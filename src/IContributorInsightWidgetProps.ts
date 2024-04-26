@@ -1,7 +1,10 @@
 import { MetricWidgetProps, CfnInsightRule, LegendPosition } from "aws-cdk-lib/aws-cloudwatch"
 import { Duration } from "aws-cdk-lib";
 
-export interface ContributorInsightWidgetProps extends MetricWidgetProps
+/**
+ * Properties for creating a contributor insight dashboard widget
+ */
+export interface IContributorInsightWidgetProps extends MetricWidgetProps
 {
     /**
      * The account id for the widget

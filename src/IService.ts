@@ -1,7 +1,7 @@
-import { Operation } from "./Operation";
+import { IOperation } from "./IOperation";
 import { Duration } from "aws-cdk-lib";
 
-export interface Service {
+export interface IService {
     /**
      * The name of the service
      */
@@ -15,7 +15,7 @@ export interface Service {
     /**
      * The operations that make up the service
      */
-    operations: Operation[];
+    operations: IOperation[];
 
     /**
      * The fault count threshold that indicates the service is unhealthy. This is an absolute value of faults
@@ -27,7 +27,7 @@ export interface Service {
      * The operations considered critical to the service. Operations that included here
      * should also be in the "operations" property.
      */
-    criticalOperations: Operation[];
+    criticalOperations: IOperation[];
 
     /**
      * A comma delimited list of the Availability Zone Ids used by this application
@@ -48,13 +48,13 @@ export interface Service {
      * Adds an operation to this service
      * @param operation 
      */
-    AddOperation(operation: Operation): Service;
+    AddOperation(operation: IOperation): IService;
 
     /**
      * Adds a critical operation to this service
      * @param operation 
      */
-    AddCriticalOperation(operation: Operation): Service;
+    AddCriticalOperation(operation: IOperation): IService;
 
     /**
      * Gets the Availability Zone Id from the "availabilityZoneIdList" property

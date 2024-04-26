@@ -1,17 +1,32 @@
 import { ConcreteWidget, IWidget} from "aws-cdk-lib/aws-cloudwatch";
-import { ContributorInsightWidgetProps } from "./ContributorInsightWidgetProps";
+import { IContributorInsightWidgetProps } from "./IContributorInsightWidgetProps";
 import { Fn } from "aws-cdk-lib";
 
+/**
+ * A Contributor Insight dashboard widget
+ */
 export class ContributorInsightsWidget extends ConcreteWidget implements IWidget
 {
-    properties: ContributorInsightWidgetProps;
+    /**
+     * The widget properties
+     */
+    properties: IContributorInsightWidgetProps;
 
-    constructor(props: ContributorInsightWidgetProps)
+    /**
+     * Creates the widget
+     * @param props 
+     */
+    constructor(props: IContributorInsightWidgetProps)
     {
         super(props.width === undefined ? 6 : props.width, props.height === undefined ? 6 : props.height)
         this.properties = props;
     } 
 
+    /**
+     * Converts the widget into an array of JSON objects (not string), this returns
+     * a single item in the array
+     * @returns An array of dictionaries
+     */
     toJson(): any[] {
         return [ {
             "type": "metric",

@@ -1,4 +1,7 @@
-export class InsightRule
+/**
+ * The insight rule body to be included in a CfnInsightRule construct
+ */
+export class InsightRuleBody
 {
     /**
      * The value of Schema for a rule that analyzes CloudWatch Logs data must always be {"Name": "CloudWatchLogRule", "Version": 1}
@@ -73,6 +76,5 @@ export class ContributionDefinition
      * evaluates them with a logical AND operator. You can use this to filter out irrelevant 
      * log events in your search or you can use it to select a single contributor to analyze their behavior.
      */
-    filters: {[key: string]: [value: any]}[] = [];
-
+    filters: {[key: string]: any}[] = [];
 }

@@ -1,13 +1,16 @@
-import { Operation } from "./Operation";
+import { IOperation } from "./IOperation";
 import { Unit } from "aws-cdk-lib/aws-cloudwatch";
 import { Duration } from "aws-cdk-lib";
 
-export interface OperationMetricDetails
+/**
+ * Generic metric details for an operation
+ */
+export interface IOperationMetricDetails
 {
         /**
          * The operation these metric details are for
          */
-        operation: Operation;
+        operation: IOperation;
 
         /**
          * The CloudWatch metric namespace for these metrics
@@ -87,7 +90,7 @@ export interface OperationMetricDetails
          * }
          * @param region 
          */
-        GetRegionalDimensions(region: string): { [key: string]: [value: string]}
+        getRegionalDimensions(region: string): { [key: string]: string}
 
         /**
          * Gets the zonal dimensions for these metrics, expected to return something like 
@@ -100,5 +103,5 @@ export interface OperationMetricDetails
          * @param availabilityZoneId 
          * @param region 
          */
-        GetZonalDimensions(availabilityZoneId: string, region: string): { [key: string]: [value: string]}
+        getZonalDimensions(availabilityZoneId: string, region: string): { [key: string]: string}
 }
