@@ -5,8 +5,4 @@ import { IAvailabilityMetricProps } from "./IAvailabilityMetricProps";
  */
 export interface IRegionalAvailabilityMetricProps extends IAvailabilityMetricProps
 {
-    /**
-     * The AWS Region
-     */
-    region: string;
 }

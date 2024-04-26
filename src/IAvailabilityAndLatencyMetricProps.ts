@@ -26,4 +26,9 @@ export interface IAvailabilityAndLatencyMetricProps
      * in alarms and graphs
      */
     keyPrefix: string;
+
+    /**
+     * The Region for the metrics
+     */
+    region: string;
 }

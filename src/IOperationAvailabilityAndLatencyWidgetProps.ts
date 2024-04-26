@@ -73,7 +73,7 @@ export interface IOperationAvailabilityAndLatencyWidgetProps
      * Instance contributors to faults, only set for
      * server-side widgets
      */
-    instanceContributorsToErrors: CfnInsightRule;
+    instanceContributorsToFaults: CfnInsightRule;
 
     /**
      * Is this widget for the canary metrics

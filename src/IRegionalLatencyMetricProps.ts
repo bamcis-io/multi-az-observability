@@ -5,8 +5,4 @@ import { ILatencyMetricProps } from "./ILatencyMetricProps";
  */
 export interface IRegionalLatencyMetricProps extends ILatencyMetricProps
 {
-    /**
-     * The AWS Region
-     */
-    region: string;
 }

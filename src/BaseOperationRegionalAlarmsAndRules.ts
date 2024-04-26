@@ -2,11 +2,12 @@ import { Construct } from "constructs";
 import { IAlarm } from "aws-cdk-lib/aws-cloudwatch";
 import { IBaseOperationRegionalAlarmsAndRulesProps } from "./IBaseOperationRegionalAlarmsAndRulesProps";
 import { AvailabilityAndLatencyAlarmsAndRules } from "./AvailabilityAndLatencyAlarmsAndRules";
+import { IBaseOperationRegionalAlarmsAndRules } from "./IBaseOperationRegionalAlarmsAndRules";
 
 /**
  * Base operation regional alarms and rules
  */
-export abstract class BaseOperationRegionalAlarmsAndRules extends Construct
+export abstract class BaseOperationRegionalAlarmsAndRules extends Construct implements IBaseOperationRegionalAlarmsAndRules
 {
     /**
      * Availability alarm for this operation

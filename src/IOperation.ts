@@ -1,3 +1,4 @@
+import { IContributorInsightRuleDetails } from "./IContributorInsightRuleDetails";
 import { IOperationMetricDetails } from "./IOperationMetricDetails";
 import { IService } from "./IService";
 
@@ -42,4 +43,14 @@ export interface IOperation
      * The canary latency metric details
      */
     canaryLatencyMetricDetails: IOperationMetricDetails;
+
+    /**
+     * The canary details for contributor insights rules
+     */
+    canaryContributorInsightRuleDetails: IContributorInsightRuleDetails;
+
+    /**
+     * The server side details for contributor insights rules
+     */
+    serverSideContributorInsightRuleDetails: IContributorInsightRuleDetails;
 }

@@ -9,9 +9,4 @@ export interface IZonalLatencyMetricProps extends ILatencyMetricProps
      * The Availability Zone Id for the metrics
      */
     availabilityZoneId: string;
-
-    /**
-     * The Region for the metrics
-     */
-    region: string;
 }

@@ -3,11 +3,12 @@ import { Construct } from "constructs";
 import { IServerSideOperationRegionalAlarmsAndRulesProps } from "./IServerSideOperationRegionalAlarmsAndRulesProps";
 import { BaseOperationRegionalAlarmsAndRules } from "./BaseOperationRegionalAlarmsAndRules";
 import { AvailabilityAndLatencyAlarmsAndRules } from "./AvailabilityAndLatencyAlarmsAndRules";
+import { IServerSideOperationRegionalAlarmsAndRules } from "./IServerSideOperationRegionalAlarmsAndRules";
 
 /**
  * The server side regional alarms and rules for an operation
  */
-export class ServerSideOperationRegionalAlarmsAndRules extends BaseOperationRegionalAlarmsAndRules
+export class ServerSideOperationRegionalAlarmsAndRules extends BaseOperationRegionalAlarmsAndRules implements IServerSideOperationRegionalAlarmsAndRules
 {
     /**
      * A rule that shows which instances are contributing to high latency responses

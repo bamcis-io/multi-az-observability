@@ -3,11 +3,12 @@ import { BaseOperationZonalAlarmsAndRules } from "./BaseOperationZonalAlarmsAndR
 import { IServerSideOperationZonalAlarmsAndRulesProps } from "./IServerSideOperationZonalAlarmsAndRulesProps";
 import { IAlarm, CfnInsightRule } from "aws-cdk-lib/aws-cloudwatch";
 import { AvailabilityAndLatencyAlarmsAndRules } from "./AvailabilityAndLatencyAlarmsAndRules";
+import { IServerSideOperationZonalAlarmsAndRules } from "./IServerSideOperationZonalAlarmsAndRules";
 
 /**
  * The server side alarms and rules for an operation in an Availability Zone
  */
-export class ServerSideOperationZonalAlarmsAndRules extends BaseOperationZonalAlarmsAndRules
+export class ServerSideOperationZonalAlarmsAndRules extends BaseOperationZonalAlarmsAndRules implements IServerSideOperationZonalAlarmsAndRules
 {
     /**
      * Alarm indicating that there are multiple instances producing faults in 

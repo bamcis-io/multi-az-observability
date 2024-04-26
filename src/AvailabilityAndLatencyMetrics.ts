@@ -3,11 +3,12 @@ import { LatencyMetricType } from "./LatencyMetricType";
 import { IAvailabilityMetricProps } from "./IAvailabilityMetricProps";
 import { IRegionalAvailabilityMetricProps } from "./IRegionalAvailabilityMetricProps";
 import { IZonalAvailabilityMetricProps } from "./IZonalAvailabilityMetricProps";
-import { IMetric, Metric, MathExpression} from "aws-cdk-lib/aws-cloudwatch";
+import { IMetric, Metric, MathExpression, Unit} from "aws-cdk-lib/aws-cloudwatch";
 import { IZonalLatencyMetricProps } from "./IZonalLatencyMetricProps";
 import { ILatencyMetricProps } from "./ILatencyMetricProps";
 import { IRegionalLatencyMetricProps } from "./IRegionalLatencyMetricProps";
 import { IServiceAvailabilityMetricProps } from "./IServiceAvailabilityMetricProps";
+import { Duration } from "aws-cdk-lib";
 
 /**
  * Class for creating availability and latency metrics that can be used in alarms and graphs
@@ -173,7 +174,7 @@ export class AvailabilityAndLatencyMetrics
             period: props.metricDetails.period,
             statistic: props.statistic,
             dimensionsMap: dimensions,
-            label: x
+            label: props.label
         }));
     }
 
@@ -293,5 +294,183 @@ export class AvailabilityAndLatencyMetrics
         operationMetrics.splice(0, 0, math);
 
         return operationMetrics;
+    }
+
+    /**
+     * Creates a regional fault count metric using 5xx target and load balancer
+     * metrics against total requests for the specified load balancer
+     * @param period 
+     * @param loadBalancerFullName 
+     * @returns 
+     */
+    static createRegionalApplicationLoadBalancerFaultRateMetric(loadBalancerFullName: string, period: Duration): IMetric
+    {
+        return new MathExpression({
+            expression: "((m1 + m2) / m3) * 100",
+            label: "Fault Rate",
+            period: period,
+            usingMetrics: {
+                "m1": new Metric({
+                        metricName: "HTTPCode_Target_5XX_Count",
+                        namespace: "AWS/ApplicationELB",
+                        unit: Unit.COUNT,
+                        period: period,
+                        statistic: "Sum",
+                        dimensionsMap: {
+                            "LoadBalancer": loadBalancerFullName
+                        },
+                        label: "5xxTarget"
+                }),
+                "m2": new Metric({
+                        metricName: "HTTPCode_ELB_5XX_Count",
+                        namespace: "AWS/ApplicationELB",
+                        unit: Unit.COUNT,
+                        period: period,
+                        statistic: "Sum",
+                        dimensionsMap: {
+                            "LoadBalancer": loadBalancerFullName
+                        },
+                        label: "5xxELB"
+                }),
+                "m3": new Metric({
+                        metricName: "RequestCount",
+                        namespace: "AWS/ApplicationELB",
+                        unit: Unit.COUNT,
+                        period: period,
+                        statistic: "Sum",
+                        dimensionsMap: {
+                            "LoadBalancer": loadBalancerFullName
+                        },
+                        label: "Requests"
+                })
+            }
+        });
+    }
+
+    /**
+     * Creates a zonal fault count metric using 5xx target and load balancer
+     * metrics against total requests for the specified load balancer
+     * @param loadBalancerFullName
+     * @param availabilityZoneName 
+     * @param period 
+     * @returns 
+     */
+    static createZonalApplicationLoadBalancerFaultRateMetric(loadBalancerFullName: string, availabilityZoneName: string, period: Duration): IMetric
+    {
+        return new MathExpression({
+            expression: "((m1 + m2) / m3) * 100",
+            label: "Fault Rate",
+            period: period,
+            usingMetrics: {
+                "m1": new Metric({
+                        metricName: "HTTPCode_Target_5XX_Count",
+                        namespace: "AWS/ApplicationELB",
+                        unit: Unit.COUNT,
+                        period: period,
+                        statistic: "Sum",
+                        dimensionsMap: {
+                            "LoadBalancer": loadBalancerFullName,
+                            "AvailabilityZone": availabilityZoneName
+                        },
+                        label: "5xxTarget"
+                }),
+                "m2": new Metric({
+                        metricName: "HTTPCode_ELB_5XX_Count",
+                        namespace: "AWS/ApplicationELB",
+                        unit: Unit.COUNT,
+                        period: period,
+                        statistic: "Sum",
+                        dimensionsMap: {
+                            "LoadBalancer": loadBalancerFullName,
+                            "AvailabilityZone": availabilityZoneName
+                        },
+                        label: "5xxELB"
+                }),
+                "m3": new Metric({
+                        metricName: "RequestCount",
+                        namespace: "AWS/ApplicationELB",
+                        unit: Unit.COUNT,
+                        period: period,
+                        statistic: "Sum",
+                        dimensionsMap: {
+                            "LoadBalancer": loadBalancerFullName,
+                            "AvailabilityZone": availabilityZoneName
+                        },
+                        label: "Requests"
+                })
+            }
+        });
+    }
+
+    /**
+     * Creates a regional processed bytes metric for the specified load balancer
+     * @param loadBalancerFullName 
+     * @param period 
+     * @returns 
+     */
+    static createRegionalApplicationLoadBalancerProcessedBytesMetric(loadBalancerFullName: string, period: Duration): IMetric
+    {
+        return new Metric({
+            metricName: "ProcessedBytes",
+            namespace: "AWS/ApplicationELB",
+            unit: Unit.COUNT,
+            period: period,
+            statistic: "Sum",
+            dimensionsMap: {
+                "LoadBalancer": loadBalancerFullName
+            },
+            label: "ProcessedBytes"
+        })
+    }
+
+    /**
+     * Creates a zonal processed bytes metric for the specified load balancer
+     * @param loadBalancerFullName 
+     * @param availabilityZoneName 
+     * @param period 
+     * @returns 
+     */
+    static createZonalApplicationLoadBalancerProcessedBytesMetric(loadBalancerFullName: string, availabilityZoneName: string, period: Duration): IMetric
+    {
+        return new Metric({
+            metricName: "ProcessedBytes",
+            namespace: "AWS/ApplicationELB",
+            unit: Unit.COUNT,
+            period: period,
+            statistic: "Sum",
+            dimensionsMap: {
+                "LoadBalancer": loadBalancerFullName,
+                "AvailabilityZone": availabilityZoneName
+            },
+            label: "ProcessedBytes"
+        })
+    }
+
+    /**
+     * Increments a str by one char, for example
+     * a -> b
+     * z -> aa
+     * ad -> ae
+     * 
+     * This wraps at z and adds a new 'a'
+     * @param str 
+     * @returns 
+     */
+    static nextChar(str: string): string 
+    {
+        if (str.length == 0) {
+            return 'a';
+        }
+        let charA: string[] = str.split('');
+        
+        if (charA[charA.length - 1] === 'z') 
+        {
+            return AvailabilityAndLatencyMetrics.nextChar(str.substring(0, charA.length - 1)) + 'a';
+        } 
+        else 
+        {
+            return str.substring(0, charA.length - 1) +
+                String.fromCharCode(charA[charA.length - 1].charCodeAt(0) + 1);
+        }
     }
 }

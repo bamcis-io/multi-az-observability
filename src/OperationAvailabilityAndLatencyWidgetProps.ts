@@ -1,5 +1,6 @@
 import { IOperation } from "./IOperation";
 import { IOperationAvailabilityAndLatencyDashboardProps } from "./IOperationAvailabilityAndLatencyDashboardProps";
+import { IOperationAvailabilityAndLatencyWidgetProps } from "./IOperationAvailabilityAndLatencyWidgetProps";
 import { IOperationMetricDetails } from "./IOperationMetricDetails";
 import { Duration } from "aws-cdk-lib";
 import { IAlarm, CfnInsightRule } from "aws-cdk-lib/aws-cloudwatch";
@@ -7,7 +8,7 @@ import { IAlarm, CfnInsightRule } from "aws-cdk-lib/aws-cloudwatch";
 /**
  * Props for creating operation dashboard availability and latency widgets
  */
-export class OperationAvailabilityAndLatencyWidgetProps
+export class OperationAvailabilityAndLatencyWidgetProps implements IOperationAvailabilityAndLatencyWidgetProps
 {
     /**
      * The operation for this widget
