@@ -3,7 +3,7 @@ import { IMultiAvailabilityZoneObservability } from "./IMultiAvailabiliyZoneObse
 import { IMultiAvailabilityZoneObservabilityProps } from "./IMultiAvailabilityZoneObservabilityProps";
 
 //TODO: start creating input props for 1/application with just custom metrics, 2/application with custom
-// metrics and logs files, 3/application with only ALB and TGW
+// metrics and logs files, 3/application with only ALB and NATGW
 export class MultiAvailabilityZoneObservability extends Construct implements IMultiAvailabilityZoneObservability
 {
     constructor(scope: Construct, id: string, props: IMultiAvailabilityZoneObservabilityProps)

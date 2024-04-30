@@ -1,4 +1,4 @@
-import { IContributorInsightRuleDetails } from "./IContributorInsightRuleDetails";
+import { IContributorInsightRuleDetails } from "./alarmsandrules/IContributorInsightRuleDetails";
 import { IOperationMetricDetails } from "./IOperationMetricDetails";
 import { IService } from "./IService";
 
