@@ -1,4 +1,4 @@
-import { CfnInsightRule, IAlarm } from "aws-cdk-lib/aws-cloudwatch";
+import { CfnInsightRule } from "aws-cdk-lib/aws-cloudwatch";
 import { IBaseOperationRegionalAlarmsAndRules } from "./IBaseOperationRegionalAlarmsAndRules";
 
 /**

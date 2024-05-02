@@ -5,20 +5,13 @@ import { ServerSideOperationRegionalAlarmsAndRules } from "./ServerSideOperation
 import { CanaryOperationRegionalAlarmsAndRules } from "./CanaryOperationRegionalAlarmsAndRules";
 import { IOperationAlarmsAndRules } from "./IOperationAlarmsAndRules";
 import { BaseLoadBalancer } from "aws-cdk-lib/aws-elasticloadbalancingv2";
-import { ServerSideOperationRegionalAlarmsAndRulesProps } from "./props/ServerSideOperationRegionalAlarmsAndRulesProps";
-import { IServerSideOperationRegionalAlarmsAndRulesProps } from "./props/IServerSideOperationRegionalAlarmsAndRulesProps";
-import { ICanaryOperationRegionalAlarmsAndRulesProps } from "./props/ICanaryOperationRegionalAlarmsAndRulesProps";
-import { CanaryOperationRegionalAlarmsAndRulesProps } from "./props/CanaryOperationRegionalAlarmsAndRulesProps";
 import { AlarmRule, CompositeAlarm, IAlarm } from "aws-cdk-lib/aws-cloudwatch";
 import { Fn } from "aws-cdk-lib";
 import { ServerSideOperationZonalAlarmsAndRules } from "./ServerSideOperationZonalAlarmsAndRules";
-import { CanaryOperationZonalAlarmsAndRules } from "./CanaryOperationZonalAlarmsAndRules";
-import { ServerSideOperationZonalAlarmsAndRulesProps } from "./props/ServerSideOperationZonalAlarmsAndRulesProps";
-import { IServerSideOperationZonalAlarmsAndRulesProps } from "./props/IServerSideOperationZonalAlarmsAndRulesProps";
-import { CanaryOperationZonalAlarmsAndRulesProps } from "./props/CanaryOperationZonalAlarmsAndRulesProps";
-import { ICanaryOperationZonalAlarmsAndRulesProps } from "./props/ICanaryOperationZonalAlarmsAndRulesProps";
 import { IServerSideOperationRegionalAlarmsAndRules } from "./IServerSideOperationRegionalAlarmsAndRules";
 import { ICanaryOperationRegionalAlarmsAndRules } from "./ICanaryOperationRegionalAlarmsAndRules";
+import { ICanaryOperationZonalAlarmsAndRules } from "./ICanaryOperationZonalAlarmsAndRules";
+import { IServerSideOperationZonalAlarmsAndRules } from "./IServerSideOperationZonalAlarmsAndRules";
 
 /**
  * Creates alarms and rules for an operation for both regional and zonal metrics
@@ -49,12 +42,12 @@ export class OperationAlarmsAndRules extends Construct implements IOperationAlar
     /**
      * The server side zonal alarms and rules
      */
-    serverSideZonalAlarmsAndRules: ServerSideOperationZonalAlarmsAndRules[];
+    serverSideZonalAlarmsAndRules: IServerSideOperationZonalAlarmsAndRules[];
 
     /**
      * The canary zonal alarms and rules
      */
-    canaryZonalAlarmsAndRules: CanaryOperationZonalAlarmsAndRules[];
+    canaryZonalAlarmsAndRules: ICanaryOperationZonalAlarmsAndRules[];
 
     /**
      * The aggregate zonal alarms, one per AZ. Each alarm indicates there is either
@@ -67,28 +60,33 @@ export class OperationAlarmsAndRules extends Construct implements IOperationAlar
     constructor(scope: Construct, id: string, props: IOperationAlarmsAndRulesProps)
     {
         super(scope, id);
+        this.serverSideZonalAlarmsAndRules = [];
+        this.canaryZonalAlarmsAndRules = [];
+        this.aggregateZonalAlarms = [];
+        this.operation = props.operation;
+
         let loadBalancerArn = (props.loadBalancer as BaseLoadBalancer).loadBalancerArn;
 
-        let serverSideRegionalAlarmsAndRulesProps: IServerSideOperationRegionalAlarmsAndRulesProps = new ServerSideOperationRegionalAlarmsAndRulesProps();
-        serverSideRegionalAlarmsAndRulesProps.availabilityMetricDetails = props.operation.serverSideAvailabilityMetricDetails;
-        serverSideRegionalAlarmsAndRulesProps.latencyMetricDetails = props.operation.serverSideLatencyMetricDetails;
-        serverSideRegionalAlarmsAndRulesProps.contributorInsightRuleDetails = props.operation.serverSideContributorInsightRuleDetails;
-                
         this.serverSideRegionalAlarmsAndRules = new ServerSideOperationRegionalAlarmsAndRules(
             this, 
             props.operation.operationName + "ServerSideRegionalAlarms",
-            serverSideRegionalAlarmsAndRulesProps
+            {
+                availabilityMetricDetails: props.operation.serverSideAvailabilityMetricDetails,
+                latencyMetricDetails: props.operation.serverSideLatencyMetricDetails,
+                contributorInsightRuleDetails: props.operation.serverSideContributorInsightRuleDetails,
+                nameSuffix: "-server"
+            }
         );
-
-        let canaryRegionalAlarmsAndRulesProps: ICanaryOperationRegionalAlarmsAndRulesProps = new CanaryOperationRegionalAlarmsAndRulesProps();
-        canaryRegionalAlarmsAndRulesProps.availabilityMetricDetails = props.operation.canaryAvailabilityMetricDetails;
-        canaryRegionalAlarmsAndRulesProps.contributorInsightRuleDetails = props.operation.canaryContributorInsightRuleDetails;
-        canaryRegionalAlarmsAndRulesProps.latencyMetricDetails = props.operation.canaryLatencyMetricDetails;
 
         this.canaryRegionalAlarmsAndRules = new CanaryOperationRegionalAlarmsAndRules(
             this,
             props.operation.operationName + "CanaryRegionalAlarms",
-            canaryRegionalAlarmsAndRulesProps
+            {
+                availabilityMetricDetails: props.operation.canaryAvailabilityMetricDetails,
+                latencyMetricDetails: props.operation.canaryLatencyMetricDetails,
+                contributorInsightRuleDetails: props.operation.canaryContributorInsightRuleDetails,
+                nameSuffix: "-canary"
+            }
         );
 
         this.aggregateRegionalAlarm = new CompositeAlarm(this, props.operation.operationName + "AggregateRegionalAlarm", {
@@ -102,33 +100,35 @@ export class OperationAlarmsAndRules extends Construct implements IOperationAlar
         for (let i = 0; i < props.operation.service.azCount; i++)
         {
             let availabilityZoneId: string = props.operation.service.GetAvailabilityZoneIdAtIndex(i);
-
-            let zonalProps: IServerSideOperationZonalAlarmsAndRulesProps = new ServerSideOperationZonalAlarmsAndRulesProps();
-            zonalProps.availabilityZoneId = availabilityZoneId;
-            zonalProps.availabilityMetricDetails = props.operation.serverSideAvailabilityMetricDetails;
-            zonalProps.latencyMetricDetails = props.operation.serverSideLatencyMetricDetails;
-            zonalProps.contributorInsightRuleDetails = props.operation.serverSideContributorInsightRuleDetails;
-            zonalProps.counter = counter;
-            zonalProps.outlierThreshold = props.outlierThreshold;
             
             this.serverSideZonalAlarmsAndRules.push(new ServerSideOperationZonalAlarmsAndRules(
                 this, 
                 props.operation.operationName + "AZ" + counter + "ServerSideZonalAlarmsAndRules",
-                zonalProps
+                {
+                    availabilityZoneId: availabilityZoneId,
+                    availabilityMetricDetails: props.operation.serverSideAvailabilityMetricDetails,
+                    latencyMetricDetails: props.operation.serverSideLatencyMetricDetails,
+                    contributorInsightRuleDetails: props.operation.serverSideContributorInsightRuleDetails,
+                    counter: counter,
+                    outlierThreshold: props.outlierThreshold,
+                    outlierDetectionAlgorithm: props.outlierDetectionAlgorithm,
+                    nameSuffix: "-server"
+                }
             ));
-
-            let canaryZonalProps: ICanaryOperationZonalAlarmsAndRulesProps = new CanaryOperationZonalAlarmsAndRulesProps();
-            canaryZonalProps.availabilityZoneId = availabilityZoneId;
-            canaryZonalProps.availabilityMetricDetails = props.operation.canaryAvailabilityMetricDetails;
-            canaryZonalProps.latencyMetricDetails = props.operation.canaryLatencyMetricDetails;
-            canaryZonalProps.contributorInsightRuleDetails = props.operation.canaryContributorInsightRuleDetails;
-            canaryZonalProps.counter = counter;
-            canaryZonalProps.outlierThreshold = props.outlierThreshold;
             
             this.canaryZonalAlarmsAndRules.push(new ServerSideOperationZonalAlarmsAndRules(
                 this, 
                 props.operation.operationName + "AZ" + counter + "CanaryZonalAlarmsAndRules",
-                canaryZonalProps
+                {
+                    availabilityZoneId: availabilityZoneId,
+                    availabilityMetricDetails: props.operation.canaryAvailabilityMetricDetails,
+                    latencyMetricDetails: props.operation.canaryLatencyMetricDetails,
+                    contributorInsightRuleDetails: props.operation.canaryContributorInsightRuleDetails,
+                    counter: counter,
+                    outlierThreshold: props.outlierThreshold,
+                    outlierDetectionAlgorithm: props.outlierDetectionAlgorithm,
+                    nameSuffix: "-canary"
+                }
             ));
 
             this.aggregateZonalAlarms.push(new CompositeAlarm(

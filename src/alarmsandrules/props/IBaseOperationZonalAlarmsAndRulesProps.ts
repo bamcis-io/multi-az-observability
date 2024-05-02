@@ -1,7 +1,5 @@
 import { IOperationMetricDetails } from "../../IOperationMetricDetails";
-import { ILogGroup } from "aws-cdk-lib/aws-logs";
 import { OutlierDetectionAlgorithm } from "../../utilities/OutlierDetectionAlgorithm";
-import { CfnInsightRule } from "aws-cdk-lib/aws-cloudwatch";
 import { IContributorInsightRuleDetails } from "../IContributorInsightRuleDetails";
 
 /**

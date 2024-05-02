@@ -1,21 +1,12 @@
 import { IOperationMetricDetails } from "../IOperationMetricDetails";
 import { Construct } from "constructs";
 import { IAlarm, Alarm, IMetric, CompositeAlarm, AlarmRule, MathExpression, CfnInsightRule, ComparisonOperator, TreatMissingData } from "aws-cdk-lib/aws-cloudwatch";
-import { ILogGroup } from "aws-cdk-lib/aws-logs";
 import { AvailabilityAndLatencyMetrics } from "../metrics/AvailabilityAndLatencyMetrics";
-import { ZonalAvailabilityMetricProps } from "../metrics/props/ZonalAvailabilityMetricProps";
-import { IZonalAvailabilityMetricProps } from "../metrics/props/IZonalAvailabilityMetricProps";
 import { AvailabilityMetricType } from "../utilities/AvailabilityMetricType";
-import { IZonalLatencyMetricProps } from "../metrics/props/IZonalLatencyMetricProps";
-import { ZonalLatencyMetricProps } from "../metrics/props/ZonalLatencyMetricProps";
 import { LatencyMetricType } from "../utilities/LatencyMetricType";
 import { IOperation } from "../IOperation";
-import { RegionalAvailabilityMetricProps } from "../metrics/props/RegionalAvailabilityMetricProps";
-import { RegionalLatencyMetricProps } from "../metrics/props/RegionalLatencyMetricProps";
 import { Fn } from "aws-cdk-lib";
-import { ContributionDefinition, InsightRuleBody } from "./InsightRuleBody";
-import { IRegionalAvailabilityMetricProps } from "../metrics/props/IRegionalAvailabilityMetricProps";
-import { IRegionalLatencyMetricProps } from "../metrics/props/IRegionalLatencyMetricProps";
+import { IContributionDefinition, InsightRuleBody } from "./InsightRuleBody";
 import { IContributorInsightRuleDetails } from "./IContributorInsightRuleDetails";
 
 /**
@@ -34,12 +25,6 @@ export class AvailabilityAndLatencyAlarmsAndRules
      */
     static createZonalAvailabilityAlarm(scope: Construct, metricDetails: IOperationMetricDetails, availabilityZoneId: string, nameSuffix: string, counter: number) : IAlarm
     {
-        let props: IZonalAvailabilityMetricProps = new ZonalAvailabilityMetricProps();
-        props.availabilityZoneId = availabilityZoneId;
-        props.label = availabilityZoneId + " availability";
-        props.metricDetails = metricDetails;
-        props.metricType = AvailabilityMetricType.SUCCESS_RATE;
-
         return new Alarm(scope, metricDetails.operation.operationName + "AZ" + counter + "AvailabilityAlarm", {
             alarmName: availabilityZoneId + "-" + metricDetails.operation.operationName.toLowerCase() + "-success-rate" + nameSuffix,
             evaluationPeriods: metricDetails.evaluationPeriods,
@@ -48,7 +33,12 @@ export class AvailabilityAndLatencyAlarmsAndRules
             threshold: metricDetails.successAlarmThreshold,
             actionsEnabled: false,
             treatMissingData: TreatMissingData.IGNORE,
-            metric: AvailabilityAndLatencyMetrics.createZonalAvailabilityMetric(props)
+            metric: AvailabilityAndLatencyMetrics.createZonalAvailabilityMetric({
+                availabilityZoneId: availabilityZoneId,
+                label: availabilityZoneId + " availability",
+                metricDetails: metricDetails,
+                metricType: AvailabilityMetricType.SUCCESS_RATE
+            })
         }); 
     }
 
@@ -63,13 +53,6 @@ export class AvailabilityAndLatencyAlarmsAndRules
      */
     static createZonalLatencyAlarm(scope: Construct, metricDetails: IOperationMetricDetails, availabilityZoneId: string, nameSuffix: string, counter: number) : IAlarm
     {
-        let props: IZonalLatencyMetricProps = new ZonalLatencyMetricProps();
-        props.availabilityZoneId = availabilityZoneId;
-        props.label = availabilityZoneId + " " + metricDetails.alarmStatistic + " latency";
-        props.metricDetails = metricDetails;
-        props.metricType = LatencyMetricType.SUCCESS_LATENCY;
-        props.statistic = metricDetails.alarmStatistic;
-
         return new Alarm(scope, metricDetails.operation.operationName + "AZ" + counter + "LatencyAlarm", {
             alarmName: availabilityZoneId + "-" + metricDetails.operation.operationName.toLowerCase() + "-success-latency" + nameSuffix,
             evaluationPeriods: metricDetails.evaluationPeriods,
@@ -78,7 +61,13 @@ export class AvailabilityAndLatencyAlarmsAndRules
             threshold: metricDetails.successAlarmThreshold,
             actionsEnabled: false,
             treatMissingData: TreatMissingData.IGNORE,
-            metric: AvailabilityAndLatencyMetrics.createZonalLatencyMetrics(props)[0]
+            metric: AvailabilityAndLatencyMetrics.createZonalLatencyMetrics({
+                availabilityZoneId: availabilityZoneId,
+                label: availabilityZoneId + " " + metricDetails.alarmStatistic + " latency",
+                metricDetails: metricDetails,
+                metricType: LatencyMetricType.SUCCESS_LATENCY,
+                statistic: metricDetails.alarmStatistic
+            })[0]
         }); 
     }
 
@@ -115,20 +104,16 @@ export class AvailabilityAndLatencyAlarmsAndRules
      */
     static createZonalFaultRateOutlierAlarm(scope: Construct, metricDetails: IOperationMetricDetails, availabilityZoneId: string, nameSuffix: string, counter: number, outlierThreshold: number): IAlarm
     {
-        let zonalProps = new ZonalAvailabilityMetricProps();
-        zonalProps.availabilityZoneId = availabilityZoneId;
-        zonalProps.label = "";
-        zonalProps.metricDetails = metricDetails;
-        zonalProps.metricType = AvailabilityMetricType.FAULT_COUNT;
+        let zonalFaults: IMetric = AvailabilityAndLatencyMetrics.createZonalAvailabilityMetric({
+            availabilityZoneId: availabilityZoneId,
+            metricDetails: metricDetails,
+            metricType: AvailabilityMetricType.FAULT_COUNT
+        });
 
-        let zonalFaults: IMetric = AvailabilityAndLatencyMetrics.createZonalAvailabilityMetric(zonalProps);
-
-        let regionalProps = new RegionalAvailabilityMetricProps();
-        regionalProps.label = "";
-        regionalProps.metricDetails = metricDetails;
-        regionalProps.metricType = AvailabilityMetricType.FAULT_COUNT;
-
-        let regionalFaults: IMetric = AvailabilityAndLatencyMetrics.createRegionalAvailabilityMetric(regionalProps);
+        let regionalFaults: IMetric = AvailabilityAndLatencyMetrics.createRegionalAvailabilityMetric({
+            metricDetails: metricDetails,
+            metricType: AvailabilityMetricType.FAULT_COUNT
+        });
 
         return new Alarm(scope, "AZ" + counter + "IsolatedImpactAlarm", {
             alarmName: availabilityZoneId + `-${metricDetails.operation.operationName.toLowerCase()}-majority-errors-impact` + nameSuffix,
@@ -157,22 +142,20 @@ export class AvailabilityAndLatencyAlarmsAndRules
         counter: number, 
         outlierThreshold: number): IAlarm
     {
-        let zonalProps = new ZonalLatencyMetricProps();
-        zonalProps.availabilityZoneId = availabilityZoneId;
-        zonalProps.label = availabilityZoneId + "-" + metricDetails.operation.operationName + "-high-latency-requests";
-        zonalProps.metricDetails = metricDetails;
-        zonalProps.metricType = LatencyMetricType.SUCCESS_LATENCY;
-        zonalProps.statistic = `TC(${metricDetails.successAlarmThreshold}:)`;
+        let zonalLatency: IMetric = AvailabilityAndLatencyMetrics.createZonalLatencyMetrics({
+            availabilityZoneId: availabilityZoneId,
+            label: availabilityZoneId + "-" + metricDetails.operation.operationName + "-high-latency-requests",
+            metricDetails: metricDetails,
+            metricType: LatencyMetricType.SUCCESS_LATENCY,
+            statistic: `TC(${metricDetails.successAlarmThreshold}:)`
+        })[0];
 
-        let zonalLatency: IMetric = AvailabilityAndLatencyMetrics.createZonalLatencyMetrics(zonalProps)[0];
-
-        let regionalProps = new RegionalLatencyMetricProps();
-        regionalProps.label = Fn.ref("AWS::Region") + "-" + metricDetails.operation.operationName + "-high-latency-requests";
-        regionalProps.metricDetails = metricDetails;
-        regionalProps.metricType = LatencyMetricType.SUCCESS_LATENCY;
-        regionalProps.statistic = `TC(${metricDetails.successAlarmThreshold}:)`;
-
-        let regionalLatency: IMetric = AvailabilityAndLatencyMetrics.createRegionalLatencyMetrics(regionalProps)[0];
+        let regionalLatency: IMetric = AvailabilityAndLatencyMetrics.createRegionalLatencyMetrics({
+            label: Fn.ref("AWS::Region") + "-" + metricDetails.operation.operationName + "-high-latency-requests",
+            metricDetails: metricDetails,
+            metricType: LatencyMetricType.SUCCESS_LATENCY,
+            statistic: `TC(${metricDetails.successAlarmThreshold}:)`
+        })[0];
 
         return new Alarm(scope, "AZ" + counter + "IsolatedImpactAlarm", {
             alarmName: availabilityZoneId + `-${metricDetails.operation.operationName.toLowerCase()}-majority-high-latency-impact` + nameSuffix,
@@ -218,23 +201,25 @@ export class AvailabilityAndLatencyAlarmsAndRules
         let ruleBody = new InsightRuleBody();
         ruleBody.logGroupNames = ruleDetails.logGroups.map(x => x.logGroupName);
         ruleBody.aggregateOn = "Count";
-        ruleBody.contribution = new ContributionDefinition();
-        ruleBody.contribution.keys = [ ruleDetails.instanceIdJsonPath ];
-        ruleBody.contribution.filters = [
-            {
-                "Match": ruleDetails.availabilityZoneIdJsonPath,
-                "In": [ availabilityZoneId ]
-            },
-            {
-                "Match": ruleDetails.operationNameJsonPath,
-                "In": [ operation.operationName ]
-            }
-        ];
+
+        ruleBody.contribution = {
+            keys: [ ruleDetails.instanceIdJsonPath ],
+            filters: [
+                {
+                    "Match": ruleDetails.availabilityZoneIdJsonPath,
+                    "In": [ availabilityZoneId ]
+                },
+                {
+                    "Match": ruleDetails.operationNameJsonPath,
+                    "In": [ operation.operationName ]
+                }
+            ]
+        } as unknown as IContributionDefinition;
 
         return new CfnInsightRule(scope, "AZ" + counter + "InstancesInTheAZRule", {
             ruleName: availabilityZoneId + `-${operation.operationName.toLowerCase()}-instances-in-the-az` + nameSuffix,
             ruleState: "ENABLED",
-            ruleBody: ruleBody.ToJson()
+            ruleBody: ruleBody.toJson()
         });
     }
 
@@ -265,27 +250,28 @@ export class AvailabilityAndLatencyAlarmsAndRules
         let ruleBody = new InsightRuleBody();
         ruleBody.logGroupNames = ruleDetails.logGroups.map(x => x.logGroupName);
         ruleBody.aggregateOn = "Count";
-        ruleBody.contribution = new ContributionDefinition();
-        ruleBody.contribution.keys = [ ruleDetails.instanceIdJsonPath ];
-        ruleBody.contribution.filters = [
-            {
-                "Match": ruleDetails.availabilityZoneIdJsonPath,
-                "In": [ availabilityZoneId ]
-            },
-            {
-                "Match": ruleDetails.operationNameJsonPath,
-                "In": [ operation.operationName ]
-            },
-            {
-                "Match": ruleDetails.faultMetricJsonPath,
-                "GreaterThan": 0
-            }
-        ];
+        ruleBody.contribution = {
+            keys: [ ruleDetails.instanceIdJsonPath ],
+            filters: [
+                {
+                    "Match": ruleDetails.availabilityZoneIdJsonPath,
+                    "In": [ availabilityZoneId ]
+                },
+                {
+                    "Match": ruleDetails.operationNameJsonPath,
+                    "In": [ operation.operationName ]
+                },
+                {
+                    "Match": ruleDetails.faultMetricJsonPath,
+                    "GreaterThan": 0
+                }
+            ]
+        } as unknown as IContributionDefinition;
 
         return new CfnInsightRule(scope, "AZ" + counter + "InstanceErrorContributionRule", {
             ruleName: availabilityZoneId + `-${operation.operationName.toLowerCase()}-per-instance-faults` + nameSuffix,
             ruleState: "ENABLED",
-            ruleBody: ruleBody.ToJson()
+            ruleBody: ruleBody.toJson()
         });
     }
 
@@ -312,27 +298,28 @@ export class AvailabilityAndLatencyAlarmsAndRules
         let ruleBody = new InsightRuleBody();
         ruleBody.logGroupNames = ruleDetails.logGroups.map(x => x.logGroupName);
         ruleBody.aggregateOn = "Count";
-        ruleBody.contribution = new ContributionDefinition();
-        ruleBody.contribution.keys = [ ruleDetails.instanceIdJsonPath ];
-        ruleBody.contribution.filters = [
-            {
-                "Match": ruleDetails.availabilityZoneIdJsonPath,
-                "In": [ availabilityZoneId ]
-            },
-            {
-                "Match": ruleDetails.operationNameJsonPath,
-                "In": [ metricDetails.operation.operationName ]
-            },
-            {
-                "Match": ruleDetails.successLatencyMetricJsonPath,
-                "GreaterThan": metricDetails.successAlarmThreshold
-            }
-        ];
+        ruleBody.contribution = {
+            keys: [ ruleDetails.instanceIdJsonPath ],
+            filters: [
+                {
+                    "Match": ruleDetails.availabilityZoneIdJsonPath,
+                    "In": [ availabilityZoneId ]
+                },
+                {
+                    "Match": ruleDetails.operationNameJsonPath,
+                    "In": [ metricDetails.operation.operationName ]
+                },
+                {
+                    "Match": ruleDetails.successLatencyMetricJsonPath,
+                    "GreaterThan": metricDetails.successAlarmThreshold
+                }
+            ]
+        } as unknown as IContributionDefinition;
 
         return new CfnInsightRule(scope, "AZ" + counter + "LatencyContributorsRule", {
             ruleName: availabilityZoneId + `-${metricDetails.operation.operationName.toLowerCase()}-per-instance-high-latency` + nameSuffix,
             ruleState: "ENABLED",
-            ruleBody: ruleBody.ToJson()
+            ruleBody: ruleBody.toJson()
         });
     }
 
@@ -530,11 +517,6 @@ export class AvailabilityAndLatencyAlarmsAndRules
      */
     static createRegionalAvailabilityAlarm(scope: Construct, metricDetails: IOperationMetricDetails, nameSuffix: string) : IAlarm
     {
-        let props: IRegionalAvailabilityMetricProps = new RegionalAvailabilityMetricProps();
-        props.label = Fn.ref("AWS::Region") + " availability";
-        props.metricDetails = metricDetails;
-        props.metricType = AvailabilityMetricType.SUCCESS_RATE;
-
         return new Alarm(scope, metricDetails.operation.operationName + "RegionalAvailabilityAlarm", {
             alarmName: Fn.ref("AWS::Region") + "-" + metricDetails.operation.operationName.toLowerCase() + "-success-rate" + nameSuffix,
             evaluationPeriods: metricDetails.evaluationPeriods,
@@ -543,7 +525,11 @@ export class AvailabilityAndLatencyAlarmsAndRules
             threshold: metricDetails.successAlarmThreshold,
             actionsEnabled: false,
             treatMissingData: TreatMissingData.IGNORE,
-            metric: AvailabilityAndLatencyMetrics.createRegionalAvailabilityMetric(props)
+            metric: AvailabilityAndLatencyMetrics.createRegionalAvailabilityMetric({
+                label: Fn.ref("AWS::Region") + " availability",
+                metricDetails: metricDetails,
+                metricType: AvailabilityMetricType.SUCCESS_RATE
+            })
         }); 
     }
 
@@ -557,12 +543,6 @@ export class AvailabilityAndLatencyAlarmsAndRules
      */
     static createRegionalLatencyAlarm(scope: Construct, metricDetails: IOperationMetricDetails, nameSuffix: string) : IAlarm
     {
-        let props: IRegionalLatencyMetricProps = new RegionalLatencyMetricProps();
-        props.label = Fn.ref("AWS::Region") + " " + metricDetails.alarmStatistic + " latency";
-        props.metricDetails = metricDetails;
-        props.metricType = LatencyMetricType.SUCCESS_LATENCY;
-        props.statistic = metricDetails.alarmStatistic;
-
         return new Alarm(scope, metricDetails.operation.operationName + "RegionalLatencyAlarm", {
             alarmName: Fn.ref("AWS::Region") + "-" + metricDetails.operation.operationName.toLowerCase() + "-success-latency" + nameSuffix,
             evaluationPeriods: metricDetails.evaluationPeriods,
@@ -571,7 +551,12 @@ export class AvailabilityAndLatencyAlarmsAndRules
             threshold: metricDetails.successAlarmThreshold,
             actionsEnabled: false,
             treatMissingData: TreatMissingData.IGNORE,
-            metric: AvailabilityAndLatencyMetrics.createRegionalLatencyMetrics(props)[0]
+            metric: AvailabilityAndLatencyMetrics.createRegionalLatencyMetrics({
+                label: Fn.ref("AWS::Region") + " " + metricDetails.alarmStatistic + " latency",
+                metricDetails: metricDetails,
+                metricType: LatencyMetricType.SUCCESS_LATENCY,
+                statistic: metricDetails.alarmStatistic
+            })[0]
         }); 
     }
 
@@ -602,23 +587,24 @@ export class AvailabilityAndLatencyAlarmsAndRules
         let ruleBody = new InsightRuleBody();
         ruleBody.logGroupNames = ruleDetails.logGroups.map(x => x.logGroupName);
         ruleBody.aggregateOn = "Count";
-        ruleBody.contribution = new ContributionDefinition();
-        ruleBody.contribution.keys = [ ruleDetails.instanceIdJsonPath ];
-        ruleBody.contribution.filters = [
-            {
-                "Match": ruleDetails.successLatencyMetricJsonPath,
-                "GreaterThan": metricDetails.successAlarmThreshold
-            },
-            {
-                "Match": ruleDetails.operationNameJsonPath,
-                "In": [ metricDetails.operation.operationName ]
-            }
-        ];
+        ruleBody.contribution = {
+            keys: [ ruleDetails.instanceIdJsonPath ],
+            filters: [
+                {
+                    "Match": ruleDetails.successLatencyMetricJsonPath,
+                    "GreaterThan": metricDetails.successAlarmThreshold
+                },
+                {
+                    "Match": ruleDetails.operationNameJsonPath,
+                    "In": [ metricDetails.operation.operationName ]
+                }
+            ]
+        } as unknown as IContributionDefinition;
 
         return new CfnInsightRule(scope, "RegionPerInstanceHighLatencyRule", {
             ruleName: Fn.ref("AWS::Region") + `-${metricDetails.operation.operationName.toLowerCase()}-per-instance-high-latency-server`,
             ruleState: "ENABLED",
-            ruleBody: ruleBody.ToJson()
+            ruleBody: ruleBody.toJson()
         });
     }
 
@@ -631,23 +617,24 @@ export class AvailabilityAndLatencyAlarmsAndRules
         let ruleBody = new InsightRuleBody();
         ruleBody.logGroupNames = ruleDetails.logGroups.map(x => x.logGroupName);
         ruleBody.aggregateOn = "Count";
-        ruleBody.contribution = new ContributionDefinition();
-        ruleBody.contribution.keys = [ ruleDetails.instanceIdJsonPath ];
-        ruleBody.contribution.filters = [
-            {
-                "Match": ruleDetails.successLatencyMetricJsonPath,
-                "GreaterThan": 0
-            },
-            {
-                "Match": ruleDetails.operationNameJsonPath,
-                "In": [ metricDetails.operation.operationName ]
-            }
-        ];
+        ruleBody.contribution = {
+            keys: [ ruleDetails.instanceIdJsonPath ],
+            filters: [
+                {
+                    "Match": ruleDetails.successLatencyMetricJsonPath,
+                    "GreaterThan": 0
+                },
+                {
+                    "Match": ruleDetails.operationNameJsonPath,
+                    "In": [ metricDetails.operation.operationName ]
+                }
+            ]
+        } as unknown as IContributionDefinition;
 
         return new CfnInsightRule(scope, "RegionPerInstanceErrorRule", {
             ruleName: Fn.ref("AWS::Region") + `-${metricDetails.operation.operationName.toLowerCase()}-per-instance-faults-server`,
             ruleState: "ENABLED",
-            ruleBody: ruleBody.ToJson()
+            ruleBody: ruleBody.toJson()
         });
     }
 }

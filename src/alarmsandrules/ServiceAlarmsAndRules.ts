@@ -5,9 +5,7 @@ import { IServiceAlarmsAndRules } from "./IServiceAlarmsAndRules";
 import { IServiceAlarmsAndRulesProps } from "./props/IServiceAlarmsAndRulesProps";
 import { Alarm, AlarmRule, ComparisonOperator, CompositeAlarm, IAlarm, IMetric, MathExpression } from "aws-cdk-lib/aws-cloudwatch";
 import { AvailabilityAndLatencyMetrics } from "../metrics/AvailabilityAndLatencyMetrics";
-import { RegionalAvailabilityMetricProps } from "../metrics/props/RegionalAvailabilityMetricProps";
 import { AvailabilityMetricType } from "../utilities/AvailabilityMetricType";
-import { IRegionalAvailabilityMetricProps } from "../metrics/props/IRegionalAvailabilityMetricProps";
 import { Fn } from "aws-cdk-lib";
 
 /**
@@ -73,20 +71,18 @@ export class ServiceAlarmsAndRules extends Construct implements IServiceAlarmsAn
             counter++;
         }
 
-        let key: string = "a";
-        let keyCounter: number = 1;
+        let keyPrefix: string = "";
 
         let regionalOperationFaultCountMetrics: {[key: string]: IMetric} = {};
 
         props.service.criticalOperations.forEach(x => {
-            let tmp: string = `${key}${keyCounter++}`
+            keyPrefix = AvailabilityAndLatencyMetrics.nextChar(keyPrefix);
 
-            let metricProps: IRegionalAvailabilityMetricProps = new RegionalAvailabilityMetricProps();
-            metricProps.label = x.operationName + " fault count";
-            metricProps.metricDetails = x.serverSideAvailabilityMetricDetails;
-            metricProps.metricType = AvailabilityMetricType.FAULT_COUNT;
-
-            regionalOperationFaultCountMetrics[key] = AvailabilityAndLatencyMetrics.createRegionalAvailabilityMetric(metricProps);
+            regionalOperationFaultCountMetrics[keyPrefix] = AvailabilityAndLatencyMetrics.createRegionalAvailabilityMetric({
+                label: x.operationName + " fault count",
+                metricDetails: x.serverSideAvailabilityMetricDetails,
+                metricType: AvailabilityMetricType.FAULT_COUNT
+            });
         });
 
         let regionalFaultCount: IMetric = new MathExpression({

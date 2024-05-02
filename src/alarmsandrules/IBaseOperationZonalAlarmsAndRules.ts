@@ -21,12 +21,6 @@ export interface IBaseOperationZonalAlarmsAndRules
     latencyAlarm: IAlarm;
 
     /**
-     * Alarm that triggers if either latency or availability breach the specified
-     * threshold in this AZ and the AZ is an outlier for faults or latency
-     */
-    isolatedImpactAlarm: IAlarm;
-
-    /**
      * Alarm that indicates that this AZ is an outlier for fault rate
      */
     availabilityZoneIsOutlierForFaults: IAlarm;

@@ -5,5 +5,5 @@ import { IBaseOperationRegionalAlarmsAndRulesProps } from "./IBaseOperationRegio
  */
 export interface IServerSideOperationRegionalAlarmsAndRulesProps extends IBaseOperationRegionalAlarmsAndRulesProps
 {
-    
+
 }

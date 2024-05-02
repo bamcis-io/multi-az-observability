@@ -7,6 +7,12 @@ import { IBaseOperationZonalAlarmsAndRules } from "./IBaseOperationZonalAlarmsAn
 export interface IServerSideOperationZonalAlarmsAndRules extends IBaseOperationZonalAlarmsAndRules
 {
     /**
+     * Alarm that triggers if either latency or availability breach the specified
+     * threshold in this AZ and the AZ is an outlier for faults or latency
+     */
+    isolatedImpactAlarm: IAlarm;
+
+    /**
      * Alarm indicating that there are multiple instances producing faults in 
      * this AZ indicating the fault rate is not being caused by a single instance
      */

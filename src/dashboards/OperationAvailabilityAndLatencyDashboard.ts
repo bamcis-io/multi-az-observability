@@ -4,17 +4,9 @@ import { Dashboard, IMetric, PeriodOverride, IWidget, TextWidget, AlarmWidget, A
 import { Fn } from "aws-cdk-lib";
 import { AvailabilityAndLatencyMetrics } from "../metrics/AvailabilityAndLatencyMetrics";
 import { LatencyMetricType } from "../utilities/LatencyMetricType";
-import { ZonalLatencyMetricProps } from "../metrics/props/ZonalLatencyMetricProps";
-import { ZonalAvailabilityMetricProps } from "../metrics/props/ZonalAvailabilityMetricProps";
 import { AvailabilityMetricType } from "../utilities/AvailabilityMetricType";
-import { IZonalLatencyMetricProps } from "../metrics/props/IZonalLatencyMetricProps";
-import { IZonalAvailabilityMetricProps } from "../metrics/props/IZonalAvailabilityMetricProps";
-import { RegionalAvailabilityMetricProps } from "../metrics/props/RegionalAvailabilityMetricProps";
 import { IOperationAvailabilityAndLatencyWidgetProps } from "./props/IOperationAvailabilityAndLatencyWidgetProps";
-import { IRegionalAvailabilityMetricProps } from "../metrics/props/IRegionalAvailabilityMetricProps";
 import { ContributorInsightsWidget } from "./ContributorInsightsWidget";
-import { IRegionalLatencyMetricProps } from "../metrics/props/IRegionalLatencyMetricProps";
-import { RegionalLatencyMetricProps } from "../metrics/props/RegionalLatencyMetricProps";
 import { OperationAvailabilityAndLatencyWidgetProps } from "./props/OperationAvailabilityAndLatencyWidgetProps";
 import { BaseLoadBalancer } from "aws-cdk-lib/aws-elasticloadbalancingv2";
 import { IOperationAvailabilityAndLatencyDashboard } from "./IOperationAvailabilityAndLatencyDashboard";
@@ -92,41 +84,38 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
         {
             let availabilityZoneId: string = props.operation.service.GetAvailabilityZoneIdAtIndex(i);
 
-            let zonalLatencyProps: IZonalLatencyMetricProps = new ZonalLatencyMetricProps();
-            zonalLatencyProps.availabilityZoneId = availabilityZoneId;
-            zonalLatencyProps.metricDetails = props.operation.serverSideLatencyMetricDetails;
-            zonalLatencyProps.label = availabilityZoneId + " high latency responses";
-            zonalLatencyProps.metricType = LatencyMetricType.SUCCESS_LATENCY;
-            zonalLatencyProps.statistic = `TC(${props.operation.serverSideLatencyMetricDetails.successAlarmThreshold}:)`;
+            zonalServerSideHighLatencyMetrics.push(AvailabilityAndLatencyMetrics.createZonalLatencyMetrics({
+                availabilityZoneId: availabilityZoneId,
+                metricDetails: props.operation.serverSideLatencyMetricDetails,
+                label: availabilityZoneId + " high latency responses",
+                metricType: LatencyMetricType.SUCCESS_LATENCY,
+                statistic: `TC(${props.operation.serverSideLatencyMetricDetails.successAlarmThreshold}:)`,
+                keyPrefix: keyPrefix
+            })[0]);
 
-            zonalServerSideHighLatencyMetrics.push(AvailabilityAndLatencyMetrics.createZonalLatencyMetrics(zonalLatencyProps)[0]);
+            zonalServerSideFaultCountMetrics.push(AvailabilityAndLatencyMetrics.createZonalAvailabilityMetric({
+                availabilityZoneId: availabilityZoneId,
+                metricDetails: props.operation.serverSideAvailabilityMetricDetails,
+                label: availabilityZoneId + " fault count",
+                metricType: AvailabilityMetricType.FAULT_COUNT,
+                keyPrefix: keyPrefix
+            }));
 
-            let zonalFaultProps: IZonalAvailabilityMetricProps = new ZonalAvailabilityMetricProps();
-            zonalFaultProps.availabilityZoneId = availabilityZoneId;
-            zonalFaultProps.metricDetails = props.operation.serverSideAvailabilityMetricDetails;
-            zonalFaultProps.label = availabilityZoneId + " fault count";
-            zonalFaultProps.metricType = AvailabilityMetricType.FAULT_COUNT;
-            zonalFaultProps.keyPrefix = keyPrefix;
+            zonalCanaryHighLatencyMetrics.push(AvailabilityAndLatencyMetrics.createZonalLatencyMetrics({
+                availabilityZoneId: availabilityZoneId,
+                metricDetails: props.operation.canaryLatencyMetricDetails,
+                label: availabilityZoneId + " high latency responses",
+                metricType: LatencyMetricType.SUCCESS_LATENCY,
+                statistic: `TC(${props.operation.canaryLatencyMetricDetails.successAlarmThreshold}:)`
+            })[0]);
 
-            zonalServerSideFaultCountMetrics.push(AvailabilityAndLatencyMetrics.createZonalAvailabilityMetric(zonalFaultProps));
-
-            let zonalCanaryLatencyProps: IZonalLatencyMetricProps = new ZonalLatencyMetricProps();
-            zonalCanaryLatencyProps.availabilityZoneId = availabilityZoneId;
-            zonalCanaryLatencyProps.metricDetails = props.operation.canaryLatencyMetricDetails;
-            zonalCanaryLatencyProps.label = availabilityZoneId + " high latency responses";
-            zonalCanaryLatencyProps.metricType = LatencyMetricType.SUCCESS_LATENCY;
-            zonalCanaryLatencyProps.statistic = `TC(${props.operation.canaryLatencyMetricDetails.successAlarmThreshold}:)`;  
-
-            zonalCanaryHighLatencyMetrics.push(AvailabilityAndLatencyMetrics.createZonalLatencyMetrics(zonalCanaryLatencyProps)[0]);
-
-            let zonalCanaryFaultCountProps: IZonalAvailabilityMetricProps = new ZonalAvailabilityMetricProps();
-            zonalCanaryFaultCountProps.availabilityZoneId = availabilityZoneId;
-            zonalCanaryFaultCountProps.metricDetails = props.operation.canaryAvailabilityMetricDetails;
-            zonalCanaryFaultCountProps.label = availabilityZoneId + " fault count";
-            zonalCanaryFaultCountProps.metricType = AvailabilityMetricType.FAULT_COUNT;
-            zonalCanaryFaultCountProps.keyPrefix = keyPrefix;
-
-            zonalCanaryFaultCountMetrics.push(AvailabilityAndLatencyMetrics.createZonalAvailabilityMetric(zonalCanaryFaultCountProps));
+            zonalCanaryFaultCountMetrics.push(AvailabilityAndLatencyMetrics.createZonalAvailabilityMetric({
+                availabilityZoneId: availabilityZoneId,
+                metricDetails: props.operation.canaryAvailabilityMetricDetails,
+                label: availabilityZoneId + " fault count",
+                metricType: AvailabilityMetricType.FAULT_COUNT,
+                keyPrefix: keyPrefix
+            }));
 
             keyPrefix = AvailabilityAndLatencyMetrics.nextChar(keyPrefix);
         }
@@ -162,18 +151,17 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
 
         topLevelAggregateAlarms.push(new TextWidget({ height: 2, width: 24, markdown: "**Top Level Metrics**" }));
 
-        let regionalAvailabilityProps = new RegionalAvailabilityMetricProps();
-        regionalAvailabilityProps.label = Fn.ref("AWS::Region") + " tps";
-        regionalAvailabilityProps.metricDetails = props.operation.serverSideAvailabilityMetricDetails;
-        regionalAvailabilityProps.metricType = AvailabilityMetricType.REQUEST_COUNT;                      
-    
         topLevelAggregateAlarms.push(new GraphWidget({
             height: 6,
             width: 24,
             title: Fn.sub("${AWS::Region} TPS"),
             region: Fn.sub("${AWS::Region}"),
             left: [
-                AvailabilityAndLatencyMetrics.createRegionalAvailabilityMetric(regionalAvailabilityProps)
+                AvailabilityAndLatencyMetrics.createRegionalAvailabilityMetric({
+                    label: Fn.ref("AWS::Region") + " tps",
+                    metricDetails: props.operation.serverSideAvailabilityMetricDetails,
+                    metricType: AvailabilityMetricType.REQUEST_COUNT
+                })
             ],
             statistic: "Sum",       
             leftYAxis: {
@@ -186,19 +174,18 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
         {
             let availabilityZoneId: string = props.operation.service.GetAvailabilityZoneIdAtIndex(i);
 
-            let zonalAvailabilityMetricProps: IZonalAvailabilityMetricProps = new ZonalAvailabilityMetricProps();
-            zonalAvailabilityMetricProps.availabilityZoneId = availabilityZoneId;
-            zonalAvailabilityMetricProps.label = availabilityZoneId + " tps";
-            zonalAvailabilityMetricProps.metricDetails = props.operation.serverSideAvailabilityMetricDetails;
-            zonalAvailabilityMetricProps.metricType = AvailabilityMetricType.REQUEST_COUNT;
-
             topLevelAggregateAlarms.push(new GraphWidget({
                 height: 6,
                 width: 8,
                 title: availabilityZoneId + " TPS",
                 region: Fn.sub("${AWS::Region}"),
                 left: [
-                    AvailabilityAndLatencyMetrics.createZonalAvailabilityMetric(zonalAvailabilityMetricProps)                   
+                    AvailabilityAndLatencyMetrics.createZonalAvailabilityMetric({
+                        availabilityZoneId: availabilityZoneId,
+                        label: availabilityZoneId + " tps",
+                        metricDetails: props.operation.serverSideAvailabilityMetricDetails,
+                        metricType: AvailabilityMetricType.REQUEST_COUNT
+                    })                   
                 ],
                 statistic: "Sum",       
                 leftYAxis: {
@@ -217,18 +204,8 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
         availabilityWidgets.push(new TextWidget({ height: 2, width: 24, markdown: title }));
         
         let rowTracker: number = 0;
-
-        let regionalAvailabilityProps: IRegionalAvailabilityMetricProps = new RegionalAvailabilityMetricProps();
-        regionalAvailabilityProps.label = Fn.ref("AWS::Region") + " availability";
-        regionalAvailabilityProps.metricDetails = props.availabilityMetricDetails;
-        regionalAvailabilityProps.metricType = AvailabilityMetricType.SUCCESS_RATE;
-        regionalAvailabilityProps.keyPrefix = AvailabilityAndLatencyMetrics.nextChar("");
-
-        let regionalFaultCountProps: IRegionalAvailabilityMetricProps = new RegionalAvailabilityMetricProps();
-        regionalFaultCountProps.label = Fn.ref("AWS::Region") + " fault count";
-        regionalFaultCountProps.metricDetails = props.availabilityMetricDetails;
-        regionalFaultCountProps.metricType = AvailabilityMetricType.FAULT_COUNT;
-        regionalFaultCountProps.keyPrefix = AvailabilityAndLatencyMetrics.nextChar(regionalAvailabilityProps.keyPrefix);
+        let keyPrefix1: string = AvailabilityAndLatencyMetrics.nextChar("");
+        let keyPrefix2: string = AvailabilityAndLatencyMetrics.nextChar(keyPrefix1);
 
         // Create regional availability and fault metrics and availability alarm widgets    
         availabilityWidgets.push(new GraphWidget({
@@ -237,7 +214,12 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
             title: Fn.sub("${AWS::Region} Availability"),
             region: Fn.sub("${AWS::Region}"),
             left: [
-                AvailabilityAndLatencyMetrics.createRegionalAvailabilityMetric(regionalAvailabilityProps)                
+                AvailabilityAndLatencyMetrics.createRegionalAvailabilityMetric({
+                    label: Fn.ref("AWS::Region") + " availability",
+                    metricDetails: props.availabilityMetricDetails,
+                    metricType: AvailabilityMetricType.SUCCESS_RATE,
+                    keyPrefix: keyPrefix1
+                })                
             ],
             statistic: "Sum",       
             leftYAxis: {
@@ -255,7 +237,12 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
                 }
             ],
             right: [
-                AvailabilityAndLatencyMetrics.createRegionalAvailabilityMetric(regionalFaultCountProps)
+                AvailabilityAndLatencyMetrics.createRegionalAvailabilityMetric({
+                    label: Fn.ref("AWS::Region") + " fault count",
+                    metricDetails: props.availabilityMetricDetails,
+                    metricType: AvailabilityMetricType.FAULT_COUNT,
+                    keyPrefix: keyPrefix2
+                })
             ],
             rightYAxis: {
                 label: "Fault Count",
@@ -274,20 +261,9 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
         for (let i = 0; i < props.azCount; i++)
         {
             let availabilityZoneId: string = props.operation.service.GetAvailabilityZoneIdAtIndex(i);
-            
-            let availabilityZoneProps: IZonalAvailabilityMetricProps = new ZonalAvailabilityMetricProps();
-            availabilityZoneProps.availabilityZoneId = availabilityZoneId;
-            availabilityZoneProps.label = availabilityZoneId + " availability";
-            availabilityZoneProps.metricDetails = props.availabilityMetricDetails;
-            availabilityZoneProps.metricType = AvailabilityMetricType.SUCCESS_RATE;
-            availabilityZoneProps.keyPrefix = AvailabilityAndLatencyMetrics.nextChar("");
 
-            let availabilityZoneFaultCountProps = new ZonalAvailabilityMetricProps();
-            availabilityZoneFaultCountProps.availabilityZoneId = availabilityZoneId;
-            availabilityZoneFaultCountProps.label = availabilityZoneId + " fault count";
-            availabilityZoneFaultCountProps.metricDetails = props.availabilityMetricDetails;
-            availabilityZoneFaultCountProps.metricType = AvailabilityMetricType.FAULT_COUNT,
-            availabilityZoneFaultCountProps.keyPrefix = AvailabilityAndLatencyMetrics.nextChar(availabilityZoneProps.keyPrefix);
+            let keyPrefix1: string = AvailabilityAndLatencyMetrics.nextChar("");
+            let keyPrefix2: string = AvailabilityAndLatencyMetrics.nextChar(keyPrefix1);
 
             availabilityWidgets.push(new GraphWidget({
                 height: 6,
@@ -295,7 +271,13 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
                 title: availabilityZoneId + " Availability",
                 region: Fn.sub("${AWS::Region}"),
                 left: [
-                    AvailabilityAndLatencyMetrics.createZonalAvailabilityMetric(availabilityZoneProps)
+                    AvailabilityAndLatencyMetrics.createZonalAvailabilityMetric({
+                        availabilityZoneId: availabilityZoneId,
+                        label: availabilityZoneId + " availability",
+                        metricDetails: props.availabilityMetricDetails,
+                        metricType: AvailabilityMetricType.SUCCESS_RATE,
+                        keyPrefix: keyPrefix1
+                    })
                 ],
                 statistic: "Sum",
                 leftYAxis: {
@@ -313,7 +295,13 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
                     }
                 ],
                 right: [
-                    AvailabilityAndLatencyMetrics.createZonalAvailabilityMetric(availabilityZoneFaultCountProps)
+                    AvailabilityAndLatencyMetrics.createZonalAvailabilityMetric({
+                        availabilityZoneId: availabilityZoneId,
+                        label: availabilityZoneId + " fault count",
+                        metricDetails: props.availabilityMetricDetails,
+                        metricType: AvailabilityMetricType.FAULT_COUNT,
+                        keyPrefix: keyPrefix2
+                    })
                 ],
                 rightYAxis: {
                     label: "Fault Count",
@@ -365,30 +353,30 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
         latencyWidgets.push(new TextWidget({ height: 2, width: 24, markdown: title }));
         
         let rowTracker: number = 0;
-        let keyPrefixSeed: string = "";
+        let keyPrefix: string = "";
 
         let latencySuccessMetrics: IMetric[] = props.latencyMetricDetails.graphedSuccessStatistics.map(x => {
-            let metricProps: IRegionalLatencyMetricProps = new RegionalLatencyMetricProps();
-            metricProps.label = x + " Success Latency";
-            metricProps.metricDetails = props.latencyMetricDetails;
-            metricProps.metricType = LatencyMetricType.SUCCESS_LATENCY;
-            metricProps.statistic = x,
-            metricProps.keyPrefix = AvailabilityAndLatencyMetrics.nextChar(keyPrefixSeed)
-            keyPrefixSeed = metricProps.keyPrefix; 
+            keyPrefix = AvailabilityAndLatencyMetrics.nextChar(keyPrefix);
 
-            return AvailabilityAndLatencyMetrics.createRegionalLatencyMetrics(metricProps)[0];
+            return AvailabilityAndLatencyMetrics.createRegionalLatencyMetrics({
+                label: x + " Success Latency",
+                metricDetails: props.latencyMetricDetails,
+                metricType: LatencyMetricType.SUCCESS_LATENCY,
+                statistic: x,
+                keyPrefix: keyPrefix
+            })[0];
         });
 
         let latencyFaultMetrics: IMetric[] = props.latencyMetricDetails.graphedFaultStatistics.map(x => {
-            let metricProps: IRegionalLatencyMetricProps = new RegionalLatencyMetricProps();
-            metricProps.label = x + " Fault Latency";
-            metricProps.metricDetails = props.latencyMetricDetails;
-            metricProps.metricType = LatencyMetricType.FAULT_LATENCY;
-            metricProps.statistic = x,
-            metricProps.keyPrefix = AvailabilityAndLatencyMetrics.nextChar(keyPrefixSeed)
-            keyPrefixSeed = metricProps.keyPrefix; 
+            keyPrefix = AvailabilityAndLatencyMetrics.nextChar(keyPrefix);
 
-            return AvailabilityAndLatencyMetrics.createRegionalLatencyMetrics(metricProps)[0];
+            return AvailabilityAndLatencyMetrics.createRegionalLatencyMetrics({
+                label: x + " Fault Latency",
+                metricDetails: props.latencyMetricDetails,
+                metricType: LatencyMetricType.FAULT_LATENCY,
+                statistic: x,
+                keyPrefix: keyPrefix
+            })[0];
         });
 
         latencyWidgets.push(new GraphWidget({
@@ -422,36 +410,37 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
             }
         ));
 
-        let keyPrefix: string = AvailabilityAndLatencyMetrics.nextChar("");
+        keyPrefix = "";
             
         for (let i = 0; i < props.azCount; i++)
         {
             let availabilityZoneId: string = props.operation.service.GetAvailabilityZoneIdAtIndex(i);
 
             let zonalSuccessLatencyMetrics: IMetric[] = props.latencyMetricDetails.graphedSuccessStatistics.map(x => {
-                let metricProps: IZonalLatencyMetricProps = new ZonalLatencyMetricProps();
-                metricProps.label = x + " Success Latency";
-                metricProps.metricDetails = props.latencyMetricDetails;
-                metricProps.metricType = LatencyMetricType.SUCCESS_LATENCY;
-                metricProps.statistic = x;
-                metricProps.availabilityZoneId = availabilityZoneId;
-                metricProps.keyPrefix = keyPrefix;
-                keyPrefix = AvailabilityAndLatencyMetrics.nextChar(metricProps.keyPrefix);
+               
+                keyPrefix = AvailabilityAndLatencyMetrics.nextChar(keyPrefix);
 
-                return AvailabilityAndLatencyMetrics.createZonalLatencyMetrics(metricProps)[0];
+                return AvailabilityAndLatencyMetrics.createZonalLatencyMetrics({
+                    label: x + " Success Latency",
+                    metricDetails: props.latencyMetricDetails,
+                    metricType: LatencyMetricType.SUCCESS_LATENCY,
+                    statistic: x,
+                    availabilityZoneId: availabilityZoneId,
+                    keyPrefix: keyPrefix
+                })[0];
             });
 
             let zonalFaultLatencyMetrics: IMetric[] = props.latencyMetricDetails.graphedFaultStatistics.map(x => {
-                let metricProps: IZonalLatencyMetricProps = new ZonalLatencyMetricProps();
-                metricProps.label = x + " Fault Latency";
-                metricProps.metricDetails = props.latencyMetricDetails;
-                metricProps.metricType = LatencyMetricType.FAULT_LATENCY;
-                metricProps.statistic = x;
-                metricProps.availabilityZoneId = availabilityZoneId;
-                metricProps.keyPrefix = keyPrefix;
-                keyPrefix = AvailabilityAndLatencyMetrics.nextChar(metricProps.keyPrefix);
+                keyPrefix = AvailabilityAndLatencyMetrics.nextChar(keyPrefix);
 
-                return AvailabilityAndLatencyMetrics.createZonalLatencyMetrics(metricProps)[0];
+                return AvailabilityAndLatencyMetrics.createZonalLatencyMetrics({
+                    label: x + " Fault Latency",
+                    metricDetails: props.latencyMetricDetails,
+                    metricType: LatencyMetricType.FAULT_LATENCY,
+                    statistic: x,
+                    availabilityZoneId: availabilityZoneId,
+                    keyPrefix: keyPrefix
+                })[0];
             });
                 
             latencyWidgets.push(new GraphWidget({

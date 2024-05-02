@@ -4,6 +4,7 @@ import { Architecture, Code, Function, IFunction, Runtime, Tracing } from "aws-c
 import { ILogGroup, LogGroup, RetentionDays } from "aws-cdk-lib/aws-logs";
 import { Construct } from "constructs";
 import { readFileSync } from 'fs';
+import path = require("path");
 
 export class AvailabilityZoneMapper extends Construct
 {
@@ -52,10 +53,10 @@ export class AvailabilityZoneMapper extends Construct
                 ec2ManagedPolicy
             ]
         }); 
+        
+        const file: string = readFileSync(path.resolve(__dirname, './../azmapper/index.py'), 'utf-8');
 
-        const file: string = readFileSync('../azmapper/index.py', 'utf-8');
-
-        this.function = new Function(this, "AvailabilityZoneMapper", {
+        this.function = new Function(this, "AvailabilityZoneMapperFunction", {
             runtime: Runtime.PYTHON_3_12,
             code: Code.fromInline(file),
             handler: "index.handler",
@@ -76,7 +77,7 @@ export class AvailabilityZoneMapper extends Construct
             removalPolicy: RemovalPolicy.DESTROY
         });
 
-        let cloudWatchManagedPolicy: IManagedPolicy = new ManagedPolicy(this, "CloudWatchManagedPolicy", {
+        new ManagedPolicy(this, "CloudWatchManagedPolicy", {
             path: "/azmapper/",
             statements: [
                 new PolicyStatement({ 

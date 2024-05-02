@@ -3,11 +3,11 @@ import { BaseLoadBalancer, HttpCodeElb, HttpCodeTarget, IApplicationLoadBalancer
 import { IBasicServiceMultiAZObservabilityProps } from "./IBasicServiceMultiAZObservabilityProps";
 import { Construct } from "constructs";
 import { Alarm, AlarmRule, ComparisonOperator, CompositeAlarm, IAlarm, IMetric, MathExpression, Metric, TreatMissingData, Unit } from "aws-cdk-lib/aws-cloudwatch";
-import { Fn } from "aws-cdk-lib";
 import { AvailabilityZoneMapper } from "./utilities/AvailabilityZoneMapper";
 import { AvailabilityAndLatencyMetrics } from "./metrics/AvailabilityAndLatencyMetrics";
 import { IBasicServiceMultiAZObservability } from "./IBasicServiceMultiAZObservability";
 import { OutlierDetectionAlgorithm } from "./utilities/OutlierDetectionAlgorithm";
+import { Fn } from "aws-cdk-lib";
 
 export class BasicServiceMultiAZObservability extends Construct implements IBasicServiceMultiAZObservability
 {
@@ -77,15 +77,15 @@ export class BasicServiceMultiAZObservability extends Construct implements IBasi
             // Iterate each ALB
             this.applicationLoadBalancers.forEach(alb => {
 
-                // Get next unique key
-                keyPrefix = AvailabilityAndLatencyMetrics.nextChar(keyPrefix);
-
+                console.log("Number of AZs: " + alb.vpc?.availabilityZones.length);
+                
                 // Iterate each AZ in the VPC
-                // TODO: This property may default to the basic 2 AZs the construct
-                // sets up if using the default Vpc construct, may need to accept an
-                // array of AZ names for ALBs
                 alb.vpc?.availabilityZones.forEach((az, index) => {
+                    // Get next unique key
+                    keyPrefix = AvailabilityAndLatencyMetrics.nextChar(keyPrefix);
+
                     let availabilityZoneId: string = azMapper.getAvailabilityZoneId(az);
+                    faultRatePercentageAlarms[availabilityZoneId] = [];
 
                     // 5xx responses from targets
                     let target5xx: IMetric = alb.metrics.httpCodeTarget(HttpCodeTarget.TARGET_5XX_COUNT, {
@@ -93,7 +93,8 @@ export class BasicServiceMultiAZObservability extends Construct implements IBasi
                             "AvailabilityZone": az,
                             "LoadBalancer": ((alb as ILoadBalancerV2) as BaseLoadBalancer).loadBalancerFullName
                         },
-                        label: availabilityZoneId
+                        label: availabilityZoneId,
+                        period: props.period
                     });
 
                     // 5xx responses from ELB
@@ -102,7 +103,8 @@ export class BasicServiceMultiAZObservability extends Construct implements IBasi
                             "AvailabilityZone": az,
                             "LoadBalancer": ((alb as ILoadBalancerV2) as BaseLoadBalancer).loadBalancerFullName
                         },
-                        label: availabilityZoneId
+                        label: availabilityZoneId,
+                        period: props.period
                     });
 
                     // 2xx responses from targets
@@ -111,7 +113,8 @@ export class BasicServiceMultiAZObservability extends Construct implements IBasi
                             "AvailabilityZone": az,
                             "LoadBalancer": ((alb as ILoadBalancerV2) as BaseLoadBalancer).loadBalancerFullName
                         },
-                        label: availabilityZoneId
+                        label: availabilityZoneId,
+                        period: props.period
                     });
 
                     // 3xx responses from targets
@@ -120,7 +123,8 @@ export class BasicServiceMultiAZObservability extends Construct implements IBasi
                             "AvailabilityZone": az,
                             "LoadBalancer": ((alb as ILoadBalancerV2) as BaseLoadBalancer).loadBalancerFullName
                         },
-                        label: availabilityZoneId
+                        label: availabilityZoneId,
+                        period: props.period
                     });
 
                     // 3xx responess from ELB
@@ -129,7 +133,8 @@ export class BasicServiceMultiAZObservability extends Construct implements IBasi
                             "AvailabilityZone": az,
                             "LoadBalancer": ((alb as ILoadBalancerV2) as BaseLoadBalancer).loadBalancerFullName
                         },
-                        label: availabilityZoneId
+                        label: availabilityZoneId,
+                        period: props.period
                     });
 
                     // Create metrics for total fault count from this ALB
@@ -137,10 +142,16 @@ export class BasicServiceMultiAZObservability extends Construct implements IBasi
                     usingMetrics[`${keyPrefix}1`] = target5xx;
                     usingMetrics[`${keyPrefix}2`] = elb5xx;
 
+                    if (albZoneFaultCountMetrics[availabilityZoneId] === undefined || albZoneFaultCountMetrics[availabilityZoneId] == null)
+                    {
+                        albZoneFaultCountMetrics[availabilityZoneId] = [];
+                    }
+
                     albZoneFaultCountMetrics[availabilityZoneId].push(new MathExpression({
                         expression: `(${keyPrefix}1 + ${keyPrefix}2)`,
                         usingMetrics: usingMetrics,
-                        label: availabilityZoneId + " " + alb.loadBalancerArn + " fault count"               
+                        label: availabilityZoneId + " " + alb.loadBalancerArn + " fault count",
+                        period: props.period           
                     }));
 
                     // Create metrics to calculate fault rate for this ALB
@@ -155,7 +166,8 @@ export class BasicServiceMultiAZObservability extends Construct implements IBasi
                     let faultRate: IMetric = new MathExpression({
                         expression: `((${keyPrefix}4+${keyPrefix}5)/(${keyPrefix}1+${keyPrefix}2+${keyPrefix}3+${keyPrefix}4+${keyPrefix}5)) * 100`,
                         usingMetrics: usingMetrics,
-                        label: availabilityZoneId + " " + alb.loadBalancerArn + " fault rate"
+                        label: availabilityZoneId + " " + alb.loadBalancerArn + " fault rate",
+                        period: props.period
                     });
 
                     // Create a fault rate alarm for the ALB
@@ -168,12 +180,6 @@ export class BasicServiceMultiAZObservability extends Construct implements IBasi
                         threshold: props.faultCountPercentageThreshold,
                         comparisonOperator: ComparisonOperator.GREATER_THAN_THRESHOLD
                     });
-
-                    // Initialize array if it hasn't been
-                    if (faultRatePercentageAlarms[availabilityZoneId] === undefined || faultRatePercentageAlarms[availabilityZoneId] == null)
-                    {
-                        faultRatePercentageAlarms[availabilityZoneId] = [];
-                    }
 
                     // Add this ALB's fault rate alarm
                     faultRatePercentageAlarms[availabilityZoneId].push(faultRateAlarm);
@@ -199,18 +205,30 @@ export class BasicServiceMultiAZObservability extends Construct implements IBasi
                 let totalFaultsPerZone: IMetric = new MathExpression({
                     expression: Object.keys(usingMetrics).join("+"),
                     usingMetrics: usingMetrics,
-                    label: availabilityZoneId + " fault count"
+                    label: availabilityZoneId + " fault count",
+                    period: props.period
                 });
+
+                keyPrefix = AvailabilityAndLatencyMetrics.nextChar(keyPrefix);
+                counter = 1;
 
                 // Assign the total faults per zone to the dictionary
                 faultsPerZone[availabilityZoneId] = totalFaultsPerZone;
             });
 
+            keyPrefix = AvailabilityAndLatencyMetrics.nextChar(keyPrefix);
+
+            let tmp: {[key: string]: IMetric} = {};
+            Object.keys(faultsPerZone).forEach((availabilityZoneId, index) => {
+                tmp[`${keyPrefix}${index}`] = faultsPerZone[availabilityZoneId];
+            });
+            
             // Calculate the total faults in the region by adding all AZs together
             let totalFaults: IMetric = new MathExpression({
-                expression: Object.keys(faultsPerZone).join("+"),
-                usingMetrics: faultsPerZone,
-                label: Fn.ref("AWS::Region") + " fault count"
+                expression: Object.keys(tmp).join("+"),
+                usingMetrics: tmp,
+                label: Fn.ref("AWS::Region") + " fault count",
+                period: props.period
             });
 
             // Finally, iterate back through each AZ
@@ -240,12 +258,12 @@ export class BasicServiceMultiAZObservability extends Construct implements IBasi
                             evaluationPeriods: 5,
                             datapointsToAlarm: 3,
                             actionsEnabled: false,
-                            treatMissingData: TreatMissingData.IGNORE
+                            treatMissingData: TreatMissingData.IGNORE,
+                            
                         });
                         break;
                 }
                 
-
                 // Create isolated AZ impact alarms by determining
                 // if the AZ is an outlier for fault count and at least
                 // one ALB exceeds the fault rate threshold provided
@@ -261,6 +279,8 @@ export class BasicServiceMultiAZObservability extends Construct implements IBasi
             });
         }
 
+        keyPrefix = AvailabilityAndLatencyMetrics.nextChar("");
+
         // Create NAT Gateway metrics and alarms
         if (this.natGateways !== undefined && this.natGateways != null)
         {
@@ -271,11 +291,11 @@ export class BasicServiceMultiAZObservability extends Construct implements IBasi
             let packetDropPercentageAlarms: {[key: string]: IAlarm[]} = {};
 
             // For each AZ, create metrics for each NAT GW
-            Object.keys(this.natGateways).forEach(az => {
+            Object.keys(this.natGateways).forEach((az, index) => {
                 // The number of packet drops for each NAT GW in the AZ
                 let packetDropMetricsForAZ: {[key: string]: IMetric} = {};
-                let counter: number = 1;
                 let availabilityZoneId = azMapper.getAvailabilityZoneId(az);
+                packetDropPercentageAlarms[availabilityZoneId] = [];
 
                 // Iterate through each NAT GW in the current AZ
                 this.natGateways[az].forEach(natgw => {
@@ -289,7 +309,8 @@ export class BasicServiceMultiAZObservability extends Construct implements IBasi
                         label: availabilityZoneId + " packet drops",
                         dimensionsMap: {
                             "NatGatewayId": natgw.attrNatGatewayId
-                        }
+                        },
+                        period: props.period
                     });
 
                     // Calculate packets in from source
@@ -301,7 +322,8 @@ export class BasicServiceMultiAZObservability extends Construct implements IBasi
                         label: availabilityZoneId + " packets in from source",
                         dimensionsMap: {
                             "NatGatewayId": natgw.attrNatGatewayId
-                        }
+                        },
+                        period: props.period
                     });
 
                     // Calculate packets in from destination
@@ -313,22 +335,25 @@ export class BasicServiceMultiAZObservability extends Construct implements IBasi
                         label: availabilityZoneId + " packets in from destination",
                         dimensionsMap: {
                             "NatGatewayId": natgw.attrNatGatewayId
-                        }
+                        },
+                        period: props.period
                     });
+
+                    let usingMetrics: {[key: string]: IMetric} = {};
+                    usingMetrics[`${keyPrefix}1`] = packetDropCount;
+                    usingMetrics[`${keyPrefix}2`] = packetsInFromSourceCount;
+                    usingMetrics[`${keyPrefix}3`] = packetsInFromDestinationCount;
 
                     // Calculate a percentage of dropped packets for the NAT GW
                     let packetDropPercentage: IMetric = new MathExpression({
-                        expression: "(m1 / (m2 + m3)) * 100",
-                        usingMetrics: {
-                            "m1": packetDropCount,
-                            "m2": packetsInFromSourceCount,
-                            "m3": packetsInFromDestinationCount
-                        },
-                        label: availabilityZoneId + " packet drop percentage"
+                        expression: `(${keyPrefix}1 / (${keyPrefix}2 + ${keyPrefix}3)) * 100`,
+                        usingMetrics: usingMetrics,
+                        label: availabilityZoneId + " packet drop percentage",
+                        period: props.period
                     });
 
                     // Create an alarm for this NAT GW if packet drops exceed the specified threshold
-                    let packetDropImpactAlarm: IAlarm = new Alarm(this, "AZ" + counter + "PacketDropImpactAlarm", {
+                    let packetDropImpactAlarm: IAlarm = new Alarm(this, "AZ" + (index + 1) + "PacketDropImpactAlarm", {
                         alarmName: availabilityZoneId + "-" + natgw.attrNatGatewayId + "-packet-drop-impact",
                         actionsEnabled: false,
                         metric: packetDropPercentage,
@@ -338,12 +363,6 @@ export class BasicServiceMultiAZObservability extends Construct implements IBasi
                         datapointsToAlarm: 3
                     });
 
-                    // Initiatlize the alarm array if required
-                    if (packetDropPercentageAlarms[availabilityZoneId] === undefined || packetDropPercentageAlarms[availabilityZoneId] == null)
-                    {
-                        packetDropPercentageAlarms[availabilityZoneId] = [];
-                    }
-
                     // Collect all of the packet drop impact alarms for each
                     // NAT GW in this AZ, need to know at least 1 sees substantial
                     // enough impact to consider the AZ as impaired
@@ -352,7 +371,7 @@ export class BasicServiceMultiAZObservability extends Construct implements IBasi
                     // Collect the packet drop metrics for this AZ so we can
                     // add them all together and count total packet drops
                     // for all NAT GWs in the AZ
-                    packetDropMetricsForAZ[`m${counter}`] = packetDropCount;
+                    packetDropMetricsForAZ[`m${index}`] = packetDropCount;
                 });
 
                 // Create a metric that adds up all packets drops from each
@@ -360,22 +379,29 @@ export class BasicServiceMultiAZObservability extends Construct implements IBasi
                 let packetDropsInThisAZ: IMetric = new MathExpression({
                     expression: Object.keys(packetDropMetricsForAZ).join("+"),
                     usingMetrics: packetDropMetricsForAZ,
-                    label: availabilityZoneId + " dropped packets"
+                    label: availabilityZoneId + " dropped packets",
+                    period: props.period
                 });
 
                 // Record these so we can add them up
                 // and get a total amount of packet drops
                 // in the region across all AZs
-                natGWZonePacketDropMetrics[az] = packetDropsInThisAZ;
+                natGWZonePacketDropMetrics[availabilityZoneId] = packetDropsInThisAZ;
+            });
 
-                counter++;
+            keyPrefix = AvailabilityAndLatencyMetrics.nextChar(keyPrefix);
+
+            let tmp: {[key: string]: IMetric} = {};
+            Object.keys(natGWZonePacketDropMetrics).forEach((availabilityZoneId, index) => {
+                tmp[`${keyPrefix}${index}`] = natGWZonePacketDropMetrics[availabilityZoneId];
             });
 
             // Calculate total packet drops for the region
             let totalPacketDrops: IMetric = new MathExpression({
-                expression: Object.keys(natGWZonePacketDropMetrics).join("+"),
-                usingMetrics: natGWZonePacketDropMetrics,
-                label: Fn.ref("AWS::Region") + " dropped packets"
+                expression: Object.keys(tmp).join("+"),
+                usingMetrics: tmp,
+                label: Fn.ref("AWS::Region") + " dropped packets",
+                period: props.period
             });
 
             // Create outlier detection alarms by comparing packet
@@ -383,18 +409,20 @@ export class BasicServiceMultiAZObservability extends Construct implements IBasi
             Object.keys(natGWZonePacketDropMetrics).forEach((availabilityZoneId, index) => {
                 
                 let azIsOutlierForPacketDrops: IAlarm;
+                keyPrefix = AvailabilityAndLatencyMetrics.nextChar(keyPrefix);
 
                 switch (props.outlierDetectionAlgorithm)
                 {
                     default:
                     case OutlierDetectionAlgorithm.STATIC:
+                        let usingMetrics: {[key: string]: IMetric } = {};
+                        usingMetrics[`${keyPrefix}1`] = natGWZonePacketDropMetrics[availabilityZoneId];
+                        usingMetrics[`${keyPrefix}2`] = totalPacketDrops;
+
                         azIsOutlierForPacketDrops = new Alarm(this, "AZ" + index + "NATGWDroppedPacketsOutlierAlarm", {
                             metric: new MathExpression({
-                                expression: "(m1 / m2) * 100",
-                                usingMetrics: {
-                                    "m1": natGWZonePacketDropMetrics[availabilityZoneId],
-                                    "m2": totalPacketDrops
-                                },
+                                expression: `(${keyPrefix}1 / ${keyPrefix}2) * 100`,
+                                usingMetrics: usingMetrics,
                                 label: availabilityZoneId + " percentage of dropped packets"
                             }),
                             alarmName: availabilityZoneId + "-dropped-packets-outlier",
@@ -405,7 +433,6 @@ export class BasicServiceMultiAZObservability extends Construct implements IBasi
 
                         break;
                 }
-                
 
                 // In addition to being an outlier for packet drops, make sure
                 // the packet loss is substantial enough to trigger the alarm
@@ -414,9 +441,7 @@ export class BasicServiceMultiAZObservability extends Construct implements IBasi
                     compositeAlarmName: availabilityZoneId + "-isolated-natgw-impact",
                     alarmRule: AlarmRule.allOf(
                         azIsOutlierForPacketDrops,
-                        AlarmRule.anyOf(
-                            ...packetDropPercentageAlarms[availabilityZoneId]
-                        )
+                        AlarmRule.anyOf(...packetDropPercentageAlarms[availabilityZoneId])
                     )
                 });
 

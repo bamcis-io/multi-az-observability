@@ -11,6 +11,12 @@ import { IServerSideOperationZonalAlarmsAndRules } from "./IServerSideOperationZ
 export class ServerSideOperationZonalAlarmsAndRules extends BaseOperationZonalAlarmsAndRules implements IServerSideOperationZonalAlarmsAndRules
 {
     /**
+     * Alarm that triggers if either latency or availability breach the specified
+     * threshold in this AZ and the AZ is an outlier for faults or latency
+     */
+    isolatedImpactAlarm: IAlarm;
+
+    /**
      * Alarm indicating that there are multiple instances producing faults in 
      * this AZ indicating the fault rate is not being caused by a single instance
      */
@@ -43,56 +49,63 @@ export class ServerSideOperationZonalAlarmsAndRules extends BaseOperationZonalAl
     {
         super(scope, id, props);
 
-        if (props.contributorInsightRuleDetails !== undefined && props.contributorInsightRuleDetails != null)
-        {
-            this.instancesHandlingRequestsInThisAZ = AvailabilityAndLatencyAlarmsAndRules.createServerSideInstancesHandlingRequestsInThisAZRule(
-                this,
-                props.availabilityMetricDetails.operation,
-                props.availabilityZoneId,
-                props.contributorInsightRuleDetails,
-                props.nameSuffix,
-                props.counter
-            );
-
-            this.instanceContributorsToFaultsInThisAZ = AvailabilityAndLatencyAlarmsAndRules.createServerSideInstanceFaultContributorsInThisAZRule(
-                this,
-                props.availabilityMetricDetails.operation,
-                props.availabilityZoneId,
-                props.contributorInsightRuleDetails,
-                props.nameSuffix,
-                props.counter
-            );
-
-            this.multipleInstancesProducingFaultsInThisAvailabilityZone = AvailabilityAndLatencyAlarmsAndRules.createServerSideZonalMoreThanOneInstanceProducingFaultsAlarm(
-                this,
-                props.availabilityMetricDetails,
-                props.availabilityZoneId,
-                props.nameSuffix,
-                props.counter,
-                props.outlierThreshold,
-                this.instanceContributorsToFaultsInThisAZ,
-                this.instancesHandlingRequestsInThisAZ
-            );
-
-            this.instanceContributorsToHighLatencyInThisAZ = AvailabilityAndLatencyAlarmsAndRules.createServerSideInstanceHighLatencyContributorsInThisAZRule(
-                this,
-                props.latencyMetricDetails,
-                props.availabilityZoneId,
-                props.contributorInsightRuleDetails,
-                props.nameSuffix,
-                props.counter
-            );
-
-            this.multipleInstancesProducingHighLatencyInThisAZ = AvailabilityAndLatencyAlarmsAndRules.createServerSideZonalMoreThanOneInstanceProducingHighLatencyAlarm(
-                this,
-                props.latencyMetricDetails,
-                props.availabilityZoneId,
-                props.nameSuffix,
-                props.counter,
-                props.outlierThreshold,
-                this.instanceContributorsToHighLatencyInThisAZ,
-                this.instancesHandlingRequestsInThisAZ
-            );
-        }
+        this.instancesHandlingRequestsInThisAZ = AvailabilityAndLatencyAlarmsAndRules.createServerSideInstancesHandlingRequestsInThisAZRule(
+            this,
+            props.availabilityMetricDetails.operation,
+            props.availabilityZoneId,
+            props.contributorInsightRuleDetails,
+            props.nameSuffix,
+            props.counter
+        );
+        this.instanceContributorsToFaultsInThisAZ = AvailabilityAndLatencyAlarmsAndRules.createServerSideInstanceFaultContributorsInThisAZRule(
+            this,
+            props.availabilityMetricDetails.operation,
+            props.availabilityZoneId,
+            props.contributorInsightRuleDetails,
+            props.nameSuffix,
+            props.counter
+        );
+        this.multipleInstancesProducingFaultsInThisAvailabilityZone = AvailabilityAndLatencyAlarmsAndRules.createServerSideZonalMoreThanOneInstanceProducingFaultsAlarm(
+            this,
+            props.availabilityMetricDetails,
+            props.availabilityZoneId,
+            props.nameSuffix,
+            props.counter,
+            props.outlierThreshold,
+            this.instanceContributorsToFaultsInThisAZ,
+            this.instancesHandlingRequestsInThisAZ
+        );
+        this.instanceContributorsToHighLatencyInThisAZ = AvailabilityAndLatencyAlarmsAndRules.createServerSideInstanceHighLatencyContributorsInThisAZRule(
+            this,
+            props.latencyMetricDetails,
+            props.availabilityZoneId,
+            props.contributorInsightRuleDetails,
+            props.nameSuffix,
+            props.counter
+        );
+        this.multipleInstancesProducingHighLatencyInThisAZ = AvailabilityAndLatencyAlarmsAndRules.createServerSideZonalMoreThanOneInstanceProducingHighLatencyAlarm(
+            this,
+            props.latencyMetricDetails,
+            props.availabilityZoneId,
+            props.nameSuffix,
+            props.counter,
+            props.outlierThreshold,
+            this.instanceContributorsToHighLatencyInThisAZ,
+            this.instancesHandlingRequestsInThisAZ
+        );
+        
+        this.isolatedImpactAlarm = AvailabilityAndLatencyAlarmsAndRules.createServerSideIsolatedAZImpactAlarm(
+            this,
+            props.availabilityMetricDetails.operation,
+            props.availabilityZoneId,
+            props.nameSuffix,
+            props.counter,
+            this.availabilityZoneIsOutlierForFaults,
+            this.availabilityAlarm,
+            this.multipleInstancesProducingFaultsInThisAvailabilityZone,
+            this.availabilityZoneIsOutlierForLatency,
+            this.latencyAlarm,
+            this.multipleInstancesProducingHighLatencyInThisAZ
+        );
     }
 }

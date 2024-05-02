@@ -1,5 +1,4 @@
 import { IOperationMetricDetails } from "../../IOperationMetricDetails";
-import { MetricScope } from "../../utilities/MetricScope";
 
 /**
  * Common availability and latency metric props
@@ -14,21 +13,21 @@ export interface IAvailabilityAndLatencyMetricProps
     /**
      * The metric label
      */
-    label: string;
+    label?: string;
 
     /**
      * The scope of the metric
      */
-    metricScope: MetricScope;
+    //metricScope: MetricScope;
 
     /**
      * (Optional) A key prefix for the metric name to make it unique
      * in alarms and graphs
      */
-    keyPrefix: string;
+    keyPrefix?: string;
 
     /**
      * The Region for the metrics
      */
-    region: string;
+    region?: string;
 }

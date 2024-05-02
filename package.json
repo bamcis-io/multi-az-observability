@@ -1,27 +1,65 @@
 {
   "name": "multi-az-observability",
   "version": "0.1.0",
-  "bin": {
-    "multi-az-observability": "bin/multi-az-observability.js"
+  "description": "Observability constructs for multi-AZ architectures",
+  "author": {
+    "name": "Mike Haken",
+    "email": "mhaken@amazon.com"
   },
+  "repository": {
+    "url": "https://github.com/bamcis-io/multi-az-observability.git"
+  },
+  "license": "MIT",
+  "main": "src/MultiAvailabilityZoneObservability.ts",
+  "types": "src/MultiAvailabilityZoneObservability.d.ts",
   "scripts": {
-    "build": "tsc",
-    "watch": "tsc -w",
-    "test": "jest",
+    "build": "jsii",
+    "build:watch": "jsii --watch",
+    "package": "jsii-pacmak",
+    "test": "tsc && jest",
     "cdk": "cdk"
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",
     "@types/node": "20.12.7",
-    "jest": "^29.7.0",
-    "ts-jest": "^29.1.2",
     "aws-cdk": "2.138.0",
+    "aws-cdk-lib": "2.138.0",
+    "constructs": "10.0.0",
+    "jest": "^29.7.0",
+    "jsii": "^5.4.9",
+    "jsii-pacmak": "^1.98.0",
+    "ts-jest": "^29.1.2",
     "ts-node": "^10.9.2",
     "typescript": "~5.4.5"
   },
+  "peerDependencies": {
+    "aws-cdk-lib": "2.138.0",
+    "constructs": "^10.0.0"
+  },
   "dependencies": {
     "aws-cdk-lib": "2.138.0",
-    "constructs": "^10.0.0",
-    "source-map-support": "^0.5.21"
-  }
+    "constructs": "^10.0.0"
+  },
+  "jsii": {
+    "outdir": "dist",
+    "versionFormat": "short",
+    "targets": {
+      "java": {
+        "package": "io.bamcis.multi-az-observability",
+        "maven": {
+          "groupId": "io.bamcis.multi-az-observability",
+          "artifactId": "multi-az-observability"
+        }
+      },
+      "python": {
+        "distName": "bamcis.io.multi-az-observability",
+        "module": "bamcis.io.multi-az-observability"
+      },
+      "dotnet": {
+        "namespace": "BAMCISIO.MultiAZObservability",
+        "packageId": "BAMCISIO.MultiAZObservability"
+      }
+    }
+  },
+  "stability": "stable"
 }

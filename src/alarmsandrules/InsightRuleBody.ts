@@ -6,7 +6,7 @@ export class InsightRuleBody
     /**
      * The value of Schema for a rule that analyzes CloudWatch Logs data must always be {"Name": "CloudWatchLogRule", "Version": 1}
      */
-    schema: RuleSchema;
+    schema: IRuleSchema;
 
     /**
      * An array of strings. For each element in the array, you can optionally use * at the end of a string to include all log groups with names that start with that prefix. 
@@ -26,39 +26,52 @@ export class InsightRuleBody
     /**
      * This object includes a Keys array with as many as four members, optionally a single ValueOf, and optionally an array of as many as four Filters. 
      */
-    contribution: ContributionDefinition;
+    contribution: IContributionDefinition;
 
     /**
      * Converts the rule to a JSON string
      * @returns 
      */
-    ToJson(): string
-    {
+    toJson(): string {
         return JSON.stringify(this);
+    }
+
+    constructor()
+    {
+        this.schema = {
+            name: "CloudWatchLogRule",
+            version: 1
+        };
+        this.aggregateOn = "";
+        this.contribution = {
+            keys: [] as string[]
+        } as IContributionDefinition;
+        this.logFormat = "";
+        this.logGroupNames = [];
     }
 }
 
-export class RuleSchema
+export interface IRuleSchema
 {
     /**
      * The name of the rule schema, this should bre CloudWatchLogRule
      */
-    readonly name: string = "CloudWatchLogRule";
+    readonly name: string;
 
     /**
      * The version number of the schema, this should be 1
      */
-    readonly version: number = 1;
+    readonly version: number;
 }
 
-export class ContributionDefinition
+export interface IContributionDefinition
 {
     /**
      * An array of up to four log fields that are used as dimensions to classify contributors. 
      * If you enter more than one key, each unique combination of values for the keys is counted 
      * as a unique contributor. The fields must be specified using JSON property format notation. 
      */
-    keys: string[]; 
+    keys: string[];
     
     /**
      * (Optional) Specify this only when you are specifying Sum as the value of AggregateOn. 
@@ -68,7 +81,7 @@ export class ContributionDefinition
      * over a period, you would set ValueOf to BytesSent and specify Sum for AggregateOn. If this
      * value is not set, it must not be included in the JSON string representation of the rule body.
      */
-    valueOf: string;
+    valueOf?: string;
 
     /**
      * (Optional) Specifies an array of as many as four filters to narrow the log events 
@@ -76,5 +89,5 @@ export class ContributionDefinition
      * evaluates them with a logical AND operator. You can use this to filter out irrelevant 
      * log events in your search or you can use it to select a single contributor to analyze their behavior.
      */
-    filters: {[key: string]: any}[] = [];
+    filters?: {[key: string]: any}[];
 }

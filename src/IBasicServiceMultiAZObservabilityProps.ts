@@ -1,6 +1,7 @@
 import { CfnNatGateway } from "aws-cdk-lib/aws-ec2";
 import { IApplicationLoadBalancer } from "aws-cdk-lib/aws-elasticloadbalancingv2";
 import { OutlierDetectionAlgorithm } from "./utilities/OutlierDetectionAlgorithm";
+import { Duration } from "aws-cdk-lib";
 
 /**
  * Properties for creating a basic service
@@ -46,4 +47,9 @@ export interface IBasicServiceMultiAZObservabilityProps
      * The algorithm to use for performing outlier detection
      */
     outlierDetectionAlgorithm: OutlierDetectionAlgorithm;
+
+    /**
+     * The period to evaluate metrics
+     */
+    period: Duration;
 }

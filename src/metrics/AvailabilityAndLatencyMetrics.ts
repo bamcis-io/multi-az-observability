@@ -8,7 +8,7 @@ import { IZonalLatencyMetricProps } from "./props/IZonalLatencyMetricProps";
 import { ILatencyMetricProps } from "./props/ILatencyMetricProps";
 import { IRegionalLatencyMetricProps } from "./props/IRegionalLatencyMetricProps";
 import { IServiceAvailabilityMetricProps } from "./props/IServiceAvailabilityMetricProps";
-import { Duration } from "aws-cdk-lib";
+import { Duration, Fn } from "aws-cdk-lib";
 
 /**
  * Class for creating availability and latency metrics that can be used in alarms and graphs
@@ -22,7 +22,7 @@ export class AvailabilityAndLatencyMetrics
      */
     static createZonalAvailabilityMetric(props: IZonalAvailabilityMetricProps): IMetric
     {
-        return this.createAvailabilityMetric(props, props.metricDetails.getZonalDimensions(props.availabilityZoneId, props.region));
+        return this.createAvailabilityMetric(props, props.metricDetails.getZonalDimensions(props.availabilityZoneId, Fn.ref("AWS::Region")));
     }
 
     /**
@@ -32,7 +32,7 @@ export class AvailabilityAndLatencyMetrics
      */
     static createRegionalAvailabilityMetric(props: IRegionalAvailabilityMetricProps): IMetric
     {
-        return this.createAvailabilityMetric(props, props.metricDetails.getRegionalDimensions(props.region));
+        return this.createAvailabilityMetric(props, props.metricDetails.getRegionalDimensions(Fn.ref("AWS::Region")));
     }
 
     /**
@@ -56,8 +56,7 @@ export class AvailabilityAndLatencyMetrics
             props.metricDetails.successMetricNames.forEach((successMetric) => {
                 let keyPrefix = ((props.keyPrefix === undefined || props.keyPrefix == "") ? "" : props.keyPrefix.toLowerCase() + "_") + 
                     props.metricDetails.operation.operationName.toLowerCase() + "_" + 
-                    successMetric.toLowerCase() + "_" + 
-                    props.metricScope.toString().toLowerCase();
+                    successMetric.toLowerCase();
 
                 key = keyPrefix + "_" + counter++;
                 successKeys.push(key);
@@ -79,8 +78,7 @@ export class AvailabilityAndLatencyMetrics
             props.metricDetails.faultMetricNames.forEach((faultMetric) => {
                 let keyPrefix = ((props.keyPrefix === undefined || props.keyPrefix == "") ? "" : props.keyPrefix.toLowerCase() + "_") + 
                     props.metricDetails.operation.operationName.toLowerCase() + "_" + 
-                    faultMetric.toLowerCase() + "_" + 
-                    props.metricScope.toString().toLowerCase();
+                    faultMetric.toLowerCase();
 
                 key = keyPrefix + "_" + counter++;
                 faultKeys.push(key);
@@ -133,7 +131,7 @@ export class AvailabilityAndLatencyMetrics
      */
     static createZonalLatencyMetrics(props: IZonalLatencyMetricProps): IMetric[]
     {
-        return this.createLatencyMetrics(props, props.metricDetails.getZonalDimensions(props.availabilityZoneId, props.region));
+        return this.createLatencyMetrics(props, props.metricDetails.getZonalDimensions(props.availabilityZoneId, Fn.ref("AWS::Region")));
     }
 
     /**
@@ -143,7 +141,7 @@ export class AvailabilityAndLatencyMetrics
      */
     static createRegionalLatencyMetrics(props: IRegionalLatencyMetricProps): IMetric[]
     {
-        return this.createLatencyMetrics(props, props.metricDetails.getRegionalDimensions(props.region));
+        return this.createLatencyMetrics(props, props.metricDetails.getRegionalDimensions(Fn.ref("AWS::Region")));
     }
 
     /**
@@ -196,8 +194,7 @@ export class AvailabilityAndLatencyMetrics
             let keyPrefix: string = ((prop.keyPrefix === undefined || prop.keyPrefix == "") ? "" : prop.keyPrefix.toLowerCase() + "_") + 
                 prop.metricDetails.operation.service.serviceName.toLowerCase() + "_" +
                 prop.metricDetails.operation.operationName.toLowerCase() + "_" +
-                prop.metricType.toString().toLowerCase() + "_" +
-                prop.metricScope.toString().toLowerCase();
+                prop.metricType.toString().toLowerCase();
             
             let regionalOperationAvailabilityMetric: IMetric = this.createRegionalAvailabilityMetric(prop as IRegionalAvailabilityMetricProps);
             
@@ -255,8 +252,7 @@ export class AvailabilityAndLatencyMetrics
             let keyPrefix: string = ((prop.keyPrefix === undefined || prop.keyPrefix == "") ? "" : prop.keyPrefix.toLowerCase() + "_") + 
                 prop.metricDetails.operation.service.serviceName.toLowerCase() + "_" +
                 prop.metricDetails.operation.operationName.toLowerCase() + "_" +
-                prop.metricType.toString().toLowerCase() + "_" +
-                prop.metricScope.toString().toLowerCase();
+                prop.metricType.toString().toLowerCase();
             
             let zonalOperationAvailabilityMetric: IMetric = this.createZonalAvailabilityMetric(prop as IZonalAvailabilityMetricProps);
             

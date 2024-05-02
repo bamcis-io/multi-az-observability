@@ -24,5 +24,5 @@ export interface IServiceAvailabilityMetricProps
     /**
      * (Optional) A key prefix for the metric id to make it unique in a graph or alarm
      */
-    keyPrefix: string;
+    keyPrefix?: string;
 }
