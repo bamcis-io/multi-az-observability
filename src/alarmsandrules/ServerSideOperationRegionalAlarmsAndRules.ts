@@ -13,17 +13,21 @@ export class ServerSideOperationRegionalAlarmsAndRules extends BaseOperationRegi
     /**
      * A rule that shows which instances are contributing to high latency responses
      */
-    instanceContributorsToRegionalHighLatency: CfnInsightRule;
+    instanceContributorsToRegionalHighLatency?: CfnInsightRule;
 
     /**
      * A rule that shows which instances are contributing to faults
      */
-    instanceContributorsToRegionalFaults: CfnInsightRule;
+    instanceContributorsToRegionalFaults?: CfnInsightRule;
 
     constructor(scope: Construct, id: string, props: IServerSideOperationRegionalAlarmsAndRulesProps)
     {
         super(scope, id, props);
-        this.instanceContributorsToRegionalFaults = AvailabilityAndLatencyAlarmsAndRules.createRegionalInstanceContributorsToFaults(this, props.availabilityMetricDetails, props.contributorInsightRuleDetails);
-        this.instanceContributorsToRegionalHighLatency = AvailabilityAndLatencyAlarmsAndRules.createRegionalInstanceContributorsToHighLatency(this, props.latencyMetricDetails, props.contributorInsightRuleDetails);
+
+        if (props.contributorInsightRuleDetails !== undefined && props.contributorInsightRuleDetails != null)
+        {
+            this.instanceContributorsToRegionalFaults = AvailabilityAndLatencyAlarmsAndRules.createRegionalInstanceContributorsToFaults(this, props.availabilityMetricDetails, props.contributorInsightRuleDetails);
+            this.instanceContributorsToRegionalHighLatency = AvailabilityAndLatencyAlarmsAndRules.createRegionalInstanceContributorsToHighLatency(this, props.latencyMetricDetails, props.contributorInsightRuleDetails);
+        }
     }
 }

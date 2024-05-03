@@ -22,14 +22,14 @@ export class CanaryOperationZonalAlarmsAndRules extends BaseOperationZonalAlarms
 
         this.isolatedImpactAlarm = AvailabilityAndLatencyAlarmsAndRules.createCanaryIsolatedAZImpactAlarm(
             this, 
-            props.availabilityMetricDetails.operation,
+            props.availabilityMetricDetails.operationName,
             props.availabilityZoneId,
-            props.nameSuffix,
             props.counter,
             this.availabilityZoneIsOutlierForFaults,
             this.availabilityAlarm,
             this.availabilityZoneIsOutlierForLatency,
-            this.latencyAlarm 
+            this.latencyAlarm,
+            props.nameSuffix,
         )
     }
 }

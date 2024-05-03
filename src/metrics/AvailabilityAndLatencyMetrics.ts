@@ -55,7 +55,7 @@ export class AvailabilityAndLatencyMetrics
         {
             props.metricDetails.successMetricNames.forEach((successMetric) => {
                 let keyPrefix = ((props.keyPrefix === undefined || props.keyPrefix == "") ? "" : props.keyPrefix.toLowerCase() + "_") + 
-                    props.metricDetails.operation.operationName.toLowerCase() + "_" + 
+                    props.metricDetails.operationName.toLowerCase() + "_" + 
                     successMetric.toLowerCase();
 
                 key = keyPrefix + "_" + counter++;
@@ -77,7 +77,7 @@ export class AvailabilityAndLatencyMetrics
         {
             props.metricDetails.faultMetricNames.forEach((faultMetric) => {
                 let keyPrefix = ((props.keyPrefix === undefined || props.keyPrefix == "") ? "" : props.keyPrefix.toLowerCase() + "_") + 
-                    props.metricDetails.operation.operationName.toLowerCase() + "_" + 
+                    props.metricDetails.operationName.toLowerCase() + "_" + 
                     faultMetric.toLowerCase();
 
                 key = keyPrefix + "_" + counter++;
@@ -192,44 +192,57 @@ export class AvailabilityAndLatencyMetrics
         props.availabilityMetricProps.forEach(prop => {
             
             let keyPrefix: string = ((prop.keyPrefix === undefined || prop.keyPrefix == "") ? "" : prop.keyPrefix.toLowerCase() + "_") + 
-                prop.metricDetails.operation.service.serviceName.toLowerCase() + "_" +
-                prop.metricDetails.operation.operationName.toLowerCase() + "_" +
+                //prop.metricDetails.service.serviceName.toLowerCase() + "_" +
+                prop.metricDetails.operationName.toLowerCase() + "_" +
                 prop.metricType.toString().toLowerCase();
             
             let regionalOperationAvailabilityMetric: IMetric = this.createRegionalAvailabilityMetric(prop as IRegionalAvailabilityMetricProps);
             
             operationMetrics.push(regionalOperationAvailabilityMetric);
-            usingMetrics[`"${keyPrefix}${counter++}`] = regionalOperationAvailabilityMetric;
+            usingMetrics[`${keyPrefix}${counter++}`] = regionalOperationAvailabilityMetric;
         });
 
         let expression: string = "";
 
-        switch (props.availabilityMetricProps[0].metricType)
+        if (props.availabilityMetricProps.length > 0)
         {
-            case AvailabilityMetricType.SUCCESS_RATE:
-                expression = `(${Object.keys(usingMetrics).join("+")}) / ${props.availabilityMetricProps.length}`;
-                break;
-            case AvailabilityMetricType.REQUEST_COUNT:
-                expression = `${Object.keys(usingMetrics).join("+")}`;
-                break;
-            case AvailabilityMetricType.FAULT_COUNT:
-                expression = `${Object.keys(usingMetrics).join("+")}`;
-                break;
-            case AvailabilityMetricType.FAULT_RATE:
-                expression = `(${Object.keys(usingMetrics).join("+")}) / ${props.availabilityMetricProps.length}`;
-                break;       
-            case AvailabilityMetricType.SUCCESS_COUNT:
-                expression = `${Object.keys(usingMetrics).join("+")}`;
-                break;      
-        }
-        let math: IMetric = new MathExpression({
-            usingMetrics: usingMetrics,
-            period: props.period,
-            label: props.label,
-            expression: expression
-        });
+            if (props.availabilityMetricProps[0].metricType == undefined || props.availabilityMetricProps[0] == null)
+            {
+                console.log(props.availabilityMetricProps[0].metricDetails.operationName);
+                console.log(props.availabilityMetricProps[0].metricDetails.alarmStatistic);
+            }
 
-        operationMetrics.splice(0, 0, math);
+            switch (props.availabilityMetricProps[0].metricType)
+            {
+                case AvailabilityMetricType.SUCCESS_RATE:
+                    expression = `(${Object.keys(usingMetrics).join("+")}) / ${props.availabilityMetricProps.length}`;
+                    break;
+                case AvailabilityMetricType.REQUEST_COUNT:
+                    expression = `${Object.keys(usingMetrics).join("+")}`;
+                    break;
+                case AvailabilityMetricType.FAULT_COUNT:
+                    expression = `${Object.keys(usingMetrics).join("+")}`;
+                    break;
+                case AvailabilityMetricType.FAULT_RATE:
+                    expression = `(${Object.keys(usingMetrics).join("+")}) / ${props.availabilityMetricProps.length}`;
+                    break;       
+                case AvailabilityMetricType.SUCCESS_COUNT:
+                    expression = `${Object.keys(usingMetrics).join("+")}`;
+                    break;      
+            }
+            let math: IMetric = new MathExpression({
+                usingMetrics: usingMetrics,
+                period: props.period,
+                label: props.label,
+                expression: expression
+            });
+
+            operationMetrics.splice(0, 0, math);
+        }
+        else
+        {
+            console.log("Got 0 metrics");
+        }
 
         return operationMetrics;
     }
@@ -250,14 +263,14 @@ export class AvailabilityAndLatencyMetrics
         props.availabilityMetricProps.forEach(prop => {
             
             let keyPrefix: string = ((prop.keyPrefix === undefined || prop.keyPrefix == "") ? "" : prop.keyPrefix.toLowerCase() + "_") + 
-                prop.metricDetails.operation.service.serviceName.toLowerCase() + "_" +
-                prop.metricDetails.operation.operationName.toLowerCase() + "_" +
+                //prop.metricDetails.operation.service.serviceName.toLowerCase() + "_" +
+                prop.metricDetails.operationName.toLowerCase() + "_" +
                 prop.metricType.toString().toLowerCase();
             
             let zonalOperationAvailabilityMetric: IMetric = this.createZonalAvailabilityMetric(prop as IZonalAvailabilityMetricProps);
             
             operationMetrics.push(zonalOperationAvailabilityMetric);
-            usingMetrics[`"${keyPrefix}${counter++}`] = zonalOperationAvailabilityMetric;
+            usingMetrics[`${keyPrefix}${counter++}`] = zonalOperationAvailabilityMetric;
         });
 
         let expression: string = "";

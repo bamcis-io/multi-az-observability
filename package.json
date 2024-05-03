@@ -9,6 +9,9 @@
   "repository": {
     "url": "https://github.com/bamcis-io/multi-az-observability.git"
   },
+  "keywords": [
+    "cdk"
+  ],
   "license": "MIT",
   "main": "src/MultiAvailabilityZoneObservability.ts",
   "types": "src/MultiAvailabilityZoneObservability.d.ts",
@@ -44,13 +47,6 @@
     "outdir": "dist",
     "versionFormat": "short",
     "targets": {
-      "java": {
-        "package": "io.bamcis.multi-az-observability",
-        "maven": {
-          "groupId": "io.bamcis.multi-az-observability",
-          "artifactId": "multi-az-observability"
-        }
-      },
       "python": {
         "distName": "bamcis.io.multi-az-observability",
         "module": "bamcis.io.multi-az-observability"
@@ -58,6 +54,17 @@
       "dotnet": {
         "namespace": "BAMCISIO.MultiAZObservability",
         "packageId": "BAMCISIO.MultiAZObservability"
+      },
+      "go": {
+        "moduleName": "bamcis.io/multi-az-observability",
+        "packageName": "multi-az-observability"
+      },
+      "java": {
+        "package": "io.bamcis.multi-az-observability",
+        "maven": {
+          "groupId": "io.bamcis.multi-az-observability",
+          "artifactId": "multi-az-observability"
+        }
       }
     }
   },

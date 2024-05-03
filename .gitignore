@@ -10,9 +10,13 @@
 *.userosscache
 *.sln.docstates
 
+# Created during jsii build
 *.js
 *.d.ts
 *.ts.old
+
+# Jsii package destination
+dist/
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

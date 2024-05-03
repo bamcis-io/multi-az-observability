@@ -1,5 +1,5 @@
+import { IOperationMetricDetails } from "../../services/IOperationMetricDetails";
 import { IContributorInsightRuleDetails } from "../IContributorInsightRuleDetails";
-import { IOperationMetricDetails } from "../../IOperationMetricDetails";
 
 /**
  * The base props for an operation regional alarms and rules configuration
@@ -25,5 +25,5 @@ export interface IBaseOperationRegionalAlarmsAndRulesProps
      * (Optional) Details for creating contributor insight rules, which help
      * make the server-side alarms for detecting single AZ failures more accurate
      */
-    contributorInsightRuleDetails: IContributorInsightRuleDetails;
+    contributorInsightRuleDetails?: IContributorInsightRuleDetails;
 }

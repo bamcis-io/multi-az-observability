@@ -1,6 +1,4 @@
 import { Construct } from "constructs";
-import { IOperation } from "../IOperation";
-import { IOperationAlarmsAndRulesProps } from "./props/IOperationAlarmsAndRulesProps";
 import { ServerSideOperationRegionalAlarmsAndRules } from "./ServerSideOperationRegionalAlarmsAndRules";
 import { CanaryOperationRegionalAlarmsAndRules } from "./CanaryOperationRegionalAlarmsAndRules";
 import { IOperationAlarmsAndRules } from "./IOperationAlarmsAndRules";
@@ -12,6 +10,8 @@ import { IServerSideOperationRegionalAlarmsAndRules } from "./IServerSideOperati
 import { ICanaryOperationRegionalAlarmsAndRules } from "./ICanaryOperationRegionalAlarmsAndRules";
 import { ICanaryOperationZonalAlarmsAndRules } from "./ICanaryOperationZonalAlarmsAndRules";
 import { IServerSideOperationZonalAlarmsAndRules } from "./IServerSideOperationZonalAlarmsAndRules";
+import { IOperationAlarmsAndRulesProps } from "./props/IOperationAlarmsAndRulesProps";
+import { IOperation } from "../services/IOperation";
 
 /**
  * Creates alarms and rules for an operation for both regional and zonal metrics
@@ -31,7 +31,7 @@ export class OperationAlarmsAndRules extends Construct implements IOperationAlar
     /**
      * The canary regional alarms and rules
      */
-    canaryRegionalAlarmsAndRules: ICanaryOperationRegionalAlarmsAndRules;
+    canaryRegionalAlarmsAndRules?: ICanaryOperationRegionalAlarmsAndRules;
 
     /**
      * The aggregate regional alarm that looks at both canary and server
@@ -78,28 +78,38 @@ export class OperationAlarmsAndRules extends Construct implements IOperationAlar
             }
         );
 
-        this.canaryRegionalAlarmsAndRules = new CanaryOperationRegionalAlarmsAndRules(
-            this,
-            props.operation.operationName + "CanaryRegionalAlarms",
-            {
-                availabilityMetricDetails: props.operation.canaryAvailabilityMetricDetails,
-                latencyMetricDetails: props.operation.canaryLatencyMetricDetails,
-                contributorInsightRuleDetails: props.operation.canaryContributorInsightRuleDetails,
-                nameSuffix: "-canary"
-            }
-        );
+        if (props.operation.canaryMetricDetails !== undefined && props.operation.canaryMetricDetails != null)
+        {
+            this.canaryRegionalAlarmsAndRules = new CanaryOperationRegionalAlarmsAndRules(
+                this,
+                props.operation.operationName + "CanaryRegionalAlarms",
+                {
+                    availabilityMetricDetails: props.operation.canaryMetricDetails.canaryAvailabilityMetricDetails,
+                    latencyMetricDetails: props.operation.canaryMetricDetails.canaryLatencyMetricDetails,
+                    contributorInsightRuleDetails: props.operation.canaryMetricDetails.canaryContributorInsightRuleDetails,
+                    nameSuffix: "-canary"
+                }
+            );
+        }
 
-        this.aggregateRegionalAlarm = new CompositeAlarm(this, props.operation.operationName + "AggregateRegionalAlarm", {
-            actionsEnabled: false,
-            compositeAlarmName: Fn.ref("AWS::Region") + "-" + props.operation.operationName.toLowerCase() + "-" + "aggregate-alarm",
-            alarmRule: AlarmRule.anyOf(this.serverSideRegionalAlarmsAndRules.availabilityOrLatencyAlarm, this.canaryRegionalAlarmsAndRules.availabilityOrLatencyAlarm)
-        });
+        if (this.canaryRegionalAlarmsAndRules !== undefined)
+        {
+            this.aggregateRegionalAlarm = new CompositeAlarm(this, props.operation.operationName + "AggregateRegionalAlarm", {
+                actionsEnabled: false,
+                compositeAlarmName: Fn.ref("AWS::Region") + "-" + props.operation.operationName.toLowerCase() + "-" + "aggregate-alarm",
+                alarmRule: AlarmRule.anyOf(this.serverSideRegionalAlarmsAndRules.availabilityOrLatencyAlarm, this.canaryRegionalAlarmsAndRules.availabilityOrLatencyAlarm)
+            });
+        }
+        else
+        {
+            this.aggregateRegionalAlarm = this.serverSideRegionalAlarmsAndRules.availabilityOrLatencyAlarm;
+        }
 
         let counter: number = 1;
 
-        for (let i = 0; i < props.operation.service.azCount; i++)
+        for (let i = 0; i < props.operation.service.availabilityZoneIds.length; i++)
         {
-            let availabilityZoneId: string = props.operation.service.GetAvailabilityZoneIdAtIndex(i);
+            let availabilityZoneId: string =  props.operation.service.availabilityZoneIds[i];
             
             this.serverSideZonalAlarmsAndRules.push(new ServerSideOperationZonalAlarmsAndRules(
                 this, 
@@ -112,35 +122,44 @@ export class OperationAlarmsAndRules extends Construct implements IOperationAlar
                     counter: counter,
                     outlierThreshold: props.outlierThreshold,
                     outlierDetectionAlgorithm: props.outlierDetectionAlgorithm,
-                    nameSuffix: "-server"
+                    nameSuffix: "-server",
+                    operation: props.operation
                 }
             ));
             
-            this.canaryZonalAlarmsAndRules.push(new ServerSideOperationZonalAlarmsAndRules(
-                this, 
-                props.operation.operationName + "AZ" + counter + "CanaryZonalAlarmsAndRules",
-                {
-                    availabilityZoneId: availabilityZoneId,
-                    availabilityMetricDetails: props.operation.canaryAvailabilityMetricDetails,
-                    latencyMetricDetails: props.operation.canaryLatencyMetricDetails,
-                    contributorInsightRuleDetails: props.operation.canaryContributorInsightRuleDetails,
-                    counter: counter,
-                    outlierThreshold: props.outlierThreshold,
-                    outlierDetectionAlgorithm: props.outlierDetectionAlgorithm,
-                    nameSuffix: "-canary"
-                }
-            ));
+            if (props.operation.canaryMetricDetails !== undefined && props.operation.canaryMetricDetails != null)
+            {
+                this.canaryZonalAlarmsAndRules.push(new ServerSideOperationZonalAlarmsAndRules(
+                    this, 
+                    props.operation.operationName + "AZ" + counter + "CanaryZonalAlarmsAndRules",
+                    {
+                        availabilityZoneId: availabilityZoneId,
+                        availabilityMetricDetails: props.operation.canaryMetricDetails.canaryAvailabilityMetricDetails,
+                        latencyMetricDetails: props.operation.canaryMetricDetails.canaryLatencyMetricDetails,
+                        contributorInsightRuleDetails: props.operation.canaryMetricDetails.canaryContributorInsightRuleDetails,
+                        counter: counter,
+                        outlierThreshold: props.outlierThreshold,
+                        outlierDetectionAlgorithm: props.outlierDetectionAlgorithm,
+                        nameSuffix: "-canary",
+                        operation: props.operation
+                    }
+                ));
 
-            this.aggregateZonalAlarms.push(new CompositeAlarm(
-                this, 
-                props.operation.operationName + "AZ" + counter + "AggregateZonalIsolatedImpactAlarm",
-                {
-                    compositeAlarmName: availabilityZoneId + "-" + props.operation.operationName.toLowerCase() + "-aggregate-isolated-az-impact",
-                    alarmRule: AlarmRule.anyOf(this.canaryZonalAlarmsAndRules[i].isolatedImpactAlarm, this.serverSideZonalAlarmsAndRules[i].isolatedImpactAlarm),
-                    actionsEnabled: false,
-                    alarmDescription: "{\"loadBalancer\":\"" + loadBalancerArn + "\",\"az-id\":\"" + availabilityZoneId + "\"}"
-                }
-            ));
+                this.aggregateZonalAlarms.push(new CompositeAlarm(
+                    this, 
+                    props.operation.operationName + "AZ" + counter + "AggregateZonalIsolatedImpactAlarm",
+                    {
+                        compositeAlarmName: availabilityZoneId + "-" + props.operation.operationName.toLowerCase() + "-aggregate-isolated-az-impact",
+                        alarmRule: AlarmRule.anyOf(this.canaryZonalAlarmsAndRules[i].isolatedImpactAlarm, this.serverSideZonalAlarmsAndRules[i].isolatedImpactAlarm),
+                        actionsEnabled: false,
+                        alarmDescription: "{\"loadBalancer\":\"" + loadBalancerArn + "\",\"az-id\":\"" + availabilityZoneId + "\"}"
+                    }
+                ));
+            }
+            else
+            {
+                this.aggregateZonalAlarms.push(this.serverSideZonalAlarmsAndRules[i].isolatedImpactAlarm)
+            }
 
             counter++;
         }

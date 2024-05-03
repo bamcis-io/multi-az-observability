@@ -1,4 +1,4 @@
-import { IOperationMetricDetails } from "../../IOperationMetricDetails";
+import { IOperationMetricDetails } from "../../services/IOperationMetricDetails";
 
 /**
  * Common availability and latency metric props

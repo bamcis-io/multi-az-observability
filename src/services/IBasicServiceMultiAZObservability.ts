@@ -11,12 +11,12 @@ export interface IBasicServiceMultiAZObservability
      * The NAT Gateways being used in the service, each set of NAT Gateways
      * are keyed by their Availability Zone Id
      */
-    natGateways: {[key:string]: CfnNatGateway[]};
+    natGateways?: {[key:string]: CfnNatGateway[]};
 
     /**
      * The application load balancers being used by the service
      */
-    applicationLoadBalancers: IApplicationLoadBalancer[];
+    applicationLoadBalancers?: IApplicationLoadBalancer[];
 
     /**
      * The name of the service
@@ -27,13 +27,13 @@ export interface IBasicServiceMultiAZObservability
      * The alarms indicating if an AZ is an outlier for NAT GW
      * packet loss and has isolated impact
      */
-    natGWZonalIsolatedImpactAlarms: {[key: string]: IAlarm};
+    natGWZonalIsolatedImpactAlarms?: {[key: string]: IAlarm};
 
     /**
      * The alarms indicating if an AZ is an outlier for ALB
      * faults and has isolated impact
      */
-    albZonalIsolatedImpactAlarms: {[key: string]: IAlarm};
+    albZonalIsolatedImpactAlarms?: {[key: string]: IAlarm};
 
     /**
      * The alarms indicating if an AZ has isolated impact

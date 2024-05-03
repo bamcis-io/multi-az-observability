@@ -30,6 +30,6 @@ export abstract class BaseOperationRegionalAlarmsAndRules extends Construct impl
 
         this.availabilityAlarm = AvailabilityAndLatencyAlarmsAndRules.createRegionalAvailabilityAlarm(this, props.availabilityMetricDetails, props.nameSuffix);
         this.latencyAlarm = AvailabilityAndLatencyAlarmsAndRules.createRegionalLatencyAlarm(this, props.latencyMetricDetails, props.nameSuffix);
-        this.availabilityOrLatencyAlarm = AvailabilityAndLatencyAlarmsAndRules.createRegionalCustomerExperienceAlarm(this, props.availabilityMetricDetails.operation, props.nameSuffix, this.availabilityAlarm, this.latencyAlarm);
+        this.availabilityOrLatencyAlarm = AvailabilityAndLatencyAlarmsAndRules.createRegionalCustomerExperienceAlarm(this, props.availabilityMetricDetails.operationName, props.nameSuffix, this.availabilityAlarm, this.latencyAlarm);
     }
 }

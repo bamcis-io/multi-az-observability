@@ -1,7 +1,8 @@
-import { IOperation } from "../../IOperation";
 import { Duration } from "aws-cdk-lib";
 import { ILoadBalancerV2 } from "aws-cdk-lib/aws-elasticloadbalancingv2";
 import { IAlarm, CfnInsightRule } from "aws-cdk-lib/aws-cloudwatch";
+import { IOperation } from "../../services/IOperation";
+import { AvailabilityZoneMapper } from "../../utilities/AvailabilityZoneMapper";
 
 /**
  * Properties for creating an availability and latency dashboard for 
@@ -15,19 +16,14 @@ export interface IOperationAvailabilityAndLatencyDashboardProps
     operation: IOperation;
 
     /**
-     * The AZ Map of AZ name to AZ Id
+     * The Availability Zone Ids being used for the operation
      */
-    azMap: string;
+    availabilityZoneIds: string[];
 
     /**
-     * A comma delimited list of the Availability Zone Ids being used
+     * The availability zone mapper to translate az names to az ids
      */
-    azIdList: string;
-
-    /**
-     * The number of Availability Zones being used
-     */
-    azCount: number;
+    availabilityZoneMapper: AvailabilityZoneMapper;
 
     /**
      * The interval of the dashboard
@@ -53,12 +49,12 @@ export interface IOperationAvailabilityAndLatencyDashboardProps
     /**
      * Per AZ canary availability alarms
      */
-    zonalEndpointCanaryAvailabilityAlarms: IAlarm[];
+    zonalEndpointCanaryAvailabilityAlarms?: IAlarm[];
 
     /**
      * Per AZ canary latency alarms
      */
-    zonalEndpointCanaryLatencyAlarms: IAlarm[];
+    zonalEndpointCanaryLatencyAlarms?: IAlarm[];
 
     /**
      * Regional server-side availability alarm
@@ -73,12 +69,12 @@ export interface IOperationAvailabilityAndLatencyDashboardProps
     /**
      * Regional canary availability alarm
      */
-    regionalEndpointCanaryAvailabilityAlarm: IAlarm;
+    regionalEndpointCanaryAvailabilityAlarm?: IAlarm;
 
     /**
      * Regional canary latency alarm
      */
-    regionalEndpointCanaryLatencyAlarm: IAlarm;
+    regionalEndpointCanaryLatencyAlarm?: IAlarm;
 
     /**
      * Per AZ alarms that indicate isolated single AZ impact
@@ -94,11 +90,11 @@ export interface IOperationAvailabilityAndLatencyDashboardProps
      * Insight rule that shows instance contributors to 
      * high latency for this operation
      */
-    instanceContributorsToHighLatency: CfnInsightRule;
+    instanceContributorsToHighLatency?: CfnInsightRule;
 
     /**
      * Insight rule that shows instance contributors to
      * faults for this operation
      */
-    instanceContributorsToFaults: CfnInsightRule;
+    instanceContributorsToFaults?: CfnInsightRule;
 }

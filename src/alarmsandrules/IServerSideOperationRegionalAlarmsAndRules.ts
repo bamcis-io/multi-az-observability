@@ -9,10 +9,10 @@ export interface IServerSideOperationRegionalAlarmsAndRules extends IBaseOperati
     /**
     * A rule that shows which instances are contributing to high latency responses
     */
-    instanceContributorsToRegionalHighLatency: CfnInsightRule;
+    instanceContributorsToRegionalHighLatency?: CfnInsightRule;
 
     /**
      * A rule that shows which instances are contributing to faults
      */
-    instanceContributorsToRegionalFaults: CfnInsightRule;
+    instanceContributorsToRegionalFaults?: CfnInsightRule;
 }

@@ -1,12 +1,13 @@
 import { Construct } from "constructs";
 import { IOperationAlarmsAndRules } from "./IOperationAlarmsAndRules";
-import { IService } from "../IService";
 import { IServiceAlarmsAndRules } from "./IServiceAlarmsAndRules";
 import { IServiceAlarmsAndRulesProps } from "./props/IServiceAlarmsAndRulesProps";
 import { Alarm, AlarmRule, ComparisonOperator, CompositeAlarm, IAlarm, IMetric, MathExpression } from "aws-cdk-lib/aws-cloudwatch";
 import { AvailabilityAndLatencyMetrics } from "../metrics/AvailabilityAndLatencyMetrics";
 import { AvailabilityMetricType } from "../utilities/AvailabilityMetricType";
 import { Fn } from "aws-cdk-lib";
+import { IService } from "../services/IService";
+import { ICanaryOperationRegionalAlarmsAndRules } from "./ICanaryOperationRegionalAlarmsAndRules";
 
 /**
  * Service level alarms and rules using critical operations
@@ -28,7 +29,7 @@ export class ServiceAlarmsAndRules extends Construct implements IServiceAlarmsAn
     /**
      * An alarm for regional impact of any critical operation as measured by the canary.
      */
-    regionalAvailabilityCanaryAlarm: IAlarm;
+    regionalAvailabilityCanaryAlarm?: IAlarm;
 
     /**
      * An alarm for regional impact of any critical operation as measured by the server-side.
@@ -49,9 +50,9 @@ export class ServiceAlarmsAndRules extends Construct implements IServiceAlarmsAn
         let counter: number = 1;
         this.zonalAggregateIsolatedImpactAlarms = [];
        
-        for (let i = 0; i < props.service.azCount; i++)
+        for (let i = 0; i < props.service.availabilityZoneIds.length; i++)
         {
-            let availabilityZonedId: string = props.service.GetAvailabilityZoneIdAtIndex(i);
+            let availabilityZonedId: string = props.service.availabilityZoneIds[i];
 
             this.zonalAggregateIsolatedImpactAlarms.push(new CompositeAlarm(this, "AZ" + counter + "ServiceAggregateIsolatedImpactAlarm", {
                 compositeAlarmName: availabilityZonedId + "-" + props.service.serviceName.toLowerCase() + "-isolated-impact-aggregate-alarm",
@@ -102,23 +103,32 @@ export class ServiceAlarmsAndRules extends Construct implements IServiceAlarmsAn
             metric: regionalFaultCount
         });
 
-        this.regionalAvailabilityCanaryAlarm = new CompositeAlarm(this, "ServiceCanaryAggregateIsolatedImpactAlarm", {
-            compositeAlarmName: Fn.ref("AWS::Region") + "-" + props.service.serviceName.toLowerCase() + "-canary-aggregate-alarm",
-            alarmRule: AlarmRule.anyOf(...Object.values(Object.entries(props.perOperationAlarmsAndRules)
-                .reduce((filtered, [key, value]) => {
-                    if (criticalOperations.indexOf(key) > -1)
-                    {
-                        filtered[key] = value;
-                    }
+        let canaryAlarms: IAlarm[] = Object.values(Object.entries(props.perOperationAlarmsAndRules)
+        .reduce((filtered, [key, value]) => {
+            if (criticalOperations.indexOf(key) > -1)
+            {
+                filtered[key] = value;
+            }
 
-                    return filtered;
-                }, {} as {[key: string]: IOperationAlarmsAndRules})
-            )
-            .map(x => x.canaryRegionalAlarmsAndRules)
-            .map(x => x.availabilityOrLatencyAlarm)
-            )
-        });
+            return filtered;
+        }, {} as {[key: string]: IOperationAlarmsAndRules})).reduce((filtered, value) => {
+            if (value.canaryRegionalAlarmsAndRules !== undefined)
+            {
+                filtered.push(value.canaryRegionalAlarmsAndRules)
+            }
+            return filtered;
+        }, [] as ICanaryOperationRegionalAlarmsAndRules[])
+        .map(x => x.availabilityOrLatencyAlarm);
 
+
+        if (canaryAlarms !== undefined && canaryAlarms !== null && canaryAlarms.length > 0)
+        {
+            this.regionalAvailabilityCanaryAlarm = new CompositeAlarm(this, "ServiceCanaryAggregateIsolatedImpactAlarm", {
+                compositeAlarmName: Fn.ref("AWS::Region") + "-" + props.service.serviceName.toLowerCase() + "-canary-aggregate-alarm",
+                alarmRule: AlarmRule.anyOf(...canaryAlarms)
+            });
+        }
+        
         this.regionalAvailabilityServerSideAlarm = new CompositeAlarm(this, "ServiceServerSideAggregateIsolatedImpactAlarm", {
             compositeAlarmName: Fn.ref("AWS::Region") + "-" + props.service.serviceName.toLowerCase() + "-server-side-aggregate-alarm",
             alarmRule: AlarmRule.anyOf(...Object.values(Object.entries(props.perOperationAlarmsAndRules)

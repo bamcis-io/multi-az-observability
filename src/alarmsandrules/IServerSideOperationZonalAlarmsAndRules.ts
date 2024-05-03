@@ -16,28 +16,28 @@ export interface IServerSideOperationZonalAlarmsAndRules extends IBaseOperationZ
      * Alarm indicating that there are multiple instances producing faults in 
      * this AZ indicating the fault rate is not being caused by a single instance
      */
-    multipleInstancesProducingFaultsInThisAvailabilityZone: IAlarm;
+    multipleInstancesProducingFaultsInThisAvailabilityZone?: IAlarm;
 
     /**
      * Alarm indicating that there are multiple instances producing high
      * latency responses in this AZ indicating the latency is not being 
      * caused by a single instance
      */
-    multipleInstancesProducingHighLatencyInThisAZ: IAlarm;
+    multipleInstancesProducingHighLatencyInThisAZ?: IAlarm;
 
     /**
      * Insight rule that measures the number of instances contributing to high latency in this AZ
      */
-    instanceContributorsToHighLatencyInThisAZ: CfnInsightRule;
+    instanceContributorsToHighLatencyInThisAZ?: CfnInsightRule;
 
     /**
      * Insight rule that measures the number of instances contributing to faults in this AZ
      */
-    instanceContributorsToFaultsInThisAZ: CfnInsightRule;
+    instanceContributorsToFaultsInThisAZ?: CfnInsightRule;
 
     /**
      * Insight rule that is used to calculate the number of instances in this particular AZ that is used with metric math to calculate
      * the percent of instances contributing to latency or faults
      */
-    instancesHandlingRequestsInThisAZ: CfnInsightRule;
+    instancesHandlingRequestsInThisAZ?: CfnInsightRule;
 }

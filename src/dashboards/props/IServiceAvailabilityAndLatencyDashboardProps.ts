@@ -1,6 +1,6 @@
-import { CfnInsightRule, IAlarm } from "aws-cdk-lib/aws-cloudwatch";
-import { IService } from "../../IService";
 import { Duration } from "aws-cdk-lib";
+import { IService } from "../../services/IService";
+import { IAlarm } from "aws-cdk-lib/aws-cloudwatch";
 
 /**
  * Properties for creating a service level dashboard
@@ -22,11 +22,6 @@ export interface IServiceAvailabilityAndLatencyDashboardProps
      * count across all critical operations 
      */
     aggregateRegionalAlarm: IAlarm;
-
-    /**
-     * The Availability Zones contributing to fault count
-     */
-    azContributorsToFaults: CfnInsightRule;
 
     /**
      * The interval for the dashboard

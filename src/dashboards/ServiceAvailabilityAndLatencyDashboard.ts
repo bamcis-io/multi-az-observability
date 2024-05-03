@@ -5,6 +5,9 @@ import { AvailabilityMetricType } from "../utilities/AvailabilityMetricType";
 import { AvailabilityAndLatencyMetrics } from "../metrics/AvailabilityAndLatencyMetrics";
 import { Fn } from "aws-cdk-lib";
 import { IServiceAvailabilityAndLatencyDashboard } from "./IServiceAvailabilityAndLatencyDashboard";
+import { IOperation } from "../services/IOperation";
+import { IOperationMetricDetails } from "../services/IOperationMetricDetails";
+import { IAvailabilityMetricProps } from "../metrics/props/IAvailabilityMetricProps";
 
 /**
  * Creates a service level availability and latency dashboard
@@ -40,10 +43,10 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
         let keyPrefix: string = AvailabilityAndLatencyMetrics.nextChar("");
         let perOperationAZFaultsMetrics: IMetric[] = [];
 
-        for (let i = 0; i < props.service.azCount; i++)
+        for (let i = 0; i < props.service.availabilityZoneIds.length; i++)
         {
             let counter: number = 1;
-            let availabilityZoneId: string = props.service.GetAvailabilityZoneIdAtIndex(i);
+            let availabilityZoneId: string = props.service.availabilityZoneIds[i];
 
             topLevelAggregateAlarmWidgets.push(new AlarmStatusWidget({
                 height: 2,
@@ -130,9 +133,9 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
             }
         }));
 
-        for (let i = 0; i < props.service.azCount; i++)
+        for (let i = 0; i < props.service.availabilityZoneIds.length; i++)
         {
-            let availabilityZoneId: string = props.service.GetAvailabilityZoneIdAtIndex(i);
+            let availabilityZoneId: string = props.service.availabilityZoneIds[i];
             let zonalMetricProps = {
                 availabilityMetricProps: props.service.criticalOperations.map(x => {
                     return {
@@ -167,19 +170,24 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
     {
        let widgets: IWidget[] = [];
             
-       widgets.push(new TextWidget({ height: 2, width: 24, markdown: "**Server-side Availability**\n(Each operation is equally weighted regardless of request volume)" }));
+        widgets.push(new TextWidget({ height: 2, width: 24, markdown: "**Server-side Availability**\n(Each operation is equally weighted regardless of request volume)" }));
     
         widgets = widgets.concat(ServiceAvailabilityAndLatencyDashboard.generateAvailabilityWidgets(props, false));
-        widgets.push(new TextWidget({ height: 2, width: 24, markdown: "**Canary Measured Availability**\n(Each operation is equally weighted regardless of request volume)" }));
-        widgets = widgets.concat(ServiceAvailabilityAndLatencyDashboard.generateAvailabilityWidgets(props, true));
-
+        
+        if (props.service.criticalOperations.filter(x => x.canaryMetricDetails !== undefined).length > 0)
+        {
+            widgets.push(new TextWidget({ height: 2, width: 24, markdown: "**Canary Measured Availability**\n(Each operation is equally weighted regardless of request volume)" }));
+        
+            widgets = widgets.concat(ServiceAvailabilityAndLatencyDashboard.generateAvailabilityWidgets(props, true));
+        }
+        
         return widgets;
     }
 
     private static generateAvailabilityWidgets(props: IServiceAvailabilityAndLatencyDashboardProps, isCanary: boolean) : IWidget[]
     {
         let widgets: IWidget[] = [];
-
+        
         widgets.push(new GraphWidget({
             height: 6,
             width: 24,
@@ -188,13 +196,7 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
             left: AvailabilityAndLatencyMetrics.createRegionalServiceAvailabilityMetrics({
                 label:  Fn.ref("AWS::Region") + " availability",
                 period: props.service.period,
-                availabilityMetricProps: props.service.criticalOperations.map(x => {
-                    return {
-                        label: x.operationName + " availability",
-                        metricDetails: isCanary ? x.canaryAvailabilityMetricDetails : x.serverSideAvailabilityMetricDetails,
-                        metricType: AvailabilityMetricType.SUCCESS_RATE
-                    };
-                })
+                availabilityMetricProps: this.createRegionalAvailabilityMetricProps(props.service.criticalOperations, isCanary, AvailabilityMetricType.SUCCESS_RATE)
             }),
             statistic: "Sum",
             leftYAxis: {
@@ -206,13 +208,7 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
             right: AvailabilityAndLatencyMetrics.createRegionalServiceAvailabilityMetrics({
                 label:  Fn.ref("AWS::Region") + " faults",
                 period: props.service.period,
-                availabilityMetricProps: props.service.criticalOperations.map(x => {
-                    return {
-                        label: x.operationName + " faults",
-                        metricDetails: isCanary ? x.canaryAvailabilityMetricDetails : x.serverSideAvailabilityMetricDetails,
-                        metricType: AvailabilityMetricType.FAULT_COUNT
-                    };
-                })
+                availabilityMetricProps: this.createRegionalAvailabilityMetricProps(props.service.criticalOperations, isCanary, AvailabilityMetricType.FAULT_COUNT)
             }),
             rightYAxis: {
                 label: "Faults",
@@ -229,9 +225,9 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
             ]
         }));
 
-        for (let i = 0; i < props.service.azCount; i++)
+        for (let i = 0; i < props.service.availabilityZoneIds.length; i++)
         {
-            let availabilityZoneId = props.service.GetAvailabilityZoneIdAtIndex(i);
+            let availabilityZoneId = props.service.availabilityZoneIds[i];
 
             widgets.push(new GraphWidget({
                 height: 6,
@@ -241,14 +237,7 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
                 left: AvailabilityAndLatencyMetrics.createZonalServiceAvailabilityMetrics({
                     label: availabilityZoneId + " availability",
                     period: props.service.period,
-                    availabilityMetricProps: props.service.criticalOperations.map(x => {
-                        return {
-                            label: x.operationName + " availability",
-                            availabilityZoneId: availabilityZoneId,
-                            metricDetails: isCanary ? x.canaryAvailabilityMetricDetails : x.serverSideAvailabilityMetricDetails,
-                            metricType: AvailabilityMetricType.SUCCESS_RATE
-                        }
-                    })
+                    availabilityMetricProps: this.createZonalAvailabilityMetricProps(props.service.criticalOperations, availabilityZoneId, isCanary, AvailabilityMetricType.SUCCESS_RATE)
                 }),
                 statistic: "Sum",
                 leftYAxis: {
@@ -260,14 +249,7 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
                 right: AvailabilityAndLatencyMetrics.createZonalServiceAvailabilityMetrics({
                     label: availabilityZoneId + " faults",
                     period: props.service.period,
-                    availabilityMetricProps: props.service.criticalOperations.map(x => {
-                        return {
-                            label: x.operationName + " faults",
-                            availabilityZoneId: availabilityZoneId,
-                            metricDetails: isCanary ? x.canaryAvailabilityMetricDetails : x.serverSideAvailabilityMetricDetails,
-                            metricType: AvailabilityMetricType.FAULT_COUNT
-                        }
-                    })
+                    availabilityMetricProps: this.createZonalAvailabilityMetricProps(props.service.criticalOperations, availabilityZoneId, isCanary, AvailabilityMetricType.FAULT_COUNT)
                 }),
                 rightYAxis: {
                     label: "Faults",
@@ -286,5 +268,50 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
         }
             
         return widgets;
+    }
+
+    private static createRegionalAvailabilityMetricProps(criticalOperations: IOperation[], isCanary: boolean, metricType: AvailabilityMetricType) : IAvailabilityMetricProps[]
+    {
+        return criticalOperations.reduce((filtered, value) => {
+            if (isCanary && value.canaryMetricDetails !== undefined && value.canaryMetricDetails != null)
+            {
+                filtered.push(value.canaryMetricDetails.canaryAvailabilityMetricDetails);
+            }
+            else if (!isCanary)
+            {
+                filtered.push(value.serverSideAvailabilityMetricDetails);
+            }
+            return filtered;
+        }, [] as IOperationMetricDetails[])
+        .map(x => {
+            return {
+                label: x.operationName + " faults",
+                metricDetails: x,
+                metricType: metricType
+            }
+        });
+    }
+
+    private static createZonalAvailabilityMetricProps(criticalOperations: IOperation[],availabilityZoneId: string, isCanary: boolean, metricType: AvailabilityMetricType) : IAvailabilityMetricProps[]
+    {
+        return criticalOperations.reduce((filtered, value) => {
+            if (isCanary && value.canaryMetricDetails !== undefined && value.canaryMetricDetails != null)
+            {
+                filtered.push(value.canaryMetricDetails.canaryAvailabilityMetricDetails);
+            }
+            else if (!isCanary)
+            {
+                filtered.push(value.serverSideAvailabilityMetricDetails);
+            }
+            return filtered;
+        }, [] as IOperationMetricDetails[])
+        .map(x => {
+            return {
+                label: x.operationName + " faults",
+                metricDetails: x,
+                metricType: metricType,
+                availabilityZoneId: availabilityZoneId
+            }
+        });
     }
 }

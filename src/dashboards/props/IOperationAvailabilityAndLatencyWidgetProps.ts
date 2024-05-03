@@ -1,7 +1,7 @@
-import { IOperation } from "../../IOperation";
-import { IOperationMetricDetails } from "../../IOperationMetricDetails";
 import { Duration } from "aws-cdk-lib";
 import { IAlarm, CfnInsightRule } from "aws-cdk-lib/aws-cloudwatch";
+import { IOperation } from "../../services/IOperation";
+import { IOperationMetricDetails } from "../../services/IOperationMetricDetails";
 
 /**
  * Props for creating operation dashboard availability and latency widgets
@@ -26,12 +26,7 @@ export interface IOperationAvailabilityAndLatencyWidgetProps
     /**
      * The number of AZs being used
      */
-    azCount: number;
-
-    /**
-     * A comma delimited list of the AZ Ids
-     */
-    availabilityZoneIdList: string;
+    availabilityZoneIds: string[];
 
     /**
      * The resolution period
@@ -67,13 +62,13 @@ export interface IOperationAvailabilityAndLatencyWidgetProps
      * Instance contributors to high latency, only set for
      * server-side widgets
      */
-    instanceContributorsToHighLatency: CfnInsightRule;
+    instanceContributorsToHighLatency?: CfnInsightRule;
 
     /**
      * Instance contributors to faults, only set for
      * server-side widgets
      */
-    instanceContributorsToFaults: CfnInsightRule;
+    instanceContributorsToFaults?: CfnInsightRule;
 
     /**
      * Is this widget for the canary metrics

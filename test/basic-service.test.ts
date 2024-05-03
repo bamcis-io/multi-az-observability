@@ -5,9 +5,7 @@ import { ApplicationLoadBalancer } from 'aws-cdk-lib/aws-elasticloadbalancingv2'
 import { CfnNatGateway, SelectedSubnets, SubnetType, Vpc } from 'aws-cdk-lib/aws-ec2';
 import { MultiAvailabilityZoneObservability } from '../src/MultiAvailabilityZoneObservability';
 
-// example test. To run these tests, uncomment this file along with the
-// example resource in lib/multi-az-observability-stack.ts
-test('Construct creates', () => {
+test('Basic service observability', () => {
     const app = new cdk.App();
     const stack = new cdk.Stack(app, "TestStack");
 
@@ -61,10 +59,10 @@ test('Construct creates', () => {
             faultCountPercentageThreshold: 1.0,
             packetLossImpactPercentageThreshold: 0.01,
             serviceName: "test",
-            period: cdk.Duration.seconds(60)
+            period: cdk.Duration.seconds(60),
+            createDashboard: true
         }
     });
 
     Template.fromStack(stack);
 });
-    

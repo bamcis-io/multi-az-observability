@@ -1,7 +1,7 @@
 import { ILoadBalancerV2 } from "aws-cdk-lib/aws-elasticloadbalancingv2";
-import { IOperation } from "../../IOperation";
 import { IContributorInsightRuleDetails } from "../IContributorInsightRuleDetails";
 import { OutlierDetectionAlgorithm } from "../../utilities/OutlierDetectionAlgorithm";
+import { IOperation } from "../../services/IOperation";
 
 /**
  * The properties for the operation alarms and rules
@@ -22,7 +22,7 @@ export interface IOperationAlarmsAndRulesProps
     /**
      * Rule details for contributor insight rules
      */
-    contributorInsightRuleDetails: IContributorInsightRuleDetails;
+    contributorInsightRuleDetails?: IContributorInsightRuleDetails;
 
     /**
      * The outlier threshold used with the STATIC outlier detection algorithm

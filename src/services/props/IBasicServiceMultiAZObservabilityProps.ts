@@ -1,6 +1,6 @@
 import { CfnNatGateway } from "aws-cdk-lib/aws-ec2";
 import { IApplicationLoadBalancer } from "aws-cdk-lib/aws-elasticloadbalancingv2";
-import { OutlierDetectionAlgorithm } from "./utilities/OutlierDetectionAlgorithm";
+import { OutlierDetectionAlgorithm } from "../../utilities/OutlierDetectionAlgorithm";
 import { Duration } from "aws-cdk-lib";
 
 /**
@@ -12,12 +12,12 @@ export interface IBasicServiceMultiAZObservabilityProps
      * (Optional) A map of Availability Zone name to the NAT Gateways
      * in that AZ
      */
-    natGateways: {[key: string]: CfnNatGateway[]};
+    natGateways?: {[key: string]: CfnNatGateway[]};
 
     /**
      * The application load balancers being used by the service
      */
-    applicationLoadBalancers: IApplicationLoadBalancer[];
+    applicationLoadBalancers?: IApplicationLoadBalancer[];
 
     /**
      * The service's name
@@ -35,13 +35,14 @@ export interface IBasicServiceMultiAZObservabilityProps
      * The amount of packet loss in a NAT GW to determine if an AZ
      * is actually impacted, recommendation is 0.01%
      */
-    packetLossImpactPercentageThreshold: number;
+    packetLossImpactPercentageThreshold?: number;
 
     /**
      * The percentage of faults for a single ALB to consider an AZ
-     * to be unhealthy, this should align with your availability goal
+     * to be unhealthy, this should align with your availability goal. For example
+     * 1% or 5%.
      */
-    faultCountPercentageThreshold: number;
+    faultCountPercentageThreshold?: number;
 
     /**
      * The algorithm to use for performing outlier detection
@@ -52,4 +53,14 @@ export interface IBasicServiceMultiAZObservabilityProps
      * The period to evaluate metrics
      */
     period: Duration;
+
+    /**
+     * Whether to create a dashboard displaying the metrics and alarms
+     */
+    createDashboard: boolean;
+
+    /**
+     * Dashboard interval
+     */
+    interval?: Duration;
 }

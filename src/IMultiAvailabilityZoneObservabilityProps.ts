@@ -1,6 +1,9 @@
-import { IBasicServiceMultiAZObservabilityProps } from "./IBasicServiceMultiAZObservabilityProps";
+import { IBasicServiceMultiAZObservabilityProps } from "./services/props/IBasicServiceMultiAZObservabilityProps";
+import { IInstrumentedServiceProps } from "./services/props/IInstrumentedServiceProps";
 
 export interface IMultiAvailabilityZoneObservabilityProps
 {
-    basicServiceObservabilityProps: IBasicServiceMultiAZObservabilityProps;
+    basicServiceObservabilityProps?: IBasicServiceMultiAZObservabilityProps;
+
+    instrumentedServiceObservabilityProps?: IInstrumentedServiceProps;
 }

@@ -1,4 +1,5 @@
-import { IOperationMetricDetails } from "../../IOperationMetricDetails";
+import { IOperation } from "../../services/IOperation";
+import { IOperationMetricDetails } from "../../services/IOperationMetricDetails";
 import { OutlierDetectionAlgorithm } from "../../utilities/OutlierDetectionAlgorithm";
 import { IContributorInsightRuleDetails } from "../IContributorInsightRuleDetails";
 
@@ -7,6 +8,11 @@ import { IContributorInsightRuleDetails } from "../IContributorInsightRuleDetail
  */
 export interface IBaseOperationZonalAlarmsAndRulesProps
 {
+    /**
+     * The operation for these alarms and rules
+     */
+    operation: IOperation;
+
     /**
      * The availability metric details to create alarms and rules from
      */
@@ -39,7 +45,7 @@ export interface IBaseOperationZonalAlarmsAndRulesProps
      * (Optional) Details for creating contributor insight rules, which help
      * make the server-side alarms for detecting single AZ failures more accurate
      */
-    contributorInsightRuleDetails: IContributorInsightRuleDetails;
+    contributorInsightRuleDetails?: IContributorInsightRuleDetails;
 
     /**
      * The outlier detection algorithm used to determine if Availability Zones
@@ -52,5 +58,5 @@ export interface IBaseOperationZonalAlarmsAndRulesProps
      * (Optional) A suffix to apply to alarm and rules names, like "-server" for server
      * side metrics and alarms
      */
-    nameSuffix: string;
+    nameSuffix?: string;
 }

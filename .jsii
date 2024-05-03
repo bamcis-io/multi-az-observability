@@ -3737,6 +3737,10 @@
       "namespace": "BAMCISIO.MultiAZObservability",
       "packageId": "BAMCISIO.MultiAZObservability"
     },
+    "go": {
+      "moduleName": "bamcis.io/multi-az-observability",
+      "packageName": "multi-az-observability"
+    },
     "java": {
       "maven": {
         "artifactId": "multi-az-observability",
@@ -4036,5 +4040,5 @@
     }
   },
   "version": "0.1.0",
-  "fingerprint": "v4/xiEsjwzQH1rFmTygJi2m29EY7TZrbfXgQIvwVdLI="
+  "fingerprint": "RjG44xIwQTd++d/VIs/hNSELuBurUgltrAJmYyHPIJg="
 }

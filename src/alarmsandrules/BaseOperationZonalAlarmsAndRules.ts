@@ -43,10 +43,10 @@ export abstract class BaseOperationZonalAlarmsAndRules extends Construct impleme
     {
         super(scope, id)
         this.availabilityZoneId = props.availabilityZoneId;
-        this.availabilityAlarm = AvailabilityAndLatencyAlarmsAndRules.createZonalAvailabilityAlarm(this, props.availabilityMetricDetails, props.availabilityZoneId, props.nameSuffix, props.counter);
-        this.latencyAlarm = AvailabilityAndLatencyAlarmsAndRules.createZonalLatencyAlarm(this, props.latencyMetricDetails, props.availabilityZoneId, props.nameSuffix, props.counter);
-        this.availabilityOrLatencyAlarm = AvailabilityAndLatencyAlarmsAndRules.createZonalAvailabilityOrLatencyCompositeAlarm(this, props.availabilityMetricDetails.operation, props.availabilityZoneId, props.nameSuffix, props.counter, this.availabilityAlarm, this.latencyAlarm);
-        this.availabilityZoneIsOutlierForFaults = AvailabilityAndLatencyAlarmsAndRules.createZonalFaultRateOutlierAlarm(this, props.availabilityMetricDetails, props.availabilityZoneId, props.nameSuffix, props.counter, props.outlierThreshold);
-        this.availabilityZoneIsOutlierForLatency = AvailabilityAndLatencyAlarmsAndRules.createZonalHighLatencyOutlierAlarm(this, props.latencyMetricDetails, props.availabilityZoneId, props.nameSuffix, props.counter, props.outlierThreshold);
+        this.availabilityAlarm = AvailabilityAndLatencyAlarmsAndRules.createZonalAvailabilityAlarm(this, props.availabilityMetricDetails, props.availabilityZoneId, props.counter, props.nameSuffix);
+        this.latencyAlarm = AvailabilityAndLatencyAlarmsAndRules.createZonalLatencyAlarm(this, props.latencyMetricDetails, props.availabilityZoneId, props.counter, props.nameSuffix);
+        this.availabilityOrLatencyAlarm = AvailabilityAndLatencyAlarmsAndRules.createZonalAvailabilityOrLatencyCompositeAlarm(this, props.availabilityMetricDetails.operationName, props.availabilityZoneId, props.counter, this.availabilityAlarm, this.latencyAlarm, props.nameSuffix);
+        this.availabilityZoneIsOutlierForFaults = AvailabilityAndLatencyAlarmsAndRules.createZonalFaultRateOutlierAlarm(this, props.availabilityMetricDetails, props.availabilityZoneId, props.counter, props.outlierThreshold, props.nameSuffix);
+        this.availabilityZoneIsOutlierForLatency = AvailabilityAndLatencyAlarmsAndRules.createZonalHighLatencyOutlierAlarm(this, props.latencyMetricDetails, props.availabilityZoneId, props.counter, props.outlierThreshold, props.nameSuffix);
     }
 }

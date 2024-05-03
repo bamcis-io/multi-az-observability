@@ -1,5 +1,5 @@
 import { IAlarm } from "aws-cdk-lib/aws-cloudwatch";
-import { IService } from "../IService";
+import { IService } from "../services/IService";
 
 /**
  * Service level alarms and rules using critical operations
@@ -21,7 +21,7 @@ export interface IServiceAlarmsAndRules
     /**
      * An alarm for regional impact of any critical operation as measured by the canary.
      */
-    regionalAvailabilityCanaryAlarm: IAlarm;
+    regionalAvailabilityCanaryAlarm?: IAlarm;
 
     /**
      * An alarm for regional impact of any critical operation as measured by the server-side.
