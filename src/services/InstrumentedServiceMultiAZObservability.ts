@@ -30,13 +30,12 @@ export class InstrumentedServiceMultiAZObservability extends Construct
 
         this.perOperationAlarmsAndRules = Object.fromEntries(props.service.operations.map((operation: IOperation) => 
             [
-                operation.operationName, 
-                
+                operation.operationName,              
                 new OperationAlarmsAndRules(this, operation.operationName + "OperationAlarmsAndRulesNestedStack", {
-                operation: operation,
-                outlierDetectionAlgorithm: OutlierDetectionAlgorithm.STATIC,
-                outlierThreshold: props.outlierThreshold,
-                loadBalancer: props.loadBalancer      
+                    operation: operation,
+                    outlierDetectionAlgorithm: OutlierDetectionAlgorithm.STATIC,
+                    outlierThreshold: props.outlierThreshold,
+                    loadBalancer: props.loadBalancer      
                 })
             ]
         ));
