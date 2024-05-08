@@ -1,7 +1,7 @@
 import { ILoadBalancerV2 } from "aws-cdk-lib/aws-elasticloadbalancingv2";
 import { IService } from "../IService";
-import { AvailabilityZoneMapper } from "../../utilities/AvailabilityZoneMapper";
 import { Duration } from "aws-cdk-lib";
+import { IAvailabilityZoneMapper } from "../../utilities/IAvailabilityZoneMapper";
 
 export interface IInstrumentedServiceProps
 {
@@ -13,7 +13,9 @@ export interface IInstrumentedServiceProps
 
     loadBalancer: ILoadBalancerV2;
 
-    availabilityZoneMapper: AvailabilityZoneMapper;
+    availabilityZoneMapper: IAvailabilityZoneMapper;
 
     interval: Duration;
+
+    addSyntheticCanaries?: boolean;
 }

@@ -2,6 +2,7 @@ import { ICanaryMetrics } from "./ICanaryMetrics";
 import { IContributorInsightRuleDetails } from "./IContributorInsightRuleDetails";
 import { IOperationMetricDetails } from "./IOperationMetricDetails";
 import { IService } from "./IService";
+import { ICanaryTestProps } from "../canaries/props/ICanaryTestProps";
 
 export interface IOperation
 {
@@ -39,5 +40,23 @@ export interface IOperation
      /**
      * The server side details for contributor insights rules
      */
-     serverSideContributorInsightRuleDetails?: IContributorInsightRuleDetails;
+    serverSideContributorInsightRuleDetails?: IContributorInsightRuleDetails;
+
+     /**
+      * Indicates this is a critical operation for the service
+      * and will be included in service level metrics and 
+      * dashboards
+      */
+    isCritical: boolean;
+
+     /**
+      * If you define this property, a synthetic
+      * canary will be provisioned to test the operation
+      */
+    canaryProps?: ICanaryTestProps;
+
+    /**
+     * The http methods supported by the operation
+     */
+    httpMethods: string[];
 }

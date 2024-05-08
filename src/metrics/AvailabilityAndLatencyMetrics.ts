@@ -22,7 +22,7 @@ export class AvailabilityAndLatencyMetrics
      */
     static createZonalAvailabilityMetric(props: IZonalAvailabilityMetricProps): IMetric
     {
-        return this.createAvailabilityMetric(props, props.metricDetails.getZonalDimensions(props.availabilityZoneId, Fn.ref("AWS::Region")));
+        return this.createAvailabilityMetric(props, props.metricDetails.zonalDimensions(props.availabilityZoneId, Fn.ref("AWS::Region")));
     }
 
     /**
@@ -32,7 +32,7 @@ export class AvailabilityAndLatencyMetrics
      */
     static createRegionalAvailabilityMetric(props: IRegionalAvailabilityMetricProps): IMetric
     {
-        return this.createAvailabilityMetric(props, props.metricDetails.getRegionalDimensions(Fn.ref("AWS::Region")));
+        return this.createAvailabilityMetric(props, props.metricDetails.regionalDimensions(Fn.ref("AWS::Region")));
     }
 
     /**
@@ -62,7 +62,7 @@ export class AvailabilityAndLatencyMetrics
                 successKeys.push(key);
 
                 usingMetrics[key] = new Metric({
-                    namespace: props.metricDetails.namespace,
+                    namespace: props.metricDetails.metricNamespace,
                     metricName: successMetric,
                     unit: props.metricDetails.unit,
                     period: props.metricDetails.period,
@@ -84,7 +84,7 @@ export class AvailabilityAndLatencyMetrics
                 faultKeys.push(key);
 
                 usingMetrics[key] = new Metric({
-                    namespace: props.metricDetails.namespace,
+                    namespace: props.metricDetails.metricNamespace,
                     metricName: faultMetric,
                     unit: props.metricDetails.unit,
                     period: props.metricDetails.period,
@@ -131,7 +131,7 @@ export class AvailabilityAndLatencyMetrics
      */
     static createZonalLatencyMetrics(props: IZonalLatencyMetricProps): IMetric[]
     {
-        return this.createLatencyMetrics(props, props.metricDetails.getZonalDimensions(props.availabilityZoneId, Fn.ref("AWS::Region")));
+        return this.createLatencyMetrics(props, props.metricDetails.zonalDimensions(props.availabilityZoneId, Fn.ref("AWS::Region")));
     }
 
     /**
@@ -141,7 +141,7 @@ export class AvailabilityAndLatencyMetrics
      */
     static createRegionalLatencyMetrics(props: IRegionalLatencyMetricProps): IMetric[]
     {
-        return this.createLatencyMetrics(props, props.metricDetails.getRegionalDimensions(Fn.ref("AWS::Region")));
+        return this.createLatencyMetrics(props, props.metricDetails.regionalDimensions(Fn.ref("AWS::Region")));
     }
 
     /**
@@ -167,7 +167,7 @@ export class AvailabilityAndLatencyMetrics
 
         return names.map(x => new Metric({
             metricName: x,
-            namespace: props.metricDetails.namespace,
+            namespace: props.metricDetails.metricNamespace,
             unit: props.metricDetails.unit,
             period: props.metricDetails.period,
             statistic: props.statistic,

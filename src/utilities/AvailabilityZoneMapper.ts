@@ -5,12 +5,26 @@ import { ILogGroup, LogGroup, RetentionDays } from "aws-cdk-lib/aws-logs";
 import { Construct } from "constructs";
 import { readFileSync } from 'fs';
 import path = require("path");
+import { IAvailabilityZoneMapper } from "./IAvailabilityZoneMapper";
 
-export class AvailabilityZoneMapper extends Construct
+export class AvailabilityZoneMapper extends Construct implements IAvailabilityZoneMapper
 {
+    /**
+     * The function that does the mapping
+     */
     function: IFunction;
+
+    /**
+     * The log group for the function's logs
+     */
     logGroup: ILogGroup;
-    availabilityZoneMapper: CustomResource;
+
+    /**
+     * The custom resource that can be referenced to use
+     * Fn::GetAtt functions on to retrieve availability zone
+     * names and ids
+     */
+    mapper: CustomResource;
 
     constructor(scope: Construct, id: string)
     {
@@ -101,7 +115,7 @@ export class AvailabilityZoneMapper extends Construct
             roles: [ executionRole ]
         });  
         
-        this.availabilityZoneMapper = new CustomResource(this, "AvailabilityZoneMapper", {
+        this.mapper = new CustomResource(this, "AvailabilityZoneMapper", {
             serviceToken: this.function.functionArn
         });
     }
@@ -111,9 +125,9 @@ export class AvailabilityZoneMapper extends Construct
      * @param availabilityZoneName 
      * @returns 
      */
-    getAvailabilityZoneId(availabilityZoneName: string): string
+    availabilityZoneId(availabilityZoneName: string): string
     {
-        return this.availabilityZoneMapper.getAttString(availabilityZoneName);
+        return this.mapper.getAttString(availabilityZoneName);
     }
 
     /**
@@ -121,9 +135,9 @@ export class AvailabilityZoneMapper extends Construct
      * @param availabilityZoneId 
      * @returns 
      */
-    getAvailabilityZoneName(availabilityZoneId: string): string
+    availabilityZoneName(availabilityZoneId: string): string
     {
-        return this.availabilityZoneMapper.getAttString(availabilityZoneId)
+        return this.mapper.getAttString(availabilityZoneId)
     }
 
     /**
@@ -131,9 +145,9 @@ export class AvailabilityZoneMapper extends Construct
      * in us-east-1, this returns "use1"
      * @returns 
      */
-    getRegionPrefixForAvailabilityZoneIds(): string
+    regionPrefixForAvailabilityZoneIds(): string
     {
-        return this.availabilityZoneMapper.getAttString(Fn.ref("AWS::Region"))
+        return this.mapper.getAttString(Fn.ref("AWS::Region"))
     }
 
     /**
@@ -142,13 +156,13 @@ export class AvailabilityZoneMapper extends Construct
      * @param availabilityZoneNames 
      * @returns 
      */
-    getAvailabilityZoneIdsAsArray(availabilityZoneNames: string[]): string[]
+    availabilityZoneIdsAsArray(availabilityZoneNames: string[]): string[]
     {
         let ids: string[] = [];
 
         for (let i = 0; i < availabilityZoneNames.length; i++)
         {
-            ids.push(this.getAvailabilityZoneId(availabilityZoneNames[i]));
+            ids.push(this.availabilityZoneId(availabilityZoneNames[i]));
         }
 
         return ids;
@@ -161,13 +175,13 @@ export class AvailabilityZoneMapper extends Construct
      * @param availabilityZoneNames 
      * @returns 
      */
-    getAvailabilityZoneIdsAsCommaDelimitedList(availabilityZoneNames: string[]): string
+    availabilityZoneIdsAsCommaDelimitedList(availabilityZoneNames: string[]): string
     {
         let ids: string[] = [];
 
         for (let i = 0; i < availabilityZoneNames.length; i++)
         {
-            ids.push(this.getAvailabilityZoneId(availabilityZoneNames[i]));
+            ids.push(this.availabilityZoneId(availabilityZoneNames[i]));
         }
 
         return ids.join(",");
@@ -179,9 +193,9 @@ export class AvailabilityZoneMapper extends Construct
      * get a specific Availability Zone Id
      * @returns 
      */
-    getAllAvailabilityZoneIdsAsCommaDelimitedList(): string
+    allAvailabilityZoneIdsAsCommaDelimitedList(): string
     {
-        return this.availabilityZoneMapper.getAttString("AllAvailabilityZoneIds");
+        return this.mapper.getAttString("AllAvailabilityZoneIds");
     }
 
     /**
@@ -189,9 +203,9 @@ export class AvailabilityZoneMapper extends Construct
      * Availability Zone Ids
      * @returns 
      */
-    getAllAvailabilityZoneIdsAsArray(): Reference
+    allAvailabilityZoneIdsAsArray(): Reference
     {
-        return this.availabilityZoneMapper.getAtt("AllAvailabilityZoneIdsArray");
+        return this.mapper.getAtt("AllAvailabilityZoneIdsArray");
     }
 
     /**
@@ -200,9 +214,9 @@ export class AvailabilityZoneMapper extends Construct
      * @param letter 
      * @returns 
      */
-    getAvailabilityZoneIdFromAvailabilityZoneLetter(letter: string): string
+    availabilityZoneIdFromAvailabilityZoneLetter(letter: string): string
     {
-        return this.availabilityZoneMapper.getAttString(letter);
+        return this.mapper.getAttString(letter);
     }
 
     /**
@@ -211,8 +225,8 @@ export class AvailabilityZoneMapper extends Construct
      * get a specific Availability Zone Name
      * @returns 
      */
-    getAllAvailabilityZoneNamesAsCommaDelimitedList(): string
+    allAvailabilityZoneNamesAsCommaDelimitedList(): string
     {
-        return this.availabilityZoneMapper.getAttString("AllAvailabilityZoneNames");
+        return this.mapper.getAttString("AllAvailabilityZoneNames");
     }
 }

@@ -7,6 +7,8 @@ import { OutlierDetectionAlgorithm } from "../MultiAvailabilityZoneObservability
 import { Dashboard } from "aws-cdk-lib/aws-cloudwatch";
 import { OperationAvailabilityAndLatencyDashboard } from "../dashboards/OperationAvailabilityAndLatencyDashboard";
 import { ServiceAvailabilityAndLatencyDashboard } from "../dashboards/ServiceAvailabilityAndLatencyDashboard";
+import { CanaryFunction } from "../canaries/CanaryFunction";
+import { CanaryTest } from "../canaries/CanaryTest";
 
 export class InstrumentedServiceMultiAZObservability extends Construct
 {
@@ -15,18 +17,36 @@ export class InstrumentedServiceMultiAZObservability extends Construct
      * of zonal alarms and rules for that operation. The values themselves
      * are dictionaries that have a key for each AZ ID.
      */
-     readonly perOperationAlarmsAndRules: {[key: string]: OperationAlarmsAndRules};
+    readonly perOperationAlarmsAndRules: {[key: string]: OperationAlarmsAndRules};
 
-     readonly serviceAlarms: ServiceAlarmsAndRules;
+    readonly serviceAlarms: ServiceAlarmsAndRules;
 
-     readonly operationDashboards: Dashboard[];
+    readonly operationDashboards: Dashboard[];
 
-     readonly serviceDashboard?: Dashboard;
+    readonly serviceDashboard?: Dashboard;
 
     constructor(scope: Construct, id: string, props: IInstrumentedServiceProps)
     {
         super(scope, id);
         this.operationDashboards = [];
+
+        if (props.addSyntheticCanaries !== undefined && props.addSyntheticCanaries == true)
+        {
+            let canary = new CanaryFunction(this, "CanaryFunction", {
+            });
+
+            props.service.operations.forEach(operation => {
+                new CanaryTest(this, operation.operationName + "CanaryTest", {
+                    function: canary.function,
+                    requestCount: 10,
+                    schedule: "rate(1 minute)",
+                    operation: operation,
+                    loadBalancer: props.loadBalancer,
+                    availabilityZoneIds: props.service.availabilityZoneIds,
+                    availabilityZoneMapper: props.availabilityZoneMapper
+                });
+            });
+        }
 
         this.perOperationAlarmsAndRules = Object.fromEntries(props.service.operations.map((operation: IOperation) => 
             [

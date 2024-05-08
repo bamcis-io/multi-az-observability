@@ -15,7 +15,7 @@ export interface IOperationMetricDetails
         /**
          * The CloudWatch metric namespace for these metrics
          */
-        namespace: string;      
+        metricNamespace: string;      
         /**
          * The names of success indicating metrics
          */
@@ -78,7 +78,7 @@ export interface IOperationMetricDetails
          * }
          * @param region 
          */
-        getRegionalDimensions(region: string): { [key: string]: string} 
+        regionalDimensions(region: string): { [key: string]: string} 
         /**
          * Gets the zonal dimensions for these metrics, expected to return something like 
          * {
@@ -90,5 +90,5 @@ export interface IOperationMetricDetails
          * @param availabilityZoneId 
          * @param region 
          */
-        getZonalDimensions(availabilityZoneId: string, region: string): { [key: string]: string}
+        zonalDimensions(availabilityZoneId: string, region: string): { [key: string]: string}
 }

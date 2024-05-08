@@ -43,23 +43,14 @@ test('Fully instrumented service', () => {
         operations: [
 
         ],
-        criticalOperations: [
-
-        ],
         availabilityZoneIds: vpc.availabilityZones,
-        endpoint: new URL("http://www.example.com"),
+        baseUrl: "http://www.example.com",
         faultCountThreshold: 25,
         period: Duration.seconds(60),
         addOperation(operation: IOperation) {
             operation.service = this;
             this.operations.push(operation)
             return this;
-        },
-        addCriticalOperation(operation: IOperation) {
-           operation.service = this;
-           this.operations.push(operation);
-           this.criticalOperations.push(operation);
-           return this;
         }
     };
 
@@ -70,6 +61,8 @@ test('Fully instrumented service', () => {
         operationName: "ride",
         service: service,
         path: "/ride",
+        isCritical: true,
+        httpMethods: [ "GET" ],
         serverSideContributorInsightRuleDetails: {
             logGroups: [ logGroup ],
             successLatencyMetricJsonPath: "$.SuccessLatency",
@@ -80,7 +73,7 @@ test('Fully instrumented service', () => {
         },
         serverSideAvailabilityMetricDetails: {
             operationName: "ride",
-            namespace: "front-end/metrics",
+            metricNamespace: "front-end/metrics",
             successMetricNames: [ "Success" ],
             faultMetricNames: [ "Fault", "Error" ],
             alarmStatistic: "Sum",
@@ -92,13 +85,13 @@ test('Fully instrumented service', () => {
             faultAlarmThreshold: 0.1,
             graphedFaultStatistics: [ "Sum" ],
             graphedSuccessStatistics: [ "Sum" ],
-            getRegionalDimensions(region: string) {
+            regionalDimensions(region: string) {
                 return {
                     "Region": region,
                     "Operation": this.operationName
                 }
             },
-            getZonalDimensions(availabilityZoneId: string, region: string) {
+            zonalDimensions(availabilityZoneId: string, region: string) {
                 return {
                     "Region": region,
                     "Operation": this.operationName,
@@ -108,7 +101,7 @@ test('Fully instrumented service', () => {
         },
         serverSideLatencyMetricDetails: {
             operationName: "ride",
-            namespace: "front-end/metrics",
+            metricNamespace: "front-end/metrics",
             successMetricNames: [ "SuccessLatency" ],
             faultMetricNames: [ "FaultLatency" ],
             alarmStatistic: "p99",
@@ -120,13 +113,13 @@ test('Fully instrumented service', () => {
             faultAlarmThreshold: 1,
             graphedFaultStatistics: [ "p99" ],
             graphedSuccessStatistics: [ "p50", "p99", "tm99" ],
-            getRegionalDimensions(region: string) {
+            regionalDimensions(region: string) {
                 return {
                     "Region": region,
                     "Operation": this.operationName
                 }
             },
-            getZonalDimensions(availabilityZoneId: string, region: string) {
+            zonalDimensions(availabilityZoneId: string, region: string) {
                 return {
                     "Region": region,
                     "Operation": this.operationName,
@@ -136,7 +129,7 @@ test('Fully instrumented service', () => {
         }
     };
 
-    service.addCriticalOperation(rideOperation);
+    service.addOperation(rideOperation);
 
     new MultiAvailabilityZoneObservability(stack, "MAZObservability", {
         instrumentedServiceObservabilityProps: {
@@ -189,23 +182,14 @@ test('Fully instrumented service with canaries', () => {
         operations: [
 
         ],
-        criticalOperations: [
-
-        ],
         availabilityZoneIds: vpc.availabilityZones,
-        endpoint: new URL("http://www.example.com"),
+        baseUrl: "http://www.example.com",
         faultCountThreshold: 25,
         period: Duration.seconds(60),
         addOperation(operation: IOperation) {
             operation.service = this;
             this.operations.push(operation)
             return this;
-        },
-        addCriticalOperation(operation: IOperation) {
-           operation.service = this;
-           this.operations.push(operation);
-           this.criticalOperations.push(operation);
-           return this;
         }
     };
 
@@ -216,6 +200,8 @@ test('Fully instrumented service with canaries', () => {
         operationName: "ride",
         service: service,
         path: "/ride",
+        isCritical: true,
+        httpMethods: [ "GET" ],
         serverSideContributorInsightRuleDetails: {
             logGroups: [ logGroup ],
             successLatencyMetricJsonPath: "$.SuccessLatency",
@@ -226,7 +212,7 @@ test('Fully instrumented service with canaries', () => {
         },
         serverSideAvailabilityMetricDetails: {
             operationName: "ride",
-            namespace: "front-end/metrics",
+            metricNamespace: "front-end/metrics",
             successMetricNames: [ "Success" ],
             faultMetricNames: [ "Fault", "Error" ],
             alarmStatistic: "Sum",
@@ -238,13 +224,13 @@ test('Fully instrumented service with canaries', () => {
             faultAlarmThreshold: 0.1,
             graphedFaultStatistics: [ "Sum" ],
             graphedSuccessStatistics: [ "Sum" ],
-            getRegionalDimensions(region: string) {
+            regionalDimensions(region: string) {
                 return {
                     "Region": region,
                     "Operation": this.operationName
                 }
             },
-            getZonalDimensions(availabilityZoneId: string, region: string) {
+            zonalDimensions(availabilityZoneId: string, region: string) {
                 return {
                     "Region": region,
                     "Operation": this.operationName,
@@ -254,7 +240,7 @@ test('Fully instrumented service with canaries', () => {
         },
         serverSideLatencyMetricDetails: {
             operationName: "ride",
-            namespace: "front-end/metrics",
+            metricNamespace: "front-end/metrics",
             successMetricNames: [ "SuccessLatency" ],
             faultMetricNames: [ "FaultLatency" ],
             alarmStatistic: "p99",
@@ -266,13 +252,13 @@ test('Fully instrumented service with canaries', () => {
             faultAlarmThreshold: 1,
             graphedFaultStatistics: [ "p99" ],
             graphedSuccessStatistics: [ "p50", "p99", "tm99" ],
-            getRegionalDimensions(region: string) {
+            regionalDimensions(region: string) {
                 return {
                     "Region": region,
                     "Operation": this.operationName
                 }
             },
-            getZonalDimensions(availabilityZoneId: string, region: string) {
+            zonalDimensions(availabilityZoneId: string, region: string) {
                 return {
                     "Region": region,
                     "Operation": this.operationName,
@@ -283,7 +269,7 @@ test('Fully instrumented service with canaries', () => {
         canaryMetricDetails: {
             canaryAvailabilityMetricDetails: {
                 operationName: "ride",
-                namespace: "front-end/metrics",
+                metricNamespace: "front-end/metrics",
                 successMetricNames: [ "Success" ],
                 faultMetricNames: [ "Fault", "Error" ],
                 alarmStatistic: "Sum",
@@ -295,13 +281,13 @@ test('Fully instrumented service with canaries', () => {
                 faultAlarmThreshold: 0.1,
                 graphedFaultStatistics: [ "Sum" ],
                 graphedSuccessStatistics: [ "Sum" ],
-                getRegionalDimensions(region: string) {
+                regionalDimensions(region: string) {
                     return {
                         "Region": region,
                         "Operation": this.operationName
                     }
                 },
-                getZonalDimensions(availabilityZoneId: string, region: string) {
+                zonalDimensions(availabilityZoneId: string, region: string) {
                     return {
                         "Region": region,
                         "Operation": this.operationName,
@@ -311,7 +297,7 @@ test('Fully instrumented service with canaries', () => {
             },
             canaryLatencyMetricDetails: {
                 operationName: "ride",
-                namespace: "front-end/metrics",
+                metricNamespace: "front-end/metrics",
                 successMetricNames: [ "SuccessLatency" ],
                 faultMetricNames: [ "FaultLatency" ],
                 alarmStatistic: "p99",
@@ -323,13 +309,13 @@ test('Fully instrumented service with canaries', () => {
                 faultAlarmThreshold: 1,
                 graphedFaultStatistics: [ "p99" ],
                 graphedSuccessStatistics: [ "p50", "p99", "tm99" ],
-                getRegionalDimensions(region: string) {
+                regionalDimensions(region: string) {
                     return {
                         "Region": region,
                         "Operation": this.operationName
                     }
                 },
-                getZonalDimensions(availabilityZoneId: string, region: string) {
+                zonalDimensions(availabilityZoneId: string, region: string) {
                     return {
                         "Region": region,
                         "Operation": this.operationName,
@@ -344,6 +330,8 @@ test('Fully instrumented service with canaries', () => {
         operationName: "pay",
         service: service,
         path: "/pay",
+        isCritical: true,
+        httpMethods: [ "GET" ],
         serverSideContributorInsightRuleDetails: {
             logGroups: [ logGroup ],
             successLatencyMetricJsonPath: "$.SuccessLatency",
@@ -354,7 +342,7 @@ test('Fully instrumented service with canaries', () => {
         },
         serverSideAvailabilityMetricDetails: {
             operationName: "pay",
-            namespace: "front-end/metrics",
+            metricNamespace: "front-end/metrics",
             successMetricNames: [ "Success" ],
             faultMetricNames: [ "Fault", "Error" ],
             alarmStatistic: "Sum",
@@ -366,13 +354,13 @@ test('Fully instrumented service with canaries', () => {
             faultAlarmThreshold: 0.1,
             graphedFaultStatistics: [ "Sum" ],
             graphedSuccessStatistics: [ "Sum" ],
-            getRegionalDimensions(region: string) {
+            regionalDimensions(region: string) {
                 return {
                     "Region": region,
                     "Operation": this.operationName
                 }
             },
-            getZonalDimensions(availabilityZoneId: string, region: string) {
+            zonalDimensions(availabilityZoneId: string, region: string) {
                 return {
                     "Region": region,
                     "Operation": this.operationName,
@@ -382,7 +370,7 @@ test('Fully instrumented service with canaries', () => {
         },
         serverSideLatencyMetricDetails: {
             operationName: "pay",
-            namespace: "front-end/metrics",
+            metricNamespace: "front-end/metrics",
             successMetricNames: [ "SuccessLatency" ],
             faultMetricNames: [ "FaultLatency" ],
             alarmStatistic: "p99",
@@ -394,13 +382,13 @@ test('Fully instrumented service with canaries', () => {
             faultAlarmThreshold: 1,
             graphedFaultStatistics: [ "p99" ],
             graphedSuccessStatistics: [ "p50", "p99", "tm99" ],
-            getRegionalDimensions(region: string) {
+            regionalDimensions(region: string) {
                 return {
                     "Region": region,
                     "Operation": this.operationName
                 }
             },
-            getZonalDimensions(availabilityZoneId: string, region: string) {
+            zonalDimensions(availabilityZoneId: string, region: string) {
                 return {
                     "Region": region,
                     "Operation": this.operationName,
@@ -411,7 +399,7 @@ test('Fully instrumented service with canaries', () => {
         canaryMetricDetails: {
             canaryAvailabilityMetricDetails: {
                 operationName: "pay",
-                namespace: "front-end/metrics",
+                metricNamespace: "front-end/metrics",
                 successMetricNames: [ "Success" ],
                 faultMetricNames: [ "Fault", "Error" ],
                 alarmStatistic: "Sum",
@@ -423,13 +411,13 @@ test('Fully instrumented service with canaries', () => {
                 faultAlarmThreshold: 0.1,
                 graphedFaultStatistics: [ "Sum" ],
                 graphedSuccessStatistics: [ "Sum" ],
-                getRegionalDimensions(region: string) {
+                regionalDimensions(region: string) {
                     return {
                         "Region": region,
                         "Operation": this.operationName
                     }
                 },
-                getZonalDimensions(availabilityZoneId: string, region: string) {
+                zonalDimensions(availabilityZoneId: string, region: string) {
                     return {
                         "Region": region,
                         "Operation": this.operationName,
@@ -439,7 +427,7 @@ test('Fully instrumented service with canaries', () => {
             },
             canaryLatencyMetricDetails: {
                 operationName: "pay",
-                namespace: "front-end/metrics",
+                metricNamespace: "front-end/metrics",
                 successMetricNames: [ "SuccessLatency" ],
                 faultMetricNames: [ "FaultLatency" ],
                 alarmStatistic: "p99",
@@ -451,13 +439,13 @@ test('Fully instrumented service with canaries', () => {
                 faultAlarmThreshold: 1,
                 graphedFaultStatistics: [ "p99" ],
                 graphedSuccessStatistics: [ "p50", "p99", "tm99" ],
-                getRegionalDimensions(region: string) {
+                regionalDimensions(region: string) {
                     return {
                         "Region": region,
                         "Operation": this.operationName
                     }
                 },
-                getZonalDimensions(availabilityZoneId: string, region: string) {
+                zonalDimensions(availabilityZoneId: string, region: string) {
                     return {
                         "Region": region,
                         "Operation": this.operationName,
@@ -468,8 +456,8 @@ test('Fully instrumented service with canaries', () => {
         }   
     };
 
-    service.addCriticalOperation(rideOperation);
-    service.addCriticalOperation(payOperation);
+    service.addOperation(rideOperation);
+    service.addOperation(payOperation);
 
     new MultiAvailabilityZoneObservability(stack, "MAZObservability", {
         instrumentedServiceObservabilityProps: {

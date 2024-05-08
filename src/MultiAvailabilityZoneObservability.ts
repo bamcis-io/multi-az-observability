@@ -6,6 +6,15 @@ import { InstrumentedServiceMultiAZObservability } from "./services/Instrumented
 export { IMultiAvailabilityZoneObservabilityProps } from "./IMultiAvailabilityZoneObservabilityProps";
 export { IMultiAvailabilityZoneObservability } from "./IMultiAvailabiliyZoneObservability";
 export { OutlierDetectionAlgorithm } from "./utilities/OutlierDetectionAlgorithm";
+export { IBasicServiceMultiAZObservabilityProps } from "./services/props/IBasicServiceMultiAZObservabilityProps";
+export { IInstrumentedServiceProps } from "./services/props/IInstrumentedServiceProps";
+export { IService } from "./services/IService";
+export { IAvailabilityZoneMapper } from "./utilities/IAvailabilityZoneMapper";
+export { IOperation } from "./services/IOperation"
+export { IOperationMetricDetails } from "./services/IOperationMetricDetails";
+export { ICanaryTestProps } from "./canaries/props/ICanaryTestProps";
+export { IContributorInsightRuleDetails } from "./alarmsandrules/IContributorInsightRuleDetails";
+export { ICanaryMetrics } from "./services/ICanaryMetrics";
 
 export class MultiAvailabilityZoneObservability extends Construct implements IMultiAvailabilityZoneObservability
 {

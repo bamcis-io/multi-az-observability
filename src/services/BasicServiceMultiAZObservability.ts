@@ -94,7 +94,7 @@ export class BasicServiceMultiAZObservability extends Construct implements IBasi
                     // Get next unique key
                     keyPrefix = AvailabilityAndLatencyMetrics.nextChar(keyPrefix);
 
-                    let availabilityZoneId: string = azMapper.getAvailabilityZoneId(az);
+                    let availabilityZoneId: string = azMapper.availabilityZoneId(az);
                     faultRatePercentageAlarms[availabilityZoneId] = [];
 
                     // 5xx responses from targets
@@ -300,7 +300,7 @@ export class BasicServiceMultiAZObservability extends Construct implements IBasi
             Object.entries(this.natGateways).forEach((entry, index) => {
                 // The number of packet drops for each NAT GW in the AZ
                 let packetDropMetricsForAZ: {[key: string]: IMetric} = {};
-                let availabilityZoneId = azMapper.getAvailabilityZoneId(entry[0]);
+                let availabilityZoneId = azMapper.availabilityZoneId(entry[0]);
                 packetDropPercentageAlarms[availabilityZoneId] = [];
 
                 // Iterate through each NAT GW in the current AZ 

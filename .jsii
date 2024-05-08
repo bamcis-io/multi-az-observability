@@ -3715,6 +3715,9 @@
   },
   "homepage": "https://github.com/bamcis-io/multi-az-observability.git",
   "jsiiVersion": "5.4.9",
+  "keywords": [
+    "cdk"
+  ],
   "license": "MIT",
   "metadata": {
     "jsii": {
@@ -3723,7 +3726,7 @@
       }
     }
   },
-  "name": "multi-az-observability",
+  "name": "multiazobservability",
   "readme": {
     "markdown": "# multi-az-observability"
   },
@@ -3743,13 +3746,13 @@
     },
     "java": {
       "maven": {
-        "artifactId": "multi-az-observability",
-        "groupId": "io.bamcis.multi-az-observability"
+        "artifactId": "multiazobservability",
+        "groupId": "io.bamcis.multiazobservability"
       },
-      "package": "io.bamcis.multi-az-observability"
+      "package": "io.bamcis.multiazobservability"
     },
     "js": {
-      "npm": "multi-az-observability"
+      "npm": "multiazobservability"
     },
     "python": {
       "distName": "bamcis.io.multi-az-observability",
@@ -3757,16 +3760,299 @@
     }
   },
   "types": {
-    "multi-az-observability.IBasicServiceMultiAZObservabilityProps": {
-      "assembly": "multi-az-observability",
+    "multiazobservability.IAvailabilityZoneMapper": {
+      "assembly": "multiazobservability",
+      "docs": {
+        "stability": "stable"
+      },
+      "fqn": "multiazobservability.IAvailabilityZoneMapper",
+      "kind": "interface",
+      "locationInModule": {
+        "filename": "src/utilities/IAvailabilityZoneMapper.ts",
+        "line": 5
+      },
+      "methods": [
+        {
+          "abstract": true,
+          "docs": {
+            "returns": "",
+            "stability": "stable",
+            "summary": "Returns a reference that can be cast to a string array with all of the  Availability Zone Ids."
+          },
+          "locationInModule": {
+            "filename": "src/utilities/IAvailabilityZoneMapper.ts",
+            "line": 75
+          },
+          "name": "allAvailabilityZoneIdsAsArray",
+          "returns": {
+            "type": {
+              "fqn": "aws-cdk-lib.Reference"
+            }
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "remarks": "You can use this string with Fn.Select(x, Fn.Split(\",\", azs)) to\nget a specific Availability Zone Id",
+            "returns": "",
+            "stability": "stable",
+            "summary": "Returns a comma delimited list of Availability Zone Ids for the supplied Availability Zone names."
+          },
+          "locationInModule": {
+            "filename": "src/utilities/IAvailabilityZoneMapper.ts",
+            "line": 68
+          },
+          "name": "allAvailabilityZoneIdsAsCommaDelimitedList",
+          "returns": {
+            "type": {
+              "primitive": "string"
+            }
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "remarks": "You can use this string with Fn.Select(x, Fn.Split(\",\", azs)) to\nget a specific Availability Zone Name",
+            "returns": "",
+            "stability": "stable",
+            "summary": "Gets all of the Availability Zone names in this Region as a comma delimited list."
+          },
+          "locationInModule": {
+            "filename": "src/utilities/IAvailabilityZoneMapper.ts",
+            "line": 91
+          },
+          "name": "allAvailabilityZoneNamesAsCommaDelimitedList",
+          "returns": {
+            "type": {
+              "primitive": "string"
+            }
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "returns": "",
+            "stability": "stable",
+            "summary": "Gets the Availability Zone Id for the given Availability Zone Name in this account."
+          },
+          "locationInModule": {
+            "filename": "src/utilities/IAvailabilityZoneMapper.ts",
+            "line": 29
+          },
+          "name": "availabilityZoneId",
+          "parameters": [
+            {
+              "name": "availabilityZoneName",
+              "type": {
+                "primitive": "string"
+              }
+            }
+          ],
+          "returns": {
+            "type": {
+              "primitive": "string"
+            }
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "returns": "",
+            "stability": "stable",
+            "summary": "Given a letter like \"f\" or \"a\", returns the Availability Zone Id for that  Availability Zone name in this account."
+          },
+          "locationInModule": {
+            "filename": "src/utilities/IAvailabilityZoneMapper.ts",
+            "line": 83
+          },
+          "name": "availabilityZoneIdFromAvailabilityZoneLetter",
+          "parameters": [
+            {
+              "name": "letter",
+              "type": {
+                "primitive": "string"
+              }
+            }
+          ],
+          "returns": {
+            "type": {
+              "primitive": "string"
+            }
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "returns": "",
+            "stability": "stable",
+            "summary": "Returns an array for Availability Zone Ids for the supplied Availability Zone names, they are returned in the same order the names were provided."
+          },
+          "locationInModule": {
+            "filename": "src/utilities/IAvailabilityZoneMapper.ts",
+            "line": 51
+          },
+          "name": "availabilityZoneIdsAsArray",
+          "parameters": [
+            {
+              "name": "availabilityZoneNames",
+              "type": {
+                "collection": {
+                  "elementtype": {
+                    "primitive": "string"
+                  },
+                  "kind": "array"
+                }
+              }
+            }
+          ],
+          "returns": {
+            "type": {
+              "collection": {
+                "elementtype": {
+                  "primitive": "string"
+                },
+                "kind": "array"
+              }
+            }
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "remarks": "You can use this string with Fn.Select(x, Fn.Split(\",\", azs)) to\nget a specific Availability Zone Id",
+            "returns": "",
+            "stability": "stable",
+            "summary": "Returns a comma delimited list of Availability Zone Ids for the supplied Availability Zone names."
+          },
+          "locationInModule": {
+            "filename": "src/utilities/IAvailabilityZoneMapper.ts",
+            "line": 60
+          },
+          "name": "availabilityZoneIdsAsCommaDelimitedList",
+          "parameters": [
+            {
+              "name": "availabilityZoneNames",
+              "type": {
+                "collection": {
+                  "elementtype": {
+                    "primitive": "string"
+                  },
+                  "kind": "array"
+                }
+              }
+            }
+          ],
+          "returns": {
+            "type": {
+              "primitive": "string"
+            }
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "returns": "",
+            "stability": "stable",
+            "summary": "Gets the Availability Zone Name for the given Availability Zone Id in this account."
+          },
+          "locationInModule": {
+            "filename": "src/utilities/IAvailabilityZoneMapper.ts",
+            "line": 36
+          },
+          "name": "availabilityZoneName",
+          "parameters": [
+            {
+              "name": "availabilityZoneId",
+              "type": {
+                "primitive": "string"
+              }
+            }
+          ],
+          "returns": {
+            "type": {
+              "primitive": "string"
+            }
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "returns": "",
+            "stability": "stable",
+            "summary": "Gets the prefix for the region used with Availability Zone Ids, for example in us-east-1, this returns \"use1\"."
+          },
+          "locationInModule": {
+            "filename": "src/utilities/IAvailabilityZoneMapper.ts",
+            "line": 43
+          },
+          "name": "regionPrefixForAvailabilityZoneIds",
+          "returns": {
+            "type": {
+              "primitive": "string"
+            }
+          }
+        }
+      ],
+      "name": "IAvailabilityZoneMapper",
+      "properties": [
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The function that does the mapping."
+          },
+          "locationInModule": {
+            "filename": "src/utilities/IAvailabilityZoneMapper.ts",
+            "line": 10
+          },
+          "name": "function",
+          "type": {
+            "fqn": "aws-cdk-lib.aws_lambda.IFunction"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The log group for the function's logs."
+          },
+          "locationInModule": {
+            "filename": "src/utilities/IAvailabilityZoneMapper.ts",
+            "line": 15
+          },
+          "name": "logGroup",
+          "type": {
+            "fqn": "aws-cdk-lib.aws_logs.ILogGroup"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The custom resource that can be referenced to use Fn::GetAtt functions on to retrieve availability zone names and ids."
+          },
+          "locationInModule": {
+            "filename": "src/utilities/IAvailabilityZoneMapper.ts",
+            "line": 22
+          },
+          "name": "mapper",
+          "type": {
+            "fqn": "aws-cdk-lib.CustomResource"
+          }
+        }
+      ],
+      "symbolId": "src/utilities/IAvailabilityZoneMapper:IAvailabilityZoneMapper"
+    },
+    "multiazobservability.IBasicServiceMultiAZObservabilityProps": {
+      "assembly": "multiazobservability",
       "docs": {
         "stability": "stable",
         "summary": "Properties for creating a basic service."
       },
-      "fqn": "multi-az-observability.IBasicServiceMultiAZObservabilityProps",
+      "fqn": "multiazobservability.IBasicServiceMultiAZObservabilityProps",
       "kind": "interface",
       "locationInModule": {
-        "filename": "src/IBasicServiceMultiAZObservabilityProps.ts",
+        "filename": "src/services/props/IBasicServiceMultiAZObservabilityProps.ts",
         "line": 9
       },
       "name": "IBasicServiceMultiAZObservabilityProps",
@@ -3775,13 +4061,89 @@
           "abstract": true,
           "docs": {
             "stability": "stable",
+            "summary": "Whether to create a dashboard displaying the metrics and alarms."
+          },
+          "locationInModule": {
+            "filename": "src/services/props/IBasicServiceMultiAZObservabilityProps.ts",
+            "line": 60
+          },
+          "name": "createDashboard",
+          "type": {
+            "primitive": "boolean"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The algorithm to use for performing outlier detection."
+          },
+          "locationInModule": {
+            "filename": "src/services/props/IBasicServiceMultiAZObservabilityProps.ts",
+            "line": 50
+          },
+          "name": "outlierDetectionAlgorithm",
+          "type": {
+            "fqn": "multiazobservability.OutlierDetectionAlgorithm"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The threshold for percentage of errors or packet loss to determine if an AZ is an outlier, should be a number between  0 and 1."
+          },
+          "locationInModule": {
+            "filename": "src/services/props/IBasicServiceMultiAZObservabilityProps.ts",
+            "line": 32
+          },
+          "name": "outlierThreshold",
+          "type": {
+            "primitive": "number"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The period to evaluate metrics."
+          },
+          "locationInModule": {
+            "filename": "src/services/props/IBasicServiceMultiAZObservabilityProps.ts",
+            "line": 55
+          },
+          "name": "period",
+          "type": {
+            "fqn": "aws-cdk-lib.Duration"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The service's name."
+          },
+          "locationInModule": {
+            "filename": "src/services/props/IBasicServiceMultiAZObservabilityProps.ts",
+            "line": 25
+          },
+          "name": "serviceName",
+          "type": {
+            "primitive": "string"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
             "summary": "The application load balancers being used by the service."
           },
           "locationInModule": {
-            "filename": "src/IBasicServiceMultiAZObservabilityProps.ts",
+            "filename": "src/services/props/IBasicServiceMultiAZObservabilityProps.ts",
             "line": 20
           },
           "name": "applicationLoadBalancers",
+          "optional": true,
           "type": {
             "collection": {
               "elementtype": {
@@ -3794,16 +4156,34 @@
         {
           "abstract": true,
           "docs": {
+            "remarks": "For example\n1% or 5%.",
             "stability": "stable",
             "summary": "The percentage of faults for a single ALB to consider an AZ to be unhealthy, this should align with your availability goal."
           },
           "locationInModule": {
-            "filename": "src/IBasicServiceMultiAZObservabilityProps.ts",
-            "line": 44
+            "filename": "src/services/props/IBasicServiceMultiAZObservabilityProps.ts",
+            "line": 45
           },
           "name": "faultCountPercentageThreshold",
+          "optional": true,
           "type": {
             "primitive": "number"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "Dashboard interval."
+          },
+          "locationInModule": {
+            "filename": "src/services/props/IBasicServiceMultiAZObservabilityProps.ts",
+            "line": 65
+          },
+          "name": "interval",
+          "optional": true,
+          "type": {
+            "fqn": "aws-cdk-lib.Duration"
           }
         },
         {
@@ -3813,10 +4193,11 @@
             "summary": "(Optional) A map of Availability Zone name to the NAT Gateways in that AZ."
           },
           "locationInModule": {
-            "filename": "src/IBasicServiceMultiAZObservabilityProps.ts",
+            "filename": "src/services/props/IBasicServiceMultiAZObservabilityProps.ts",
             "line": 15
           },
           "name": "natGateways",
+          "optional": true,
           "type": {
             "collection": {
               "elementtype": {
@@ -3835,26 +4216,437 @@
           "abstract": true,
           "docs": {
             "stability": "stable",
-            "summary": "The algorithm to use for performing outlier detection."
+            "summary": "The amount of packet loss in a NAT GW to determine if an AZ is actually impacted, recommendation is 0.01%."
           },
           "locationInModule": {
-            "filename": "src/IBasicServiceMultiAZObservabilityProps.ts",
-            "line": 49
+            "filename": "src/services/props/IBasicServiceMultiAZObservabilityProps.ts",
+            "line": 38
           },
-          "name": "outlierDetectionAlgorithm",
+          "name": "packetLossImpactPercentageThreshold",
+          "optional": true,
           "type": {
-            "fqn": "multi-az-observability.OutlierDetectionAlgorithm"
+            "primitive": "number"
+          }
+        }
+      ],
+      "symbolId": "src/services/props/IBasicServiceMultiAZObservabilityProps:IBasicServiceMultiAZObservabilityProps"
+    },
+    "multiazobservability.ICanaryMetrics": {
+      "assembly": "multiazobservability",
+      "docs": {
+        "stability": "stable",
+        "summary": "Represents metrics for a canary testing a service."
+      },
+      "fqn": "multiazobservability.ICanaryMetrics",
+      "kind": "interface",
+      "locationInModule": {
+        "filename": "src/services/ICanaryMetrics.ts",
+        "line": 7
+      },
+      "name": "ICanaryMetrics",
+      "properties": [
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The canary availability metric details."
+          },
+          "locationInModule": {
+            "filename": "src/services/ICanaryMetrics.ts",
+            "line": 12
+          },
+          "name": "canaryAvailabilityMetricDetails",
+          "type": {
+            "fqn": "multiazobservability.IOperationMetricDetails"
           }
         },
         {
           "abstract": true,
           "docs": {
             "stability": "stable",
-            "summary": "The threshold for percentage of errors or packet loss to determine if an AZ is an outlier, should be a number between  0 and 1."
+            "summary": "The canary latency metric details."
           },
           "locationInModule": {
-            "filename": "src/IBasicServiceMultiAZObservabilityProps.ts",
-            "line": 32
+            "filename": "src/services/ICanaryMetrics.ts",
+            "line": 17
+          },
+          "name": "canaryLatencyMetricDetails",
+          "type": {
+            "fqn": "multiazobservability.IOperationMetricDetails"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The canary details for contributor insights rules."
+          },
+          "locationInModule": {
+            "filename": "src/services/ICanaryMetrics.ts",
+            "line": 22
+          },
+          "name": "canaryContributorInsightRuleDetails",
+          "optional": true,
+          "type": {
+            "fqn": "multiazobservability.IContributorInsightRuleDetails"
+          }
+        }
+      ],
+      "symbolId": "src/services/ICanaryMetrics:ICanaryMetrics"
+    },
+    "multiazobservability.ICanaryTestProps": {
+      "assembly": "multiazobservability",
+      "docs": {
+        "stability": "stable"
+      },
+      "fqn": "multiazobservability.ICanaryTestProps",
+      "kind": "interface",
+      "locationInModule": {
+        "filename": "src/canaries/props/ICanaryTestProps.ts",
+        "line": 6
+      },
+      "name": "ICanaryTestProps",
+      "properties": [
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The Availability Zones being used."
+          },
+          "locationInModule": {
+            "filename": "src/canaries/props/ICanaryTestProps.ts",
+            "line": 51
+          },
+          "name": "availabilityZoneIds",
+          "type": {
+            "collection": {
+              "elementtype": {
+                "primitive": "string"
+              },
+              "kind": "array"
+            }
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The Availability Zone mapper object."
+          },
+          "locationInModule": {
+            "filename": "src/canaries/props/ICanaryTestProps.ts",
+            "line": 46
+          },
+          "name": "availabilityZoneMapper",
+          "type": {
+            "fqn": "multiazobservability.IAvailabilityZoneMapper"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The function that will run the canary requests."
+          },
+          "locationInModule": {
+            "filename": "src/canaries/props/ICanaryTestProps.ts",
+            "line": 11
+          },
+          "name": "function",
+          "type": {
+            "fqn": "aws-cdk-lib.aws_lambda.IFunction"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The load balancer that will be tested against."
+          },
+          "locationInModule": {
+            "filename": "src/canaries/props/ICanaryTestProps.ts",
+            "line": 41
+          },
+          "name": "loadBalancer",
+          "type": {
+            "fqn": "aws-cdk-lib.aws_elasticloadbalancingv2.ILoadBalancerV2"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The operation being tested."
+          },
+          "locationInModule": {
+            "filename": "src/canaries/props/ICanaryTestProps.ts",
+            "line": 36
+          },
+          "name": "operation",
+          "type": {
+            "fqn": "multiazobservability.IOperation"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The number of requests to send on each test."
+          },
+          "locationInModule": {
+            "filename": "src/canaries/props/ICanaryTestProps.ts",
+            "line": 16
+          },
+          "name": "requestCount",
+          "type": {
+            "primitive": "number"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "A schedule expression."
+          },
+          "locationInModule": {
+            "filename": "src/canaries/props/ICanaryTestProps.ts",
+            "line": 21
+          },
+          "name": "schedule",
+          "type": {
+            "primitive": "string"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "Any headers to include."
+          },
+          "locationInModule": {
+            "filename": "src/canaries/props/ICanaryTestProps.ts",
+            "line": 31
+          },
+          "name": "headers",
+          "optional": true,
+          "type": {
+            "collection": {
+              "elementtype": {
+                "primitive": "string"
+              },
+              "kind": "map"
+            }
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "Data to supply in a POST, PUT, or PATCH operation."
+          },
+          "locationInModule": {
+            "filename": "src/canaries/props/ICanaryTestProps.ts",
+            "line": 26
+          },
+          "name": "postData",
+          "optional": true,
+          "type": {
+            "primitive": "string"
+          }
+        }
+      ],
+      "symbolId": "src/canaries/props/ICanaryTestProps:ICanaryTestProps"
+    },
+    "multiazobservability.IContributorInsightRuleDetails": {
+      "assembly": "multiazobservability",
+      "docs": {
+        "stability": "stable"
+      },
+      "fqn": "multiazobservability.IContributorInsightRuleDetails",
+      "kind": "interface",
+      "locationInModule": {
+        "filename": "src/alarmsandrules/IContributorInsightRuleDetails.d.ts",
+        "line": 2
+      },
+      "name": "IContributorInsightRuleDetails",
+      "properties": [
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The path in the log files to the field that identifies the Availability Zone Id that the request was handled in, for example { \"AZ-ID\": \"use1-az1\" } would have a path of $.AZ-ID."
+          },
+          "locationInModule": {
+            "filename": "src/alarmsandrules/IContributorInsightRuleDetails.d.ts",
+            "line": 29
+          },
+          "name": "availabilityZoneIdJsonPath",
+          "type": {
+            "primitive": "string"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The path in the log files to the field that identifies if the response resulted in a fault, for example { \"Fault\" : 1 } would have a path of $.Fault."
+          },
+          "locationInModule": {
+            "filename": "src/alarmsandrules/IContributorInsightRuleDetails.d.ts",
+            "line": 23
+          },
+          "name": "faultMetricJsonPath",
+          "type": {
+            "primitive": "string"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The JSON path to the instance id field in the log files, only required for server-side rules."
+          },
+          "locationInModule": {
+            "filename": "src/alarmsandrules/IContributorInsightRuleDetails.d.ts",
+            "line": 34
+          },
+          "name": "instanceIdJsonPath",
+          "type": {
+            "primitive": "string"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "remarks": "If\nthis is not provided, Contributor Insight rules cannot be created.",
+            "stability": "stable",
+            "summary": "The log groups where CloudWatch logs for the operation are located."
+          },
+          "locationInModule": {
+            "filename": "src/alarmsandrules/IContributorInsightRuleDetails.d.ts",
+            "line": 7
+          },
+          "name": "logGroups",
+          "type": {
+            "collection": {
+              "elementtype": {
+                "fqn": "aws-cdk-lib.aws_logs.ILogGroup"
+              },
+              "kind": "array"
+            }
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The path in the log files to the field that identifies the operation the log file is for."
+          },
+          "locationInModule": {
+            "filename": "src/alarmsandrules/IContributorInsightRuleDetails.d.ts",
+            "line": 18
+          },
+          "name": "operationNameJsonPath",
+          "type": {
+            "primitive": "string"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "remarks": "This could either be success latency or fault\nlatency depending on the alarms and rules you are creating.",
+            "stability": "stable",
+            "summary": "The path in the log files to the field that indicates the latency for the response."
+          },
+          "locationInModule": {
+            "filename": "src/alarmsandrules/IContributorInsightRuleDetails.d.ts",
+            "line": 13
+          },
+          "name": "successLatencyMetricJsonPath",
+          "type": {
+            "primitive": "string"
+          }
+        }
+      ],
+      "symbolId": "src/alarmsandrules/IContributorInsightRuleDetails:IContributorInsightRuleDetails"
+    },
+    "multiazobservability.IInstrumentedServiceProps": {
+      "assembly": "multiazobservability",
+      "docs": {
+        "stability": "stable"
+      },
+      "fqn": "multiazobservability.IInstrumentedServiceProps",
+      "kind": "interface",
+      "locationInModule": {
+        "filename": "src/services/props/IInstrumentedServiceProps.ts",
+        "line": 6
+      },
+      "name": "IInstrumentedServiceProps",
+      "properties": [
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable"
+          },
+          "locationInModule": {
+            "filename": "src/services/props/IInstrumentedServiceProps.ts",
+            "line": 16
+          },
+          "name": "availabilityZoneMapper",
+          "type": {
+            "fqn": "multiazobservability.IAvailabilityZoneMapper"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable"
+          },
+          "locationInModule": {
+            "filename": "src/services/props/IInstrumentedServiceProps.ts",
+            "line": 10
+          },
+          "name": "createDashboard",
+          "type": {
+            "primitive": "boolean"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable"
+          },
+          "locationInModule": {
+            "filename": "src/services/props/IInstrumentedServiceProps.ts",
+            "line": 18
+          },
+          "name": "interval",
+          "type": {
+            "fqn": "aws-cdk-lib.Duration"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable"
+          },
+          "locationInModule": {
+            "filename": "src/services/props/IInstrumentedServiceProps.ts",
+            "line": 14
+          },
+          "name": "loadBalancer",
+          "type": {
+            "fqn": "aws-cdk-lib.aws_elasticloadbalancingv2.ILoadBalancerV2"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable"
+          },
+          "locationInModule": {
+            "filename": "src/services/props/IInstrumentedServiceProps.ts",
+            "line": 12
           },
           "name": "outlierThreshold",
           "type": {
@@ -3864,57 +4656,41 @@
         {
           "abstract": true,
           "docs": {
-            "stability": "stable",
-            "summary": "The amount of packet loss in a NAT GW to determine if an AZ is actually impacted, recommendation is 0.01%."
+            "stability": "stable"
           },
           "locationInModule": {
-            "filename": "src/IBasicServiceMultiAZObservabilityProps.ts",
-            "line": 38
+            "filename": "src/services/props/IInstrumentedServiceProps.ts",
+            "line": 8
           },
-          "name": "packetLossImpactPercentageThreshold",
+          "name": "service",
           "type": {
-            "primitive": "number"
+            "fqn": "multiazobservability.IService"
           }
         },
         {
           "abstract": true,
           "docs": {
-            "stability": "stable",
-            "summary": "The period to evaluate metrics."
+            "stability": "stable"
           },
           "locationInModule": {
-            "filename": "src/IBasicServiceMultiAZObservabilityProps.ts",
-            "line": 54
+            "filename": "src/services/props/IInstrumentedServiceProps.ts",
+            "line": 20
           },
-          "name": "period",
+          "name": "addSyntheticCanaries",
+          "optional": true,
           "type": {
-            "fqn": "aws-cdk-lib.Duration"
-          }
-        },
-        {
-          "abstract": true,
-          "docs": {
-            "stability": "stable",
-            "summary": "The service's name."
-          },
-          "locationInModule": {
-            "filename": "src/IBasicServiceMultiAZObservabilityProps.ts",
-            "line": 25
-          },
-          "name": "serviceName",
-          "type": {
-            "primitive": "string"
+            "primitive": "boolean"
           }
         }
       ],
-      "symbolId": "src/IBasicServiceMultiAZObservabilityProps:IBasicServiceMultiAZObservabilityProps"
+      "symbolId": "src/services/props/IInstrumentedServiceProps:IInstrumentedServiceProps"
     },
-    "multi-az-observability.IMultiAvailabilityZoneObservability": {
-      "assembly": "multi-az-observability",
+    "multiazobservability.IMultiAvailabilityZoneObservability": {
+      "assembly": "multiazobservability",
       "docs": {
         "stability": "stable"
       },
-      "fqn": "multi-az-observability.IMultiAvailabilityZoneObservability",
+      "fqn": "multiazobservability.IMultiAvailabilityZoneObservability",
       "kind": "interface",
       "locationInModule": {
         "filename": "src/IMultiAvailabiliyZoneObservability.ts",
@@ -3923,16 +4699,16 @@
       "name": "IMultiAvailabilityZoneObservability",
       "symbolId": "src/IMultiAvailabiliyZoneObservability:IMultiAvailabilityZoneObservability"
     },
-    "multi-az-observability.IMultiAvailabilityZoneObservabilityProps": {
-      "assembly": "multi-az-observability",
+    "multiazobservability.IMultiAvailabilityZoneObservabilityProps": {
+      "assembly": "multiazobservability",
       "docs": {
         "stability": "stable"
       },
-      "fqn": "multi-az-observability.IMultiAvailabilityZoneObservabilityProps",
+      "fqn": "multiazobservability.IMultiAvailabilityZoneObservabilityProps",
       "kind": "interface",
       "locationInModule": {
         "filename": "src/IMultiAvailabilityZoneObservabilityProps.ts",
-        "line": 3
+        "line": 4
       },
       "name": "IMultiAvailabilityZoneObservabilityProps",
       "properties": [
@@ -3943,30 +4719,668 @@
           },
           "locationInModule": {
             "filename": "src/IMultiAvailabilityZoneObservabilityProps.ts",
-            "line": 5
+            "line": 6
           },
           "name": "basicServiceObservabilityProps",
+          "optional": true,
           "type": {
-            "fqn": "multi-az-observability.IBasicServiceMultiAZObservabilityProps"
+            "fqn": "multiazobservability.IBasicServiceMultiAZObservabilityProps"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable"
+          },
+          "locationInModule": {
+            "filename": "src/IMultiAvailabilityZoneObservabilityProps.ts",
+            "line": 8
+          },
+          "name": "instrumentedServiceObservabilityProps",
+          "optional": true,
+          "type": {
+            "fqn": "multiazobservability.IInstrumentedServiceProps"
           }
         }
       ],
       "symbolId": "src/IMultiAvailabilityZoneObservabilityProps:IMultiAvailabilityZoneObservabilityProps"
     },
-    "multi-az-observability.MultiAvailabilityZoneObservability": {
-      "assembly": "multi-az-observability",
+    "multiazobservability.IOperation": {
+      "assembly": "multiazobservability",
+      "docs": {
+        "stability": "stable"
+      },
+      "fqn": "multiazobservability.IOperation",
+      "kind": "interface",
+      "locationInModule": {
+        "filename": "src/services/IOperation.ts",
+        "line": 7
+      },
+      "name": "IOperation",
+      "properties": [
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The http methods supported by the operation."
+          },
+          "locationInModule": {
+            "filename": "src/services/IOperation.ts",
+            "line": 61
+          },
+          "name": "httpMethods",
+          "type": {
+            "collection": {
+              "elementtype": {
+                "primitive": "string"
+              },
+              "kind": "array"
+            }
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "Indicates this is a critical operation for the service and will be included in service level metrics and  dashboards."
+          },
+          "locationInModule": {
+            "filename": "src/services/IOperation.ts",
+            "line": 50
+          },
+          "name": "isCritical",
+          "type": {
+            "primitive": "boolean"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The name of the operation."
+          },
+          "locationInModule": {
+            "filename": "src/services/IOperation.ts",
+            "line": 17
+          },
+          "name": "operationName",
+          "type": {
+            "primitive": "string"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The HTTP path for the operation for canaries to run against, something like \"/products/list\"."
+          },
+          "locationInModule": {
+            "filename": "src/services/IOperation.ts",
+            "line": 23
+          },
+          "name": "path",
+          "type": {
+            "primitive": "string"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The server side availability metric details."
+          },
+          "locationInModule": {
+            "filename": "src/services/IOperation.ts",
+            "line": 28
+          },
+          "name": "serverSideAvailabilityMetricDetails",
+          "type": {
+            "fqn": "multiazobservability.IOperationMetricDetails"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The server side latency metric details."
+          },
+          "locationInModule": {
+            "filename": "src/services/IOperation.ts",
+            "line": 33
+          },
+          "name": "serverSideLatencyMetricDetails",
+          "type": {
+            "fqn": "multiazobservability.IOperationMetricDetails"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The service the operation is associated with."
+          },
+          "locationInModule": {
+            "filename": "src/services/IOperation.ts",
+            "line": 12
+          },
+          "name": "service",
+          "type": {
+            "fqn": "multiazobservability.IService"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "Optional metric details if the service has a canary."
+          },
+          "locationInModule": {
+            "filename": "src/services/IOperation.ts",
+            "line": 38
+          },
+          "name": "canaryMetricDetails",
+          "optional": true,
+          "type": {
+            "fqn": "multiazobservability.ICanaryMetrics"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "If you define this property, a synthetic canary will be provisioned to test the operation."
+          },
+          "locationInModule": {
+            "filename": "src/services/IOperation.ts",
+            "line": 56
+          },
+          "name": "canaryProps",
+          "optional": true,
+          "type": {
+            "fqn": "multiazobservability.ICanaryTestProps"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The server side details for contributor insights rules."
+          },
+          "locationInModule": {
+            "filename": "src/services/IOperation.ts",
+            "line": 43
+          },
+          "name": "serverSideContributorInsightRuleDetails",
+          "optional": true,
+          "type": {
+            "fqn": "multiazobservability.IContributorInsightRuleDetails"
+          }
+        }
+      ],
+      "symbolId": "src/services/IOperation:IOperation"
+    },
+    "multiazobservability.IOperationMetricDetails": {
+      "assembly": "multiazobservability",
+      "docs": {
+        "stability": "stable",
+        "summary": "Generic metric details for an operation."
+      },
+      "fqn": "multiazobservability.IOperationMetricDetails",
+      "kind": "interface",
+      "locationInModule": {
+        "filename": "src/services/IOperationMetricDetails.ts",
+        "line": 8
+      },
+      "methods": [
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "Gets the regional dimensions for these metrics, expected to return something like {   \"Region\": \"us-east-1\",   \"Operation\": \"Ride\",   \"Service\": \"WildRydes\" }."
+          },
+          "locationInModule": {
+            "filename": "src/services/IOperationMetricDetails.ts",
+            "line": 81
+          },
+          "name": "regionalDimensions",
+          "parameters": [
+            {
+              "name": "region",
+              "type": {
+                "primitive": "string"
+              }
+            }
+          ],
+          "returns": {
+            "type": {
+              "collection": {
+                "elementtype": {
+                  "primitive": "string"
+                },
+                "kind": "map"
+              }
+            }
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "Gets the zonal dimensions for these metrics, expected to return something like  {   \"Region\": \"us-east-1\",   \"AZ-ID\": \"use1-az1\",   \"Operation\": \"Ride\",   \"Service\": \"WildRydes\" }."
+          },
+          "locationInModule": {
+            "filename": "src/services/IOperationMetricDetails.ts",
+            "line": 93
+          },
+          "name": "zonalDimensions",
+          "parameters": [
+            {
+              "name": "availabilityZoneId",
+              "type": {
+                "primitive": "string"
+              }
+            },
+            {
+              "name": "region",
+              "type": {
+                "primitive": "string"
+              }
+            }
+          ],
+          "returns": {
+            "type": {
+              "collection": {
+                "elementtype": {
+                  "primitive": "string"
+                },
+                "kind": "map"
+              }
+            }
+          }
+        }
+      ],
+      "name": "IOperationMetricDetails",
+      "properties": [
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The statistic used for alarms, for availability metrics this should be \"Sum\", for latency metrics it could something like \"p99\" or \"p99.9\"."
+          },
+          "locationInModule": {
+            "filename": "src/services/IOperationMetricDetails.ts",
+            "line": 31
+          },
+          "name": "alarmStatistic",
+          "type": {
+            "primitive": "string"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The number of datapoints to alarm on for latency and availability alarms."
+          },
+          "locationInModule": {
+            "filename": "src/services/IOperationMetricDetails.ts",
+            "line": 59
+          },
+          "name": "datapointsToAlarm",
+          "type": {
+            "primitive": "number"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The number of evaluation periods for latency and availabiltiy alarms."
+          },
+          "locationInModule": {
+            "filename": "src/services/IOperationMetricDetails.ts",
+            "line": 55
+          },
+          "name": "evaluationPeriods",
+          "type": {
+            "primitive": "number"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The threshold for alarms associated with fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%."
+          },
+          "locationInModule": {
+            "filename": "src/services/IOperationMetricDetails.ts",
+            "line": 71
+          },
+          "name": "faultAlarmThreshold",
+          "type": {
+            "primitive": "number"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The names of fault indicating metrics."
+          },
+          "locationInModule": {
+            "filename": "src/services/IOperationMetricDetails.ts",
+            "line": 26
+          },
+          "name": "faultMetricNames",
+          "type": {
+            "collection": {
+              "elementtype": {
+                "primitive": "string"
+              },
+              "kind": "array"
+            }
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The CloudWatch metric namespace for these metrics."
+          },
+          "locationInModule": {
+            "filename": "src/services/IOperationMetricDetails.ts",
+            "line": 18
+          },
+          "name": "metricNamespace",
+          "type": {
+            "primitive": "string"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The operation these metric details are for."
+          },
+          "locationInModule": {
+            "filename": "src/services/IOperationMetricDetails.ts",
+            "line": 14
+          },
+          "name": "operationName",
+          "type": {
+            "primitive": "string"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The period for the metrics."
+          },
+          "locationInModule": {
+            "filename": "src/services/IOperationMetricDetails.ts",
+            "line": 51
+          },
+          "name": "period",
+          "type": {
+            "fqn": "aws-cdk-lib.Duration"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The threshold for alarms associated with success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%."
+          },
+          "locationInModule": {
+            "filename": "src/services/IOperationMetricDetails.ts",
+            "line": 65
+          },
+          "name": "successAlarmThreshold",
+          "type": {
+            "primitive": "number"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The names of success indicating metrics."
+          },
+          "locationInModule": {
+            "filename": "src/services/IOperationMetricDetails.ts",
+            "line": 22
+          },
+          "name": "successMetricNames",
+          "type": {
+            "collection": {
+              "elementtype": {
+                "primitive": "string"
+              },
+              "kind": "array"
+            }
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The unit used for these metrics."
+          },
+          "locationInModule": {
+            "filename": "src/services/IOperationMetricDetails.ts",
+            "line": 47
+          },
+          "name": "unit",
+          "type": {
+            "fqn": "aws-cdk-lib.aws_cloudwatch.Unit"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "remarks": "For availability\nmetrics this will typically just be \"Sum\".",
+            "stability": "stable",
+            "summary": "The statistics for faults you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99."
+          },
+          "locationInModule": {
+            "filename": "src/services/IOperationMetricDetails.ts",
+            "line": 43
+          },
+          "name": "graphedFaultStatistics",
+          "optional": true,
+          "type": {
+            "collection": {
+              "elementtype": {
+                "primitive": "string"
+              },
+              "kind": "array"
+            }
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "remarks": "For availability\nmetrics this will typically just be \"Sum\".",
+            "stability": "stable",
+            "summary": "The statistics for successes you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99."
+          },
+          "locationInModule": {
+            "filename": "src/services/IOperationMetricDetails.ts",
+            "line": 37
+          },
+          "name": "graphedSuccessStatistics",
+          "optional": true,
+          "type": {
+            "collection": {
+              "elementtype": {
+                "primitive": "string"
+              },
+              "kind": "array"
+            }
+          }
+        }
+      ],
+      "symbolId": "src/services/IOperationMetricDetails:IOperationMetricDetails"
+    },
+    "multiazobservability.IService": {
+      "assembly": "multiazobservability",
+      "docs": {
+        "stability": "stable"
+      },
+      "fqn": "multiazobservability.IService",
+      "kind": "interface",
+      "locationInModule": {
+        "filename": "src/services/IService.ts",
+        "line": 4
+      },
+      "methods": [
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "Adds an operation to this service and sets the operation's service property."
+          },
+          "locationInModule": {
+            "filename": "src/services/IService.ts",
+            "line": 41
+          },
+          "name": "addOperation",
+          "parameters": [
+            {
+              "name": "operation",
+              "type": {
+                "fqn": "multiazobservability.IOperation"
+              }
+            }
+          ],
+          "returns": {
+            "type": {
+              "fqn": "multiazobservability.IService"
+            }
+          }
+        }
+      ],
+      "name": "IService",
+      "properties": [
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "A list of the Availability Zone Ids used by this application."
+          },
+          "locationInModule": {
+            "filename": "src/services/IService.ts",
+            "line": 25
+          },
+          "name": "availabilityZoneIds",
+          "type": {
+            "collection": {
+              "elementtype": {
+                "primitive": "string"
+              },
+              "kind": "array"
+            }
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The base endpoint for this service, like \"https://www.example.com\". Operation paths will be appended to this endpoint for canary testing the service."
+          },
+          "locationInModule": {
+            "filename": "src/services/IService.ts",
+            "line": 14
+          },
+          "name": "baseUrl",
+          "type": {
+            "primitive": "string"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "remarks": "This is an absolute value of faults\nbeing produced by all critical operations in aggregate.",
+            "stability": "stable",
+            "summary": "The fault count threshold that indicates the service is unhealthy."
+          },
+          "locationInModule": {
+            "filename": "src/services/IService.ts",
+            "line": 20
+          },
+          "name": "faultCountThreshold",
+          "type": {
+            "primitive": "number"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The operations that are part of this service."
+          },
+          "locationInModule": {
+            "filename": "src/services/IService.ts",
+            "line": 35
+          },
+          "name": "operations",
+          "type": {
+            "collection": {
+              "elementtype": {
+                "fqn": "multiazobservability.IOperation"
+              },
+              "kind": "array"
+            }
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The period for which metrics for the service should be aggregated."
+          },
+          "locationInModule": {
+            "filename": "src/services/IService.ts",
+            "line": 30
+          },
+          "name": "period",
+          "type": {
+            "fqn": "aws-cdk-lib.Duration"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The name of your service."
+          },
+          "locationInModule": {
+            "filename": "src/services/IService.ts",
+            "line": 9
+          },
+          "name": "serviceName",
+          "type": {
+            "primitive": "string"
+          }
+        }
+      ],
+      "symbolId": "src/services/IService:IService"
+    },
+    "multiazobservability.MultiAvailabilityZoneObservability": {
+      "assembly": "multiazobservability",
       "base": "constructs.Construct",
       "docs": {
         "stability": "stable"
       },
-      "fqn": "multi-az-observability.MultiAvailabilityZoneObservability",
+      "fqn": "multiazobservability.MultiAvailabilityZoneObservability",
       "initializer": {
         "docs": {
           "stability": "stable"
         },
         "locationInModule": {
           "filename": "src/MultiAvailabilityZoneObservability.ts",
-          "line": 12
+          "line": 21
         },
         "parameters": [
           {
@@ -3984,29 +5398,29 @@
           {
             "name": "props",
             "type": {
-              "fqn": "multi-az-observability.IMultiAvailabilityZoneObservabilityProps"
+              "fqn": "multiazobservability.IMultiAvailabilityZoneObservabilityProps"
             }
           }
         ]
       },
       "interfaces": [
-        "multi-az-observability.IMultiAvailabilityZoneObservability"
+        "multiazobservability.IMultiAvailabilityZoneObservability"
       ],
       "kind": "class",
       "locationInModule": {
         "filename": "src/MultiAvailabilityZoneObservability.ts",
-        "line": 10
+        "line": 19
       },
       "name": "MultiAvailabilityZoneObservability",
       "symbolId": "src/MultiAvailabilityZoneObservability:MultiAvailabilityZoneObservability"
     },
-    "multi-az-observability.OutlierDetectionAlgorithm": {
-      "assembly": "multi-az-observability",
+    "multiazobservability.OutlierDetectionAlgorithm": {
+      "assembly": "multiazobservability",
       "docs": {
         "stability": "stable",
         "summary": "Available algorithms for performing outlier detection, currently only STATIC is supported."
       },
-      "fqn": "multi-az-observability.OutlierDetectionAlgorithm",
+      "fqn": "multiazobservability.OutlierDetectionAlgorithm",
       "kind": "enum",
       "locationInModule": {
         "filename": "src/utilities/OutlierDetectionAlgorithm.ts",
@@ -4040,5 +5454,5 @@
     }
   },
   "version": "0.1.0",
-  "fingerprint": "RjG44xIwQTd++d/VIs/hNSELuBurUgltrAJmYyHPIJg="
+  "fingerprint": "Ue3B1X9byXCTs3EsVCFr/TmQtCBa6bHM1OPqBZvb3kc="
 }

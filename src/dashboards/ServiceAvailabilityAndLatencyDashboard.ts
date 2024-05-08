@@ -59,7 +59,7 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
 
             let usingMetrics: {[key: string]: IMetric} = {};
 
-            props.service.criticalOperations.forEach(x => {               
+            props.service.operations.filter(x => x.isCritical == true).forEach(x => {               
                 usingMetrics[`${keyPrefix}${counter++}`] = AvailabilityAndLatencyMetrics.createZonalAvailabilityMetric({
                     availabilityZoneId: availabilityZoneId,
                     metricDetails: x.serverSideAvailabilityMetricDetails,
@@ -118,7 +118,7 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
             left: AvailabilityAndLatencyMetrics.createRegionalServiceAvailabilityMetrics({
                 label: Fn.ref("AWS::Region") + " tps",
                 period: props.service.period,
-                availabilityMetricProps: props.service.criticalOperations.map(x => {
+                availabilityMetricProps: props.service.operations.filter(x => x.isCritical).map(x => {
                     return {
                         label: x.operationName,
                         metricDetails: x.serverSideAvailabilityMetricDetails,
@@ -137,7 +137,7 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
         {
             let availabilityZoneId: string = props.service.availabilityZoneIds[i];
             let zonalMetricProps = {
-                availabilityMetricProps: props.service.criticalOperations.map(x => {
+                availabilityMetricProps: props.service.operations.filter(x => x.isCritical).map(x => {
                     return {
                         availabilityZoneId: availabilityZoneId,
                         label: x.operationName,
@@ -174,7 +174,7 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
     
         widgets = widgets.concat(ServiceAvailabilityAndLatencyDashboard.generateAvailabilityWidgets(props, false));
         
-        if (props.service.criticalOperations.filter(x => x.canaryMetricDetails !== undefined).length > 0)
+        if (props.service.operations.filter(x => x.isCritical && x.canaryMetricDetails !== undefined).length > 0)
         {
             widgets.push(new TextWidget({ height: 2, width: 24, markdown: "**Canary Measured Availability**\n(Each operation is equally weighted regardless of request volume)" }));
         
@@ -196,7 +196,7 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
             left: AvailabilityAndLatencyMetrics.createRegionalServiceAvailabilityMetrics({
                 label:  Fn.ref("AWS::Region") + " availability",
                 period: props.service.period,
-                availabilityMetricProps: this.createRegionalAvailabilityMetricProps(props.service.criticalOperations, isCanary, AvailabilityMetricType.SUCCESS_RATE)
+                availabilityMetricProps: this.createRegionalAvailabilityMetricProps(props.service.operations.filter(x => x.isCritical), isCanary, AvailabilityMetricType.SUCCESS_RATE)
             }),
             statistic: "Sum",
             leftYAxis: {
@@ -208,7 +208,7 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
             right: AvailabilityAndLatencyMetrics.createRegionalServiceAvailabilityMetrics({
                 label:  Fn.ref("AWS::Region") + " faults",
                 period: props.service.period,
-                availabilityMetricProps: this.createRegionalAvailabilityMetricProps(props.service.criticalOperations, isCanary, AvailabilityMetricType.FAULT_COUNT)
+                availabilityMetricProps: this.createRegionalAvailabilityMetricProps(props.service.operations.filter(x => x.isCritical), isCanary, AvailabilityMetricType.FAULT_COUNT)
             }),
             rightYAxis: {
                 label: "Faults",
@@ -237,7 +237,7 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
                 left: AvailabilityAndLatencyMetrics.createZonalServiceAvailabilityMetrics({
                     label: availabilityZoneId + " availability",
                     period: props.service.period,
-                    availabilityMetricProps: this.createZonalAvailabilityMetricProps(props.service.criticalOperations, availabilityZoneId, isCanary, AvailabilityMetricType.SUCCESS_RATE)
+                    availabilityMetricProps: this.createZonalAvailabilityMetricProps(props.service.operations.filter(x => x.isCritical), availabilityZoneId, isCanary, AvailabilityMetricType.SUCCESS_RATE)
                 }),
                 statistic: "Sum",
                 leftYAxis: {
@@ -249,7 +249,7 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
                 right: AvailabilityAndLatencyMetrics.createZonalServiceAvailabilityMetrics({
                     label: availabilityZoneId + " faults",
                     period: props.service.period,
-                    availabilityMetricProps: this.createZonalAvailabilityMetricProps(props.service.criticalOperations, availabilityZoneId, isCanary, AvailabilityMetricType.FAULT_COUNT)
+                    availabilityMetricProps: this.createZonalAvailabilityMetricProps(props.service.operations.filter(x => x.isCritical), availabilityZoneId, isCanary, AvailabilityMetricType.FAULT_COUNT)
                 }),
                 rightYAxis: {
                     label: "Faults",

@@ -46,7 +46,7 @@ export class ServiceAlarmsAndRules extends Construct implements IServiceAlarmsAn
         super(scope, id);
         this.service = props.service;
 
-        let criticalOperations: string[] = props.service.criticalOperations.map(x => x.operationName);
+        let criticalOperations: string[] = props.service.operations.filter(x => x.isCritical == true).map(x => x.operationName);
         let counter: number = 1;
         this.zonalAggregateIsolatedImpactAlarms = [];
        
@@ -76,7 +76,7 @@ export class ServiceAlarmsAndRules extends Construct implements IServiceAlarmsAn
 
         let regionalOperationFaultCountMetrics: {[key: string]: IMetric} = {};
 
-        props.service.criticalOperations.forEach(x => {
+        props.service.operations.filter(x => x.isCritical == true).forEach(x => {
             keyPrefix = AvailabilityAndLatencyMetrics.nextChar(keyPrefix);
 
             regionalOperationFaultCountMetrics[keyPrefix] = AvailabilityAndLatencyMetrics.createRegionalAvailabilityMetric({

@@ -11,7 +11,7 @@ export interface IService
     /**
      * The base endpoint for this service, like "https://www.example.com". Operation paths will be appended to this endpoint for canary testing the service.
      */
-    endpoint: URL;
+    baseUrl: string;
 
     /**
      * The fault count threshold that indicates the service is unhealthy. This is an absolute value of faults
@@ -27,7 +27,7 @@ export interface IService
     /**
      * The period for which metrics for the service should be aggregated 
      */
-     period: Duration;
+    period: Duration;
 
     /**
      * The operations that are part of this service
@@ -35,20 +35,8 @@ export interface IService
     operations: IOperation[];
 
     /**
-     * The operations considered critical to the service. Operations that included here
-     * should also be in the "operations" property.
-     */
-    criticalOperations: IOperation[];
-
-    /**
      * Adds an operation to this service and sets the operation's
      * service property
      */
     addOperation(operation: IOperation): IService;
-
-    /**
-     * Adds a critical operation (and adds to the overall operations) and
-     * sets the operation's service property
-     */
-    addCriticalOperation(operation: IOperation): IService;
 }

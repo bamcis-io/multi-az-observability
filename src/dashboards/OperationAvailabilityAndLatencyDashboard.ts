@@ -652,7 +652,7 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
         for (let i = 0; i < props.availabilityZoneIds.length; i++)
         {
             let availabilityZoneId: string = props.availabilityZoneIds[i];
-            let availabilityZoneName: string = props.availabilityZoneMapper.getAvailabilityZoneName(availabilityZoneId);
+            let availabilityZoneName: string = props.availabilityZoneMapper.availabilityZoneName(availabilityZoneId);
 
             albWidgets.push(new GraphWidget({
                 height: 6,
@@ -695,7 +695,7 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
         for (let i = 0; i < props.availabilityZoneIds.length; i++)
         {
             let availabilityZoneId: string = props.availabilityZoneIds[i]
-            let availabilityZoneName: string = props.availabilityZoneMapper.getAvailabilityZoneName(availabilityZoneId);
+            let availabilityZoneName: string = props.availabilityZoneMapper.availabilityZoneName(availabilityZoneId);
 
             albWidgets.push(new GraphWidget({
                 height: 6,

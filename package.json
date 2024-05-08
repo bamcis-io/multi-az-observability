@@ -1,5 +1,5 @@
 {
-  "name": "multi-az-observability",
+  "name": "multiazobservability",
   "version": "0.1.0",
   "description": "Observability constructs for multi-AZ architectures",
   "author": {
@@ -60,10 +60,10 @@
         "packageName": "multi-az-observability"
       },
       "java": {
-        "package": "io.bamcis.multi-az-observability",
+        "package": "io.bamcis.multiazobservability",
         "maven": {
-          "groupId": "io.bamcis.multi-az-observability",
-          "artifactId": "multi-az-observability"
+          "groupId": "io.bamcis.multiazobservability",
+          "artifactId": "multiazobservability"
         }
       }
     }
