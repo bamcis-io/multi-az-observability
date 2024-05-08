@@ -1,5 +1,5 @@
+import { IContributorInsightRuleDetails } from "../../services/IContributorInsightRuleDetails";
 import { IOperationMetricDetails } from "../../services/IOperationMetricDetails";
-import { IContributorInsightRuleDetails } from "../IContributorInsightRuleDetails";
 
 /**
  * The base props for an operation regional alarms and rules configuration

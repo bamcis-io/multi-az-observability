@@ -1,7 +1,7 @@
 import { ILoadBalancerV2 } from "aws-cdk-lib/aws-elasticloadbalancingv2";
-import { IContributorInsightRuleDetails } from "../IContributorInsightRuleDetails";
 import { OutlierDetectionAlgorithm } from "../../utilities/OutlierDetectionAlgorithm";
 import { IOperation } from "../../services/IOperation";
+import { IContributorInsightRuleDetails } from "../../services/IContributorInsightRuleDetails";
 
 /**
  * The properties for the operation alarms and rules

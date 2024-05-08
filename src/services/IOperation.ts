@@ -4,6 +4,9 @@ import { IOperationMetricDetails } from "./IOperationMetricDetails";
 import { IService } from "./IService";
 import { ICanaryTestProps } from "../canaries/props/ICanaryTestProps";
 
+/**
+ * A single operation that is part of a service
+ */
 export interface IOperation
 {
     /**

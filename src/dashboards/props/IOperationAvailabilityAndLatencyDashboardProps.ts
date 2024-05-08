@@ -2,7 +2,6 @@ import { Duration } from "aws-cdk-lib";
 import { ILoadBalancerV2 } from "aws-cdk-lib/aws-elasticloadbalancingv2";
 import { IAlarm, CfnInsightRule } from "aws-cdk-lib/aws-cloudwatch";
 import { IOperation } from "../../services/IOperation";
-import { IAvailabilityZoneMapper } from "../../utilities/IAvailabilityZoneMapper";
 
 /**
  * Properties for creating an availability and latency dashboard for 
@@ -19,11 +18,6 @@ export interface IOperationAvailabilityAndLatencyDashboardProps
      * The Availability Zone Ids being used for the operation
      */
     availabilityZoneIds: string[];
-
-    /**
-     * The availability zone mapper to translate az names to az ids
-     */
-    availabilityZoneMapper: IAvailabilityZoneMapper;
 
     /**
      * The interval of the dashboard

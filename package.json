@@ -1,7 +1,7 @@
 {
-  "name": "multiazobservability",
+  "name": "multi-az-observability",
   "version": "0.1.0",
-  "description": "Observability constructs for multi-AZ architectures",
+  "description": "A pattern for observability in multi-AZ architectures to detect single AZ faults",
   "author": {
     "name": "Mike Haken",
     "email": "mhaken@amazon.com"
@@ -20,7 +20,8 @@
     "build:watch": "jsii --watch",
     "package": "jsii-pacmak",
     "test": "tsc && jest",
-    "cdk": "cdk"
+    "cdk": "cdk",
+    "awslint": "awslint"
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",
@@ -40,8 +41,10 @@
     "constructs": "^10.0.0"
   },
   "dependencies": {
-    "aws-cdk-lib": "2.138.0",
+    "aws-cdk-lib": "^2.0.0",
     "constructs": "^10.0.0"
+  },
+  "awslint": {
   },
   "jsii": {
     "outdir": "dist",

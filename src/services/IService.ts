@@ -1,6 +1,9 @@
 import { Duration } from "aws-cdk-lib";
 import { IOperation } from "./IOperation";
 
+/**
+ * The representation of a service composed of multiple operations
+ */
 export interface IService
 {
     /**

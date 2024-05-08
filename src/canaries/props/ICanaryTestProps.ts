@@ -3,6 +3,9 @@ import { IOperation } from "../../services/IOperation";
 import { ILoadBalancerV2 } from "aws-cdk-lib/aws-elasticloadbalancingv2";
 import { IAvailabilityZoneMapper } from "../../utilities/IAvailabilityZoneMapper";
 
+/**
+ * The props for creating a canary test on a single operation
+ */
 export interface ICanaryTestProps
 {
     /**

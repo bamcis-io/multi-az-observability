@@ -1,7 +1,7 @@
+import { IContributorInsightRuleDetails } from "../../services/IContributorInsightRuleDetails";
 import { IOperation } from "../../services/IOperation";
 import { IOperationMetricDetails } from "../../services/IOperationMetricDetails";
 import { OutlierDetectionAlgorithm } from "../../utilities/OutlierDetectionAlgorithm";
-import { IContributorInsightRuleDetails } from "../IContributorInsightRuleDetails";
 
 /**
  * The base properties for an operation zonal alarms and rules configuration

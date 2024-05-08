@@ -1,10 +1,8 @@
+import { IMultiAvailabilityZoneObservabilityProps } from "./IMultiAvailabilityZoneObservabilityProps";
 import { IBasicServiceMultiAZObservabilityProps } from "./services/props/IBasicServiceMultiAZObservabilityProps";
 import { IInstrumentedServiceProps } from "./services/props/IInstrumentedServiceProps";
 
-/**
- * The properties for creating multi-AZ observability alarms and dashboards.
- */
-export interface IMultiAvailabilityZoneObservabilityProps
+export class MultiAvailabilityZoneObservabilityProps implements IMultiAvailabilityZoneObservabilityProps
 {
     /**
      * The properties for a basic service that does not emit its own

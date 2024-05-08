@@ -5,9 +5,9 @@ import { AvailabilityMetricType } from "../utilities/AvailabilityMetricType";
 import { LatencyMetricType } from "../utilities/LatencyMetricType";
 import { Fn } from "aws-cdk-lib";
 import { IContributionDefinition, InsightRuleBody } from "./InsightRuleBody";
-import { IContributorInsightRuleDetails } from "./IContributorInsightRuleDetails";
 import { IOperationMetricDetails } from "../services/IOperationMetricDetails";
 import { IOperation } from "../services/IOperation";
+import { IContributorInsightRuleDetails } from "../services/IContributorInsightRuleDetails";
 
 /**
  * Class used to create availability and latency alarms and Contributor Insight rules

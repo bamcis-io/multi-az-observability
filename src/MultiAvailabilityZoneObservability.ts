@@ -1,8 +1,9 @@
 import { Construct } from "constructs";
 import { IMultiAvailabilityZoneObservability } from "./IMultiAvailabiliyZoneObservability";
-import { IMultiAvailabilityZoneObservabilityProps } from "./IMultiAvailabilityZoneObservabilityProps";
 import { BasicServiceMultiAZObservability } from "./services/BasicServiceMultiAZObservability";
 import { InstrumentedServiceMultiAZObservability } from "./services/InstrumentedServiceMultiAZObservability";
+//import { MultiAvailabilityZoneObservabilityProps } from "./MultiAvailabilityZoneObservabilityProps";
+import { IMultiAvailabilityZoneObservabilityProps } from "./IMultiAvailabilityZoneObservabilityProps";
 export { IMultiAvailabilityZoneObservabilityProps } from "./IMultiAvailabilityZoneObservabilityProps";
 export { IMultiAvailabilityZoneObservability } from "./IMultiAvailabiliyZoneObservability";
 export { OutlierDetectionAlgorithm } from "./utilities/OutlierDetectionAlgorithm";
@@ -13,9 +14,17 @@ export { IAvailabilityZoneMapper } from "./utilities/IAvailabilityZoneMapper";
 export { IOperation } from "./services/IOperation"
 export { IOperationMetricDetails } from "./services/IOperationMetricDetails";
 export { ICanaryTestProps } from "./canaries/props/ICanaryTestProps";
-export { IContributorInsightRuleDetails } from "./alarmsandrules/IContributorInsightRuleDetails";
 export { ICanaryMetrics } from "./services/ICanaryMetrics";
+export { IContributorInsightRuleDetails } from "./services/IContributorInsightRuleDetails";
+//export { MultiAvailabilityZoneObservabilityProps } from "./MultiAvailabilityZoneObservabilityProps";
 
+/**
+ * The construct will create multi-AZ observability for your service based on the 
+ * parameters you provide. It will create alarms that indicate if a single AZ is
+ * impacted so you can take appropriate action to mitigate the event, for example,
+ * using zonal shift. It will also optionally create dashboards for your service so
+ * you can visualize the metrics used to feed the alarms as well as the alarm states.
+ */
 export class MultiAvailabilityZoneObservability extends Construct implements IMultiAvailabilityZoneObservability
 {
     constructor(scope: Construct, id: string, props: IMultiAvailabilityZoneObservabilityProps)

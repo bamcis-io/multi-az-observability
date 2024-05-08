@@ -2,6 +2,12 @@ import { CustomResource, Reference } from "aws-cdk-lib";
 import { IFunction } from "aws-cdk-lib/aws-lambda";
 import { ILogGroup } from "aws-cdk-lib/aws-logs";
 
+/**
+ * A wrapper for the Availability Zone mapper construct
+ * that allows you to translate Availability Zone names
+ * to Availability Zone Ids and vice a versa using the 
+ * mapping in the AWS account where this is deployed.
+ */
 export interface IAvailabilityZoneMapper
 {
     /**

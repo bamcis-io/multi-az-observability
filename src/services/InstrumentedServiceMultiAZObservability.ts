@@ -9,6 +9,7 @@ import { OperationAvailabilityAndLatencyDashboard } from "../dashboards/Operatio
 import { ServiceAvailabilityAndLatencyDashboard } from "../dashboards/ServiceAvailabilityAndLatencyDashboard";
 import { CanaryFunction } from "../canaries/CanaryFunction";
 import { CanaryTest } from "../canaries/CanaryTest";
+import { Duration, NestedStack } from "aws-cdk-lib";
 
 export class InstrumentedServiceMultiAZObservability extends Construct
 {
@@ -32,11 +33,15 @@ export class InstrumentedServiceMultiAZObservability extends Construct
 
         if (props.addSyntheticCanaries !== undefined && props.addSyntheticCanaries == true)
         {
-            let canary = new CanaryFunction(this, "CanaryFunction", {
+            let canaryNestedStack: NestedStack = new NestedStack(this, "CanaryStack");
+
+            let canary = new CanaryFunction(canaryNestedStack, "CanaryFunction", {
             });
 
             props.service.operations.forEach(operation => {
-                new CanaryTest(this, operation.operationName + "CanaryTest", {
+                let nestedStack: NestedStack = new NestedStack(this, operation.operationName + "CanaryTestStack");
+
+                new CanaryTest(nestedStack, operation.operationName + "CanaryTest", {
                     function: canary.function,
                     requestCount: 10,
                     schedule: "rate(1 minute)",
@@ -51,7 +56,7 @@ export class InstrumentedServiceMultiAZObservability extends Construct
         this.perOperationAlarmsAndRules = Object.fromEntries(props.service.operations.map((operation: IOperation) => 
             [
                 operation.operationName,              
-                new OperationAlarmsAndRules(this, operation.operationName + "OperationAlarmsAndRulesNestedStack", {
+                new OperationAlarmsAndRules(new NestedStack(this, operation.operationName + "DashboardStack"), operation.operationName + "OperationAlarmsAndRulesNestedStack", {
                     operation: operation,
                     outlierDetectionAlgorithm: OutlierDetectionAlgorithm.STATIC,
                     outlierThreshold: props.outlierThreshold,
@@ -60,7 +65,9 @@ export class InstrumentedServiceMultiAZObservability extends Construct
             ]
         ));
 
-        this.serviceAlarms = new ServiceAlarmsAndRules(this, "ServiceAlarmsNestedStack", {
+        let serviceAlarmsStack: NestedStack = new NestedStack(this, "ServiceAlarmsStack");
+
+        this.serviceAlarms = new ServiceAlarmsAndRules(serviceAlarmsStack, "ServiceAlarmsNestedStack", {
             perOperationAlarmsAndRules: this.perOperationAlarmsAndRules,
             service: props.service            
         }); 
@@ -68,12 +75,13 @@ export class InstrumentedServiceMultiAZObservability extends Construct
         if (props.createDashboard)
         {
             props.service.operations.forEach(x => {
+                let dashboardStack: NestedStack = new NestedStack(this, x.operationName + "Dashboard");
+
                 this.operationDashboards.push(
-                    new OperationAvailabilityAndLatencyDashboard(this, x.operationName + "Dashboard", {
+                    new OperationAvailabilityAndLatencyDashboard(dashboardStack, x.operationName + "Dashboard", {
                         availabilityZoneIds: props.service.availabilityZoneIds,
                         operation: x,
-                        availabilityZoneMapper: props.availabilityZoneMapper,
-                        interval: props.interval,
+                        interval: props.interval ? props.interval : Duration.minutes(60),
                         loadBalancer: props.loadBalancer,
 
                         regionalEndpointCanaryAvailabilityAlarm: this.perOperationAlarmsAndRules[x.operationName].canaryRegionalAlarmsAndRules?.availabilityAlarm,
@@ -97,8 +105,9 @@ export class InstrumentedServiceMultiAZObservability extends Construct
                 );
             })
             
-            this.serviceDashboard = new ServiceAvailabilityAndLatencyDashboard(this, props.service.serviceName +  "Dashboard", {
-                interval: props.interval,
+            let dashboardStack: NestedStack = new NestedStack(this, "ServiceDashboardStack");
+            this.serviceDashboard = new ServiceAvailabilityAndLatencyDashboard(dashboardStack, props.service.serviceName +  "Dashboard", {
+                interval: props.interval ? props.interval : Duration.minutes(60),
                 service: props.service,
                 aggregateRegionalAlarm: this.serviceAlarms.regionalFaultCountServerSideAlarm,
                 zonalAggregateAlarms: this.serviceAlarms.zonalAggregateIsolatedImpactAlarms

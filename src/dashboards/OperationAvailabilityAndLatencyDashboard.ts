@@ -9,6 +9,8 @@ import { IOperationAvailabilityAndLatencyWidgetProps } from "./props/IOperationA
 import { ContributorInsightsWidget } from "./ContributorInsightsWidget";
 import { BaseLoadBalancer } from "aws-cdk-lib/aws-elasticloadbalancingv2";
 import { IOperationAvailabilityAndLatencyDashboard } from "./IOperationAvailabilityAndLatencyDashboard";
+import { AvailabilityZoneMapper } from "../utilities/AvailabilityZoneMapper";
+import { IAvailabilityZoneMapper } from "../MultiAvailabilityZoneObservability";
 
 /**
  * Creates an operation level availability and latency dashboard
@@ -20,11 +22,15 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
      */
     dashboard: Dashboard;
 
+    private azMapper: IAvailabilityZoneMapper;
+
     constructor(scope: Construct, id: string, props: IOperationAvailabilityAndLatencyDashboardProps)
     {
         super(scope, id);
 
         let widgets: IWidget[][] = [];
+
+        this.azMapper = new AvailabilityZoneMapper(this, "AZMapper");
 
         widgets.push(
             OperationAvailabilityAndLatencyDashboard.createTopLevelAggregateAlarmWidgets(props, "**Top Level Aggregate Alarms**")
@@ -68,7 +74,7 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
 
         if (props.loadBalancer !== undefined && props.loadBalancer != null)
         {
-            widgets.push(OperationAvailabilityAndLatencyDashboard.createApplicationLoadBalancerWidgets(props, "**Application Load Balancer Metrics**"));
+            widgets.push(this.createApplicationLoadBalancerWidgets(props, "**Application Load Balancer Metrics**"));
         }                
 
         if (props.operation.canaryMetricDetails !== undefined && props.operation.canaryMetricDetails != null)
@@ -618,7 +624,7 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
         return latencyWidgets;
     }
 
-    private static createApplicationLoadBalancerWidgets(props: IOperationAvailabilityAndLatencyDashboardProps, title: string) : IWidget[]
+    private createApplicationLoadBalancerWidgets(props: IOperationAvailabilityAndLatencyDashboardProps, title: string) : IWidget[]
     {
         let albWidgets: IWidget[] = [];
         let loadBalancerFullName: string = (props.loadBalancer as BaseLoadBalancer).loadBalancerFullName;
@@ -649,10 +655,8 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
             ]
         }));
 
-        for (let i = 0; i < props.availabilityZoneIds.length; i++)
-        {
-            let availabilityZoneId: string = props.availabilityZoneIds[i];
-            let availabilityZoneName: string = props.availabilityZoneMapper.availabilityZoneName(availabilityZoneId);
+        props.availabilityZoneIds.forEach((availabilityZoneId) => {
+            let availabilityZoneName: string = this.azMapper.availabilityZoneName(availabilityZoneId);
 
             albWidgets.push(new GraphWidget({
                 height: 6,
@@ -676,7 +680,7 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
                     }
                 ]
             }));
-        }
+        });
 
         albWidgets.push(new GraphWidget({
             height: 8,
@@ -692,10 +696,8 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
             }
         }));
 
-        for (let i = 0; i < props.availabilityZoneIds.length; i++)
-        {
-            let availabilityZoneId: string = props.availabilityZoneIds[i]
-            let availabilityZoneName: string = props.availabilityZoneMapper.availabilityZoneName(availabilityZoneId);
+        props.availabilityZoneIds.forEach(availabilityZoneId => {
+            let availabilityZoneName: string = this.azMapper.availabilityZoneName(availabilityZoneId);
 
             albWidgets.push(new GraphWidget({
                 height: 6,
@@ -710,7 +712,7 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
                     showUnits: true
                 }
             }));
-        }
+        });
 
         return albWidgets;
     }
