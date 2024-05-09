@@ -1,6 +1,6 @@
 import { Construct } from "constructs";
 import { BaseOperationZonalAlarmsAndRules } from "./BaseOperationZonalAlarmsAndRules";
-import { ICanaryOperationZonalAlarmsAndRulesProps } from "./props/ICanaryOperationZonalAlarmsAndRulesProps";
+import { CanaryOperationZonalAlarmsAndRulesProps } from "./props/CanaryOperationZonalAlarmsAndRulesProps";
 import { AvailabilityAndLatencyAlarmsAndRules } from "./AvailabilityAndLatencyAlarmsAndRules";
 import { ICanaryOperationZonalAlarmsAndRules } from "./ICanaryOperationZonalAlarmsAndRules";
 import { IAlarm } from "aws-cdk-lib/aws-cloudwatch";
@@ -16,7 +16,7 @@ export class CanaryOperationZonalAlarmsAndRules extends BaseOperationZonalAlarms
      */
     isolatedImpactAlarm: IAlarm;
 
-    constructor(scope: Construct, id: string, props: ICanaryOperationZonalAlarmsAndRulesProps)
+    constructor(scope: Construct, id: string, props: CanaryOperationZonalAlarmsAndRulesProps)
     {
         super(scope, id, props);
 

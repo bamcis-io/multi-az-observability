@@ -6,72 +6,72 @@ import { IOperationMetricDetails } from "../../services/IOperationMetricDetails"
 /**
  * Props for creating operation dashboard availability and latency widgets
  */
-export interface IOperationAvailabilityAndLatencyWidgetProps
+export interface OperationAvailabilityAndLatencyWidgetProps
 {
     /**
      * The operation for this widget
      */
-    operation: IOperation;
+    readonly operation: IOperation;
 
     /**
      * The availability metric details
      */
-    availabilityMetricDetails: IOperationMetricDetails;
+    readonly availabilityMetricDetails: IOperationMetricDetails;
 
     /**
      * The latency metric details
      */
-    latencyMetricDetails: IOperationMetricDetails;
+    readonly latencyMetricDetails: IOperationMetricDetails;
 
     /**
      * The number of AZs being used
      */
-    availabilityZoneIds: string[];
+    readonly availabilityZoneIds: string[];
 
     /**
      * The resolution period
      */
-    resolutionPeriod: Duration;
+    readonly resolutionPeriod: Duration;
 
     /**
      * The interval for the widget
      */
-    interval: Duration;
+    readonly interval: Duration;
 
     /**
      * An alarm per AZ for availability
      */
-    zonalEndpointAvailabilityAlarms: IAlarm[];
+    readonly zonalEndpointAvailabilityAlarms: IAlarm[];
 
     /**
      * An alarm per AZ for latency
      */
-    zonalEndpointLatencyAlarms: IAlarm[];
+    readonly zonalEndpointLatencyAlarms: IAlarm[];
 
     /**
      * The regional endpoint availability alarm
      */
-    regionalEndpointAvailabilityAlarm: IAlarm;
+    readonly regionalEndpointAvailabilityAlarm: IAlarm;
 
     /**
      * The regional endpoint latency alarm
      */
-    regionalEndpointLatencyAlarm: IAlarm;
+    readonly regionalEndpointLatencyAlarm: IAlarm;
 
     /**
      * Instance contributors to high latency, only set for
      * server-side widgets
      */
-    instanceContributorsToHighLatency?: CfnInsightRule;
+    readonly instanceContributorsToHighLatency?: CfnInsightRule;
 
     /**
      * Instance contributors to faults, only set for
      * server-side widgets
      */
-    instanceContributorsToFaults?: CfnInsightRule;
+    readonly instanceContributorsToFaults?: CfnInsightRule;
 
     /**
      * Is this widget for the canary metrics
      */
-    isCanary: boolean;
+    readonly isCanary: boolean;
 }

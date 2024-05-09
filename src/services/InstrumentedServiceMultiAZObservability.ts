@@ -1,5 +1,5 @@
 import { Construct } from "constructs";
-import { IInstrumentedServiceProps } from "./props/IInstrumentedServiceProps";
+import { InstrumentedServiceProps } from "./props/InstrumentedServiceProps";
 import { OperationAlarmsAndRules } from "../alarmsandrules/OperationAlarmsAndRules";
 import { ServiceAlarmsAndRules } from "../alarmsandrules/ServiceAlarmsAndRules";
 import { IOperation } from "./IOperation";
@@ -26,7 +26,7 @@ export class InstrumentedServiceMultiAZObservability extends Construct
 
     readonly serviceDashboard?: Dashboard;
 
-    constructor(scope: Construct, id: string, props: IInstrumentedServiceProps)
+    constructor(scope: Construct, id: string, props: InstrumentedServiceProps)
     {
         super(scope, id);
         this.operationDashboards = [];

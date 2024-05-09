@@ -4,26 +4,26 @@ import { IOperationMetricDetails } from "../../services/IOperationMetricDetails"
 /**
  * The base props for an operation regional alarms and rules configuration
  */
-export interface IBaseOperationRegionalAlarmsAndRulesProps
+export interface BaseOperationRegionalAlarmsAndRulesProps
 {
     /**
      * The metric details for availability metrics
      */
-    availabilityMetricDetails: IOperationMetricDetails;
+    readonly availabilityMetricDetails: IOperationMetricDetails;
 
     /**
      * The metric details for latency metrics
      */
-    latencyMetricDetails: IOperationMetricDetails;
+    readonly latencyMetricDetails: IOperationMetricDetails;
 
     /**
      * (Optional) A suffix to be appended to alarm and rule names
      */
-    nameSuffix: string;
+    readonly nameSuffix: string;
 
     /**
      * (Optional) Details for creating contributor insight rules, which help
      * make the server-side alarms for detecting single AZ failures more accurate
      */
-    contributorInsightRuleDetails?: IContributorInsightRuleDetails;
+    readonly contributorInsightRuleDetails?: IContributorInsightRuleDetails;
 }

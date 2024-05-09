@@ -1,6 +1,6 @@
 import { Construct } from "constructs";
 import { BaseOperationZonalAlarmsAndRules } from "./BaseOperationZonalAlarmsAndRules";
-import { IServerSideOperationZonalAlarmsAndRulesProps } from "./props/IServerSideOperationZonalAlarmsAndRulesProps";
+import { ServerSideOperationZonalAlarmsAndRulesProps } from "./props/ServerSideOperationZonalAlarmsAndRulesProps";
 import { IAlarm, CfnInsightRule, CompositeAlarm, AlarmRule } from "aws-cdk-lib/aws-cloudwatch";
 import { AvailabilityAndLatencyAlarmsAndRules } from "./AvailabilityAndLatencyAlarmsAndRules";
 import { IServerSideOperationZonalAlarmsAndRules } from "./IServerSideOperationZonalAlarmsAndRules";
@@ -45,7 +45,7 @@ export class ServerSideOperationZonalAlarmsAndRules extends BaseOperationZonalAl
      */
     instancesHandlingRequestsInThisAZ?: CfnInsightRule;
 
-    constructor(scope: Construct, id: string, props: IServerSideOperationZonalAlarmsAndRulesProps)
+    constructor(scope: Construct, id: string, props: ServerSideOperationZonalAlarmsAndRulesProps)
     {
         super(scope, id, props);
 

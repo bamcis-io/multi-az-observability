@@ -10,7 +10,7 @@ import { IServerSideOperationRegionalAlarmsAndRules } from "./IServerSideOperati
 import { ICanaryOperationRegionalAlarmsAndRules } from "./ICanaryOperationRegionalAlarmsAndRules";
 import { ICanaryOperationZonalAlarmsAndRules } from "./ICanaryOperationZonalAlarmsAndRules";
 import { IServerSideOperationZonalAlarmsAndRules } from "./IServerSideOperationZonalAlarmsAndRules";
-import { IOperationAlarmsAndRulesProps } from "./props/IOperationAlarmsAndRulesProps";
+import { OperationAlarmsAndRulesProps } from "./props/OperationAlarmsAndRulesProps";
 import { IOperation } from "../services/IOperation";
 
 /**
@@ -57,7 +57,7 @@ export class OperationAlarmsAndRules extends Construct implements IOperationAlar
      */
     aggregateZonalAlarms: IAlarm[];
 
-    constructor(scope: Construct, id: string, props: IOperationAlarmsAndRulesProps)
+    constructor(scope: Construct, id: string, props: OperationAlarmsAndRulesProps)
     {
         super(scope, id);
         this.serverSideZonalAlarmsAndRules = [];

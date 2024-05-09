@@ -1,13 +1,13 @@
 import { AvailabilityMetricType } from "../utilities/AvailabilityMetricType";
 import { LatencyMetricType } from "../utilities/LatencyMetricType";
-import { IAvailabilityMetricProps } from "./props/IAvailabilityMetricProps";
-import { IRegionalAvailabilityMetricProps } from "./props/IRegionalAvailabilityMetricProps";
-import { IZonalAvailabilityMetricProps } from "./props/IZonalAvailabilityMetricProps";
+import { AvailabilityMetricProps } from "./props/AvailabilityMetricProps";
+import { RegionalAvailabilityMetricProps } from "./props/RegionalAvailabilityMetricProps";
+import { ZonalAvailabilityMetricProps } from "./props/ZonalAvailabilityMetricProps";
 import { IMetric, Metric, MathExpression, Unit} from "aws-cdk-lib/aws-cloudwatch";
-import { IZonalLatencyMetricProps } from "./props/IZonalLatencyMetricProps";
-import { ILatencyMetricProps } from "./props/ILatencyMetricProps";
-import { IRegionalLatencyMetricProps } from "./props/IRegionalLatencyMetricProps";
-import { IServiceAvailabilityMetricProps } from "./props/IServiceAvailabilityMetricProps";
+import { ZonalLatencyMetricProps } from "./props/ZonalLatencyMetricProps";
+import { LatencyMetricProps } from "./props/LatencyMetricProps";
+import { RegionalLatencyMetricProps } from "./props/RegionalLatencyMetricProps";
+import { ServiceAvailabilityMetricProps } from "./props/ServiceAvailabilityMetricProps";
 import { Duration, Fn } from "aws-cdk-lib";
 
 /**
@@ -20,7 +20,7 @@ export class AvailabilityAndLatencyMetrics
      * @param props 
      * @returns 
      */
-    static createZonalAvailabilityMetric(props: IZonalAvailabilityMetricProps): IMetric
+    static createZonalAvailabilityMetric(props: ZonalAvailabilityMetricProps): IMetric
     {
         return this.createAvailabilityMetric(props, props.metricDetails.zonalDimensions(props.availabilityZoneId, Fn.ref("AWS::Region")));
     }
@@ -30,7 +30,7 @@ export class AvailabilityAndLatencyMetrics
      * @param props 
      * @returns 
      */
-    static createRegionalAvailabilityMetric(props: IRegionalAvailabilityMetricProps): IMetric
+    static createRegionalAvailabilityMetric(props: RegionalAvailabilityMetricProps): IMetric
     {
         return this.createAvailabilityMetric(props, props.metricDetails.regionalDimensions(Fn.ref("AWS::Region")));
     }
@@ -41,7 +41,7 @@ export class AvailabilityAndLatencyMetrics
      * @param dimensions 
      * @returns 
      */
-    private static createAvailabilityMetric(props: IAvailabilityMetricProps, dimensions: {[key: string]: string}): IMetric
+    private static createAvailabilityMetric(props: AvailabilityMetricProps, dimensions: {[key: string]: string}): IMetric
     {
         let counter: number = 0;
         let key: string = "";
@@ -129,7 +129,7 @@ export class AvailabilityAndLatencyMetrics
      * @param props 
      * @returns 
      */
-    static createZonalLatencyMetrics(props: IZonalLatencyMetricProps): IMetric[]
+    static createZonalLatencyMetrics(props: ZonalLatencyMetricProps): IMetric[]
     {
         return this.createLatencyMetrics(props, props.metricDetails.zonalDimensions(props.availabilityZoneId, Fn.ref("AWS::Region")));
     }
@@ -139,7 +139,7 @@ export class AvailabilityAndLatencyMetrics
      * @param props 
      * @returns 
      */
-    static createRegionalLatencyMetrics(props: IRegionalLatencyMetricProps): IMetric[]
+    static createRegionalLatencyMetrics(props: RegionalLatencyMetricProps): IMetric[]
     {
         return this.createLatencyMetrics(props, props.metricDetails.regionalDimensions(Fn.ref("AWS::Region")));
     }
@@ -150,7 +150,7 @@ export class AvailabilityAndLatencyMetrics
      * @param dimensions 
      * @returns 
      */
-    private static createLatencyMetrics(props: ILatencyMetricProps, dimensions: {[key: string]: string}): IMetric[]
+    private static createLatencyMetrics(props: LatencyMetricProps, dimensions: {[key: string]: string}): IMetric[]
     {
         let names: string[];
 
@@ -183,7 +183,7 @@ export class AvailabilityAndLatencyMetrics
      * @returns The metric at index 0 is the metric math expression for the whole service. The following metrics
      * are the metrics for each operation included in the request availability metric props.
      */
-    static createRegionalServiceAvailabilityMetrics(props: IServiceAvailabilityMetricProps): IMetric[]
+    static createRegionalServiceAvailabilityMetrics(props: ServiceAvailabilityMetricProps): IMetric[]
     {
         let usingMetrics: {[key: string]: IMetric} = {};
         let operationMetrics: IMetric[] = [];
@@ -196,7 +196,7 @@ export class AvailabilityAndLatencyMetrics
                 prop.metricDetails.operationName.toLowerCase() + "_" +
                 prop.metricType.toString().toLowerCase();
             
-            let regionalOperationAvailabilityMetric: IMetric = this.createRegionalAvailabilityMetric(prop as IRegionalAvailabilityMetricProps);
+            let regionalOperationAvailabilityMetric: IMetric = this.createRegionalAvailabilityMetric(prop as RegionalAvailabilityMetricProps);
             
             operationMetrics.push(regionalOperationAvailabilityMetric);
             usingMetrics[`${keyPrefix}${counter++}`] = regionalOperationAvailabilityMetric;
@@ -254,7 +254,7 @@ export class AvailabilityAndLatencyMetrics
      * @returns The metric at index 0 is the metric math expression for the whole service. The following metrics
      * are the metrics for each operation included in the request availability metric props.
      */
-    static createZonalServiceAvailabilityMetrics(props: IServiceAvailabilityMetricProps): IMetric[]
+    static createZonalServiceAvailabilityMetrics(props: ServiceAvailabilityMetricProps): IMetric[]
     {
         let usingMetrics: {[key: string]: IMetric} = {};
         let operationMetrics: IMetric[] = [];
@@ -267,7 +267,7 @@ export class AvailabilityAndLatencyMetrics
                 prop.metricDetails.operationName.toLowerCase() + "_" +
                 prop.metricType.toString().toLowerCase();
             
-            let zonalOperationAvailabilityMetric: IMetric = this.createZonalAvailabilityMetric(prop as IZonalAvailabilityMetricProps);
+            let zonalOperationAvailabilityMetric: IMetric = this.createZonalAvailabilityMetric(prop as ZonalAvailabilityMetricProps);
             
             operationMetrics.push(zonalOperationAvailabilityMetric);
             usingMetrics[`${keyPrefix}${counter++}`] = zonalOperationAvailabilityMetric;

@@ -1,6 +1,6 @@
 import { CfnInsightRule } from "aws-cdk-lib/aws-cloudwatch";
 import { Construct } from "constructs";
-import { IServerSideOperationRegionalAlarmsAndRulesProps } from "./props/IServerSideOperationRegionalAlarmsAndRulesProps";
+import { ServerSideOperationRegionalAlarmsAndRulesProps } from "./props/ServerSideOperationRegionalAlarmsAndRulesProps";
 import { BaseOperationRegionalAlarmsAndRules } from "./BaseOperationRegionalAlarmsAndRules";
 import { AvailabilityAndLatencyAlarmsAndRules } from "./AvailabilityAndLatencyAlarmsAndRules";
 import { IServerSideOperationRegionalAlarmsAndRules } from "./IServerSideOperationRegionalAlarmsAndRules";
@@ -20,7 +20,7 @@ export class ServerSideOperationRegionalAlarmsAndRules extends BaseOperationRegi
      */
     instanceContributorsToRegionalFaults?: CfnInsightRule;
 
-    constructor(scope: Construct, id: string, props: IServerSideOperationRegionalAlarmsAndRulesProps)
+    constructor(scope: Construct, id: string, props: ServerSideOperationRegionalAlarmsAndRulesProps)
     {
         super(scope, id, props);
 

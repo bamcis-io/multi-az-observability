@@ -1,7 +1,7 @@
 import { Construct } from "constructs";
 import { IAlarm } from "aws-cdk-lib/aws-cloudwatch";
 import { AvailabilityAndLatencyAlarmsAndRules } from "./AvailabilityAndLatencyAlarmsAndRules";
-import { IBaseOperationZonalAlarmsAndRulesProps } from "./props/IBaseOperationZonalAlarmsAndRulesProps";
+import { BaseOperationZonalAlarmsAndRulesProps } from "./props/BaseOperationZonalAlarmsAndRulesProps";
 import { IBaseOperationZonalAlarmsAndRules } from "./IBaseOperationZonalAlarmsAndRules";
 
 /**
@@ -39,7 +39,7 @@ export abstract class BaseOperationZonalAlarmsAndRules extends Construct impleme
      */
     availabilityZoneId: string;
 
-    constructor(scope: Construct, id: string, props: IBaseOperationZonalAlarmsAndRulesProps)
+    constructor(scope: Construct, id: string, props: BaseOperationZonalAlarmsAndRulesProps)
     {
         super(scope, id)
         this.availabilityZoneId = props.availabilityZoneId;

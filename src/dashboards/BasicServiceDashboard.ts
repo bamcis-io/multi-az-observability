@@ -1,13 +1,13 @@
 import { AlarmStatusWidget, AlarmWidget, Dashboard, GraphWidget, IAlarm, IMetric, IWidget, PeriodOverride, TextWidget } from "aws-cdk-lib/aws-cloudwatch";
 import { Construct } from "constructs";
-import { IBasicServiceDashboardProps } from "./props/IBasicServiceDashboardProps";
+import { BasicServiceDashboardProps } from "./props/BasicServiceDashboardProps";
 import { Fn } from "aws-cdk-lib";
 
 export class BasicServiceDashboard extends Construct
 {
     dashboard: Dashboard;
 
-    constructor(scope: Construct, id: string, props: IBasicServiceDashboardProps)
+    constructor(scope: Construct, id: string, props: BasicServiceDashboardProps)
     {
         super(scope, id);
 

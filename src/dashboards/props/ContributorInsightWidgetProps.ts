@@ -4,35 +4,35 @@ import { Duration } from "aws-cdk-lib";
 /**
  * Properties for creating a contributor insight dashboard widget
  */
-export interface IContributorInsightWidgetProps extends MetricWidgetProps
+export interface ContributorInsightWidgetProps extends MetricWidgetProps
 {
     /**
      * The account id for the widget
      */
-    accountId: string;
+    readonly accountId: string;
 
     /**
      * The number of top contributors to graph
      */
-    topContributors: number;
+    readonly topContributors: number;
 
     /**
      * The insight rule for the widget
      */
-    insightRule: CfnInsightRule;
+    readonly insightRule: CfnInsightRule;
     
     /**
      * The legend position in the widget
      */
-    legendPosition: LegendPosition;
+    readonly legendPosition: LegendPosition;
 
     /**
      * The order statistic used
      */
-    orderStatistic: string;
+    readonly orderStatistic: string;
 
     /**
      * The period for the widget data points
      */
-    period: Duration;
+    readonly period: Duration;
 }

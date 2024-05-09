@@ -1,11 +1,11 @@
 import { Construct } from "constructs";
-import { IOperationAvailabilityAndLatencyDashboardProps } from "./props/IOperationAvailabilityAndLatencyDashboardProps";
+import { OperationAvailabilityAndLatencyDashboardProps } from "./props/OperationAvailabilityAndLatencyDashboardProps";
 import { Dashboard, IMetric, PeriodOverride, IWidget, TextWidget, AlarmWidget, AlarmStatusWidget, GraphWidget, Color, LegendPosition} from "aws-cdk-lib/aws-cloudwatch";
 import { Duration, Fn } from "aws-cdk-lib";
 import { AvailabilityAndLatencyMetrics } from "../metrics/AvailabilityAndLatencyMetrics";
 import { LatencyMetricType } from "../utilities/LatencyMetricType";
 import { AvailabilityMetricType } from "../utilities/AvailabilityMetricType";
-import { IOperationAvailabilityAndLatencyWidgetProps } from "./props/IOperationAvailabilityAndLatencyWidgetProps";
+import { OperationAvailabilityAndLatencyWidgetProps } from "./props/OperationAvailabilityAndLatencyWidgetProps";
 import { ContributorInsightsWidget } from "./ContributorInsightsWidget";
 import { BaseLoadBalancer } from "aws-cdk-lib/aws-elasticloadbalancingv2";
 import { IOperationAvailabilityAndLatencyDashboard } from "./IOperationAvailabilityAndLatencyDashboard";
@@ -24,7 +24,7 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
 
     private azMapper: IAvailabilityZoneMapper;
 
-    constructor(scope: Construct, id: string, props: IOperationAvailabilityAndLatencyDashboardProps)
+    constructor(scope: Construct, id: string, props: OperationAvailabilityAndLatencyDashboardProps)
     {
         super(scope, id);
 
@@ -122,7 +122,7 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
         });
     }
 
-    private static createTopLevelAggregateAlarmWidgets(props: IOperationAvailabilityAndLatencyDashboardProps, title: string)
+    private static createTopLevelAggregateAlarmWidgets(props: OperationAvailabilityAndLatencyDashboardProps, title: string)
     {
         let topLevelAggregateAlarms: IWidget[] = [
             new TextWidget({ height: 2, width: 24, markdown: title }),
@@ -289,7 +289,7 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
         return topLevelAggregateAlarms;    
     }
 
-    private static createAvailabilityWidgets(props: IOperationAvailabilityAndLatencyWidgetProps, title: string) : IWidget[]
+    private static createAvailabilityWidgets(props: OperationAvailabilityAndLatencyWidgetProps, title: string) : IWidget[]
     {
         let availabilityWidgets: IWidget[] = [];  
         availabilityWidgets.push(new TextWidget({ height: 2, width: 24, markdown: title }));
@@ -438,7 +438,7 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
         return availabilityWidgets;
     }
 
-    private static createLatencyWidgets(props: IOperationAvailabilityAndLatencyWidgetProps, title: string) : IWidget[]
+    private static createLatencyWidgets(props: OperationAvailabilityAndLatencyWidgetProps, title: string) : IWidget[]
     {
         let latencyWidgets: IWidget[] = [];  
         latencyWidgets.push(new TextWidget({ height: 2, width: 24, markdown: title }));
@@ -624,7 +624,7 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
         return latencyWidgets;
     }
 
-    private createApplicationLoadBalancerWidgets(props: IOperationAvailabilityAndLatencyDashboardProps, title: string) : IWidget[]
+    private createApplicationLoadBalancerWidgets(props: OperationAvailabilityAndLatencyDashboardProps, title: string) : IWidget[]
     {
         let albWidgets: IWidget[] = [];
         let loadBalancerFullName: string = (props.loadBalancer as BaseLoadBalancer).loadBalancerFullName;

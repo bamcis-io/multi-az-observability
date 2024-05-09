@@ -1,6 +1,6 @@
 import { CfnNatGateway } from "aws-cdk-lib/aws-ec2";
 import { BaseLoadBalancer, HttpCodeElb, HttpCodeTarget, IApplicationLoadBalancer, ILoadBalancerV2 } from "aws-cdk-lib/aws-elasticloadbalancingv2";
-import { IBasicServiceMultiAZObservabilityProps } from "./props/IBasicServiceMultiAZObservabilityProps";
+import { BasicServiceMultiAZObservabilityProps } from "./props/BasicServiceMultiAZObservabilityProps";
 import { Construct } from "constructs";
 import { Alarm, AlarmRule, ComparisonOperator, CompositeAlarm, Dashboard, IAlarm, IMetric, MathExpression, Metric, TreatMissingData, Unit } from "aws-cdk-lib/aws-cloudwatch";
 import { AvailabilityZoneMapper } from "../utilities/AvailabilityZoneMapper";
@@ -52,7 +52,7 @@ export class BasicServiceMultiAZObservability extends Construct implements IBasi
      */
     dashboard?: Dashboard;
 
-    constructor(scope: Construct, id: string, props: IBasicServiceMultiAZObservabilityProps)
+    constructor(scope: Construct, id: string, props: BasicServiceMultiAZObservabilityProps)
     {
         super(scope, id);
 
@@ -170,7 +170,7 @@ export class BasicServiceMultiAZObservability extends Construct implements IBasi
                     usingMetrics[`${keyPrefix}2`] = target3xx;
                     usingMetrics[`${keyPrefix}3`] = elb3xx;
                     usingMetrics[`${keyPrefix}4`] = target5xx;
-                    usingMetrics[`${keyPrefix}4`] = elb5xx;
+                    usingMetrics[`${keyPrefix}5`] = elb5xx;
 
                     // The ALB fault rate
                     let faultRate: IMetric = new MathExpression({
@@ -358,7 +358,7 @@ export class BasicServiceMultiAZObservability extends Construct implements IBasi
                         period: props.period
                     });
 
-                    let threshold: number = props.faultCountPercentageThreshold ?? 5;
+                    let threshold: number = props.packetLossImpactPercentageThreshold ?? 0.01;
 
                     // Create an alarm for this NAT GW if packet drops exceed the specified threshold
                     let packetDropImpactAlarm: IAlarm = new Alarm(this, "AZ" + (index + 1) + "PacketDropImpactAlarm", {

@@ -1,18 +1,18 @@
-import { IAvailabilityAndLatencyMetricProps } from "./IAvailabilityAndLatencyMetricProps";
+import { AvailabilityAndLatencyMetricProps } from "./AvailabilityAndLatencyMetricProps";
 import { LatencyMetricType } from "../../utilities/LatencyMetricType";
 
 /**
  * Metric properties for latency metrics
  */
-export interface ILatencyMetricProps extends IAvailabilityAndLatencyMetricProps
+export interface LatencyMetricProps extends AvailabilityAndLatencyMetricProps
 {
     /**
      * The type of latency metric
      */
-    metricType: LatencyMetricType;
+    readonly metricType: LatencyMetricType;
 
     /**
      * The latency statistic like p99, tm99, or TC(100:)
      */
-    statistic: string;
+    readonly statistic: string;
 }

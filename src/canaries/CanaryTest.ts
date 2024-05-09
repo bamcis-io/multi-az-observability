@@ -1,5 +1,5 @@
 import { Construct } from "constructs";
-import { ICanaryTestProps } from "./props/ICanaryTestProps";
+import { CanaryTestProps } from "./props/CanaryTestProps";
 import { IRule, Rule, RuleTargetInput, Schedule } from "aws-cdk-lib/aws-events";
 import { LambdaFunction } from "aws-cdk-lib/aws-events-targets";
 import { Fn } from "aws-cdk-lib";
@@ -8,7 +8,7 @@ export class CanaryTest extends Construct
 {
     timedEventRules: {[key: string]: IRule};
 
-    constructor(scope: Construct, id: string, props: ICanaryTestProps)
+    constructor(scope: Construct, id: string, props: CanaryTestProps)
     {
         super(scope, id);
         this.timedEventRules = {};

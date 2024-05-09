@@ -1,5 +1,5 @@
 import { Construct } from "constructs";
-import { ICanaryFunctionProps } from "./props/ICanaryFunctionProps";
+import { CanaryFunctionProps } from "./props/CanaryFunctionProps";
 import { Effect, IManagedPolicy, IRole, ManagedPolicy, PolicyStatement, Role, ServicePrincipal } from "aws-cdk-lib/aws-iam";
 import { ISecurityGroup, SecurityGroup } from "aws-cdk-lib/aws-ec2";
 import { Architecture, AssetCode, Code, Function, IFunction, Runtime, Tracing } from "aws-cdk-lib/aws-lambda";
@@ -20,7 +20,7 @@ export class CanaryFunction extends Construct implements ICanaryFunction {
      */
     logGroup: ILogGroup;
 
-    constructor(scope: Construct, id: string, props: ICanaryFunctionProps) {
+    constructor(scope: Construct, id: string, props: CanaryFunctionProps) {
         super(scope, id);
 
         let xrayManagedPolicy: IManagedPolicy = new ManagedPolicy(this, "xrayManagedPolicy", {

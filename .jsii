@@ -3760,6 +3760,210 @@
     }
   },
   "types": {
+    "multi-az-observability.BasicServiceMultiAZObservabilityProps": {
+      "assembly": "multi-az-observability",
+      "datatype": true,
+      "docs": {
+        "stability": "stable",
+        "summary": "Properties for creating a basic service."
+      },
+      "fqn": "multi-az-observability.BasicServiceMultiAZObservabilityProps",
+      "kind": "interface",
+      "locationInModule": {
+        "filename": "src/services/props/BasicServiceMultiAZObservabilityProps.ts",
+        "line": 9
+      },
+      "name": "BasicServiceMultiAZObservabilityProps",
+      "properties": [
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "Whether to create a dashboard displaying the metrics and alarms."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/BasicServiceMultiAZObservabilityProps.ts",
+            "line": 68
+          },
+          "name": "createDashboard",
+          "type": {
+            "primitive": "boolean"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The algorithm to use for performing outlier detection."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/BasicServiceMultiAZObservabilityProps.ts",
+            "line": 58
+          },
+          "name": "outlierDetectionAlgorithm",
+          "type": {
+            "fqn": "multi-az-observability.OutlierDetectionAlgorithm"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The threshold for percentage of errors or packet loss to determine if an AZ is an outlier, should be a number between  0 and 1."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/BasicServiceMultiAZObservabilityProps.ts",
+            "line": 36
+          },
+          "name": "outlierThreshold",
+          "type": {
+            "primitive": "number"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The period to evaluate metrics."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/BasicServiceMultiAZObservabilityProps.ts",
+            "line": 63
+          },
+          "name": "period",
+          "type": {
+            "fqn": "aws-cdk-lib.Duration"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The service's name."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/BasicServiceMultiAZObservabilityProps.ts",
+            "line": 29
+          },
+          "name": "serviceName",
+          "type": {
+            "primitive": "string"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "default": "- No alarms for ALBs will be created",
+            "stability": "stable",
+            "summary": "The application load balancers being used by the service."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/BasicServiceMultiAZObservabilityProps.ts",
+            "line": 24
+          },
+          "name": "applicationLoadBalancers",
+          "optional": true,
+          "type": {
+            "collection": {
+              "elementtype": {
+                "fqn": "aws-cdk-lib.aws_elasticloadbalancingv2.IApplicationLoadBalancer"
+              },
+              "kind": "array"
+            }
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "default": "- 5 (as in 5%)",
+            "remarks": "For example\n1% or 5%.",
+            "stability": "stable",
+            "summary": "The percentage of faults for a single ALB to consider an AZ to be unhealthy, this should align with your availability goal."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/BasicServiceMultiAZObservabilityProps.ts",
+            "line": 53
+          },
+          "name": "faultCountPercentageThreshold",
+          "optional": true,
+          "type": {
+            "primitive": "number"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "default": "- 1 hour",
+            "stability": "stable",
+            "summary": "Dashboard interval."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/BasicServiceMultiAZObservabilityProps.ts",
+            "line": 75
+          },
+          "name": "interval",
+          "optional": true,
+          "type": {
+            "fqn": "aws-cdk-lib.Duration"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "default": "- No alarms for NAT Gateways will be created",
+            "stability": "stable",
+            "summary": "(Optional) A map of Availability Zone name to the NAT Gateways in that AZ."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/BasicServiceMultiAZObservabilityProps.ts",
+            "line": 17
+          },
+          "name": "natGateways",
+          "optional": true,
+          "type": {
+            "collection": {
+              "elementtype": {
+                "collection": {
+                  "elementtype": {
+                    "fqn": "aws-cdk-lib.aws_ec2.CfnNatGateway"
+                  },
+                  "kind": "array"
+                }
+              },
+              "kind": "map"
+            }
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "default": "- 0.01 (as in 0.01%)",
+            "stability": "stable",
+            "summary": "The amount of packet loss in a NAT GW to determine if an AZ is actually impacted, recommendation is 0.01%."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/BasicServiceMultiAZObservabilityProps.ts",
+            "line": 44
+          },
+          "name": "packetLossImpactPercentageThreshold",
+          "optional": true,
+          "type": {
+            "primitive": "number"
+          }
+        }
+      ],
+      "symbolId": "src/services/props/BasicServiceMultiAZObservabilityProps:BasicServiceMultiAZObservabilityProps"
+    },
     "multi-az-observability.IAvailabilityZoneMapper": {
       "assembly": "multi-az-observability",
       "docs": {
@@ -4044,194 +4248,6 @@
       ],
       "symbolId": "src/utilities/IAvailabilityZoneMapper:IAvailabilityZoneMapper"
     },
-    "multi-az-observability.IBasicServiceMultiAZObservabilityProps": {
-      "assembly": "multi-az-observability",
-      "docs": {
-        "stability": "stable",
-        "summary": "Properties for creating a basic service."
-      },
-      "fqn": "multi-az-observability.IBasicServiceMultiAZObservabilityProps",
-      "kind": "interface",
-      "locationInModule": {
-        "filename": "src/services/props/IBasicServiceMultiAZObservabilityProps.ts",
-        "line": 9
-      },
-      "name": "IBasicServiceMultiAZObservabilityProps",
-      "properties": [
-        {
-          "abstract": true,
-          "docs": {
-            "stability": "stable",
-            "summary": "Whether to create a dashboard displaying the metrics and alarms."
-          },
-          "locationInModule": {
-            "filename": "src/services/props/IBasicServiceMultiAZObservabilityProps.ts",
-            "line": 60
-          },
-          "name": "createDashboard",
-          "type": {
-            "primitive": "boolean"
-          }
-        },
-        {
-          "abstract": true,
-          "docs": {
-            "stability": "stable",
-            "summary": "The algorithm to use for performing outlier detection."
-          },
-          "locationInModule": {
-            "filename": "src/services/props/IBasicServiceMultiAZObservabilityProps.ts",
-            "line": 50
-          },
-          "name": "outlierDetectionAlgorithm",
-          "type": {
-            "fqn": "multi-az-observability.OutlierDetectionAlgorithm"
-          }
-        },
-        {
-          "abstract": true,
-          "docs": {
-            "stability": "stable",
-            "summary": "The threshold for percentage of errors or packet loss to determine if an AZ is an outlier, should be a number between  0 and 1."
-          },
-          "locationInModule": {
-            "filename": "src/services/props/IBasicServiceMultiAZObservabilityProps.ts",
-            "line": 32
-          },
-          "name": "outlierThreshold",
-          "type": {
-            "primitive": "number"
-          }
-        },
-        {
-          "abstract": true,
-          "docs": {
-            "stability": "stable",
-            "summary": "The period to evaluate metrics."
-          },
-          "locationInModule": {
-            "filename": "src/services/props/IBasicServiceMultiAZObservabilityProps.ts",
-            "line": 55
-          },
-          "name": "period",
-          "type": {
-            "fqn": "aws-cdk-lib.Duration"
-          }
-        },
-        {
-          "abstract": true,
-          "docs": {
-            "stability": "stable",
-            "summary": "The service's name."
-          },
-          "locationInModule": {
-            "filename": "src/services/props/IBasicServiceMultiAZObservabilityProps.ts",
-            "line": 25
-          },
-          "name": "serviceName",
-          "type": {
-            "primitive": "string"
-          }
-        },
-        {
-          "abstract": true,
-          "docs": {
-            "stability": "stable",
-            "summary": "The application load balancers being used by the service."
-          },
-          "locationInModule": {
-            "filename": "src/services/props/IBasicServiceMultiAZObservabilityProps.ts",
-            "line": 20
-          },
-          "name": "applicationLoadBalancers",
-          "optional": true,
-          "type": {
-            "collection": {
-              "elementtype": {
-                "fqn": "aws-cdk-lib.aws_elasticloadbalancingv2.IApplicationLoadBalancer"
-              },
-              "kind": "array"
-            }
-          }
-        },
-        {
-          "abstract": true,
-          "docs": {
-            "remarks": "For example\n1% or 5%.",
-            "stability": "stable",
-            "summary": "The percentage of faults for a single ALB to consider an AZ to be unhealthy, this should align with your availability goal."
-          },
-          "locationInModule": {
-            "filename": "src/services/props/IBasicServiceMultiAZObservabilityProps.ts",
-            "line": 45
-          },
-          "name": "faultCountPercentageThreshold",
-          "optional": true,
-          "type": {
-            "primitive": "number"
-          }
-        },
-        {
-          "abstract": true,
-          "docs": {
-            "stability": "stable",
-            "summary": "Dashboard interval."
-          },
-          "locationInModule": {
-            "filename": "src/services/props/IBasicServiceMultiAZObservabilityProps.ts",
-            "line": 65
-          },
-          "name": "interval",
-          "optional": true,
-          "type": {
-            "fqn": "aws-cdk-lib.Duration"
-          }
-        },
-        {
-          "abstract": true,
-          "docs": {
-            "stability": "stable",
-            "summary": "(Optional) A map of Availability Zone name to the NAT Gateways in that AZ."
-          },
-          "locationInModule": {
-            "filename": "src/services/props/IBasicServiceMultiAZObservabilityProps.ts",
-            "line": 15
-          },
-          "name": "natGateways",
-          "optional": true,
-          "type": {
-            "collection": {
-              "elementtype": {
-                "collection": {
-                  "elementtype": {
-                    "fqn": "aws-cdk-lib.aws_ec2.CfnNatGateway"
-                  },
-                  "kind": "array"
-                }
-              },
-              "kind": "map"
-            }
-          }
-        },
-        {
-          "abstract": true,
-          "docs": {
-            "stability": "stable",
-            "summary": "The amount of packet loss in a NAT GW to determine if an AZ is actually impacted, recommendation is 0.01%."
-          },
-          "locationInModule": {
-            "filename": "src/services/props/IBasicServiceMultiAZObservabilityProps.ts",
-            "line": 38
-          },
-          "name": "packetLossImpactPercentageThreshold",
-          "optional": true,
-          "type": {
-            "primitive": "number"
-          }
-        }
-      ],
-      "symbolId": "src/services/props/IBasicServiceMultiAZObservabilityProps:IBasicServiceMultiAZObservabilityProps"
-    },
     "multi-az-observability.ICanaryMetrics": {
       "assembly": "multi-az-observability",
       "docs": {
@@ -4304,8 +4320,8 @@
       "fqn": "multi-az-observability.ICanaryTestProps",
       "kind": "interface",
       "locationInModule": {
-        "filename": "src/canaries/props/ICanaryTestProps.ts",
-        "line": 9
+        "filename": "src/canaries/props/ICanaryTestProps.d.ts",
+        "line": 8
       },
       "name": "ICanaryTestProps",
       "properties": [
@@ -4315,9 +4331,10 @@
             "stability": "stable",
             "summary": "The Availability Zones being used."
           },
+          "immutable": true,
           "locationInModule": {
-            "filename": "src/canaries/props/ICanaryTestProps.ts",
-            "line": 54
+            "filename": "src/canaries/props/ICanaryTestProps.d.ts",
+            "line": 46
           },
           "name": "availabilityZoneIds",
           "type": {
@@ -4335,9 +4352,10 @@
             "stability": "stable",
             "summary": "The Availability Zone mapper object."
           },
+          "immutable": true,
           "locationInModule": {
-            "filename": "src/canaries/props/ICanaryTestProps.ts",
-            "line": 49
+            "filename": "src/canaries/props/ICanaryTestProps.d.ts",
+            "line": 42
           },
           "name": "availabilityZoneMapper",
           "type": {
@@ -4350,9 +4368,10 @@
             "stability": "stable",
             "summary": "The function that will run the canary requests."
           },
+          "immutable": true,
           "locationInModule": {
-            "filename": "src/canaries/props/ICanaryTestProps.ts",
-            "line": 14
+            "filename": "src/canaries/props/ICanaryTestProps.d.ts",
+            "line": 12
           },
           "name": "function",
           "type": {
@@ -4365,9 +4384,10 @@
             "stability": "stable",
             "summary": "The load balancer that will be tested against."
           },
+          "immutable": true,
           "locationInModule": {
-            "filename": "src/canaries/props/ICanaryTestProps.ts",
-            "line": 44
+            "filename": "src/canaries/props/ICanaryTestProps.d.ts",
+            "line": 38
           },
           "name": "loadBalancer",
           "type": {
@@ -4380,9 +4400,10 @@
             "stability": "stable",
             "summary": "The operation being tested."
           },
+          "immutable": true,
           "locationInModule": {
-            "filename": "src/canaries/props/ICanaryTestProps.ts",
-            "line": 39
+            "filename": "src/canaries/props/ICanaryTestProps.d.ts",
+            "line": 34
           },
           "name": "operation",
           "type": {
@@ -4395,9 +4416,10 @@
             "stability": "stable",
             "summary": "The number of requests to send on each test."
           },
+          "immutable": true,
           "locationInModule": {
-            "filename": "src/canaries/props/ICanaryTestProps.ts",
-            "line": 19
+            "filename": "src/canaries/props/ICanaryTestProps.d.ts",
+            "line": 16
           },
           "name": "requestCount",
           "type": {
@@ -4410,9 +4432,10 @@
             "stability": "stable",
             "summary": "A schedule expression."
           },
+          "immutable": true,
           "locationInModule": {
-            "filename": "src/canaries/props/ICanaryTestProps.ts",
-            "line": 24
+            "filename": "src/canaries/props/ICanaryTestProps.d.ts",
+            "line": 20
           },
           "name": "schedule",
           "type": {
@@ -4425,9 +4448,10 @@
             "stability": "stable",
             "summary": "Any headers to include."
           },
+          "immutable": true,
           "locationInModule": {
-            "filename": "src/canaries/props/ICanaryTestProps.ts",
-            "line": 34
+            "filename": "src/canaries/props/ICanaryTestProps.d.ts",
+            "line": 28
           },
           "name": "headers",
           "optional": true,
@@ -4446,9 +4470,10 @@
             "stability": "stable",
             "summary": "Data to supply in a POST, PUT, or PATCH operation."
           },
+          "immutable": true,
           "locationInModule": {
-            "filename": "src/canaries/props/ICanaryTestProps.ts",
-            "line": 29
+            "filename": "src/canaries/props/ICanaryTestProps.d.ts",
+            "line": 24
           },
           "name": "postData",
           "optional": true,
@@ -4573,130 +4598,6 @@
       ],
       "symbolId": "src/services/IContributorInsightRuleDetails:IContributorInsightRuleDetails"
     },
-    "multi-az-observability.IInstrumentedServiceProps": {
-      "assembly": "multi-az-observability",
-      "docs": {
-        "stability": "stable",
-        "summary": "The properties for adding alarms and dashboards for an instrumented service."
-      },
-      "fqn": "multi-az-observability.IInstrumentedServiceProps",
-      "kind": "interface",
-      "locationInModule": {
-        "filename": "src/services/props/IInstrumentedServiceProps.ts",
-        "line": 10
-      },
-      "name": "IInstrumentedServiceProps",
-      "properties": [
-        {
-          "abstract": true,
-          "docs": {
-            "stability": "stable",
-            "summary": "The Availability Zone mapper custom resources used to map AZ names to ids."
-          },
-          "locationInModule": {
-            "filename": "src/services/props/IInstrumentedServiceProps.ts",
-            "line": 39
-          },
-          "name": "availabilityZoneMapper",
-          "type": {
-            "fqn": "multi-az-observability.IAvailabilityZoneMapper"
-          }
-        },
-        {
-          "abstract": true,
-          "docs": {
-            "stability": "stable",
-            "summary": "Indicates whether to create per operation and overall service  dashboards."
-          },
-          "locationInModule": {
-            "filename": "src/services/props/IInstrumentedServiceProps.ts",
-            "line": 21
-          },
-          "name": "createDashboard",
-          "type": {
-            "primitive": "boolean"
-          }
-        },
-        {
-          "abstract": true,
-          "docs": {
-            "stability": "stable",
-            "summary": "The load balancer used by the service."
-          },
-          "locationInModule": {
-            "filename": "src/services/props/IInstrumentedServiceProps.ts",
-            "line": 33
-          },
-          "name": "loadBalancer",
-          "type": {
-            "fqn": "aws-cdk-lib.aws_elasticloadbalancingv2.ILoadBalancerV2"
-          }
-        },
-        {
-          "abstract": true,
-          "docs": {
-            "stability": "stable",
-            "summary": "The threshold as a percentage between 0 and 1 on when to consider an AZ as an outlier for faults or high latency responses."
-          },
-          "locationInModule": {
-            "filename": "src/services/props/IInstrumentedServiceProps.ts",
-            "line": 28
-          },
-          "name": "outlierThreshold",
-          "type": {
-            "primitive": "number"
-          }
-        },
-        {
-          "abstract": true,
-          "docs": {
-            "stability": "stable",
-            "summary": "The service that the alarms and dashboards are being crated for."
-          },
-          "locationInModule": {
-            "filename": "src/services/props/IInstrumentedServiceProps.ts",
-            "line": 15
-          },
-          "name": "service",
-          "type": {
-            "fqn": "multi-az-observability.IService"
-          }
-        },
-        {
-          "abstract": true,
-          "docs": {
-            "stability": "stable",
-            "summary": "An option to automatically create synthetic canaries to test each  operation in each AZ as well as via the regional."
-          },
-          "locationInModule": {
-            "filename": "src/services/props/IInstrumentedServiceProps.ts",
-            "line": 51
-          },
-          "name": "addSyntheticCanaries",
-          "optional": true,
-          "type": {
-            "primitive": "boolean"
-          }
-        },
-        {
-          "abstract": true,
-          "docs": {
-            "stability": "stable",
-            "summary": "The interval used in the dashboard, defaults to 60 minutes."
-          },
-          "locationInModule": {
-            "filename": "src/services/props/IInstrumentedServiceProps.ts",
-            "line": 45
-          },
-          "name": "interval",
-          "optional": true,
-          "type": {
-            "fqn": "aws-cdk-lib.Duration"
-          }
-        }
-      ],
-      "symbolId": "src/services/props/IInstrumentedServiceProps:IInstrumentedServiceProps"
-    },
     "multi-az-observability.IMultiAvailabilityZoneObservability": {
       "assembly": "multi-az-observability",
       "docs": {
@@ -4714,57 +4615,6 @@
       },
       "name": "IMultiAvailabilityZoneObservability",
       "symbolId": "src/IMultiAvailabiliyZoneObservability:IMultiAvailabilityZoneObservability"
-    },
-    "multi-az-observability.IMultiAvailabilityZoneObservabilityProps": {
-      "assembly": "multi-az-observability",
-      "docs": {
-        "stability": "stable",
-        "summary": "The properties for creating multi-AZ observability alarms and dashboards."
-      },
-      "fqn": "multi-az-observability.IMultiAvailabilityZoneObservabilityProps",
-      "kind": "interface",
-      "locationInModule": {
-        "filename": "src/IMultiAvailabilityZoneObservabilityProps.ts",
-        "line": 7
-      },
-      "name": "IMultiAvailabilityZoneObservabilityProps",
-      "properties": [
-        {
-          "abstract": true,
-          "docs": {
-            "remarks": "This will create\nalarms based on Application Load Balancer metrics and optionally\nNAT Gateway metrics to determine single AZ impact. Specify either\nthis or instrumentedServiceObservabilityProps, but not both.",
-            "stability": "stable",
-            "summary": "The properties for a basic service that does not emit its own metrics or logs for latency and availability."
-          },
-          "locationInModule": {
-            "filename": "src/IMultiAvailabilityZoneObservabilityProps.ts",
-            "line": 16
-          },
-          "name": "basicServiceObservabilityProps",
-          "optional": true,
-          "type": {
-            "fqn": "multi-az-observability.IBasicServiceMultiAZObservabilityProps"
-          }
-        },
-        {
-          "abstract": true,
-          "docs": {
-            "remarks": "This will create alarms based\non those metrics to determine single AZ impact. Specify either this or\nbasicServiceObservabilityProps, but not both.",
-            "stability": "stable",
-            "summary": "The properties for a service that has implemented its own instrumentation to emit availability and latency metrics."
-          },
-          "locationInModule": {
-            "filename": "src/IMultiAvailabilityZoneObservabilityProps.ts",
-            "line": 24
-          },
-          "name": "instrumentedServiceObservabilityProps",
-          "optional": true,
-          "type": {
-            "fqn": "multi-az-observability.IInstrumentedServiceProps"
-          }
-        }
-      ],
-      "symbolId": "src/IMultiAvailabilityZoneObservabilityProps:IMultiAvailabilityZoneObservabilityProps"
     },
     "multi-az-observability.IOperation": {
       "assembly": "multi-az-observability",
@@ -5390,6 +5240,140 @@
       ],
       "symbolId": "src/services/IService:IService"
     },
+    "multi-az-observability.InstrumentedServiceProps": {
+      "assembly": "multi-az-observability",
+      "datatype": true,
+      "docs": {
+        "stability": "stable",
+        "summary": "The properties for adding alarms and dashboards for an instrumented service."
+      },
+      "fqn": "multi-az-observability.InstrumentedServiceProps",
+      "kind": "interface",
+      "locationInModule": {
+        "filename": "src/services/props/InstrumentedServiceProps.ts",
+        "line": 10
+      },
+      "name": "InstrumentedServiceProps",
+      "properties": [
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The Availability Zone mapper custom resources used to map AZ names to ids."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/InstrumentedServiceProps.ts",
+            "line": 39
+          },
+          "name": "availabilityZoneMapper",
+          "type": {
+            "fqn": "multi-az-observability.IAvailabilityZoneMapper"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "Indicates whether to create per operation and overall service  dashboards."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/InstrumentedServiceProps.ts",
+            "line": 21
+          },
+          "name": "createDashboard",
+          "type": {
+            "primitive": "boolean"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The load balancer used by the service."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/InstrumentedServiceProps.ts",
+            "line": 33
+          },
+          "name": "loadBalancer",
+          "type": {
+            "fqn": "aws-cdk-lib.aws_elasticloadbalancingv2.ILoadBalancerV2"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The threshold as a percentage between 0 and 1 on when to consider an AZ as an outlier for faults or high latency responses."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/InstrumentedServiceProps.ts",
+            "line": 28
+          },
+          "name": "outlierThreshold",
+          "type": {
+            "primitive": "number"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The service that the alarms and dashboards are being crated for."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/InstrumentedServiceProps.ts",
+            "line": 15
+          },
+          "name": "service",
+          "type": {
+            "fqn": "multi-az-observability.IService"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "default": "- No synthetic canaries are created",
+            "stability": "stable",
+            "summary": "An option to automatically create synthetic canaries to test each  operation in each AZ as well as via the regional."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/InstrumentedServiceProps.ts",
+            "line": 55
+          },
+          "name": "addSyntheticCanaries",
+          "optional": true,
+          "type": {
+            "primitive": "boolean"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "default": "- 60 minutes",
+            "stability": "stable",
+            "summary": "The interval used in the dashboard, defaults to 60 minutes."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/InstrumentedServiceProps.ts",
+            "line": 47
+          },
+          "name": "interval",
+          "optional": true,
+          "type": {
+            "fqn": "aws-cdk-lib.Duration"
+          }
+        }
+      ],
+      "symbolId": "src/services/props/InstrumentedServiceProps:InstrumentedServiceProps"
+    },
     "multi-az-observability.MultiAvailabilityZoneObservability": {
       "assembly": "multi-az-observability",
       "base": "constructs.Construct",
@@ -5405,7 +5389,7 @@
         },
         "locationInModule": {
           "filename": "src/MultiAvailabilityZoneObservability.ts",
-          "line": 30
+          "line": 28
         },
         "parameters": [
           {
@@ -5422,6 +5406,7 @@
           },
           {
             "name": "props",
+            "optional": true,
             "type": {
               "fqn": "multi-az-observability.MultiAvailabilityZoneObservabilityProps"
             }
@@ -5434,64 +5419,62 @@
       "kind": "class",
       "locationInModule": {
         "filename": "src/MultiAvailabilityZoneObservability.ts",
-        "line": 28
+        "line": 26
       },
       "name": "MultiAvailabilityZoneObservability",
       "symbolId": "src/MultiAvailabilityZoneObservability:MultiAvailabilityZoneObservability"
     },
     "multi-az-observability.MultiAvailabilityZoneObservabilityProps": {
       "assembly": "multi-az-observability",
+      "datatype": true,
       "docs": {
-        "stability": "stable"
+        "stability": "stable",
+        "summary": "The properties for creating multi-AZ observability alarms and dashboards."
       },
       "fqn": "multi-az-observability.MultiAvailabilityZoneObservabilityProps",
-      "initializer": {
-        "docs": {
-          "stability": "stable"
-        }
-      },
-      "interfaces": [
-        "multi-az-observability.IMultiAvailabilityZoneObservabilityProps"
-      ],
-      "kind": "class",
+      "kind": "interface",
       "locationInModule": {
         "filename": "src/MultiAvailabilityZoneObservabilityProps.ts",
-        "line": 5
+        "line": 7
       },
       "name": "MultiAvailabilityZoneObservabilityProps",
       "properties": [
         {
+          "abstract": true,
           "docs": {
+            "default": "- No basic service observability alarms are created",
             "remarks": "This will create\nalarms based on Application Load Balancer metrics and optionally\nNAT Gateway metrics to determine single AZ impact. Specify either\nthis or instrumentedServiceObservabilityProps, but not both.",
             "stability": "stable",
             "summary": "The properties for a basic service that does not emit its own metrics or logs for latency and availability."
           },
+          "immutable": true,
           "locationInModule": {
             "filename": "src/MultiAvailabilityZoneObservabilityProps.ts",
-            "line": 14
+            "line": 18
           },
           "name": "basicServiceObservabilityProps",
           "optional": true,
-          "overrides": "multi-az-observability.IMultiAvailabilityZoneObservabilityProps",
           "type": {
-            "fqn": "multi-az-observability.IBasicServiceMultiAZObservabilityProps"
+            "fqn": "multi-az-observability.BasicServiceMultiAZObservabilityProps"
           }
         },
         {
+          "abstract": true,
           "docs": {
+            "default": "- No instrumented service observability alarms are created",
             "remarks": "This will create alarms based\non those metrics to determine single AZ impact. Specify either this or\nbasicServiceObservabilityProps, but not both.",
             "stability": "stable",
             "summary": "The properties for a service that has implemented its own instrumentation to emit availability and latency metrics."
           },
+          "immutable": true,
           "locationInModule": {
             "filename": "src/MultiAvailabilityZoneObservabilityProps.ts",
-            "line": 22
+            "line": 28
           },
           "name": "instrumentedServiceObservabilityProps",
           "optional": true,
-          "overrides": "multi-az-observability.IMultiAvailabilityZoneObservabilityProps",
           "type": {
-            "fqn": "multi-az-observability.IInstrumentedServiceProps"
+            "fqn": "multi-az-observability.InstrumentedServiceProps"
           }
         }
       ],
@@ -5537,5 +5520,5 @@
     }
   },
   "version": "0.1.0",
-  "fingerprint": "Gk4VmX6cd7HXqh3Qcd2+vJXAS+HroZmB5Z/HtlixFsA="
+  "fingerprint": "7Z37gOqtRvHnO5db/vVHKCKPWC/anVvSrXM4MbnhmT4="
 }

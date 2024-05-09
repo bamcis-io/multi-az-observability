@@ -1,6 +1,6 @@
 import { Construct } from "constructs";
 import { IAlarm } from "aws-cdk-lib/aws-cloudwatch";
-import { IBaseOperationRegionalAlarmsAndRulesProps } from "./props/IBaseOperationRegionalAlarmsAndRulesProps";
+import { BaseOperationRegionalAlarmsAndRulesProps } from "./props/BaseOperationRegionalAlarmsAndRulesProps";
 import { AvailabilityAndLatencyAlarmsAndRules } from "./AvailabilityAndLatencyAlarmsAndRules";
 import { IBaseOperationRegionalAlarmsAndRules } from "./IBaseOperationRegionalAlarmsAndRules";
 
@@ -24,7 +24,7 @@ export abstract class BaseOperationRegionalAlarmsAndRules extends Construct impl
      */
     availabilityOrLatencyAlarm: IAlarm;
 
-    constructor(scope: Construct, id: string, props: IBaseOperationRegionalAlarmsAndRulesProps)
+    constructor(scope: Construct, id: string, props: BaseOperationRegionalAlarmsAndRulesProps)
     {
         super(scope, id);
 

@@ -7,88 +7,88 @@ import { IOperation } from "../../services/IOperation";
  * Properties for creating an availability and latency dashboard for 
  * a single operation
  */
-export interface IOperationAvailabilityAndLatencyDashboardProps
+export interface OperationAvailabilityAndLatencyDashboardProps
 {
     /**
      * The operation for this dashboard
      */
-    operation: IOperation;
+    readonly operation: IOperation;
 
     /**
      * The Availability Zone Ids being used for the operation
      */
-    availabilityZoneIds: string[];
+    readonly availabilityZoneIds: string[];
 
     /**
      * The interval of the dashboard
      */
-    interval: Duration;
+    readonly interval: Duration;
 
     /**
      * (Optional) The load balancer supporting this operation, if this is not 
      * provided, no load balancer metrics will be shown
      */
-    loadBalancer: ILoadBalancerV2;
+    readonly loadBalancer: ILoadBalancerV2;
 
     /**
      * Per AZ server-side availability alarms
      */
-    zonalEndpointServerAvailabilityAlarms: IAlarm[];
+    readonly zonalEndpointServerAvailabilityAlarms: IAlarm[];
 
     /**
      * Per AZ server-side latency alarms
      */
-    zonalEndpointServerLatencyAlarms: IAlarm[];
+    readonly zonalEndpointServerLatencyAlarms: IAlarm[];
 
     /**
      * Per AZ canary availability alarms
      */
-    zonalEndpointCanaryAvailabilityAlarms?: IAlarm[];
+    readonly zonalEndpointCanaryAvailabilityAlarms?: IAlarm[];
 
     /**
      * Per AZ canary latency alarms
      */
-    zonalEndpointCanaryLatencyAlarms?: IAlarm[];
+    readonly zonalEndpointCanaryLatencyAlarms?: IAlarm[];
 
     /**
      * Regional server-side availability alarm
      */
-    regionalEndpointServerAvailabilityAlarm: IAlarm;
+    readonly regionalEndpointServerAvailabilityAlarm: IAlarm;
 
     /**
      * Regional server-side latency alarm
      */
-    regionalEndpointServerLatencyAlarm: IAlarm;
+    readonly regionalEndpointServerLatencyAlarm: IAlarm;
 
     /**
      * Regional canary availability alarm
      */
-    regionalEndpointCanaryAvailabilityAlarm?: IAlarm;
+    readonly regionalEndpointCanaryAvailabilityAlarm?: IAlarm;
 
     /**
      * Regional canary latency alarm
      */
-    regionalEndpointCanaryLatencyAlarm?: IAlarm;
+    readonly regionalEndpointCanaryLatencyAlarm?: IAlarm;
 
     /**
      * Per AZ alarms that indicate isolated single AZ impact
      */
-    isolatedAZImpactAlarms: IAlarm[];
+    readonly isolatedAZImpactAlarms: IAlarm[];
 
     /**
      * Alarm that indicates regional impact
      */
-    regionalImpactAlarm: IAlarm;
+    readonly regionalImpactAlarm: IAlarm;
 
     /**
      * Insight rule that shows instance contributors to 
      * high latency for this operation
      */
-    instanceContributorsToHighLatency?: CfnInsightRule;
+    readonly instanceContributorsToHighLatency?: CfnInsightRule;
 
     /**
      * Insight rule that shows instance contributors to
      * faults for this operation
      */
-    instanceContributorsToFaults?: CfnInsightRule;
+    readonly instanceContributorsToFaults?: CfnInsightRule;
 }

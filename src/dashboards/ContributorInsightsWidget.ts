@@ -1,5 +1,5 @@
 import { ConcreteWidget, IWidget} from "aws-cdk-lib/aws-cloudwatch";
-import { IContributorInsightWidgetProps } from "./props/IContributorInsightWidgetProps";
+import { ContributorInsightWidgetProps } from "./props/ContributorInsightWidgetProps";
 import { Fn } from "aws-cdk-lib";
 
 /**
@@ -10,13 +10,13 @@ export class ContributorInsightsWidget extends ConcreteWidget implements IWidget
     /**
      * The widget properties
      */
-    properties: IContributorInsightWidgetProps;
+    properties: ContributorInsightWidgetProps;
 
     /**
      * Creates the widget
      * @param props 
      */
-    constructor(props: IContributorInsightWidgetProps)
+    constructor(props: ContributorInsightWidgetProps)
     {
         super(props.width === undefined ? 6 : props.width, props.height === undefined ? 6 : props.height)
         this.properties = props;

@@ -1,7 +1,7 @@
 import { Construct } from "constructs";
 import { IOperationAlarmsAndRules } from "./IOperationAlarmsAndRules";
 import { IServiceAlarmsAndRules } from "./IServiceAlarmsAndRules";
-import { IServiceAlarmsAndRulesProps } from "./props/IServiceAlarmsAndRulesProps";
+import { ServiceAlarmsAndRulesProps } from "./props/ServiceAlarmsAndRulesProps";
 import { Alarm, AlarmRule, ComparisonOperator, CompositeAlarm, IAlarm, IMetric, MathExpression } from "aws-cdk-lib/aws-cloudwatch";
 import { AvailabilityAndLatencyMetrics } from "../metrics/AvailabilityAndLatencyMetrics";
 import { AvailabilityMetricType } from "../utilities/AvailabilityMetricType";
@@ -41,7 +41,7 @@ export class ServiceAlarmsAndRules extends Construct implements IServiceAlarmsAn
      */
     regionalFaultCountServerSideAlarm: IAlarm;
 
-    constructor(scope: Construct, id: string, props: IServiceAlarmsAndRulesProps)
+    constructor(scope: Construct, id: string, props: ServiceAlarmsAndRulesProps)
     {
         super(scope, id);
         this.service = props.service;

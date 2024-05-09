@@ -1,5 +1,5 @@
 import { Construct } from "constructs";
-import { IServiceAvailabilityAndLatencyDashboardProps } from "./props/IServiceAvailabilityAndLatencyDashboardProps";
+import { ServiceAvailabilityAndLatencyDashboardProps } from "./props/ServiceAvailabilityAndLatencyDashboardProps";
 import { AlarmStatusWidget, Color, Dashboard, GraphWidget, IMetric, IWidget, MathExpression, PeriodOverride, TextWidget } from "aws-cdk-lib/aws-cloudwatch";
 import { AvailabilityMetricType } from "../utilities/AvailabilityMetricType";
 import { AvailabilityAndLatencyMetrics } from "../metrics/AvailabilityAndLatencyMetrics";
@@ -7,7 +7,7 @@ import { Fn } from "aws-cdk-lib";
 import { IServiceAvailabilityAndLatencyDashboard } from "./IServiceAvailabilityAndLatencyDashboard";
 import { IOperation } from "../services/IOperation";
 import { IOperationMetricDetails } from "../services/IOperationMetricDetails";
-import { IAvailabilityMetricProps } from "../metrics/props/IAvailabilityMetricProps";
+import { AvailabilityMetricProps } from "../metrics/props/AvailabilityMetricProps";
 
 /**
  * Creates a service level availability and latency dashboard
@@ -19,7 +19,7 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
      */
     dashboard: Dashboard;
 
-    constructor(scope: Construct, id: string, props: IServiceAvailabilityAndLatencyDashboardProps)
+    constructor(scope: Construct, id: string, props: ServiceAvailabilityAndLatencyDashboardProps)
     {
         super(scope, id);
 
@@ -104,7 +104,7 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
         });
     }
 
-    private static generateTPSWidgets(props: IServiceAvailabilityAndLatencyDashboardProps) : IWidget[]
+    private static generateTPSWidgets(props: ServiceAvailabilityAndLatencyDashboardProps) : IWidget[]
     {
         let widgets: IWidget[] = [];
 
@@ -166,7 +166,7 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
         return widgets;
     }
 
-    private static generateServerSideAndCanaryAvailabilityWidgets(props: IServiceAvailabilityAndLatencyDashboardProps): IWidget[]
+    private static generateServerSideAndCanaryAvailabilityWidgets(props: ServiceAvailabilityAndLatencyDashboardProps): IWidget[]
     {
        let widgets: IWidget[] = [];
             
@@ -184,7 +184,7 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
         return widgets;
     }
 
-    private static generateAvailabilityWidgets(props: IServiceAvailabilityAndLatencyDashboardProps, isCanary: boolean) : IWidget[]
+    private static generateAvailabilityWidgets(props: ServiceAvailabilityAndLatencyDashboardProps, isCanary: boolean) : IWidget[]
     {
         let widgets: IWidget[] = [];
         
@@ -270,7 +270,7 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
         return widgets;
     }
 
-    private static createRegionalAvailabilityMetricProps(criticalOperations: IOperation[], isCanary: boolean, metricType: AvailabilityMetricType) : IAvailabilityMetricProps[]
+    private static createRegionalAvailabilityMetricProps(criticalOperations: IOperation[], isCanary: boolean, metricType: AvailabilityMetricType) : AvailabilityMetricProps[]
     {
         return criticalOperations.reduce((filtered, value) => {
             if (isCanary && value.canaryMetricDetails !== undefined && value.canaryMetricDetails != null)
@@ -292,7 +292,7 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
         });
     }
 
-    private static createZonalAvailabilityMetricProps(criticalOperations: IOperation[],availabilityZoneId: string, isCanary: boolean, metricType: AvailabilityMetricType) : IAvailabilityMetricProps[]
+    private static createZonalAvailabilityMetricProps(criticalOperations: IOperation[],availabilityZoneId: string, isCanary: boolean, metricType: AvailabilityMetricType) : AvailabilityMetricProps[]
     {
         return criticalOperations.reduce((filtered, value) => {
             if (isCanary && value.canaryMetricDetails !== undefined && value.canaryMetricDetails != null)
