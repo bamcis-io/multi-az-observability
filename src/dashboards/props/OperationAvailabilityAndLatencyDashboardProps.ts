@@ -15,11 +15,6 @@ export interface OperationAvailabilityAndLatencyDashboardProps
     readonly operation: IOperation;
 
     /**
-     * The Availability Zone Ids being used for the operation
-     */
-    readonly availabilityZoneIds: string[];
-
-    /**
      * The interval of the dashboard
      */
     readonly interval: Duration;

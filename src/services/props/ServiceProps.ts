@@ -1,7 +1,9 @@
 import { Duration } from "aws-cdk-lib";
-import { IOperation } from "./IOperation";
 
-export interface IService
+/**
+ * Properties to initialize a service
+ */
+export interface ServiceProps
 {
     /**
      * The name of your service
@@ -28,15 +30,4 @@ export interface IService
      * The period for which metrics for the service should be aggregated 
      */
     readonly period: Duration;
-
-    /**
-     * The operations that are part of this service
-     */
-    readonly operations: IOperation[];
-
-    /**
-     * Adds an operation to this service and sets the operation's
-     * service property
-     */
-    addOperation(operation: IOperation): IService;
 }

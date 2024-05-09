@@ -3,8 +3,7 @@ import { CanaryFunctionProps } from "./props/CanaryFunctionProps";
 import { Effect, IManagedPolicy, IRole, ManagedPolicy, PolicyStatement, Role, ServicePrincipal } from "aws-cdk-lib/aws-iam";
 import { ISecurityGroup, SecurityGroup } from "aws-cdk-lib/aws-ec2";
 import { Architecture, AssetCode, Code, Function, IFunction, Runtime, Tracing } from "aws-cdk-lib/aws-lambda";
-import path = require("path");
-import { readFileSync } from "fs";
+const path = require("path");
 import { Duration, Fn, RemovalPolicy } from "aws-cdk-lib";
 import { ILogGroup, LogGroup, RetentionDays } from "aws-cdk-lib/aws-logs";
 import { ICanaryFunction } from "./ICanaryFunction";
@@ -63,13 +62,13 @@ export class CanaryFunction extends Construct implements ICanaryFunction {
             ]
         });
 
-        const file: string = readFileSync(path.resolve(__dirname, './src'), 'utf-8');
-        let code: AssetCode = Code.fromAsset(file, {
+        const dir: string = path.resolve(__dirname, './src');
+        let code: AssetCode = Code.fromAsset(dir, {
             bundling: {
                 image: Runtime.PYTHON_3_12.bundlingImage,
                 command: [
                     "bash", "-c",
-                    "pip install --no-cache -r requirements.txt -t /asset-output && cp --archive --update=older . /asset-output"
+                    "pip install --no-cache -r requirements.txt -t /asset-output && cp --archive --update . /asset-output"
                 ]
             }
         });

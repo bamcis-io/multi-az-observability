@@ -2,12 +2,12 @@ import * as cdk from 'aws-cdk-lib';
 import { Template } from 'aws-cdk-lib/assertions';
 import { SelectedSubnets, SubnetType, Vpc } from 'aws-cdk-lib/aws-ec2';
 import { ApplicationLoadBalancer } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
-import { MultiAvailabilityZoneObservability } from '../src/MultiAvailabilityZoneObservability';
+import { IService, MultiAvailabilityZoneObservability } from '../src/MultiAvailabilityZoneObservability';
 import { Duration } from 'aws-cdk-lib';
-import { IService } from '../src/services/IService';
-import { IOperation } from '../src/services/IOperation';
+import { Service } from '../src/services/Service';
+import { Operation } from '../src/services/Operation';
 import { Unit } from 'aws-cdk-lib/aws-cloudwatch';
-import { AvailabilityZoneMapper } from '../src/utilities/AvailabilityZoneMapper';
+import { IOperation } from '../src/services/IOperation';
 
 test('Partially instrumented service', () => {
     const app = new cdk.App();
@@ -37,23 +37,15 @@ test('Partially instrumented service', () => {
         subnetType: SubnetType.PRIVATE_WITH_EGRESS
     });
 
-    let service: IService = {
+    let service: IService = new Service({
         serviceName: "test",
-        operations: [
-
-        ],
-        availabilityZoneIds: vpc.availabilityZones,
+        availabilityZoneNames: vpc.availabilityZones,
         baseUrl: "http://www.example.com",
         faultCountThreshold: 25,
-        period: Duration.seconds(60),
-        addOperation(operation: IOperation) {
-            operation.service = this;
-            this.operations.push(operation)
-            return this;
-        }
-    };
+        period: Duration.seconds(60)
+    });
 
-    let rideOperation: IOperation = {
+    let rideOperation: IOperation = new Operation({
         operationName: "ride",
         service: service,
         path: "/ride",
@@ -86,6 +78,7 @@ test('Partially instrumented service', () => {
                     "AZ-ID": availabilityZoneId
                 }
             }
+            
         },
         serverSideLatencyMetricDetails: {
             operationName: "ride",
@@ -115,13 +108,13 @@ test('Partially instrumented service', () => {
                 }
             }
         }
-    };
+    });
 
     service.addOperation(rideOperation);
 
     new MultiAvailabilityZoneObservability(stack, "MAZObservability", {
         instrumentedServiceObservabilityProps: {
-            createDashboard: true,
+            createDashboards: true,
             loadBalancer: new ApplicationLoadBalancer(stack, "alb", {
                 vpc: vpc,
                 crossZoneEnabled: false,
@@ -129,7 +122,6 @@ test('Partially instrumented service', () => {
             }),
             service: service,
             outlierThreshold: 0.7,
-            availabilityZoneMapper: new AvailabilityZoneMapper(stack, "AZMapper"),
             interval: Duration.minutes(30)
         }
     });
@@ -159,29 +151,20 @@ test('Partially instrumented service with canaries', () => {
         createInternetGateway: false,
         natGateways: 0
     });
-
-    
+   
     let subnets: SelectedSubnets = vpc.selectSubnets({
         subnetType: SubnetType.PRIVATE_WITH_EGRESS
     });
 
-    let service: IService = {
+    let service: IService = new Service({
         serviceName: "test",
-        operations: [
-
-        ],
-        availabilityZoneIds: vpc.availabilityZones,
+        availabilityZoneNames: vpc.availabilityZones,
         baseUrl: "http://www.example.com",
         faultCountThreshold: 25,
-        period: Duration.seconds(60),
-        addOperation(operation: IOperation) {
-            operation.service = this;
-            this.operations.push(operation)
-            return this;
-        }
-    };
+        period: Duration.seconds(60)
+    });
 
-    let rideOperation: IOperation = {
+    let rideOperation: Operation = {
         operationName: "ride",
         service: service,
         path: "/ride",
@@ -307,7 +290,7 @@ test('Partially instrumented service with canaries', () => {
 
     new MultiAvailabilityZoneObservability(stack, "MAZObservability", {
         instrumentedServiceObservabilityProps: {
-            createDashboard: true,
+            createDashboards: true,
             loadBalancer: new ApplicationLoadBalancer(stack, "alb", {
                 vpc: vpc,
                 crossZoneEnabled: false,
@@ -315,7 +298,6 @@ test('Partially instrumented service with canaries', () => {
             }),
             service: service,
             outlierThreshold: 0.7,
-            availabilityZoneMapper: new AvailabilityZoneMapper(stack, "AZMapper"),
             interval: Duration.minutes(30)
         }
     });

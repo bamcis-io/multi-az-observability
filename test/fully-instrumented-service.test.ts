@@ -8,7 +8,8 @@ import { IService } from '../src/services/IService';
 import { IOperation } from '../src/services/IOperation';
 import { Unit } from 'aws-cdk-lib/aws-cloudwatch';
 import { ILogGroup, LogGroup } from 'aws-cdk-lib/aws-logs';
-import { AvailabilityZoneMapper } from '../src/utilities/AvailabilityZoneMapper';
+import { Service } from '../src/services/Service';
+import { Operation } from '../src/services/Operation';
 
 test('Fully instrumented service', () => {
     const app = new cdk.App();
@@ -38,26 +39,18 @@ test('Fully instrumented service', () => {
         subnetType: SubnetType.PRIVATE_WITH_EGRESS
     });
 
-    let service: IService = {
+    let service: IService = new Service({
         serviceName: "test",
-        operations: [
-
-        ],
-        availabilityZoneIds: vpc.availabilityZones,
+        availabilityZoneNames: vpc.availabilityZones,
         baseUrl: "http://www.example.com",
         faultCountThreshold: 25,
         period: Duration.seconds(60),
-        addOperation(operation: IOperation) {
-            operation.service = this;
-            this.operations.push(operation)
-            return this;
-        }
-    };
+    });
 
     let logGroup: ILogGroup = new LogGroup(stack, "Logs", {
     });
 
-    let rideOperation: IOperation = {
+    let rideOperation: IOperation = new Operation({
         operationName: "ride",
         service: service,
         path: "/ride",
@@ -127,13 +120,13 @@ test('Fully instrumented service', () => {
                 }
             }
         }
-    };
+    });
 
     service.addOperation(rideOperation);
 
     new MultiAvailabilityZoneObservability(stack, "MAZObservability", {
         instrumentedServiceObservabilityProps: {
-            createDashboard: true,
+            createDashboards: true,
             loadBalancer: new ApplicationLoadBalancer(stack, "alb", {
                 vpc: vpc,
                 crossZoneEnabled: false,
@@ -141,7 +134,6 @@ test('Fully instrumented service', () => {
             }),
             service: service,
             outlierThreshold: 0.7,
-            availabilityZoneMapper: new AvailabilityZoneMapper(stack, "AZMapper"),
             interval: Duration.minutes(30)
         }
     });
@@ -177,26 +169,18 @@ test('Fully instrumented service with canaries', () => {
         subnetType: SubnetType.PRIVATE_WITH_EGRESS
     });
 
-    let service: IService = {
+    let service: IService = new Service({
         serviceName: "test",
-        operations: [
-
-        ],
-        availabilityZoneIds: vpc.availabilityZones,
+        availabilityZoneNames: vpc.availabilityZones,
         baseUrl: "http://www.example.com",
         faultCountThreshold: 25,
-        period: Duration.seconds(60),
-        addOperation(operation: IOperation) {
-            operation.service = this;
-            this.operations.push(operation)
-            return this;
-        }
-    };
+        period: Duration.seconds(60)
+    });
 
     let logGroup: ILogGroup = new LogGroup(stack, "Logs", {
     });
 
-    let rideOperation: IOperation = {
+    let rideOperation: Operation = {
         operationName: "ride",
         service: service,
         path: "/ride",
@@ -326,7 +310,7 @@ test('Fully instrumented service with canaries', () => {
         }   
     };
 
-    let payOperation: IOperation = {
+    let payOperation: Operation = {
         operationName: "pay",
         service: service,
         path: "/pay",
@@ -461,7 +445,7 @@ test('Fully instrumented service with canaries', () => {
 
     new MultiAvailabilityZoneObservability(stack, "MAZObservability", {
         instrumentedServiceObservabilityProps: {
-            createDashboard: true,
+            createDashboards: true,
             loadBalancer: new ApplicationLoadBalancer(stack, "alb", {
                 vpc: vpc,
                 crossZoneEnabled: false,
@@ -469,8 +453,8 @@ test('Fully instrumented service with canaries', () => {
             }),
             service: service,
             outlierThreshold: 0.7,
-            availabilityZoneMapper: new AvailabilityZoneMapper(stack, "AZMapper"),
-            interval: Duration.minutes(30)
+            interval: Duration.minutes(30),
+            addSyntheticCanaries: true
         }
     });
 

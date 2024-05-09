@@ -8,6 +8,8 @@ import { AvailabilityMetricType } from "../utilities/AvailabilityMetricType";
 import { Fn } from "aws-cdk-lib";
 import { IService } from "../services/IService";
 import { ICanaryOperationRegionalAlarmsAndRules } from "./ICanaryOperationRegionalAlarmsAndRules";
+import { IAvailabilityZoneMapper } from "../utilities/IAvailabilityZoneMapper";
+import { AvailabilityZoneMapper } from "../utilities/AvailabilityZoneMapper";
 
 /**
  * Service level alarms and rules using critical operations
@@ -49,10 +51,14 @@ export class ServiceAlarmsAndRules extends Construct implements IServiceAlarmsAn
         let criticalOperations: string[] = props.service.operations.filter(x => x.isCritical == true).map(x => x.operationName);
         let counter: number = 1;
         this.zonalAggregateIsolatedImpactAlarms = [];
+
+        let azMapper: IAvailabilityZoneMapper = new AvailabilityZoneMapper(this, "AZMapper", {
+            availabilityZoneNames: props.service.availabilityZoneNames
+        });
        
-        for (let i = 0; i < props.service.availabilityZoneIds.length; i++)
+        for (let i = 0; i < props.service.availabilityZoneNames.length; i++)
         {
-            let availabilityZonedId: string = props.service.availabilityZoneIds[i];
+            let availabilityZonedId: string = azMapper.availabilityZoneId(props.service.availabilityZoneNames[i]);
 
             this.zonalAggregateIsolatedImpactAlarms.push(new CompositeAlarm(this, "AZ" + counter + "ServiceAggregateIsolatedImpactAlarm", {
                 compositeAlarmName: availabilityZonedId + "-" + props.service.serviceName.toLowerCase() + "-isolated-impact-aggregate-alarm",

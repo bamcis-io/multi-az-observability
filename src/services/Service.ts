@@ -1,7 +1,12 @@
 import { Duration } from "aws-cdk-lib";
 import { IOperation } from "./IOperation";
+import { ServiceProps } from "./props/ServiceProps";
+import { IService } from "./IService";
 
-export interface IService
+/**
+ * The representation of a service composed of multiple operations
+ */
+export class Service implements IService
 {
     /**
      * The name of your service
@@ -38,5 +43,19 @@ export interface IService
      * Adds an operation to this service and sets the operation's
      * service property
      */
-    addOperation(operation: IOperation): IService;
+    addOperation(operation: IOperation): IService
+    {
+        this.operations.push(operation);
+        return this;
+    }
+
+    constructor(props: ServiceProps)
+    {
+        this.serviceName = props.serviceName;
+        this.availabilityZoneNames = props.availabilityZoneNames;
+        this.baseUrl = props.baseUrl;
+        this.faultCountThreshold = props.faultCountThreshold;
+        this.operations = [];
+        this.period = props.period;
+    }
 }

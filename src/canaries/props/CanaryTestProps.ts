@@ -1,7 +1,6 @@
 import { IFunction } from "aws-cdk-lib/aws-lambda";
 import { IOperation } from "../../services/IOperation";
 import { ILoadBalancerV2 } from "aws-cdk-lib/aws-elasticloadbalancingv2";
-import { IAvailabilityZoneMapper } from "../../utilities/IAvailabilityZoneMapper";
 
 /**
  * The props for creating a canary test on a single operation
@@ -25,11 +24,15 @@ export interface CanaryTestProps
 
     /**
      * Data to supply in a POST, PUT, or PATCH operation
+     * 
+     * @default - No data is sent in a POST, PUT, or PATCH request
      */
     readonly postData?: string;
 
     /**
      * Any headers to include
+     * 
+     * @default - No additional headers are added to the requests
      */
     readonly headers?: {[key: string]: string};
 
@@ -44,12 +47,7 @@ export interface CanaryTestProps
     readonly loadBalancer: ILoadBalancerV2;
 
     /**
-     * The Availability Zone mapper object
-     */
-    readonly availabilityZoneMapper: IAvailabilityZoneMapper;
-
-    /**
      * The Availability Zones being used
      */
-    readonly availabilityZoneIds: string[];
+    readonly availabilityZoneNames: string[];
 }

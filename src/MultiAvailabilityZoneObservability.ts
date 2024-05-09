@@ -7,14 +7,27 @@ export { MultiAvailabilityZoneObservabilityProps } from "./MultiAvailabilityZone
 export { IMultiAvailabilityZoneObservability } from "./IMultiAvailabiliyZoneObservability";
 export { OutlierDetectionAlgorithm } from "./utilities/OutlierDetectionAlgorithm";
 export { BasicServiceMultiAZObservabilityProps } from "./services/props/BasicServiceMultiAZObservabilityProps";
-export { InstrumentedServiceProps } from "./services/props/InstrumentedServiceProps";
+export { InstrumentedServiceMultiAZObservabilityProps } from "./services/props/InstrumentedServiceMultiAZObservabilityProps";
 export { IService } from "./services/IService";
+export { Service } from "./services/Service";
 export { IAvailabilityZoneMapper } from "./utilities/IAvailabilityZoneMapper";
-export { IOperation } from "./services/IOperation"
+export { IOperation } from "./services/IOperation";
+export { Operation } from "./services/Operation";
+export { OperationMetricDetails } from "./services/OperationMetricDetails";
 export { IOperationMetricDetails } from "./services/IOperationMetricDetails";
-export { ICanaryTestProps } from "./canaries/props/ICanaryTestProps";
+export { CanaryTestProps } from "./canaries/props/CanaryTestProps";
 export { ICanaryMetrics } from "./services/ICanaryMetrics";
 export { IContributorInsightRuleDetails } from "./services/IContributorInsightRuleDetails";
+export { AvailabilityZoneMapper } from "./utilities/AvailabilityZoneMapper";
+export { AvailabilityZoneMapperProps } from "./utilities/AvailabilityZoneMapperProps";
+export { ServiceProps } from "./services/props/ServiceProps";
+export { CanaryMetrics } from "./services/CanaryMetrics";
+export { CanaryMetricProps } from "./services/props/CanaryMetricProps";
+export { OperationProps } from "./services/props/OperationProps";
+export { OperationMetricDetailsProps } from "./services/props/OperationMetricDetailsProps";
+export { IDimensions } from "./services/IDimensions";
+export { ContributorInsightRuleDetails } from "./services/ContributorInsightRuleDetails";
+export { ContributorInsightRuleDetailsProps } from "./services/props/ContributorInsightRuleDetailsProps";
 
 /**
  * The construct will create multi-AZ observability for your service based on the 
@@ -41,9 +54,9 @@ export class MultiAvailabilityZoneObservability extends Construct implements IMu
                     service: props.instrumentedServiceObservabilityProps.service,
                     outlierThreshold: props.instrumentedServiceObservabilityProps.outlierThreshold,
                     loadBalancer: props.instrumentedServiceObservabilityProps.loadBalancer,
-                    createDashboard: props.instrumentedServiceObservabilityProps.createDashboard,
-                    availabilityZoneMapper: props.instrumentedServiceObservabilityProps.availabilityZoneMapper,
-                    interval: props.instrumentedServiceObservabilityProps.interval
+                    createDashboards: props.instrumentedServiceObservabilityProps.createDashboards,
+                    interval: props.instrumentedServiceObservabilityProps.interval,
+                    addSyntheticCanaries: props.instrumentedServiceObservabilityProps.addSyntheticCanaries
                 });
             } 
         }

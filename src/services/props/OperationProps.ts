@@ -1,11 +1,13 @@
-import { CanaryTestProps } from "../canaries/props/CanaryTestProps";
-import { ICanaryMetrics } from "./ICanaryMetrics";
-import { IContributorInsightRuleDetails } from "./IContributorInsightRuleDetails";
-import { IOperationMetricDetails } from "./IOperationMetricDetails";
-import { IService } from "./IService";
+import { CanaryTestProps } from "../../canaries/props/CanaryTestProps";
+import { ICanaryMetrics } from "../ICanaryMetrics";
+import { IContributorInsightRuleDetails } from "../IContributorInsightRuleDetails";
+import { IOperationMetricDetails } from "../IOperationMetricDetails";
+import { IService } from "../IService";
 
-
-export interface IOperation
+/**
+ * Properties for an operation
+ */
+export interface OperationProps
 {
     /**
      * The service the operation is associated with
@@ -39,8 +41,8 @@ export interface IOperation
     readonly canaryMetricDetails?: ICanaryMetrics;
 
     /**
-    * The server side details for contributor insights rules
-    */
+     * The server side details for contributor insights rules
+     */
     readonly serverSideContributorInsightRuleDetails?: IContributorInsightRuleDetails;
 
     /**

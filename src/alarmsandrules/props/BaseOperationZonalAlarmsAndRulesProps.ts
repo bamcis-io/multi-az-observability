@@ -1,6 +1,6 @@
 import { IContributorInsightRuleDetails } from "../../services/IContributorInsightRuleDetails";
-import { IOperation } from "../../services/IOperation";
 import { IOperationMetricDetails } from "../../services/IOperationMetricDetails";
+import { Operation } from "../../services/Operation";
 import { OutlierDetectionAlgorithm } from "../../utilities/OutlierDetectionAlgorithm";
 
 /**
@@ -11,7 +11,7 @@ export interface BaseOperationZonalAlarmsAndRulesProps
     /**
      * The operation for these alarms and rules
      */
-    readonly operation: IOperation;
+    readonly operation: Operation;
 
     /**
      * The availability metric details to create alarms and rules from

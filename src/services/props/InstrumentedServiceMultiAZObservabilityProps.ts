@@ -1,13 +1,12 @@
 import { ILoadBalancerV2 } from "aws-cdk-lib/aws-elasticloadbalancingv2";
 import { IService } from "../IService";
 import { Duration } from "aws-cdk-lib";
-import { IAvailabilityZoneMapper } from "../../utilities/IAvailabilityZoneMapper";
 
 /**
  * The properties for adding alarms and dashboards
  * for an instrumented service.
  */
-export interface InstrumentedServiceProps
+export interface InstrumentedServiceMultiAZObservabilityProps
 {
     /**
      * The service that the alarms and dashboards are being crated for.
@@ -17,8 +16,10 @@ export interface InstrumentedServiceProps
     /**
      * Indicates whether to create per operation and overall service 
      * dashboards.
+     * 
+     * @default - No dashboards are created
      */
-    readonly createDashboard: boolean;
+    readonly createDashboards?: boolean;
 
     /**
      * The threshold as a percentage between 0 and 1
@@ -31,12 +32,6 @@ export interface InstrumentedServiceProps
      * The load balancer used by the service
      */
     readonly loadBalancer: ILoadBalancerV2;
-
-    /**
-     * The Availability Zone mapper custom resources
-     * used to map AZ names to ids.
-     */
-    readonly availabilityZoneMapper: IAvailabilityZoneMapper;
 
     /**
      * The interval used in the dashboard, defaults to

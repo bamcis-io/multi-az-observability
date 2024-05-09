@@ -8,6 +8,8 @@ import { IServiceAvailabilityAndLatencyDashboard } from "./IServiceAvailabilityA
 import { IOperation } from "../services/IOperation";
 import { IOperationMetricDetails } from "../services/IOperationMetricDetails";
 import { AvailabilityMetricProps } from "../metrics/props/AvailabilityMetricProps";
+import { AvailabilityZoneMapper } from "../utilities/AvailabilityZoneMapper";
+import { IAvailabilityZoneMapper } from "../MultiAvailabilityZoneObservability";
 
 /**
  * Creates a service level availability and latency dashboard
@@ -24,6 +26,14 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
         super(scope, id);
 
         let topLevelAggregateAlarmWidgets: IWidget[] = [];
+
+        let azMapper: IAvailabilityZoneMapper = new AvailabilityZoneMapper(this, "AZMapper", {
+            availabilityZoneNames: props.service.availabilityZoneNames
+        });
+
+        let availabilityZoneIds: string[] = props.service.availabilityZoneNames.map(x => {
+            return azMapper.availabilityZoneId(x);
+        })
 
         topLevelAggregateAlarmWidgets.push(new TextWidget({
             height: 2,
@@ -43,10 +53,10 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
         let keyPrefix: string = AvailabilityAndLatencyMetrics.nextChar("");
         let perOperationAZFaultsMetrics: IMetric[] = [];
 
-        for (let i = 0; i < props.service.availabilityZoneIds.length; i++)
+        for (let i = 0; i < props.service.availabilityZoneNames.length; i++)
         {
             let counter: number = 1;
-            let availabilityZoneId: string = props.service.availabilityZoneIds[i];
+            let availabilityZoneId: string = azMapper.availabilityZoneId(props.service.availabilityZoneNames[i]);
 
             topLevelAggregateAlarmWidgets.push(new AlarmStatusWidget({
                 height: 2,
@@ -90,7 +100,7 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
             })
         ]
 
-        topLevelAggregateAlarmWidgets.concat(ServiceAvailabilityAndLatencyDashboard.generateTPSWidgets(props));
+        topLevelAggregateAlarmWidgets.concat(ServiceAvailabilityAndLatencyDashboard.generateTPSWidgets(props, availabilityZoneIds));
 
         this.dashboard = new Dashboard(this, "TopLevelDashboard", {
             dashboardName: props.service.serviceName.toLowerCase() + Fn.sub("-service-availability-and-latency-${AWS::Region}"),
@@ -99,12 +109,12 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
             widgets: [
                 topLevelAggregateAlarmWidgets,
                 azContributorWidgets,
-                ServiceAvailabilityAndLatencyDashboard.generateServerSideAndCanaryAvailabilityWidgets(props)
+                ServiceAvailabilityAndLatencyDashboard.generateServerSideAndCanaryAvailabilityWidgets(props, availabilityZoneIds)
             ]
         });
     }
 
-    private static generateTPSWidgets(props: ServiceAvailabilityAndLatencyDashboardProps) : IWidget[]
+    private static generateTPSWidgets(props: ServiceAvailabilityAndLatencyDashboardProps, availabilityZoneIds: string[]) : IWidget[]
     {
         let widgets: IWidget[] = [];
 
@@ -133,9 +143,10 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
             }
         }));
 
-        for (let i = 0; i < props.service.availabilityZoneIds.length; i++)
+        for (let i = 0; i < availabilityZoneIds.length; i++)
         {
-            let availabilityZoneId: string = props.service.availabilityZoneIds[i];
+            let availabilityZoneId: string = availabilityZoneIds[i];
+            
             let zonalMetricProps = {
                 availabilityMetricProps: props.service.operations.filter(x => x.isCritical).map(x => {
                     return {
@@ -166,25 +177,25 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
         return widgets;
     }
 
-    private static generateServerSideAndCanaryAvailabilityWidgets(props: ServiceAvailabilityAndLatencyDashboardProps): IWidget[]
+    private static generateServerSideAndCanaryAvailabilityWidgets(props: ServiceAvailabilityAndLatencyDashboardProps, availabilityZoneIds: string[]): IWidget[]
     {
        let widgets: IWidget[] = [];
             
         widgets.push(new TextWidget({ height: 2, width: 24, markdown: "**Server-side Availability**\n(Each operation is equally weighted regardless of request volume)" }));
     
-        widgets = widgets.concat(ServiceAvailabilityAndLatencyDashboard.generateAvailabilityWidgets(props, false));
+        widgets = widgets.concat(ServiceAvailabilityAndLatencyDashboard.generateAvailabilityWidgets(props, false, availabilityZoneIds));
         
         if (props.service.operations.filter(x => x.isCritical && x.canaryMetricDetails !== undefined).length > 0)
         {
             widgets.push(new TextWidget({ height: 2, width: 24, markdown: "**Canary Measured Availability**\n(Each operation is equally weighted regardless of request volume)" }));
         
-            widgets = widgets.concat(ServiceAvailabilityAndLatencyDashboard.generateAvailabilityWidgets(props, true));
+            widgets = widgets.concat(ServiceAvailabilityAndLatencyDashboard.generateAvailabilityWidgets(props, true, availabilityZoneIds));
         }
         
         return widgets;
     }
 
-    private static generateAvailabilityWidgets(props: ServiceAvailabilityAndLatencyDashboardProps, isCanary: boolean) : IWidget[]
+    private static generateAvailabilityWidgets(props: ServiceAvailabilityAndLatencyDashboardProps, isCanary: boolean, availabilityZoneIds: string[]) : IWidget[]
     {
         let widgets: IWidget[] = [];
         
@@ -225,9 +236,9 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
             ]
         }));
 
-        for (let i = 0; i < props.service.availabilityZoneIds.length; i++)
+        for (let i = 0; i < availabilityZoneIds.length; i++)
         {
-            let availabilityZoneId = props.service.availabilityZoneIds[i];
+            let availabilityZoneId = availabilityZoneIds[i];
 
             widgets.push(new GraphWidget({
                 height: 6,

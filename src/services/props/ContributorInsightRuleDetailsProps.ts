@@ -1,13 +1,12 @@
 import { ILogGroup } from "aws-cdk-lib/aws-logs";
 
-export interface IContributorInsightRuleDetails
+export interface ContributorInsightRuleDetailsProps
 {
     /**
      * The log groups where CloudWatch logs for the operation are located. If 
      * this is not provided, Contributor Insight rules cannot be created.
      */
     readonly logGroups: ILogGroup[];
-
     /**
      * The path in the log files to the field that indicates the latency
      * for the response. This could either be success latency or fault 

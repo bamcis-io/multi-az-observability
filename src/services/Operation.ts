@@ -1,11 +1,16 @@
-import { CanaryTestProps } from "../canaries/props/CanaryTestProps";
-import { ICanaryMetrics } from "./ICanaryMetrics";
+
 import { IContributorInsightRuleDetails } from "./IContributorInsightRuleDetails";
-import { IOperationMetricDetails } from "./IOperationMetricDetails";
 import { IService } from "./IService";
+import { CanaryTestProps } from "../canaries/props/CanaryTestProps";
+import { OperationProps } from "./props/OperationProps";
+import { IOperation } from "./IOperation";
+import { IOperationMetricDetails } from "./IOperationMetricDetails";
+import { ICanaryMetrics } from "./ICanaryMetrics";
 
-
-export interface IOperation
+/**
+ * A single operation that is part of a service
+ */
+export class Operation implements IOperation
 {
     /**
      * The service the operation is associated with
@@ -60,4 +65,18 @@ export interface IOperation
      * The http methods supported by the operation
      */
     readonly httpMethods: string[];
+
+    constructor(props: OperationProps)
+    {
+      this.canaryMetricDetails = props.canaryMetricDetails;
+      this.canaryTestProps = props.canaryTestProps;
+      this.httpMethods = props.httpMethods;
+      this.isCritical = props.isCritical;
+      this.operationName = props.operationName;
+      this.path = props.path;
+      this.serverSideAvailabilityMetricDetails = props.serverSideAvailabilityMetricDetails;
+      this.serverSideLatencyMetricDetails = props.serverSideLatencyMetricDetails;
+      this.serverSideContributorInsightRuleDetails = props.serverSideContributorInsightRuleDetails;
+      this.service = props.service;
+    }
 }

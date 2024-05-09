@@ -1,7 +1,13 @@
-import { Duration } from "aws-cdk-lib";
 import { Unit } from "aws-cdk-lib/aws-cloudwatch";
+import { Duration } from "aws-cdk-lib";
+import { OperationMetricDetailsProps } from "./props/OperationMetricDetailsProps";
+import { IDimensions } from "./IDimensions";
+import { IOperationMetricDetails } from "./IOperationMetricDetails";
 
-export interface IOperationMetricDetails
+/**
+ * Generic metric details for an operation
+ */
+export class OperationMetricDetails implements IOperationMetricDetails
 {
     /**
      * The operation these metric details are for
@@ -83,7 +89,10 @@ export interface IOperationMetricDetails
      * @param region 
      */
 
-    regionalDimensions(region: string): { [key: string]: string};
+    regionalDimensions(region: string): { [key: string]: string} 
+    {
+        return this.dimensions.regionalDimensions(region);
+    }
     
     /**
      * Gets the zonal dimensions for these metrics, expected to return something like 
@@ -96,5 +105,28 @@ export interface IOperationMetricDetails
      * @param availabilityZoneId 
      * @param region 
      */
-    zonalDimensions(availabilityZoneId: string, region: string): { [key: string]: string};
+    zonalDimensions(availabilityZoneId: string, region: string): { [key: string]: string}
+    {
+        return this.dimensions.zonalDimensions(availabilityZoneId, region);
+    }
+
+    private readonly dimensions: IDimensions;
+
+    constructor(props: OperationMetricDetailsProps)
+    {
+        this.alarmStatistic = props.alarmStatistic;
+        this.datapointsToAlarm = props.datapointsToAlarm;
+        this.evaluationPeriods = props.evaluationPeriods;
+        this.faultAlarmThreshold = props.faultAlarmThreshold;
+        this.faultMetricNames = props.faultMetricNames;
+        this.graphedFaultStatistics = props.graphedFaultStatistics;
+        this.graphedSuccessStatistics = props.graphedSuccessStatistics;
+        this.metricNamespace = props.metricNamespace;
+        this.operationName = props.operationName;
+        this.period = props.period;
+        this.successAlarmThreshold = props.successAlarmThreshold;
+        this.successMetricNames = props.successMetricNames;
+        this.unit = props.unit;
+        this.dimensions = props.dimensions;
+    }
 }

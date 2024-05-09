@@ -3,10 +3,14 @@ import { Effect, IManagedPolicy, IRole, ManagedPolicy, PolicyStatement, Role, Se
 import { Architecture, Code, Function, IFunction, Runtime, Tracing } from "aws-cdk-lib/aws-lambda";
 import { ILogGroup, LogGroup, RetentionDays } from "aws-cdk-lib/aws-logs";
 import { Construct } from "constructs";
-import { readFileSync } from 'fs';
-import path = require("path");
+const fs = require('fs');
+const path = require("path");
 import { IAvailabilityZoneMapper } from "./IAvailabilityZoneMapper";
+import { AvailabilityZoneMapperProps } from "./AvailabilityZoneMapperProps";
 
+/**
+ * A construct that allows you to map AZ names to ids and back
+ */
 export class AvailabilityZoneMapper extends Construct implements IAvailabilityZoneMapper
 {
     /**
@@ -26,7 +30,7 @@ export class AvailabilityZoneMapper extends Construct implements IAvailabilityZo
      */
     mapper: CustomResource;
 
-    constructor(scope: Construct, id: string)
+    constructor(scope: Construct, id: string, props?: AvailabilityZoneMapperProps)
     {
         super(scope, id);
         let xrayManagedPolicy: IManagedPolicy = new ManagedPolicy(this, "XrayManagedPolicy", {
@@ -68,7 +72,7 @@ export class AvailabilityZoneMapper extends Construct implements IAvailabilityZo
             ]
         }); 
         
-        const file: string = readFileSync(path.resolve(__dirname, './../azmapper/index.py'), 'utf-8');
+        const file: string = fs.readFileSync(path.resolve(__dirname, './../azmapper/index.py'), 'utf-8');
 
         this.function = new Function(this, "AvailabilityZoneMapperFunction", {
             runtime: Runtime.PYTHON_3_12,
@@ -116,7 +120,8 @@ export class AvailabilityZoneMapper extends Construct implements IAvailabilityZo
         });  
         
         this.mapper = new CustomResource(this, "AvailabilityZoneMapper", {
-            serviceToken: this.function.functionArn
+            serviceToken: this.function.functionArn,
+            properties: props?.availabilityZoneNames !== undefined ? { "AvailabilityZones": props.availabilityZoneNames} : {}
         });
     }
 

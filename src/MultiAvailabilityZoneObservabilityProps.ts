@@ -1,5 +1,5 @@
 import { BasicServiceMultiAZObservabilityProps } from "./services/props/BasicServiceMultiAZObservabilityProps";
-import { InstrumentedServiceProps } from "./services/props/InstrumentedServiceProps";
+import { InstrumentedServiceMultiAZObservabilityProps } from "./services/props/InstrumentedServiceMultiAZObservabilityProps";
 
 /**
  * The properties for creating multi-AZ observability alarms and dashboards.
@@ -25,5 +25,5 @@ export interface MultiAvailabilityZoneObservabilityProps
      * 
      * @default - No instrumented service observability alarms are created
      */
-    readonly instrumentedServiceObservabilityProps?: InstrumentedServiceProps;
+    readonly instrumentedServiceObservabilityProps?: InstrumentedServiceMultiAZObservabilityProps;
 }

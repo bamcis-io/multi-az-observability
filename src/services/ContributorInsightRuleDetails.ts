@@ -1,6 +1,12 @@
 import { ILogGroup } from "aws-cdk-lib/aws-logs";
+import { ContributorInsightRuleDetailsProps } from "./props/ContributorInsightRuleDetailsProps";
+import { IContributorInsightRuleDetails } from "./IContributorInsightRuleDetails";
 
-export interface IContributorInsightRuleDetails
+/**
+ * The contributor insight rule details for creating an
+ * insight rule
+ */
+export class ContributorInsightRuleDetails implements IContributorInsightRuleDetails
 {
     /**
      * The log groups where CloudWatch logs for the operation are located. If 
@@ -39,4 +45,14 @@ export interface IContributorInsightRuleDetails
      * rules
      */
     readonly instanceIdJsonPath: string;
+
+    constructor(props: ContributorInsightRuleDetailsProps)
+    {
+        this.availabilityZoneIdJsonPath = props.availabilityZoneIdJsonPath;
+        this.faultMetricJsonPath = props.faultMetricJsonPath;
+        this.instanceIdJsonPath = props.instanceIdJsonPath;
+        this.logGroups = props.logGroups;
+        this.operationNameJsonPath = props.operationNameJsonPath;
+        this.successLatencyMetricJsonPath = props.successLatencyMetricJsonPath;
+    }
 }

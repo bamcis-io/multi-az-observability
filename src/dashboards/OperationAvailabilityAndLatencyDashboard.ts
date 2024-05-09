@@ -30,10 +30,16 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
 
         let widgets: IWidget[][] = [];
 
-        this.azMapper = new AvailabilityZoneMapper(this, "AZMapper");
+        this.azMapper = new AvailabilityZoneMapper(this, "AZMapper", {
+            availabilityZoneNames: props.operation.service.availabilityZoneNames
+        });
+
+        let availabilityZoneIds: string[] = props.operation.service.availabilityZoneNames.map(x => {
+            return this.azMapper.availabilityZoneId(x);
+        });
 
         widgets.push(
-            OperationAvailabilityAndLatencyDashboard.createTopLevelAggregateAlarmWidgets(props, "**Top Level Aggregate Alarms**")
+            OperationAvailabilityAndLatencyDashboard.createTopLevelAggregateAlarmWidgets(props, "**Top Level Aggregate Alarms**", availabilityZoneIds)
         );
 
         widgets.push(
@@ -41,7 +47,7 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
                 operation: props.operation,
                 availabilityMetricDetails: props.operation.serverSideAvailabilityMetricDetails,
                 latencyMetricDetails: props.operation.serverSideLatencyMetricDetails,
-                availabilityZoneIds: props.availabilityZoneIds,
+                availabilityZoneIds: availabilityZoneIds,
                 interval: props.interval,
                 isCanary: false,
                 resolutionPeriod: Duration.minutes(60),
@@ -59,7 +65,7 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
                 operation: props.operation,
                 availabilityMetricDetails: props.operation.serverSideAvailabilityMetricDetails,
                 latencyMetricDetails: props.operation.serverSideLatencyMetricDetails,
-                availabilityZoneIds: props.availabilityZoneIds,
+                availabilityZoneIds: availabilityZoneIds,
                 interval: props.interval,
                 isCanary: false,
                 resolutionPeriod: Duration.minutes(60),
@@ -74,7 +80,7 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
 
         if (props.loadBalancer !== undefined && props.loadBalancer != null)
         {
-            widgets.push(this.createApplicationLoadBalancerWidgets(props, "**Application Load Balancer Metrics**"));
+            widgets.push(this.createApplicationLoadBalancerWidgets(props, "**Application Load Balancer Metrics**", availabilityZoneIds));
         }                
 
         if (props.operation.canaryMetricDetails !== undefined && props.operation.canaryMetricDetails != null)
@@ -83,7 +89,7 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
                 operation: props.operation,
                 availabilityMetricDetails: props.operation.canaryMetricDetails.canaryAvailabilityMetricDetails,
                 latencyMetricDetails: props.operation.serverSideLatencyMetricDetails,
-                availabilityZoneIds: props.availabilityZoneIds,
+                availabilityZoneIds: availabilityZoneIds,
                 interval: props.interval,
                 isCanary: false,
                 resolutionPeriod: Duration.minutes(60),
@@ -100,7 +106,7 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
                 operation: props.operation,
                 availabilityMetricDetails: props.operation.canaryMetricDetails.canaryAvailabilityMetricDetails,
                 latencyMetricDetails: props.operation.serverSideLatencyMetricDetails,
-                availabilityZoneIds: props.availabilityZoneIds,
+                availabilityZoneIds: availabilityZoneIds,
                 interval: props.interval,
                 isCanary: false,
                 resolutionPeriod: Duration.minutes(60),
@@ -122,7 +128,7 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
         });
     }
 
-    private static createTopLevelAggregateAlarmWidgets(props: OperationAvailabilityAndLatencyDashboardProps, title: string)
+    private static createTopLevelAggregateAlarmWidgets(props: OperationAvailabilityAndLatencyDashboardProps, title: string, availabilityZoneIds: string[])
     {
         let topLevelAggregateAlarms: IWidget[] = [
             new TextWidget({ height: 2, width: 24, markdown: title }),
@@ -136,9 +142,9 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
             )
         ];
 
-        for (let i = 0; i < props.availabilityZoneIds.length; i++)
+        for (let i = 0; i < availabilityZoneIds.length; i++)
         {
-            let availabilityZoneId = props.availabilityZoneIds[i];
+            let availabilityZoneId = availabilityZoneIds[i];
 
             topLevelAggregateAlarms.push(
                 new AlarmStatusWidget(
@@ -162,9 +168,9 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
 
         let keyPrefix: string = AvailabilityAndLatencyMetrics.nextChar("");
 
-        for (let i = 0; i < props.availabilityZoneIds.length; i++)
+        for (let i = 0; i < availabilityZoneIds.length; i++)
         {
-            let availabilityZoneId: string = props.availabilityZoneIds[i];
+            let availabilityZoneId: string = availabilityZoneIds[i];
 
             zonalServerSideHighLatencyMetrics.push(AvailabilityAndLatencyMetrics.createZonalLatencyMetrics({
                 availabilityZoneId: availabilityZoneId,
@@ -261,9 +267,9 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
             }
         }));
 
-        for (let i = 0; i < props.availabilityZoneIds.length; i++)
+        for (let i = 0; i < availabilityZoneIds.length; i++)
         {
-            let availabilityZoneId: string = props.availabilityZoneIds[i];
+            let availabilityZoneId: string = availabilityZoneIds[i];
 
             topLevelAggregateAlarms.push(new GraphWidget({
                 height: 6,
@@ -624,7 +630,7 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
         return latencyWidgets;
     }
 
-    private createApplicationLoadBalancerWidgets(props: OperationAvailabilityAndLatencyDashboardProps, title: string) : IWidget[]
+    private createApplicationLoadBalancerWidgets(props: OperationAvailabilityAndLatencyDashboardProps, title: string, availabilityZoneIds: string[]) : IWidget[]
     {
         let albWidgets: IWidget[] = [];
         let loadBalancerFullName: string = (props.loadBalancer as BaseLoadBalancer).loadBalancerFullName;
@@ -655,7 +661,7 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
             ]
         }));
 
-        props.availabilityZoneIds.forEach((availabilityZoneId) => {
+        availabilityZoneIds.forEach((availabilityZoneId) => {
             let availabilityZoneName: string = this.azMapper.availabilityZoneName(availabilityZoneId);
 
             albWidgets.push(new GraphWidget({
@@ -696,7 +702,7 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
             }
         }));
 
-        props.availabilityZoneIds.forEach(availabilityZoneId => {
+        availabilityZoneIds.forEach(availabilityZoneId => {
             let availabilityZoneName: string = this.azMapper.availabilityZoneName(availabilityZoneId);
 
             albWidgets.push(new GraphWidget({

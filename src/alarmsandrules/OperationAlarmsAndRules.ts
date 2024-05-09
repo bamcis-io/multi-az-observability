@@ -12,6 +12,7 @@ import { ICanaryOperationZonalAlarmsAndRules } from "./ICanaryOperationZonalAlar
 import { IServerSideOperationZonalAlarmsAndRules } from "./IServerSideOperationZonalAlarmsAndRules";
 import { OperationAlarmsAndRulesProps } from "./props/OperationAlarmsAndRulesProps";
 import { IOperation } from "../services/IOperation";
+import { AvailabilityZoneMapper, IAvailabilityZoneMapper } from "../MultiAvailabilityZoneObservability";
 
 /**
  * Creates alarms and rules for an operation for both regional and zonal metrics
@@ -65,6 +66,10 @@ export class OperationAlarmsAndRules extends Construct implements IOperationAlar
         this.aggregateZonalAlarms = [];
         this.operation = props.operation;
 
+        let azMapper: IAvailabilityZoneMapper = new AvailabilityZoneMapper(this, "AZMapper", {
+            availabilityZoneNames: props.operation.service.availabilityZoneNames
+        });
+
         let loadBalancerArn = (props.loadBalancer as BaseLoadBalancer).loadBalancerArn;
 
         this.serverSideRegionalAlarmsAndRules = new ServerSideOperationRegionalAlarmsAndRules(
@@ -107,10 +112,10 @@ export class OperationAlarmsAndRules extends Construct implements IOperationAlar
 
         let counter: number = 1;
 
-        for (let i = 0; i < props.operation.service.availabilityZoneIds.length; i++)
+        for (let i = 0; i < props.operation.service.availabilityZoneNames.length; i++)
         {
-            let availabilityZoneId: string =  props.operation.service.availabilityZoneIds[i];
-            
+            let availabilityZoneId: string = azMapper.availabilityZoneId(props.operation.service.availabilityZoneNames[i]);
+
             this.serverSideZonalAlarmsAndRules.push(new ServerSideOperationZonalAlarmsAndRules(
                 this, 
                 props.operation.operationName + "AZ" + counter + "ServerSideZonalAlarmsAndRules",
