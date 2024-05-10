@@ -3,7 +3,8 @@ import { IRule, Rule, RuleTargetInput, Schedule } from 'aws-cdk-lib/aws-events';
 import { LambdaFunction } from 'aws-cdk-lib/aws-events-targets';
 import { Construct } from 'constructs';
 import { CanaryTestProps } from './props/CanaryTestProps';
-import { AvailabilityZoneMapper, IAvailabilityZoneMapper } from '../MultiAvailabilityZoneObservability';
+import { AvailabilityZoneMapper } from '../utilities/AvailabilityZoneMapper';
+import { IAvailabilityZoneMapper } from '../utilities/IAvailabilityZoneMapper';
 
 export class CanaryTest extends Construct {
   timedEventRules: {[key: string]: IRule};

@@ -1,15 +1,19 @@
 import { Duration, NestedStack } from 'aws-cdk-lib';
 import { Dashboard, Unit } from 'aws-cdk-lib/aws-cloudwatch';
 import { Construct } from 'constructs';
+import { CanaryMetrics } from './CanaryMetrics';
 import { IOperation } from './IOperation';
+import { Operation } from './Operation';
+import { OperationMetricDetails } from './OperationMetricDetails';
 import { InstrumentedServiceMultiAZObservabilityProps } from './props/InstrumentedServiceMultiAZObservabilityProps';
+import { MetricDimensions } from './props/MetricDimensions';
 import { OperationAlarmsAndRules } from '../alarmsandrules/OperationAlarmsAndRules';
 import { ServiceAlarmsAndRules } from '../alarmsandrules/ServiceAlarmsAndRules';
 import { CanaryFunction } from '../canaries/CanaryFunction';
 import { CanaryTest } from '../canaries/CanaryTest';
 import { OperationAvailabilityAndLatencyDashboard } from '../dashboards/OperationAvailabilityAndLatencyDashboard';
 import { ServiceAvailabilityAndLatencyDashboard } from '../dashboards/ServiceAvailabilityAndLatencyDashboard';
-import { CanaryMetrics, Operation, OperationMetricDetails, OutlierDetectionAlgorithm } from '../MultiAvailabilityZoneObservability';
+import { OutlierDetectionAlgorithm } from '../utilities/OutlierDetectionAlgorithm';
 
 export class InstrumentedServiceMultiAZObservability extends Construct {
   /**
@@ -72,6 +76,8 @@ export class InstrumentedServiceMultiAZObservability extends Construct {
                 faultAlarmThreshold: operation.serverSideAvailabilityMetricDetails.faultAlarmThreshold,
                 graphedFaultStatistics: ['Sum'],
                 graphedSuccessStatistics: ['Sum'],
+                metricDimensions: new MetricDimensions({ Operation: operation.operationName }, 'AZ-ID', 'Region'),
+                /*
                 metricDimensions: {
                   zonalDimensions(availabilityZoneId: string, region: string) {
                     return {
@@ -86,7 +92,7 @@ export class InstrumentedServiceMultiAZObservability extends Construct {
                       Operation: operation.operationName,
                     };
                   },
-                },
+                },*/
               }),
               canaryLatencyMetricDetails: new OperationMetricDetails({
                 operationName: operation.operationName,
@@ -102,6 +108,8 @@ export class InstrumentedServiceMultiAZObservability extends Construct {
                 faultAlarmThreshold: operation.serverSideLatencyMetricDetails.faultAlarmThreshold,
                 graphedFaultStatistics: operation.serverSideLatencyMetricDetails.graphedFaultStatistics,
                 graphedSuccessStatistics: operation.serverSideLatencyMetricDetails.graphedSuccessStatistics,
+                metricDimensions: new MetricDimensions({ Operation: operation.operationName }, 'AZ-ID', 'Region'),
+                /*
                 metricDimensions: {
                   zonalDimensions(availabilityZoneId: string, region: string) {
                     return {
@@ -116,7 +124,7 @@ export class InstrumentedServiceMultiAZObservability extends Construct {
                       Operation: operation.operationName,
                     };
                   },
-                },
+                },*/
               }),
               canaryContributorInsightRuleDetails: {
                 logGroups: [canary.logGroup],

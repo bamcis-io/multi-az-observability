@@ -6,10 +6,12 @@ import { Unit } from 'aws-cdk-lib/aws-cloudwatch';
 import { SelectedSubnets, SubnetType, Vpc } from 'aws-cdk-lib/aws-ec2';
 import { ApplicationLoadBalancer, ILoadBalancerV2 } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import { ILogGroup, LogGroup } from 'aws-cdk-lib/aws-logs';
-import { MultiAvailabilityZoneObservability, OperationMetricDetails } from '../src/MultiAvailabilityZoneObservability';
+import { MultiAvailabilityZoneObservability } from '../src/MultiAvailabilityZoneObservability';
 import { IOperation } from '../src/services/IOperation';
 import { IService } from '../src/services/IService';
 import { Operation } from '../src/services/Operation';
+import { OperationMetricDetails } from '../src/services/OperationMetricDetails';
+import { MetricDimensions } from '../src/services/props/MetricDimensions';
 import { Service } from '../src/services/Service';
 
 test('Fully instrumented service', () => {
@@ -79,21 +81,7 @@ test('Fully instrumented service', () => {
       faultAlarmThreshold: 0.1,
       graphedFaultStatistics: ['Sum'],
       graphedSuccessStatistics: ['Sum'],
-      metricDimensions: {
-        zonalDimensions(availabilityZoneId: string, region: string) {
-          return {
-            'AZ-ID': availabilityZoneId,
-            'Region': region,
-            'Operation': 'ride',
-          };
-        },
-        regionalDimensions(region: string) {
-          return {
-            Region: region,
-            Operation: 'ride',
-          };
-        },
-      },
+      metricDimensions: new MetricDimensions({ Operation: 'ride' }, 'AZ-ID', 'Region')
     }),
     serverSideLatencyMetricDetails: new OperationMetricDetails({
       operationName: 'ride',
@@ -109,21 +97,7 @@ test('Fully instrumented service', () => {
       faultAlarmThreshold: 1,
       graphedFaultStatistics: ['p99'],
       graphedSuccessStatistics: ['p50', 'p99', 'tm99'],
-      metricDimensions: {
-        zonalDimensions(availabilityZoneId: string, region: string) {
-          return {
-            'AZ-ID': availabilityZoneId,
-            'Region': region,
-            'Operation': 'ride',
-          };
-        },
-        regionalDimensions(region: string) {
-          return {
-            Region: region,
-            Operation: 'ride',
-          };
-        },
-      },
+      metricDimensions: new MetricDimensions({ Operation: 'ride' }, 'AZ-ID', 'Region'),
     }),
   });
 
@@ -218,21 +192,7 @@ test('Fully instrumented service adding canaries', () => {
       faultAlarmThreshold: 0.1,
       graphedFaultStatistics: ['Sum'],
       graphedSuccessStatistics: ['Sum'],
-      metricDimensions: {
-        zonalDimensions(availabilityZoneId: string, region: string) {
-          return {
-            'AZ-ID': availabilityZoneId,
-            'Region': region,
-            'Operation': 'ride',
-          };
-        },
-        regionalDimensions(region: string) {
-          return {
-            Region: region,
-            Operation: 'ride',
-          };
-        },
-      },
+      metricDimensions: new MetricDimensions({ Operation: 'ride' }, 'AZ-ID', 'Region'),
     }),
     serverSideLatencyMetricDetails: new OperationMetricDetails({
       operationName: 'ride',
@@ -248,27 +208,13 @@ test('Fully instrumented service adding canaries', () => {
       faultAlarmThreshold: 1,
       graphedFaultStatistics: ['p99'],
       graphedSuccessStatistics: ['p50', 'p99', 'tm99'],
-      metricDimensions: {
-        zonalDimensions(availabilityZoneId: string, region: string) {
-          return {
-            'AZ-ID': availabilityZoneId,
-            'Region': region,
-            'Operation': 'ride',
-          };
-        },
-        regionalDimensions(region: string) {
-          return {
-            Region: region,
-            Operation: 'ride',
-          };
-        },
-      },
+      metricDimensions: new MetricDimensions({ Operation: 'ride' }, 'AZ-ID', 'Region'),
     }),
     canaryTestProps: {
       requestCount: 10,
       schedule: 'rate(1 minute)',
       loadBalancer: loadbalancer,
-    },
+    }
   };
 
   let payOperation: Operation = {
@@ -299,21 +245,7 @@ test('Fully instrumented service adding canaries', () => {
       faultAlarmThreshold: 0.1,
       graphedFaultStatistics: ['Sum'],
       graphedSuccessStatistics: ['Sum'],
-      metricDimensions: {
-        zonalDimensions(availabilityZoneId: string, region: string) {
-          return {
-            'AZ-ID': availabilityZoneId,
-            'Region': region,
-            'Operation': 'pay',
-          };
-        },
-        regionalDimensions(region: string) {
-          return {
-            Region: region,
-            Operation: 'pay',
-          };
-        },
-      },
+      metricDimensions: new MetricDimensions({ Operation: 'ride' }, 'AZ-ID', 'Region')
     }),
     serverSideLatencyMetricDetails: new OperationMetricDetails({
       operationName: 'pay',
@@ -329,21 +261,7 @@ test('Fully instrumented service adding canaries', () => {
       faultAlarmThreshold: 1,
       graphedFaultStatistics: ['p99'],
       graphedSuccessStatistics: ['p50', 'p99', 'tm99'],
-      metricDimensions: {
-        zonalDimensions(availabilityZoneId: string, region: string) {
-          return {
-            'AZ-ID': availabilityZoneId,
-            'Region': region,
-            'Operation': 'pay',
-          };
-        },
-        regionalDimensions(region: string) {
-          return {
-            Region: region,
-            Operation: 'pay',
-          };
-        },
-      },
+      metricDimensions: new MetricDimensions({ Operation: 'ride' }, 'AZ-ID', 'Region')
     }),
     canaryTestProps: {
       requestCount: 10,

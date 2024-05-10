@@ -1,5 +1,5 @@
 {
-  "app": "npx ts-node --prefer-ts-exts bin/multi-az-observability.ts",
+  "app": "npx ts-node --prefer-ts-exts src/multi-az-observability.ts",
   "watch": {
     "include": [
       "**"

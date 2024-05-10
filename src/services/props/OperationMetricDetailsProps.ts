@@ -1,6 +1,6 @@
 import { Duration } from 'aws-cdk-lib';
 import { Unit } from 'aws-cdk-lib/aws-cloudwatch';
-import { IMetricDimensions } from '../IMetricDimensions';
+import { MetricDimensions } from './MetricDimensions';
 
 /**
  * The properties for operation metric details
@@ -88,5 +88,6 @@ export interface OperationMetricDetailsProps
   /**
      * The user implemented functions for providing the metric's dimensions
      */
-  readonly metricDimensions: IMetricDimensions;
+  //readonly metricDimensions: IMetricDimensions;
+  readonly metricDimensions: MetricDimensions;
 }

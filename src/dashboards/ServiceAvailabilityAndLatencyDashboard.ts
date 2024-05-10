@@ -5,11 +5,11 @@ import { IServiceAvailabilityAndLatencyDashboard } from './IServiceAvailabilityA
 import { ServiceAvailabilityAndLatencyDashboardProps } from './props/ServiceAvailabilityAndLatencyDashboardProps';
 import { AvailabilityAndLatencyMetrics } from '../metrics/AvailabilityAndLatencyMetrics';
 import { AvailabilityMetricProps } from '../metrics/props/AvailabilityMetricProps';
-import { IAvailabilityZoneMapper } from '../MultiAvailabilityZoneObservability';
 import { IOperation } from '../services/IOperation';
 import { IOperationMetricDetails } from '../services/IOperationMetricDetails';
 import { AvailabilityMetricType } from '../utilities/AvailabilityMetricType';
 import { AvailabilityZoneMapper } from '../utilities/AvailabilityZoneMapper';
+import { IAvailabilityZoneMapper } from '../utilities/IAvailabilityZoneMapper';
 
 /**
  * Creates a service level availability and latency dashboard

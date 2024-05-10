@@ -1,14 +1,14 @@
 {
   "author": {
-    "email": "mhaken@amazon.com",
-    "name": "Mike Haken",
+    "email": "michael.haken@outlook.com",
+    "name": "Michael Haken",
     "roles": [
       "author"
     ]
   },
   "dependencies": {
-    "aws-cdk-lib": "^2.0.0",
-    "constructs": "^10.0.0"
+    "aws-cdk-lib": "^2.138.0",
+    "constructs": "^10.0.5"
   },
   "dependencyClosure": {
     "@aws-cdk/asset-awscli-v1": {
@@ -3709,14 +3709,19 @@
       }
     }
   },
-  "description": "A pattern for observability in multi-AZ architectures to detect single AZ faults",
+  "description": "A construct for implementing multi-AZ observability to detect single AZ impairments",
   "docs": {
     "stability": "stable"
   },
-  "homepage": "https://github.com/bamcis-io/multi-az-observability.git",
-  "jsiiVersion": "5.4.9",
+  "homepage": "https://github.com/bamcis-io/multi-az-observability",
+  "jsiiVersion": "5.4.12 (build bc82b08)",
   "keywords": [
-    "cdk"
+    "cdk",
+    "cloudwatch",
+    "monitoring",
+    "multi-AZ",
+    "observability",
+    "resilience"
   ],
   "license": "MIT",
   "metadata": {
@@ -3724,7 +3729,8 @@
       "pacmak": {
         "hasDefaultInterfaces": true
       }
-    }
+    },
+    "tscRootDir": "src"
   },
   "name": "multi-az-observability",
   "readme": {
@@ -3732,7 +3738,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/bamcis-io/multi-az-observability.git"
+    "url": "https://github.com/bamcis-io/multi-az-observability"
   },
   "schema": "jsii/0.10.0",
   "targets": {
@@ -3740,16 +3746,8 @@
       "namespace": "BAMCISIO.MultiAZObservability",
       "packageId": "BAMCISIO.MultiAZObservability"
     },
-    "go": {
-      "moduleName": "bamcis.io/multi-az-observability",
-      "packageName": "multi-az-observability"
-    },
     "js": {
       "npm": "multi-az-observability"
-    },
-    "python": {
-      "distName": "bamcis.io.multi-az-observability",
-      "module": "bamcis.io.multi-az-observability"
     }
   },
   "types": {
@@ -3897,7 +3895,7 @@
         },
         "locationInModule": {
           "filename": "src/utilities/AvailabilityZoneMapper.ts",
-          "line": 33
+          "line": 32
         },
         "parameters": [
           {
@@ -3934,11 +3932,11 @@
           "docs": {
             "returns": "",
             "stability": "stable",
-            "summary": "Returns a reference that can be cast to a string array with all of the  Availability Zone Ids."
+            "summary": "Returns a reference that can be cast to a string array with all of the Availability Zone Ids."
           },
           "locationInModule": {
             "filename": "src/utilities/AvailabilityZoneMapper.ts",
-            "line": 211
+            "line": 201
           },
           "name": "allAvailabilityZoneIdsAsArray",
           "overrides": "multi-az-observability.IAvailabilityZoneMapper",
@@ -3957,7 +3955,7 @@
           },
           "locationInModule": {
             "filename": "src/utilities/AvailabilityZoneMapper.ts",
-            "line": 201
+            "line": 192
           },
           "name": "allAvailabilityZoneIdsAsCommaDelimitedList",
           "overrides": "multi-az-observability.IAvailabilityZoneMapper",
@@ -3976,7 +3974,7 @@
           },
           "locationInModule": {
             "filename": "src/utilities/AvailabilityZoneMapper.ts",
-            "line": 233
+            "line": 221
           },
           "name": "allAvailabilityZoneNamesAsCommaDelimitedList",
           "overrides": "multi-az-observability.IAvailabilityZoneMapper",
@@ -3994,7 +3992,7 @@
           },
           "locationInModule": {
             "filename": "src/utilities/AvailabilityZoneMapper.ts",
-            "line": 133
+            "line": 131
           },
           "name": "availabilityZoneId",
           "overrides": "multi-az-observability.IAvailabilityZoneMapper",
@@ -4016,11 +4014,11 @@
           "docs": {
             "returns": "",
             "stability": "stable",
-            "summary": "Given a letter like \"f\" or \"a\", returns the Availability Zone Id for that  Availability Zone name in this account."
+            "summary": "Given a letter like \"f\" or \"a\", returns the Availability Zone Id for that Availability Zone name in this account."
           },
           "locationInModule": {
             "filename": "src/utilities/AvailabilityZoneMapper.ts",
-            "line": 222
+            "line": 211
           },
           "name": "availabilityZoneIdFromAvailabilityZoneLetter",
           "overrides": "multi-az-observability.IAvailabilityZoneMapper",
@@ -4046,7 +4044,7 @@
           },
           "locationInModule": {
             "filename": "src/utilities/AvailabilityZoneMapper.ts",
-            "line": 164
+            "line": 159
           },
           "name": "availabilityZoneIdsAsArray",
           "overrides": "multi-az-observability.IAvailabilityZoneMapper",
@@ -4083,7 +4081,7 @@
           },
           "locationInModule": {
             "filename": "src/utilities/AvailabilityZoneMapper.ts",
-            "line": 183
+            "line": 176
           },
           "name": "availabilityZoneIdsAsCommaDelimitedList",
           "overrides": "multi-az-observability.IAvailabilityZoneMapper",
@@ -4114,7 +4112,7 @@
           },
           "locationInModule": {
             "filename": "src/utilities/AvailabilityZoneMapper.ts",
-            "line": 143
+            "line": 140
           },
           "name": "availabilityZoneName",
           "overrides": "multi-az-observability.IAvailabilityZoneMapper",
@@ -4140,7 +4138,7 @@
           },
           "locationInModule": {
             "filename": "src/utilities/AvailabilityZoneMapper.ts",
-            "line": 153
+            "line": 149
           },
           "name": "regionPrefixForAvailabilityZoneIds",
           "overrides": "multi-az-observability.IAvailabilityZoneMapper",
@@ -4160,7 +4158,7 @@
           },
           "locationInModule": {
             "filename": "src/utilities/AvailabilityZoneMapper.ts",
-            "line": 19
+            "line": 18
           },
           "name": "function",
           "overrides": "multi-az-observability.IAvailabilityZoneMapper",
@@ -4175,7 +4173,7 @@
           },
           "locationInModule": {
             "filename": "src/utilities/AvailabilityZoneMapper.ts",
-            "line": 24
+            "line": 23
           },
           "name": "logGroup",
           "overrides": "multi-az-observability.IAvailabilityZoneMapper",
@@ -4190,7 +4188,7 @@
           },
           "locationInModule": {
             "filename": "src/utilities/AvailabilityZoneMapper.ts",
-            "line": 31
+            "line": 30
           },
           "name": "mapper",
           "overrides": "multi-az-observability.IAvailabilityZoneMapper",
@@ -4219,7 +4217,7 @@
         {
           "abstract": true,
           "docs": {
-            "default": "- No names are provided and the mapper returns \nall AZs in the region in its lists",
+            "default": "- No names are provided and the mapper returns\nall AZs in the region in its lists",
             "stability": "stable",
             "summary": "The currently in use Availability Zone names which constrains the list of AZ IDs that are returned."
           },
@@ -4293,7 +4291,7 @@
           "abstract": true,
           "docs": {
             "stability": "stable",
-            "summary": "The threshold for percentage of errors or packet loss to determine if an AZ is an outlier, should be a number between  0 and 1."
+            "summary": "The threshold for percentage of errors or packet loss to determine if an AZ is an outlier, should be a number between 0 and 1."
           },
           "immutable": true,
           "locationInModule": {
@@ -4527,7 +4525,7 @@
         },
         "locationInModule": {
           "filename": "src/services/CanaryMetrics.ts",
-          "line": 29
+          "line": 28
         },
         "parameters": [
           {
@@ -4556,7 +4554,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/CanaryMetrics.ts",
-            "line": 14
+            "line": 13
           },
           "name": "canaryAvailabilityMetricDetails",
           "overrides": "multi-az-observability.ICanaryMetrics",
@@ -4572,7 +4570,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/CanaryMetrics.ts",
-            "line": 19
+            "line": 18
           },
           "name": "canaryLatencyMetricDetails",
           "overrides": "multi-az-observability.ICanaryMetrics",
@@ -4582,14 +4580,14 @@
         },
         {
           "docs": {
-            "default": "- No contributor insights rules will be created for the \ncanary metrics",
+            "default": "- No contributor insights rules will be created for the\ncanary metrics",
             "stability": "stable",
             "summary": "The canary details for contributor insights rules."
           },
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/CanaryMetrics.ts",
-            "line": 27
+            "line": 26
           },
           "name": "canaryContributorInsightRuleDetails",
           "optional": true,
@@ -4614,7 +4612,7 @@
         },
         "locationInModule": {
           "filename": "src/services/ContributorInsightRuleDetails.ts",
-          "line": 49
+          "line": 48
         },
         "parameters": [
           {
@@ -4643,7 +4641,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/ContributorInsightRuleDetails.ts",
-            "line": 41
+            "line": 40
           },
           "name": "availabilityZoneIdJsonPath",
           "overrides": "multi-az-observability.IContributorInsightRuleDetails",
@@ -4659,7 +4657,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/ContributorInsightRuleDetails.ts",
-            "line": 34
+            "line": 33
           },
           "name": "faultMetricJsonPath",
           "overrides": "multi-az-observability.IContributorInsightRuleDetails",
@@ -4675,7 +4673,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/ContributorInsightRuleDetails.ts",
-            "line": 47
+            "line": 46
           },
           "name": "instanceIdJsonPath",
           "overrides": "multi-az-observability.IContributorInsightRuleDetails",
@@ -4685,14 +4683,14 @@
         },
         {
           "docs": {
-            "remarks": "If \nthis is not provided, Contributor Insight rules cannot be created.",
+            "remarks": "If\nthis is not provided, Contributor Insight rules cannot be created.",
             "stability": "stable",
             "summary": "The log groups where CloudWatch logs for the operation are located."
           },
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/ContributorInsightRuleDetails.ts",
-            "line": 15
+            "line": 14
           },
           "name": "logGroups",
           "overrides": "multi-az-observability.IContributorInsightRuleDetails",
@@ -4713,7 +4711,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/ContributorInsightRuleDetails.ts",
-            "line": 28
+            "line": 27
           },
           "name": "operationNameJsonPath",
           "overrides": "multi-az-observability.IContributorInsightRuleDetails",
@@ -4723,14 +4721,14 @@
         },
         {
           "docs": {
-            "remarks": "This could either be success latency or fault \nlatency depending on the alarms and rules you are creating.",
+            "remarks": "This could either be success latency or fault\nlatency depending on the alarms and rules you are creating.",
             "stability": "stable",
             "summary": "The path in the log files to the field that indicates the latency for the response."
           },
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/ContributorInsightRuleDetails.ts",
-            "line": 22
+            "line": 21
           },
           "name": "successLatencyMetricJsonPath",
           "overrides": "multi-az-observability.IContributorInsightRuleDetails",
@@ -4807,7 +4805,7 @@
         {
           "abstract": true,
           "docs": {
-            "remarks": "If \nthis is not provided, Contributor Insight rules cannot be created.",
+            "remarks": "If\nthis is not provided, Contributor Insight rules cannot be created.",
             "stability": "stable",
             "summary": "The log groups where CloudWatch logs for the operation are located."
           },
@@ -4845,7 +4843,7 @@
         {
           "abstract": true,
           "docs": {
-            "remarks": "This could either be success latency or fault \nlatency depending on the alarms and rules you are creating.",
+            "remarks": "This could either be success latency or fault\nlatency depending on the alarms and rules you are creating.",
             "stability": "stable",
             "summary": "The path in the log files to the field that indicates the latency for the response."
           },
@@ -4866,7 +4864,7 @@
       "assembly": "multi-az-observability",
       "docs": {
         "stability": "stable",
-        "summary": "A wrapper for the Availability Zone mapper construct that allows you to translate Availability Zone names to Availability Zone Ids and vice a versa using the  mapping in the AWS account where this is deployed."
+        "summary": "A wrapper for the Availability Zone mapper construct that allows you to translate Availability Zone names to Availability Zone Ids and vice a versa using the mapping in the AWS account where this is deployed."
       },
       "fqn": "multi-az-observability.IAvailabilityZoneMapper",
       "interfaces": [
@@ -4883,7 +4881,7 @@
           "docs": {
             "returns": "",
             "stability": "stable",
-            "summary": "Returns a reference that can be cast to a string array with all of the  Availability Zone Ids."
+            "summary": "Returns a reference that can be cast to a string array with all of the Availability Zone Ids."
           },
           "locationInModule": {
             "filename": "src/utilities/IAvailabilityZoneMapper.ts",
@@ -4965,7 +4963,7 @@
           "docs": {
             "returns": "",
             "stability": "stable",
-            "summary": "Given a letter like \"f\" or \"a\", returns the Availability Zone Id for that  Availability Zone name in this account."
+            "summary": "Given a letter like \"f\" or \"a\", returns the Availability Zone Id for that Availability Zone name in this account."
           },
           "locationInModule": {
             "filename": "src/utilities/IAvailabilityZoneMapper.ts",
@@ -5280,7 +5278,7 @@
         {
           "abstract": true,
           "docs": {
-            "remarks": "If \nthis is not provided, Contributor Insight rules cannot be created.",
+            "remarks": "If\nthis is not provided, Contributor Insight rules cannot be created.",
             "stability": "stable",
             "summary": "The log groups where CloudWatch logs for the operation are located."
           },
@@ -5318,7 +5316,7 @@
         {
           "abstract": true,
           "docs": {
-            "remarks": "This could either be success latency or fault \nlatency depending on the alarms and rules you are creating.",
+            "remarks": "This could either be success latency or fault\nlatency depending on the alarms and rules you are creating.",
             "stability": "stable",
             "summary": "The path in the log files to the field that indicates the latency for the response."
           },
@@ -5334,89 +5332,6 @@
         }
       ],
       "symbolId": "src/services/IContributorInsightRuleDetails:IContributorInsightRuleDetails"
-    },
-    "multi-az-observability.IMetricDimensions": {
-      "assembly": "multi-az-observability",
-      "docs": {
-        "stability": "stable",
-        "summary": "Interface for defining the operation's dimensions."
-      },
-      "fqn": "multi-az-observability.IMetricDimensions",
-      "kind": "interface",
-      "locationInModule": {
-        "filename": "src/services/IMetricDimensions.ts",
-        "line": 4
-      },
-      "methods": [
-        {
-          "abstract": true,
-          "docs": {
-            "stability": "stable",
-            "summary": "Gets the regional dimensions for these metrics, expected to return something like {   \"Region\": \"us-east-1\",   \"Operation\": \"Ride\",   \"Service\": \"WildRydes\" }."
-          },
-          "locationInModule": {
-            "filename": "src/services/IMetricDimensions.ts",
-            "line": 15
-          },
-          "name": "regionalDimensions",
-          "parameters": [
-            {
-              "name": "region",
-              "type": {
-                "primitive": "string"
-              }
-            }
-          ],
-          "returns": {
-            "type": {
-              "collection": {
-                "elementtype": {
-                  "primitive": "string"
-                },
-                "kind": "map"
-              }
-            }
-          }
-        },
-        {
-          "abstract": true,
-          "docs": {
-            "stability": "stable",
-            "summary": "Gets the zonal dimensions for these metrics, expected to return something like  {   \"Region\": \"us-east-1\",   \"AZ-ID\": \"use1-az1\",   \"Operation\": \"Ride\",   \"Service\": \"WildRydes\" }."
-          },
-          "locationInModule": {
-            "filename": "src/services/IMetricDimensions.ts",
-            "line": 28
-          },
-          "name": "zonalDimensions",
-          "parameters": [
-            {
-              "name": "availabilityZoneId",
-              "type": {
-                "primitive": "string"
-              }
-            },
-            {
-              "name": "region",
-              "type": {
-                "primitive": "string"
-              }
-            }
-          ],
-          "returns": {
-            "type": {
-              "collection": {
-                "elementtype": {
-                  "primitive": "string"
-                },
-                "kind": "map"
-              }
-            }
-          }
-        }
-      ],
-      "name": "IMetricDimensions",
-      "symbolId": "src/services/IMetricDimensions:IMetricDimensions"
     },
     "multi-az-observability.IMultiAvailabilityZoneObservability": {
       "assembly": "multi-az-observability",
@@ -5475,7 +5390,7 @@
           "abstract": true,
           "docs": {
             "stability": "stable",
-            "summary": "Indicates this is a critical operation for the service and will be included in service level metrics and  dashboards."
+            "summary": "Indicates this is a critical operation for the service and will be included in service level metrics and dashboards."
           },
           "immutable": true,
           "locationInModule": {
@@ -5733,7 +5648,7 @@
           },
           "name": "metricDimensions",
           "type": {
-            "fqn": "multi-az-observability.IMetricDimensions"
+            "fqn": "multi-az-observability.MetricDimensions"
           }
         },
         {
@@ -6107,7 +6022,7 @@
           "docs": {
             "default": "- No dashboards are created",
             "stability": "stable",
-            "summary": "Indicates whether to create per operation and overall service  dashboards."
+            "summary": "Indicates whether to create per operation and overall service dashboards."
           },
           "immutable": true,
           "locationInModule": {
@@ -6141,13 +6056,173 @@
       ],
       "symbolId": "src/services/props/InstrumentedServiceMultiAZObservabilityProps:InstrumentedServiceMultiAZObservabilityProps"
     },
+    "multi-az-observability.MetricDimensions": {
+      "assembly": "multi-az-observability",
+      "docs": {
+        "stability": "stable"
+      },
+      "fqn": "multi-az-observability.MetricDimensions",
+      "initializer": {
+        "docs": {
+          "stability": "stable"
+        },
+        "locationInModule": {
+          "filename": "src/services/props/MetricDimensions.ts",
+          "line": 9
+        },
+        "parameters": [
+          {
+            "name": "staticDimensions",
+            "type": {
+              "collection": {
+                "elementtype": {
+                  "primitive": "string"
+                },
+                "kind": "map"
+              }
+            }
+          },
+          {
+            "name": "availabilityZoneIdKey",
+            "type": {
+              "primitive": "string"
+            }
+          },
+          {
+            "name": "regionKey",
+            "optional": true,
+            "type": {
+              "primitive": "string"
+            }
+          }
+        ]
+      },
+      "kind": "class",
+      "locationInModule": {
+        "filename": "src/services/props/MetricDimensions.ts",
+        "line": 1
+      },
+      "methods": [
+        {
+          "docs": {
+            "stability": "stable"
+          },
+          "locationInModule": {
+            "filename": "src/services/props/MetricDimensions.ts",
+            "line": 29
+          },
+          "name": "regionalDimensions",
+          "parameters": [
+            {
+              "name": "region",
+              "type": {
+                "primitive": "string"
+              }
+            }
+          ],
+          "returns": {
+            "type": {
+              "collection": {
+                "elementtype": {
+                  "primitive": "string"
+                },
+                "kind": "map"
+              }
+            }
+          }
+        },
+        {
+          "docs": {
+            "stability": "stable"
+          },
+          "locationInModule": {
+            "filename": "src/services/props/MetricDimensions.ts",
+            "line": 16
+          },
+          "name": "zonalDimensions",
+          "parameters": [
+            {
+              "name": "availabilityZoneId",
+              "type": {
+                "primitive": "string"
+              }
+            },
+            {
+              "name": "region",
+              "type": {
+                "primitive": "string"
+              }
+            }
+          ],
+          "returns": {
+            "type": {
+              "collection": {
+                "elementtype": {
+                  "primitive": "string"
+                },
+                "kind": "map"
+              }
+            }
+          }
+        }
+      ],
+      "name": "MetricDimensions",
+      "properties": [
+        {
+          "docs": {
+            "stability": "stable"
+          },
+          "locationInModule": {
+            "filename": "src/services/props/MetricDimensions.ts",
+            "line": 5
+          },
+          "name": "availabilityZoneIdKey",
+          "type": {
+            "primitive": "string"
+          }
+        },
+        {
+          "docs": {
+            "stability": "stable"
+          },
+          "locationInModule": {
+            "filename": "src/services/props/MetricDimensions.ts",
+            "line": 3
+          },
+          "name": "staticDimensions",
+          "type": {
+            "collection": {
+              "elementtype": {
+                "primitive": "string"
+              },
+              "kind": "map"
+            }
+          }
+        },
+        {
+          "docs": {
+            "stability": "stable"
+          },
+          "locationInModule": {
+            "filename": "src/services/props/MetricDimensions.ts",
+            "line": 7
+          },
+          "name": "regionKey",
+          "optional": true,
+          "type": {
+            "primitive": "string"
+          }
+        }
+      ],
+      "symbolId": "src/services/props/MetricDimensions:MetricDimensions"
+    },
     "multi-az-observability.MultiAvailabilityZoneObservability": {
       "assembly": "multi-az-observability",
       "base": "constructs.Construct",
       "docs": {
         "remarks": "It will create alarms that indicate if a single AZ is\nimpacted so you can take appropriate action to mitigate the event, for example,\nusing zonal shift. It will also optionally create dashboards for your service so\nyou can visualize the metrics used to feed the alarms as well as the alarm states.",
         "stability": "stable",
-        "summary": "The construct will create multi-AZ observability for your service based on the  parameters you provide."
+        "summary": "The construct will create multi-AZ observability for your service based on the parameters you provide."
       },
       "fqn": "multi-az-observability.MultiAvailabilityZoneObservability",
       "initializer": {
@@ -6156,7 +6231,7 @@
         },
         "locationInModule": {
           "filename": "src/MultiAvailabilityZoneObservability.ts",
-          "line": 41
+          "line": 15
         },
         "parameters": [
           {
@@ -6186,7 +6261,7 @@
       "kind": "class",
       "locationInModule": {
         "filename": "src/MultiAvailabilityZoneObservability.ts",
-        "line": 39
+        "line": 14
       },
       "name": "MultiAvailabilityZoneObservability",
       "symbolId": "src/MultiAvailabilityZoneObservability:MultiAvailabilityZoneObservability"
@@ -6260,7 +6335,7 @@
         },
         "locationInModule": {
           "filename": "src/services/Operation.ts",
-          "line": 69
+          "line": 68
         },
         "parameters": [
           {
@@ -6289,7 +6364,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/Operation.ts",
-            "line": 61
+            "line": 60
           },
           "name": "httpMethods",
           "overrides": "multi-az-observability.IOperation",
@@ -6305,12 +6380,12 @@
         {
           "docs": {
             "stability": "stable",
-            "summary": "Indicates this is a critical operation for the service and will be included in service level metrics and  dashboards."
+            "summary": "Indicates this is a critical operation for the service and will be included in service level metrics and dashboards."
           },
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/Operation.ts",
-            "line": 56
+            "line": 55
           },
           "name": "isCritical",
           "overrides": "multi-az-observability.IOperation",
@@ -6326,7 +6401,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/Operation.ts",
-            "line": 23
+            "line": 22
           },
           "name": "operationName",
           "overrides": "multi-az-observability.IOperation",
@@ -6342,7 +6417,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/Operation.ts",
-            "line": 29
+            "line": 28
           },
           "name": "path",
           "overrides": "multi-az-observability.IOperation",
@@ -6358,7 +6433,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/Operation.ts",
-            "line": 34
+            "line": 33
           },
           "name": "serverSideAvailabilityMetricDetails",
           "overrides": "multi-az-observability.IOperation",
@@ -6374,7 +6449,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/Operation.ts",
-            "line": 39
+            "line": 38
           },
           "name": "serverSideLatencyMetricDetails",
           "overrides": "multi-az-observability.IOperation",
@@ -6390,7 +6465,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/Operation.ts",
-            "line": 18
+            "line": 17
           },
           "name": "service",
           "overrides": "multi-az-observability.IOperation",
@@ -6406,7 +6481,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/Operation.ts",
-            "line": 44
+            "line": 43
           },
           "name": "canaryMetricDetails",
           "optional": true,
@@ -6423,7 +6498,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/Operation.ts",
-            "line": 67
+            "line": 66
           },
           "name": "canaryTestProps",
           "optional": true,
@@ -6440,7 +6515,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/Operation.ts",
-            "line": 49
+            "line": 48
           },
           "name": "serverSideContributorInsightRuleDetails",
           "optional": true,
@@ -6465,7 +6540,7 @@
         },
         "locationInModule": {
           "filename": "src/services/OperationMetricDetails.ts",
-          "line": 96
+          "line": 95
         },
         "parameters": [
           {
@@ -6494,7 +6569,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/OperationMetricDetails.ts",
-            "line": 36
+            "line": 35
           },
           "name": "alarmStatistic",
           "overrides": "multi-az-observability.IOperationMetricDetails",
@@ -6510,7 +6585,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/OperationMetricDetails.ts",
-            "line": 74
+            "line": 73
           },
           "name": "datapointsToAlarm",
           "overrides": "multi-az-observability.IOperationMetricDetails",
@@ -6526,7 +6601,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/OperationMetricDetails.ts",
-            "line": 69
+            "line": 68
           },
           "name": "evaluationPeriods",
           "overrides": "multi-az-observability.IOperationMetricDetails",
@@ -6542,7 +6617,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/OperationMetricDetails.ts",
-            "line": 88
+            "line": 87
           },
           "name": "faultAlarmThreshold",
           "overrides": "multi-az-observability.IOperationMetricDetails",
@@ -6558,7 +6633,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/OperationMetricDetails.ts",
-            "line": 30
+            "line": 29
           },
           "name": "faultMetricNames",
           "overrides": "multi-az-observability.IOperationMetricDetails",
@@ -6579,12 +6654,12 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/OperationMetricDetails.ts",
-            "line": 94
+            "line": 93
           },
           "name": "metricDimensions",
           "overrides": "multi-az-observability.IOperationMetricDetails",
           "type": {
-            "fqn": "multi-az-observability.IMetricDimensions"
+            "fqn": "multi-az-observability.MetricDimensions"
           }
         },
         {
@@ -6595,7 +6670,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/OperationMetricDetails.ts",
-            "line": 20
+            "line": 19
           },
           "name": "metricNamespace",
           "overrides": "multi-az-observability.IOperationMetricDetails",
@@ -6611,7 +6686,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/OperationMetricDetails.ts",
-            "line": 15
+            "line": 14
           },
           "name": "operationName",
           "overrides": "multi-az-observability.IOperationMetricDetails",
@@ -6627,7 +6702,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/OperationMetricDetails.ts",
-            "line": 64
+            "line": 63
           },
           "name": "period",
           "overrides": "multi-az-observability.IOperationMetricDetails",
@@ -6643,7 +6718,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/OperationMetricDetails.ts",
-            "line": 81
+            "line": 80
           },
           "name": "successAlarmThreshold",
           "overrides": "multi-az-observability.IOperationMetricDetails",
@@ -6659,7 +6734,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/OperationMetricDetails.ts",
-            "line": 25
+            "line": 24
           },
           "name": "successMetricNames",
           "overrides": "multi-az-observability.IOperationMetricDetails",
@@ -6680,7 +6755,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/OperationMetricDetails.ts",
-            "line": 59
+            "line": 58
           },
           "name": "unit",
           "overrides": "multi-az-observability.IOperationMetricDetails",
@@ -6698,7 +6773,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/OperationMetricDetails.ts",
-            "line": 54
+            "line": 53
           },
           "name": "graphedFaultStatistics",
           "optional": true,
@@ -6722,7 +6797,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/OperationMetricDetails.ts",
-            "line": 45
+            "line": 44
           },
           "name": "graphedSuccessStatistics",
           "optional": true,
@@ -6848,11 +6923,11 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/OperationMetricDetailsProps.ts",
-            "line": 91
+            "line": 92
           },
           "name": "metricDimensions",
           "type": {
-            "fqn": "multi-az-observability.IMetricDimensions"
+            "fqn": "multi-az-observability.MetricDimensions"
           }
         },
         {
@@ -7047,7 +7122,7 @@
           "abstract": true,
           "docs": {
             "stability": "stable",
-            "summary": "Indicates this is a critical operation for the service and will be included in service level metrics and  dashboards."
+            "summary": "Indicates this is a critical operation for the service and will be included in service level metrics and dashboards."
           },
           "immutable": true,
           "locationInModule": {
@@ -7247,7 +7322,7 @@
         },
         "locationInModule": {
           "filename": "src/services/Service.ts",
-          "line": 52
+          "line": 41
         },
         "parameters": [
           {
@@ -7274,7 +7349,7 @@
           },
           "locationInModule": {
             "filename": "src/services/Service.ts",
-            "line": 46
+            "line": 54
           },
           "name": "addOperation",
           "overrides": "multi-az-observability.IService",
@@ -7303,7 +7378,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/Service.ts",
-            "line": 30
+            "line": 29
           },
           "name": "availabilityZoneNames",
           "overrides": "multi-az-observability.IService",
@@ -7324,7 +7399,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/Service.ts",
-            "line": 19
+            "line": 18
           },
           "name": "baseUrl",
           "overrides": "multi-az-observability.IService",
@@ -7341,7 +7416,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/Service.ts",
-            "line": 25
+            "line": 24
           },
           "name": "faultCountThreshold",
           "overrides": "multi-az-observability.IService",
@@ -7357,7 +7432,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/Service.ts",
-            "line": 40
+            "line": 39
           },
           "name": "operations",
           "overrides": "multi-az-observability.IService",
@@ -7378,7 +7453,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/Service.ts",
-            "line": 35
+            "line": 34
           },
           "name": "period",
           "overrides": "multi-az-observability.IService",
@@ -7394,7 +7469,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/Service.ts",
-            "line": 14
+            "line": 13
           },
           "name": "serviceName",
           "overrides": "multi-az-observability.IService",
@@ -7510,6 +7585,6 @@
       "symbolId": "src/services/props/ServiceProps:ServiceProps"
     }
   },
-  "version": "0.1.12",
-  "fingerprint": "ykCUfcxXsiCJaxFJNl4y8ZxFi9kQtSjXYkJa4XOQJ2o="
+  "version": "0.1.15",
+  "fingerprint": "6W39BQvveZvgjzW9XxfzhInnO1YGvO+jnawam/CM+MU="
 }

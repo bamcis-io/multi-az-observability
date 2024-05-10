@@ -1,7 +1,7 @@
 import { Duration } from 'aws-cdk-lib';
 import { Unit } from 'aws-cdk-lib/aws-cloudwatch';
-import { IMetricDimensions } from './IMetricDimensions';
 import { IOperationMetricDetails } from './IOperationMetricDetails';
+import { MetricDimensions } from './props/MetricDimensions';
 import { OperationMetricDetailsProps } from './props/OperationMetricDetailsProps';
 
 /**
@@ -90,7 +90,7 @@ export class OperationMetricDetails implements IOperationMetricDetails {
      * The metric dimensions for this operation, must be implemented
      * as a concrete class by the user
      */
-  readonly metricDimensions: IMetricDimensions;
+  readonly metricDimensions: MetricDimensions;
 
   constructor(props: OperationMetricDetailsProps) {
     this.alarmStatistic = props.alarmStatistic;

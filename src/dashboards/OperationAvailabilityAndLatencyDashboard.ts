@@ -7,9 +7,9 @@ import { IOperationAvailabilityAndLatencyDashboard } from './IOperationAvailabil
 import { OperationAvailabilityAndLatencyDashboardProps } from './props/OperationAvailabilityAndLatencyDashboardProps';
 import { OperationAvailabilityAndLatencyWidgetProps } from './props/OperationAvailabilityAndLatencyWidgetProps';
 import { AvailabilityAndLatencyMetrics } from '../metrics/AvailabilityAndLatencyMetrics';
-import { IAvailabilityZoneMapper } from '../MultiAvailabilityZoneObservability';
 import { AvailabilityMetricType } from '../utilities/AvailabilityMetricType';
 import { AvailabilityZoneMapper } from '../utilities/AvailabilityZoneMapper';
+import { IAvailabilityZoneMapper } from '../utilities/IAvailabilityZoneMapper';
 import { LatencyMetricType } from '../utilities/LatencyMetricType';
 
 /**

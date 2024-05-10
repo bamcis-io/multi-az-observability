@@ -1,11 +1,12 @@
 {
   "name": "multi-az-observability",
+  "description": "A construct for implementing multi-AZ observability to detect single AZ impairments",
   "repository": {
     "type": "git",
     "url": "https://github.com/bamcis-io/multi-az-observability"
   },
   "scripts": {
-    "build": "npx projen build",
+    "build": "export CDK_DOCKER=build.sh && npx projen build",
     "bump": "npx projen bump",
     "clobber": "npx projen clobber",
     "compat": "npx projen compat",
@@ -16,6 +17,7 @@
     "eslint": "npx projen eslint",
     "package": "npx projen package",
     "package-all": "npx projen package-all",
+    "package:dotnet": "npx projen package:dotnet",
     "package:js": "npx projen package:js",
     "post-compile": "npx projen post-compile",
     "post-upgrade": "npx projen post-upgrade",
@@ -38,7 +40,7 @@
     "@types/node": "^18",
     "@typescript-eslint/eslint-plugin": "^6",
     "@typescript-eslint/parser": "^6",
-    "aws-cdk-lib": "2.1.0",
+    "aws-cdk-lib": "2.138.0",
     "constructs": "10.0.5",
     "eslint": "^8",
     "eslint-import-resolver-typescript": "^3.6.1",
@@ -57,17 +59,26 @@
     "typescript": "~5.4.5"
   },
   "peerDependencies": {
-    "aws-cdk-lib": "^2.1.0",
+    "aws-cdk-lib": "^2.138.0",
     "constructs": "^10.0.5"
   },
   "keywords": [
-    "cdk"
+    "cdk",
+    "cloudwatch",
+    "monitoring",
+    "multi-AZ",
+    "observability",
+    "resilience"
   ],
   "main": "lib/index.js",
-  "license": "Apache-2.0",
-  "version": "0.0.0",
+  "license": "MIT",
+  "version": "0.1.15",
   "jest": {
+    "roots": [
+      "<rootDir>/test"
+    ],
     "testMatch": [
+      "**/*.test.ts",
       "<rootDir>/src/**/__tests__/**/*.ts?(x)",
       "<rootDir>/(test|src)/**/*(*.)@(spec|test).ts?(x)"
     ],
@@ -112,7 +123,12 @@
   "stability": "stable",
   "jsii": {
     "outdir": "dist",
-    "targets": {},
+    "targets": {
+      "dotnet": {
+        "namespace": "BAMCISIO.MultiAZObservability",
+        "packageId": "BAMCISIO.MultiAZObservability"
+      }
+    },
     "tsc": {
       "outDir": "lib",
       "rootDir": "src"

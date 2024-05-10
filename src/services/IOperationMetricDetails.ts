@@ -1,6 +1,6 @@
 import { Duration } from 'aws-cdk-lib';
 import { Unit } from 'aws-cdk-lib/aws-cloudwatch';
-import { IMetricDimensions } from './IMetricDimensions';
+import { MetricDimensions } from './props/MetricDimensions';
 
 /**
  * Details for operation metrics in one perspective, such as server side latency
@@ -89,5 +89,5 @@ export interface IOperationMetricDetails
      * The metric dimensions for this operation, must be implemented
      * as a concrete class by the user
      */
-  readonly metricDimensions: IMetricDimensions;
+  readonly metricDimensions: MetricDimensions;
 }

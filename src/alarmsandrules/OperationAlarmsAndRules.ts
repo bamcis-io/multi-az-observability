@@ -11,8 +11,9 @@ import { IServerSideOperationZonalAlarmsAndRules } from './IServerSideOperationZ
 import { OperationAlarmsAndRulesProps } from './props/OperationAlarmsAndRulesProps';
 import { ServerSideOperationRegionalAlarmsAndRules } from './ServerSideOperationRegionalAlarmsAndRules';
 import { ServerSideOperationZonalAlarmsAndRules } from './ServerSideOperationZonalAlarmsAndRules';
-import { AvailabilityZoneMapper, IAvailabilityZoneMapper } from '../MultiAvailabilityZoneObservability';
 import { IOperation } from '../services/IOperation';
+import { AvailabilityZoneMapper } from '../utilities/AvailabilityZoneMapper';
+import { IAvailabilityZoneMapper } from '../utilities/IAvailabilityZoneMapper';
 
 /**
  * Creates alarms and rules for an operation for both regional and zonal metrics
