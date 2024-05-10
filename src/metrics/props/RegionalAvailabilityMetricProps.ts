@@ -1,4 +1,4 @@
-import { AvailabilityMetricProps } from "./AvailabilityMetricProps";
+import { AvailabilityMetricProps } from './AvailabilityMetricProps';
 
 /**
  * Metric properties for regional availability metrics

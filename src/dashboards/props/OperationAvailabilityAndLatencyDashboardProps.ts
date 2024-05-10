@@ -1,89 +1,89 @@
-import { Duration } from "aws-cdk-lib";
-import { ILoadBalancerV2 } from "aws-cdk-lib/aws-elasticloadbalancingv2";
-import { IAlarm, CfnInsightRule } from "aws-cdk-lib/aws-cloudwatch";
-import { IOperation } from "../../services/IOperation";
+import { Duration } from 'aws-cdk-lib';
+import { IAlarm, CfnInsightRule } from 'aws-cdk-lib/aws-cloudwatch';
+import { ILoadBalancerV2 } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
+import { IOperation } from '../../services/IOperation';
 
 /**
- * Properties for creating an availability and latency dashboard for 
+ * Properties for creating an availability and latency dashboard for
  * a single operation
  */
 export interface OperationAvailabilityAndLatencyDashboardProps
 {
-    /**
+  /**
      * The operation for this dashboard
      */
-    readonly operation: IOperation;
+  readonly operation: IOperation;
 
-    /**
+  /**
      * The interval of the dashboard
      */
-    readonly interval: Duration;
+  readonly interval: Duration;
 
-    /**
-     * (Optional) The load balancer supporting this operation, if this is not 
+  /**
+     * (Optional) The load balancer supporting this operation, if this is not
      * provided, no load balancer metrics will be shown
      */
-    readonly loadBalancer: ILoadBalancerV2;
+  readonly loadBalancer: ILoadBalancerV2;
 
-    /**
+  /**
      * Per AZ server-side availability alarms
      */
-    readonly zonalEndpointServerAvailabilityAlarms: IAlarm[];
+  readonly zonalEndpointServerAvailabilityAlarms: IAlarm[];
 
-    /**
+  /**
      * Per AZ server-side latency alarms
      */
-    readonly zonalEndpointServerLatencyAlarms: IAlarm[];
+  readonly zonalEndpointServerLatencyAlarms: IAlarm[];
 
-    /**
+  /**
      * Per AZ canary availability alarms
      */
-    readonly zonalEndpointCanaryAvailabilityAlarms?: IAlarm[];
+  readonly zonalEndpointCanaryAvailabilityAlarms?: IAlarm[];
 
-    /**
+  /**
      * Per AZ canary latency alarms
      */
-    readonly zonalEndpointCanaryLatencyAlarms?: IAlarm[];
+  readonly zonalEndpointCanaryLatencyAlarms?: IAlarm[];
 
-    /**
+  /**
      * Regional server-side availability alarm
      */
-    readonly regionalEndpointServerAvailabilityAlarm: IAlarm;
+  readonly regionalEndpointServerAvailabilityAlarm: IAlarm;
 
-    /**
+  /**
      * Regional server-side latency alarm
      */
-    readonly regionalEndpointServerLatencyAlarm: IAlarm;
+  readonly regionalEndpointServerLatencyAlarm: IAlarm;
 
-    /**
+  /**
      * Regional canary availability alarm
      */
-    readonly regionalEndpointCanaryAvailabilityAlarm?: IAlarm;
+  readonly regionalEndpointCanaryAvailabilityAlarm?: IAlarm;
 
-    /**
+  /**
      * Regional canary latency alarm
      */
-    readonly regionalEndpointCanaryLatencyAlarm?: IAlarm;
+  readonly regionalEndpointCanaryLatencyAlarm?: IAlarm;
 
-    /**
+  /**
      * Per AZ alarms that indicate isolated single AZ impact
      */
-    readonly isolatedAZImpactAlarms: IAlarm[];
+  readonly isolatedAZImpactAlarms: IAlarm[];
 
-    /**
+  /**
      * Alarm that indicates regional impact
      */
-    readonly regionalImpactAlarm: IAlarm;
+  readonly regionalImpactAlarm: IAlarm;
 
-    /**
-     * Insight rule that shows instance contributors to 
+  /**
+     * Insight rule that shows instance contributors to
      * high latency for this operation
      */
-    readonly instanceContributorsToHighLatency?: CfnInsightRule;
+  readonly instanceContributorsToHighLatency?: CfnInsightRule;
 
-    /**
+  /**
      * Insight rule that shows instance contributors to
      * faults for this operation
      */
-    readonly instanceContributorsToFaults?: CfnInsightRule;
+  readonly instanceContributorsToFaults?: CfnInsightRule;
 }

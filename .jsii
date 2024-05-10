@@ -5660,7 +5660,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IOperationMetricDetails.ts",
-            "line": 68
+            "line": 72
           },
           "name": "datapointsToAlarm",
           "type": {
@@ -5676,7 +5676,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IOperationMetricDetails.ts",
-            "line": 63
+            "line": 67
           },
           "name": "evaluationPeriods",
           "type": {
@@ -5692,7 +5692,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IOperationMetricDetails.ts",
-            "line": 82
+            "line": 86
           },
           "name": "faultAlarmThreshold",
           "type": {
@@ -5729,7 +5729,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IOperationMetricDetails.ts",
-            "line": 88
+            "line": 92
           },
           "name": "metricDimensions",
           "type": {
@@ -5777,7 +5777,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IOperationMetricDetails.ts",
-            "line": 58
+            "line": 62
           },
           "name": "period",
           "type": {
@@ -5793,7 +5793,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IOperationMetricDetails.ts",
-            "line": 75
+            "line": 79
           },
           "name": "successAlarmThreshold",
           "type": {
@@ -5830,7 +5830,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IOperationMetricDetails.ts",
-            "line": 53
+            "line": 57
           },
           "name": "unit",
           "type": {
@@ -5840,6 +5840,7 @@
         {
           "abstract": true,
           "docs": {
+            "default": "- For availability metrics, this will be \"Sum\", for latency metrics it will be just \"p99\"",
             "remarks": "For availability\nmetrics this will typically just be \"Sum\".",
             "stability": "stable",
             "summary": "The statistics for faults you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99."
@@ -5847,7 +5848,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IOperationMetricDetails.ts",
-            "line": 48
+            "line": 52
           },
           "name": "graphedFaultStatistics",
           "optional": true,
@@ -5863,6 +5864,7 @@
         {
           "abstract": true,
           "docs": {
+            "default": "- For availability metrics, this will be \"Sum\", for latency metrics it will be just \"p99\"",
             "remarks": "For availability\nmetrics this will typically just be \"Sum\".",
             "stability": "stable",
             "summary": "The statistics for successes you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99."
@@ -5870,7 +5872,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IOperationMetricDetails.ts",
-            "line": 41
+            "line": 43
           },
           "name": "graphedSuccessStatistics",
           "optional": true,
@@ -7508,6 +7510,6 @@
       "symbolId": "src/services/props/ServiceProps:ServiceProps"
     }
   },
-  "version": "0.1.11",
-  "fingerprint": "+fdEBsH21UtXss4o+M/IyecebK7T9DDBS+PC0MJziZc="
+  "version": "0.1.12",
+  "fingerprint": "ykCUfcxXsiCJaxFJNl4y8ZxFi9kQtSjXYkJa4XOQJ2o="
 }

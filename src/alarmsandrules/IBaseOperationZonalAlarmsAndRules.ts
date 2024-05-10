@@ -1,37 +1,37 @@
-import { IAlarm } from "aws-cdk-lib/aws-cloudwatch";
+import { IAlarm } from 'aws-cdk-lib/aws-cloudwatch';
 
 /**
  * The base operation zonal alarms and rules
  */
 export interface IBaseOperationZonalAlarmsAndRules
 {
-    /**
+  /**
      * Composite alarm for either availabiltiy or latency impact to this operation
      */
-    availabilityOrLatencyAlarm: IAlarm;
+  availabilityOrLatencyAlarm: IAlarm;
 
-    /**
+  /**
      * Availability alarm for this operation
      */
-    availabilityAlarm: IAlarm;
+  availabilityAlarm: IAlarm;
 
-    /**
+  /**
      * Latency alarm for this operation
      */
-    latencyAlarm: IAlarm;
+  latencyAlarm: IAlarm;
 
-    /**
+  /**
      * Alarm that indicates that this AZ is an outlier for fault rate
      */
-    availabilityZoneIsOutlierForFaults: IAlarm;
+  availabilityZoneIsOutlierForFaults: IAlarm;
 
-    /**
+  /**
      * Alarm that indicates this AZ is an outlier for high latency
      */
-    availabilityZoneIsOutlierForLatency: IAlarm;
+  availabilityZoneIsOutlierForLatency: IAlarm;
 
-    /**
+  /**
      * The Availability Zone Id for the alarms and rules
      */
-    availabilityZoneId: string;
+  availabilityZoneId: string;
 }

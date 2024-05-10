@@ -1,4 +1,4 @@
-import { BaseOperationZonalAlarmsAndRulesProps } from "./BaseOperationZonalAlarmsAndRulesProps";
+import { BaseOperationZonalAlarmsAndRulesProps } from './BaseOperationZonalAlarmsAndRulesProps';
 
 /**
  * Canary metric properties for an operation at the zonal level

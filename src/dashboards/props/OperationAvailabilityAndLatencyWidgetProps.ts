@@ -1,77 +1,77 @@
-import { Duration } from "aws-cdk-lib";
-import { IAlarm, CfnInsightRule } from "aws-cdk-lib/aws-cloudwatch";
-import { IOperation } from "../../services/IOperation";
-import { IOperationMetricDetails } from "../../services/IOperationMetricDetails";
+import { Duration } from 'aws-cdk-lib';
+import { IAlarm, CfnInsightRule } from 'aws-cdk-lib/aws-cloudwatch';
+import { IOperation } from '../../services/IOperation';
+import { IOperationMetricDetails } from '../../services/IOperationMetricDetails';
 
 /**
  * Props for creating operation dashboard availability and latency widgets
  */
 export interface OperationAvailabilityAndLatencyWidgetProps
 {
-    /**
+  /**
      * The operation for this widget
      */
-    readonly operation: IOperation;
+  readonly operation: IOperation;
 
-    /**
+  /**
      * The availability metric details
      */
-    readonly availabilityMetricDetails: IOperationMetricDetails;
+  readonly availabilityMetricDetails: IOperationMetricDetails;
 
-    /**
+  /**
      * The latency metric details
      */
-    readonly latencyMetricDetails: IOperationMetricDetails;
+  readonly latencyMetricDetails: IOperationMetricDetails;
 
-    /**
+  /**
      * The number of AZs being used
      */
-    readonly availabilityZoneIds: string[];
+  readonly availabilityZoneIds: string[];
 
-    /**
+  /**
      * The resolution period
      */
-    readonly resolutionPeriod: Duration;
+  readonly resolutionPeriod: Duration;
 
-    /**
+  /**
      * The interval for the widget
      */
-    readonly interval: Duration;
+  readonly interval: Duration;
 
-    /**
+  /**
      * An alarm per AZ for availability
      */
-    readonly zonalEndpointAvailabilityAlarms: IAlarm[];
+  readonly zonalEndpointAvailabilityAlarms: IAlarm[];
 
-    /**
+  /**
      * An alarm per AZ for latency
      */
-    readonly zonalEndpointLatencyAlarms: IAlarm[];
+  readonly zonalEndpointLatencyAlarms: IAlarm[];
 
-    /**
+  /**
      * The regional endpoint availability alarm
      */
-    readonly regionalEndpointAvailabilityAlarm: IAlarm;
+  readonly regionalEndpointAvailabilityAlarm: IAlarm;
 
-    /**
+  /**
      * The regional endpoint latency alarm
      */
-    readonly regionalEndpointLatencyAlarm: IAlarm;
+  readonly regionalEndpointLatencyAlarm: IAlarm;
 
-    /**
+  /**
      * Instance contributors to high latency, only set for
      * server-side widgets
      */
-    readonly instanceContributorsToHighLatency?: CfnInsightRule;
+  readonly instanceContributorsToHighLatency?: CfnInsightRule;
 
-    /**
+  /**
      * Instance contributors to faults, only set for
      * server-side widgets
      */
-    readonly instanceContributorsToFaults?: CfnInsightRule;
+  readonly instanceContributorsToFaults?: CfnInsightRule;
 
-    /**
+  /**
      * Is this widget for the canary metrics
      */
-    readonly isCanary: boolean;
+  readonly isCanary: boolean;
 }

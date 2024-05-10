@@ -1,35 +1,33 @@
-import { ICanaryMetrics } from "./ICanaryMetrics";
-import { IContributorInsightRuleDetails } from "./IContributorInsightRuleDetails";
-import { IOperationMetricDetails } from "./IOperationMetricDetails";
-import { CanaryMetricProps } from "./props/CanaryMetricProps";
+import { ICanaryMetrics } from './ICanaryMetrics';
+import { IContributorInsightRuleDetails } from './IContributorInsightRuleDetails';
+import { IOperationMetricDetails } from './IOperationMetricDetails';
+import { CanaryMetricProps } from './props/CanaryMetricProps';
 
 /**
  * Represents metrics for a canary testing a service
  */
-export class CanaryMetrics implements ICanaryMetrics
-{
-    /**
+export class CanaryMetrics implements ICanaryMetrics {
+  /**
      * The canary availability metric details
      */
-    readonly canaryAvailabilityMetricDetails: IOperationMetricDetails;
+  readonly canaryAvailabilityMetricDetails: IOperationMetricDetails;
 
-    /**
+  /**
      * The canary latency metric details
      */
-    readonly canaryLatencyMetricDetails: IOperationMetricDetails;
-    
-    /**
+  readonly canaryLatencyMetricDetails: IOperationMetricDetails;
+
+  /**
      * The canary details for contributor insights rules
-     * 
-     * @default - No contributor insights rules will be created for the 
+     *
+     * @default - No contributor insights rules will be created for the
      * canary metrics
      */
-    readonly canaryContributorInsightRuleDetails?: IContributorInsightRuleDetails;
+  readonly canaryContributorInsightRuleDetails?: IContributorInsightRuleDetails;
 
-    constructor(props: CanaryMetricProps)
-    {
-        this.canaryAvailabilityMetricDetails = props.canaryAvailabilityMetricDetails;
-        this.canaryContributorInsightRuleDetails = props.canaryContributorInsightRuleDetails;
-        this.canaryLatencyMetricDetails = props.canaryLatencyMetricDetails;
-    }
+  constructor(props: CanaryMetricProps) {
+    this.canaryAvailabilityMetricDetails = props.canaryAvailabilityMetricDetails;
+    this.canaryContributorInsightRuleDetails = props.canaryContributorInsightRuleDetails;
+    this.canaryLatencyMetricDetails = props.canaryLatencyMetricDetails;
+  }
 }

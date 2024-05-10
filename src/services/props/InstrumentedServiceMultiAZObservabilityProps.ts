@@ -1,6 +1,6 @@
-import { ILoadBalancerV2 } from "aws-cdk-lib/aws-elasticloadbalancingv2";
-import { IService } from "../IService";
-import { Duration } from "aws-cdk-lib";
+import { Duration } from 'aws-cdk-lib';
+import { ILoadBalancerV2 } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
+import { IService } from '../IService';
 
 /**
  * The properties for adding alarms and dashboards
@@ -8,36 +8,36 @@ import { Duration } from "aws-cdk-lib";
  */
 export interface InstrumentedServiceMultiAZObservabilityProps
 {
-    /**
+  /**
      * The service that the alarms and dashboards are being crated for.
      */
-    readonly service: IService;
+  readonly service: IService;
 
-    /**
-     * Indicates whether to create per operation and overall service 
+  /**
+     * Indicates whether to create per operation and overall service
      * dashboards.
-     * 
+     *
      * @default - No dashboards are created
      */
-    readonly createDashboards?: boolean;
+  readonly createDashboards?: boolean;
 
-    /**
+  /**
      * The threshold as a percentage between 0 and 1
      * on when to consider an AZ as an outlier for
      * faults or high latency responses
      */
-    readonly outlierThreshold: number;
+  readonly outlierThreshold: number;
 
-    /**
+  /**
      * The load balancer used by the service
      */
-    readonly loadBalancer: ILoadBalancerV2;
+  readonly loadBalancer: ILoadBalancerV2;
 
-    /**
+  /**
      * The interval used in the dashboard, defaults to
      * 60 minutes.
-     * 
+     *
      * @default - 60 minutes
      */
-    readonly interval?: Duration;
+  readonly interval?: Duration;
 }

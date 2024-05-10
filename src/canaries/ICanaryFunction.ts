@@ -1,9 +1,9 @@
-import { IFunction } from "aws-cdk-lib/aws-lambda";
-import { ILogGroup } from "aws-cdk-lib/aws-logs";
+import { IFunction } from 'aws-cdk-lib/aws-lambda';
+import { ILogGroup } from 'aws-cdk-lib/aws-logs';
 
 export interface ICanaryFunction
 {
-    function: IFunction;
+  function: IFunction;
 
-    logGroup: ILogGroup;
+  logGroup: ILogGroup;
 }

@@ -1,30 +1,30 @@
-import { Duration } from "aws-cdk-lib";
-import { IService } from "../../services/IService";
-import { IAlarm } from "aws-cdk-lib/aws-cloudwatch";
+import { Duration } from 'aws-cdk-lib';
+import { IAlarm } from 'aws-cdk-lib/aws-cloudwatch';
+import { IService } from '../../services/IService';
 
 /**
  * Properties for creating a service level dashboard
  */
 export interface ServiceAvailabilityAndLatencyDashboardProps
 {
-    /**
+  /**
      * The service for the dashboard
      */
-    readonly service: IService;
+  readonly service: IService;
 
-    /**
+  /**
      * The AZ isolated impact alarms, one for each AZ
      */
-    readonly zonalAggregateAlarms: IAlarm[];
+  readonly zonalAggregateAlarms: IAlarm[];
 
-    /**
+  /**
      * The aggregate regional impact alarm, typically a fault
-     * count across all critical operations 
+     * count across all critical operations
      */
-    readonly aggregateRegionalAlarm: IAlarm;
+  readonly aggregateRegionalAlarm: IAlarm;
 
-    /**
+  /**
      * The interval for the dashboard
      */
-    readonly interval: Duration;
+  readonly interval: Duration;
 }
