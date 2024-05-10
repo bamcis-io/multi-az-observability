@@ -15,7 +15,7 @@ export { IOperation } from "./services/IOperation";
 export { Operation } from "./services/Operation";
 export { OperationMetricDetails } from "./services/OperationMetricDetails";
 export { IOperationMetricDetails } from "./services/IOperationMetricDetails";
-export { CanaryTestProps } from "./canaries/props/CanaryTestProps";
+export { AddCanaryTestProps } from "./canaries/props/AddCanaryTestProps";
 export { ICanaryMetrics } from "./services/ICanaryMetrics";
 export { IContributorInsightRuleDetails } from "./services/IContributorInsightRuleDetails";
 export { AvailabilityZoneMapper } from "./utilities/AvailabilityZoneMapper";
@@ -25,7 +25,7 @@ export { CanaryMetrics } from "./services/CanaryMetrics";
 export { CanaryMetricProps } from "./services/props/CanaryMetricProps";
 export { OperationProps } from "./services/props/OperationProps";
 export { OperationMetricDetailsProps } from "./services/props/OperationMetricDetailsProps";
-export { IDimensions } from "./services/IDimensions";
+export { IMetricDimensions } from "./services/IMetricDimensions";
 export { ContributorInsightRuleDetails } from "./services/ContributorInsightRuleDetails";
 export { ContributorInsightRuleDetailsProps } from "./services/props/ContributorInsightRuleDetailsProps";
 
@@ -55,8 +55,7 @@ export class MultiAvailabilityZoneObservability extends Construct implements IMu
                     outlierThreshold: props.instrumentedServiceObservabilityProps.outlierThreshold,
                     loadBalancer: props.instrumentedServiceObservabilityProps.loadBalancer,
                     createDashboards: props.instrumentedServiceObservabilityProps.createDashboards,
-                    interval: props.instrumentedServiceObservabilityProps.interval,
-                    addSyntheticCanaries: props.instrumentedServiceObservabilityProps.addSyntheticCanaries
+                    interval: props.instrumentedServiceObservabilityProps.interval
                 });
             } 
         }

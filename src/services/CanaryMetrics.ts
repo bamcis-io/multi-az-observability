@@ -20,6 +20,9 @@ export class CanaryMetrics implements ICanaryMetrics
     
     /**
      * The canary details for contributor insights rules
+     * 
+     * @default - No contributor insights rules will be created for the 
+     * canary metrics
      */
     readonly canaryContributorInsightRuleDetails?: IContributorInsightRuleDetails;
 

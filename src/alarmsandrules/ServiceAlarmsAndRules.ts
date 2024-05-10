@@ -2,7 +2,9 @@ import { Construct } from "constructs";
 import { IOperationAlarmsAndRules } from "./IOperationAlarmsAndRules";
 import { IServiceAlarmsAndRules } from "./IServiceAlarmsAndRules";
 import { ServiceAlarmsAndRulesProps } from "./props/ServiceAlarmsAndRulesProps";
+//import { AlarmRule, CompositeAlarm, IAlarm } from "aws-cdk-lib/aws-cloudwatch";
 import { Alarm, AlarmRule, ComparisonOperator, CompositeAlarm, IAlarm, IMetric, MathExpression } from "aws-cdk-lib/aws-cloudwatch";
+//import { Alarm, AlarmRule, ComparisonOperator, CompositeAlarm, IAlarm, IMetric, MathExpression } from "aws-cdk-lib/aws-cloudwatch";
 import { AvailabilityAndLatencyMetrics } from "../metrics/AvailabilityAndLatencyMetrics";
 import { AvailabilityMetricType } from "../utilities/AvailabilityMetricType";
 import { Fn } from "aws-cdk-lib";
@@ -55,7 +57,7 @@ export class ServiceAlarmsAndRules extends Construct implements IServiceAlarmsAn
         let azMapper: IAvailabilityZoneMapper = new AvailabilityZoneMapper(this, "AZMapper", {
             availabilityZoneNames: props.service.availabilityZoneNames
         });
-       
+        
         for (let i = 0; i < props.service.availabilityZoneNames.length; i++)
         {
             let availabilityZonedId: string = azMapper.availabilityZoneId(props.service.availabilityZoneNames[i]);
@@ -77,7 +79,11 @@ export class ServiceAlarmsAndRules extends Construct implements IServiceAlarmsAn
 
             counter++;
         }
-
+        
+        this.regionalAvailabilityServerSideAlarm = new CompositeAlarm(this, "tesT", {
+            alarmRule: AlarmRule.fromString("ALARM(TEST)")
+        }); 
+       
         let keyPrefix: string = "";
 
         let regionalOperationFaultCountMetrics: {[key: string]: IMetric} = {};

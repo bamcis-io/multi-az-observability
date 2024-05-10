@@ -1,5 +1,8 @@
 import { ILogGroup } from "aws-cdk-lib/aws-logs";
 
+/**
+ * Details for setting up Contributor Insight rules
+ */
 export interface IContributorInsightRuleDetails
 {
     /**

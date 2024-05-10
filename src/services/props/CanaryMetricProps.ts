@@ -18,6 +18,8 @@ export interface CanaryMetricProps
     
     /**
      * The canary details for contributor insights rules
+     * 
+     * @default - No contributor insight rules will be created
      */
     readonly canaryContributorInsightRuleDetails?: IContributorInsightRuleDetails;
 }

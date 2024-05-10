@@ -7,7 +7,7 @@
     ]
   },
   "dependencies": {
-    "aws-cdk-lib": "^2.138.0",
+    "aws-cdk-lib": "^2.0.0",
     "constructs": "^10.0.0"
   },
   "dependencyClosure": {
@@ -3753,6 +3753,136 @@
     }
   },
   "types": {
+    "multi-az-observability.AddCanaryTestProps": {
+      "assembly": "multi-az-observability",
+      "datatype": true,
+      "docs": {
+        "stability": "stable",
+        "summary": "The props for requesting a canary be made for an operation."
+      },
+      "fqn": "multi-az-observability.AddCanaryTestProps",
+      "kind": "interface",
+      "locationInModule": {
+        "filename": "src/canaries/props/AddCanaryTestProps.ts",
+        "line": 6
+      },
+      "name": "AddCanaryTestProps",
+      "properties": [
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The load balancer that will be tested against."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/canaries/props/AddCanaryTestProps.ts",
+            "line": 35
+          },
+          "name": "loadBalancer",
+          "type": {
+            "fqn": "aws-cdk-lib.aws_elasticloadbalancingv2.ILoadBalancerV2"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The number of requests to send on each test."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/canaries/props/AddCanaryTestProps.ts",
+            "line": 11
+          },
+          "name": "requestCount",
+          "type": {
+            "primitive": "number"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "A schedule expression."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/canaries/props/AddCanaryTestProps.ts",
+            "line": 16
+          },
+          "name": "schedule",
+          "type": {
+            "primitive": "string"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "default": "- No additional headers are added to the requests",
+            "stability": "stable",
+            "summary": "Any headers to include."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/canaries/props/AddCanaryTestProps.ts",
+            "line": 30
+          },
+          "name": "headers",
+          "optional": true,
+          "type": {
+            "collection": {
+              "elementtype": {
+                "primitive": "string"
+              },
+              "kind": "map"
+            }
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "default": "- The operation's defined HTTP methods will be used to\nconduct the canary tests",
+            "stability": "stable",
+            "summary": "Defining this will override the methods defined in the operation and will use these instead."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/canaries/props/AddCanaryTestProps.ts",
+            "line": 44
+          },
+          "name": "httpMethods",
+          "optional": true,
+          "type": {
+            "collection": {
+              "elementtype": {
+                "primitive": "string"
+              },
+              "kind": "array"
+            }
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "default": "- No data is sent in a POST, PUT, or PATCH request",
+            "stability": "stable",
+            "summary": "Data to supply in a POST, PUT, or PATCH operation."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/canaries/props/AddCanaryTestProps.ts",
+            "line": 23
+          },
+          "name": "postData",
+          "optional": true,
+          "type": {
+            "primitive": "string"
+          }
+        }
+      ],
+      "symbolId": "src/canaries/props/AddCanaryTestProps:AddCanaryTestProps"
+    },
     "multi-az-observability.AvailabilityZoneMapper": {
       "assembly": "multi-az-observability",
       "base": "constructs.Construct",
@@ -4366,13 +4496,14 @@
         {
           "abstract": true,
           "docs": {
+            "default": "- No contributor insight rules will be created",
             "stability": "stable",
             "summary": "The canary details for contributor insights rules."
           },
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/CanaryMetricProps.ts",
-            "line": 22
+            "line": 24
           },
           "name": "canaryContributorInsightRuleDetails",
           "optional": true,
@@ -4396,7 +4527,7 @@
         },
         "locationInModule": {
           "filename": "src/services/CanaryMetrics.ts",
-          "line": 26
+          "line": 29
         },
         "parameters": [
           {
@@ -4451,13 +4582,14 @@
         },
         {
           "docs": {
+            "default": "- No contributor insights rules will be created for the \ncanary metrics",
             "stability": "stable",
             "summary": "The canary details for contributor insights rules."
           },
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/CanaryMetrics.ts",
-            "line": 24
+            "line": 27
           },
           "name": "canaryContributorInsightRuleDetails",
           "optional": true,
@@ -4468,166 +4600,6 @@
         }
       ],
       "symbolId": "src/services/CanaryMetrics:CanaryMetrics"
-    },
-    "multi-az-observability.CanaryTestProps": {
-      "assembly": "multi-az-observability",
-      "datatype": true,
-      "docs": {
-        "stability": "stable",
-        "summary": "The props for creating a canary test on a single operation."
-      },
-      "fqn": "multi-az-observability.CanaryTestProps",
-      "kind": "interface",
-      "locationInModule": {
-        "filename": "src/canaries/props/CanaryTestProps.ts",
-        "line": 8
-      },
-      "name": "CanaryTestProps",
-      "properties": [
-        {
-          "abstract": true,
-          "docs": {
-            "stability": "stable",
-            "summary": "The Availability Zones being used."
-          },
-          "immutable": true,
-          "locationInModule": {
-            "filename": "src/canaries/props/CanaryTestProps.ts",
-            "line": 52
-          },
-          "name": "availabilityZoneNames",
-          "type": {
-            "collection": {
-              "elementtype": {
-                "primitive": "string"
-              },
-              "kind": "array"
-            }
-          }
-        },
-        {
-          "abstract": true,
-          "docs": {
-            "stability": "stable",
-            "summary": "The function that will run the canary requests."
-          },
-          "immutable": true,
-          "locationInModule": {
-            "filename": "src/canaries/props/CanaryTestProps.ts",
-            "line": 13
-          },
-          "name": "function",
-          "type": {
-            "fqn": "aws-cdk-lib.aws_lambda.IFunction"
-          }
-        },
-        {
-          "abstract": true,
-          "docs": {
-            "stability": "stable",
-            "summary": "The load balancer that will be tested against."
-          },
-          "immutable": true,
-          "locationInModule": {
-            "filename": "src/canaries/props/CanaryTestProps.ts",
-            "line": 47
-          },
-          "name": "loadBalancer",
-          "type": {
-            "fqn": "aws-cdk-lib.aws_elasticloadbalancingv2.ILoadBalancerV2"
-          }
-        },
-        {
-          "abstract": true,
-          "docs": {
-            "stability": "stable",
-            "summary": "The operation being tested."
-          },
-          "immutable": true,
-          "locationInModule": {
-            "filename": "src/canaries/props/CanaryTestProps.ts",
-            "line": 42
-          },
-          "name": "operation",
-          "type": {
-            "fqn": "multi-az-observability.IOperation"
-          }
-        },
-        {
-          "abstract": true,
-          "docs": {
-            "stability": "stable",
-            "summary": "The number of requests to send on each test."
-          },
-          "immutable": true,
-          "locationInModule": {
-            "filename": "src/canaries/props/CanaryTestProps.ts",
-            "line": 18
-          },
-          "name": "requestCount",
-          "type": {
-            "primitive": "number"
-          }
-        },
-        {
-          "abstract": true,
-          "docs": {
-            "stability": "stable",
-            "summary": "A schedule expression."
-          },
-          "immutable": true,
-          "locationInModule": {
-            "filename": "src/canaries/props/CanaryTestProps.ts",
-            "line": 23
-          },
-          "name": "schedule",
-          "type": {
-            "primitive": "string"
-          }
-        },
-        {
-          "abstract": true,
-          "docs": {
-            "default": "- No additional headers are added to the requests",
-            "stability": "stable",
-            "summary": "Any headers to include."
-          },
-          "immutable": true,
-          "locationInModule": {
-            "filename": "src/canaries/props/CanaryTestProps.ts",
-            "line": 37
-          },
-          "name": "headers",
-          "optional": true,
-          "type": {
-            "collection": {
-              "elementtype": {
-                "primitive": "string"
-              },
-              "kind": "map"
-            }
-          }
-        },
-        {
-          "abstract": true,
-          "docs": {
-            "default": "- No data is sent in a POST, PUT, or PATCH request",
-            "stability": "stable",
-            "summary": "Data to supply in a POST, PUT, or PATCH operation."
-          },
-          "immutable": true,
-          "locationInModule": {
-            "filename": "src/canaries/props/CanaryTestProps.ts",
-            "line": 30
-          },
-          "name": "postData",
-          "optional": true,
-          "type": {
-            "primitive": "string"
-          }
-        }
-      ],
-      "symbolId": "src/canaries/props/CanaryTestProps:CanaryTestProps"
     },
     "multi-az-observability.ContributorInsightRuleDetails": {
       "assembly": "multi-az-observability",
@@ -4773,13 +4745,14 @@
       "assembly": "multi-az-observability",
       "datatype": true,
       "docs": {
-        "stability": "stable"
+        "stability": "stable",
+        "summary": "The contributor insight rule details properties."
       },
       "fqn": "multi-az-observability.ContributorInsightRuleDetailsProps",
       "kind": "interface",
       "locationInModule": {
         "filename": "src/services/props/ContributorInsightRuleDetailsProps.ts",
-        "line": 3
+        "line": 6
       },
       "name": "ContributorInsightRuleDetailsProps",
       "properties": [
@@ -4792,7 +4765,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/ContributorInsightRuleDetailsProps.ts",
-            "line": 34
+            "line": 37
           },
           "name": "availabilityZoneIdJsonPath",
           "type": {
@@ -4808,7 +4781,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/ContributorInsightRuleDetailsProps.ts",
-            "line": 27
+            "line": 30
           },
           "name": "faultMetricJsonPath",
           "type": {
@@ -4824,7 +4797,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/ContributorInsightRuleDetailsProps.ts",
-            "line": 40
+            "line": 43
           },
           "name": "instanceIdJsonPath",
           "type": {
@@ -4841,7 +4814,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/ContributorInsightRuleDetailsProps.ts",
-            "line": 9
+            "line": 12
           },
           "name": "logGroups",
           "type": {
@@ -4862,7 +4835,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/ContributorInsightRuleDetailsProps.ts",
-            "line": 21
+            "line": 24
           },
           "name": "operationNameJsonPath",
           "type": {
@@ -4879,7 +4852,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/ContributorInsightRuleDetailsProps.ts",
-            "line": 15
+            "line": 18
           },
           "name": "successLatencyMetricJsonPath",
           "type": {
@@ -5179,13 +5152,14 @@
     "multi-az-observability.ICanaryMetrics": {
       "assembly": "multi-az-observability",
       "docs": {
-        "stability": "stable"
+        "stability": "stable",
+        "summary": "The metric definitions for metric produced by the canary."
       },
       "fqn": "multi-az-observability.ICanaryMetrics",
       "kind": "interface",
       "locationInModule": {
         "filename": "src/services/ICanaryMetrics.ts",
-        "line": 4
+        "line": 7
       },
       "name": "ICanaryMetrics",
       "properties": [
@@ -5198,7 +5172,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/ICanaryMetrics.ts",
-            "line": 9
+            "line": 12
           },
           "name": "canaryAvailabilityMetricDetails",
           "type": {
@@ -5214,7 +5188,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/ICanaryMetrics.ts",
-            "line": 14
+            "line": 17
           },
           "name": "canaryLatencyMetricDetails",
           "type": {
@@ -5230,7 +5204,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/ICanaryMetrics.ts",
-            "line": 19
+            "line": 22
           },
           "name": "canaryContributorInsightRuleDetails",
           "optional": true,
@@ -5244,13 +5218,14 @@
     "multi-az-observability.IContributorInsightRuleDetails": {
       "assembly": "multi-az-observability",
       "docs": {
-        "stability": "stable"
+        "stability": "stable",
+        "summary": "Details for setting up Contributor Insight rules."
       },
       "fqn": "multi-az-observability.IContributorInsightRuleDetails",
       "kind": "interface",
       "locationInModule": {
         "filename": "src/services/IContributorInsightRuleDetails.ts",
-        "line": 3
+        "line": 6
       },
       "name": "IContributorInsightRuleDetails",
       "properties": [
@@ -5263,7 +5238,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IContributorInsightRuleDetails.ts",
-            "line": 35
+            "line": 38
           },
           "name": "availabilityZoneIdJsonPath",
           "type": {
@@ -5279,7 +5254,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IContributorInsightRuleDetails.ts",
-            "line": 28
+            "line": 31
           },
           "name": "faultMetricJsonPath",
           "type": {
@@ -5295,7 +5270,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IContributorInsightRuleDetails.ts",
-            "line": 41
+            "line": 44
           },
           "name": "instanceIdJsonPath",
           "type": {
@@ -5312,7 +5287,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IContributorInsightRuleDetails.ts",
-            "line": 9
+            "line": 12
           },
           "name": "logGroups",
           "type": {
@@ -5333,7 +5308,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IContributorInsightRuleDetails.ts",
-            "line": 22
+            "line": 25
           },
           "name": "operationNameJsonPath",
           "type": {
@@ -5350,7 +5325,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IContributorInsightRuleDetails.ts",
-            "line": 16
+            "line": 19
           },
           "name": "successLatencyMetricJsonPath",
           "type": {
@@ -5360,16 +5335,16 @@
       ],
       "symbolId": "src/services/IContributorInsightRuleDetails:IContributorInsightRuleDetails"
     },
-    "multi-az-observability.IDimensions": {
+    "multi-az-observability.IMetricDimensions": {
       "assembly": "multi-az-observability",
       "docs": {
         "stability": "stable",
         "summary": "Interface for defining the operation's dimensions."
       },
-      "fqn": "multi-az-observability.IDimensions",
+      "fqn": "multi-az-observability.IMetricDimensions",
       "kind": "interface",
       "locationInModule": {
-        "filename": "src/services/IDimensions.ts",
+        "filename": "src/services/IMetricDimensions.ts",
         "line": 4
       },
       "methods": [
@@ -5380,7 +5355,7 @@
             "summary": "Gets the regional dimensions for these metrics, expected to return something like {   \"Region\": \"us-east-1\",   \"Operation\": \"Ride\",   \"Service\": \"WildRydes\" }."
           },
           "locationInModule": {
-            "filename": "src/services/IDimensions.ts",
+            "filename": "src/services/IMetricDimensions.ts",
             "line": 15
           },
           "name": "regionalDimensions",
@@ -5410,7 +5385,7 @@
             "summary": "Gets the zonal dimensions for these metrics, expected to return something like  {   \"Region\": \"us-east-1\",   \"AZ-ID\": \"use1-az1\",   \"Operation\": \"Ride\",   \"Service\": \"WildRydes\" }."
           },
           "locationInModule": {
-            "filename": "src/services/IDimensions.ts",
+            "filename": "src/services/IMetricDimensions.ts",
             "line": 28
           },
           "name": "zonalDimensions",
@@ -5440,8 +5415,8 @@
           }
         }
       ],
-      "name": "IDimensions",
-      "symbolId": "src/services/IDimensions:IDimensions"
+      "name": "IMetricDimensions",
+      "symbolId": "src/services/IMetricDimensions:IMetricDimensions"
     },
     "multi-az-observability.IMultiAvailabilityZoneObservability": {
       "assembly": "multi-az-observability",
@@ -5464,13 +5439,14 @@
     "multi-az-observability.IOperation": {
       "assembly": "multi-az-observability",
       "docs": {
-        "stability": "stable"
+        "stability": "stable",
+        "summary": "Represents an operation in a service."
       },
       "fqn": "multi-az-observability.IOperation",
       "kind": "interface",
       "locationInModule": {
         "filename": "src/services/IOperation.ts",
-        "line": 8
+        "line": 10
       },
       "name": "IOperation",
       "properties": [
@@ -5483,7 +5459,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IOperation.ts",
-            "line": 62
+            "line": 58
           },
           "name": "httpMethods",
           "type": {
@@ -5504,7 +5480,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IOperation.ts",
-            "line": 51
+            "line": 53
           },
           "name": "isCritical",
           "type": {
@@ -5520,7 +5496,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IOperation.ts",
-            "line": 18
+            "line": 20
           },
           "name": "operationName",
           "type": {
@@ -5536,7 +5512,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IOperation.ts",
-            "line": 24
+            "line": 26
           },
           "name": "path",
           "type": {
@@ -5552,7 +5528,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IOperation.ts",
-            "line": 29
+            "line": 31
           },
           "name": "serverSideAvailabilityMetricDetails",
           "type": {
@@ -5568,7 +5544,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IOperation.ts",
-            "line": 34
+            "line": 36
           },
           "name": "serverSideLatencyMetricDetails",
           "type": {
@@ -5584,7 +5560,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IOperation.ts",
-            "line": 13
+            "line": 15
           },
           "name": "service",
           "type": {
@@ -5600,7 +5576,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IOperation.ts",
-            "line": 39
+            "line": 41
           },
           "name": "canaryMetricDetails",
           "optional": true,
@@ -5612,17 +5588,17 @@
           "abstract": true,
           "docs": {
             "stability": "stable",
-            "summary": "If you define this property, a synthetic canary will be provisioned to test the operation."
+            "summary": "If they have been added, the properties for creating new canary tests on this operation."
           },
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IOperation.ts",
-            "line": 57
+            "line": 64
           },
           "name": "canaryTestProps",
           "optional": true,
           "type": {
-            "fqn": "multi-az-observability.CanaryTestProps"
+            "fqn": "multi-az-observability.AddCanaryTestProps"
           }
         },
         {
@@ -5634,7 +5610,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IOperation.ts",
-            "line": 44
+            "line": 46
           },
           "name": "serverSideContributorInsightRuleDetails",
           "optional": true,
@@ -5648,82 +5624,15 @@
     "multi-az-observability.IOperationMetricDetails": {
       "assembly": "multi-az-observability",
       "docs": {
-        "stability": "stable"
+        "stability": "stable",
+        "summary": "Details for operation metrics in one perspective, such as server side latency."
       },
       "fqn": "multi-az-observability.IOperationMetricDetails",
       "kind": "interface",
       "locationInModule": {
         "filename": "src/services/IOperationMetricDetails.ts",
-        "line": 4
+        "line": 8
       },
-      "methods": [
-        {
-          "abstract": true,
-          "docs": {
-            "stability": "stable",
-            "summary": "Gets the regional dimensions for these metrics, expected to return something like {   \"Region\": \"us-east-1\",   \"Operation\": \"Ride\",   \"Service\": \"WildRydes\" }."
-          },
-          "locationInModule": {
-            "filename": "src/services/IOperationMetricDetails.ts",
-            "line": 86
-          },
-          "name": "regionalDimensions",
-          "parameters": [
-            {
-              "name": "region",
-              "type": {
-                "primitive": "string"
-              }
-            }
-          ],
-          "returns": {
-            "type": {
-              "collection": {
-                "elementtype": {
-                  "primitive": "string"
-                },
-                "kind": "map"
-              }
-            }
-          }
-        },
-        {
-          "abstract": true,
-          "docs": {
-            "stability": "stable",
-            "summary": "Gets the zonal dimensions for these metrics, expected to return something like  {   \"Region\": \"us-east-1\",   \"AZ-ID\": \"use1-az1\",   \"Operation\": \"Ride\",   \"Service\": \"WildRydes\" }."
-          },
-          "locationInModule": {
-            "filename": "src/services/IOperationMetricDetails.ts",
-            "line": 99
-          },
-          "name": "zonalDimensions",
-          "parameters": [
-            {
-              "name": "availabilityZoneId",
-              "type": {
-                "primitive": "string"
-              }
-            },
-            {
-              "name": "region",
-              "type": {
-                "primitive": "string"
-              }
-            }
-          ],
-          "returns": {
-            "type": {
-              "collection": {
-                "elementtype": {
-                  "primitive": "string"
-                },
-                "kind": "map"
-              }
-            }
-          }
-        }
-      ],
       "name": "IOperationMetricDetails",
       "properties": [
         {
@@ -5735,7 +5644,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IOperationMetricDetails.ts",
-            "line": 28
+            "line": 34
           },
           "name": "alarmStatistic",
           "type": {
@@ -5751,7 +5660,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IOperationMetricDetails.ts",
-            "line": 59
+            "line": 68
           },
           "name": "datapointsToAlarm",
           "type": {
@@ -5767,7 +5676,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IOperationMetricDetails.ts",
-            "line": 55
+            "line": 63
           },
           "name": "evaluationPeriods",
           "type": {
@@ -5783,7 +5692,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IOperationMetricDetails.ts",
-            "line": 74
+            "line": 82
           },
           "name": "faultAlarmThreshold",
           "type": {
@@ -5799,7 +5708,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IOperationMetricDetails.ts",
-            "line": 23
+            "line": 28
           },
           "name": "faultMetricNames",
           "type": {
@@ -5815,12 +5724,28 @@
           "abstract": true,
           "docs": {
             "stability": "stable",
+            "summary": "The metric dimensions for this operation, must be implemented as a concrete class by the user."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/IOperationMetricDetails.ts",
+            "line": 88
+          },
+          "name": "metricDimensions",
+          "type": {
+            "fqn": "multi-az-observability.IMetricDimensions"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
             "summary": "The CloudWatch metric namespace for these metrics."
           },
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IOperationMetricDetails.ts",
-            "line": 14
+            "line": 18
           },
           "name": "metricNamespace",
           "type": {
@@ -5836,7 +5761,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IOperationMetricDetails.ts",
-            "line": 9
+            "line": 13
           },
           "name": "operationName",
           "type": {
@@ -5852,7 +5777,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IOperationMetricDetails.ts",
-            "line": 50
+            "line": 58
           },
           "name": "period",
           "type": {
@@ -5868,7 +5793,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IOperationMetricDetails.ts",
-            "line": 66
+            "line": 75
           },
           "name": "successAlarmThreshold",
           "type": {
@@ -5884,7 +5809,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IOperationMetricDetails.ts",
-            "line": 19
+            "line": 23
           },
           "name": "successMetricNames",
           "type": {
@@ -5905,7 +5830,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IOperationMetricDetails.ts",
-            "line": 45
+            "line": 53
           },
           "name": "unit",
           "type": {
@@ -5922,7 +5847,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IOperationMetricDetails.ts",
-            "line": 40
+            "line": 48
           },
           "name": "graphedFaultStatistics",
           "optional": true,
@@ -5945,7 +5870,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IOperationMetricDetails.ts",
-            "line": 34
+            "line": 41
           },
           "name": "graphedSuccessStatistics",
           "optional": true,
@@ -5964,13 +5889,14 @@
     "multi-az-observability.IService": {
       "assembly": "multi-az-observability",
       "docs": {
-        "stability": "stable"
+        "stability": "stable",
+        "summary": "Represents a complete service composed of one or more operations."
       },
       "fqn": "multi-az-observability.IService",
       "kind": "interface",
       "locationInModule": {
         "filename": "src/services/IService.ts",
-        "line": 4
+        "line": 7
       },
       "methods": [
         {
@@ -5981,7 +5907,7 @@
           },
           "locationInModule": {
             "filename": "src/services/IService.ts",
-            "line": 41
+            "line": 44
           },
           "name": "addOperation",
           "parameters": [
@@ -6010,7 +5936,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IService.ts",
-            "line": 25
+            "line": 28
           },
           "name": "availabilityZoneNames",
           "type": {
@@ -6031,7 +5957,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IService.ts",
-            "line": 14
+            "line": 17
           },
           "name": "baseUrl",
           "type": {
@@ -6048,7 +5974,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IService.ts",
-            "line": 20
+            "line": 23
           },
           "name": "faultCountThreshold",
           "type": {
@@ -6064,7 +5990,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IService.ts",
-            "line": 35
+            "line": 38
           },
           "name": "operations",
           "type": {
@@ -6085,7 +6011,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IService.ts",
-            "line": 30
+            "line": 33
           },
           "name": "period",
           "type": {
@@ -6101,7 +6027,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IService.ts",
-            "line": 9
+            "line": 12
           },
           "name": "serviceName",
           "type": {
@@ -6172,24 +6098,6 @@
           "name": "service",
           "type": {
             "fqn": "multi-az-observability.IService"
-          }
-        },
-        {
-          "abstract": true,
-          "docs": {
-            "default": "- No synthetic canaries are created",
-            "stability": "stable",
-            "summary": "An option to automatically create synthetic canaries to test each  operation in each AZ as well as via the regional."
-          },
-          "immutable": true,
-          "locationInModule": {
-            "filename": "src/services/props/InstrumentedServiceMultiAZObservabilityProps.ts",
-            "line": 50
-          },
-          "name": "addSyntheticCanaries",
-          "optional": true,
-          "type": {
-            "primitive": "boolean"
           }
         },
         {
@@ -6379,7 +6287,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/Operation.ts",
-            "line": 67
+            "line": 61
           },
           "name": "httpMethods",
           "overrides": "multi-az-observability.IOperation",
@@ -6508,18 +6416,18 @@
         {
           "docs": {
             "stability": "stable",
-            "summary": "If you define this property, a synthetic canary will be provisioned to test the operation."
+            "summary": "If they have been added, the properties for creating new canary tests on this operation."
           },
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/Operation.ts",
-            "line": 62
+            "line": 67
           },
           "name": "canaryTestProps",
           "optional": true,
           "overrides": "multi-az-observability.IOperation",
           "type": {
-            "fqn": "multi-az-observability.CanaryTestProps"
+            "fqn": "multi-az-observability.AddCanaryTestProps"
           }
         },
         {
@@ -6555,7 +6463,7 @@
         },
         "locationInModule": {
           "filename": "src/services/OperationMetricDetails.ts",
-          "line": 115
+          "line": 96
         },
         "parameters": [
           {
@@ -6574,74 +6482,6 @@
         "filename": "src/services/OperationMetricDetails.ts",
         "line": 10
       },
-      "methods": [
-        {
-          "docs": {
-            "stability": "stable",
-            "summary": "Gets the regional dimensions for these metrics, expected to return something like {   \"Region\": \"us-east-1\",   \"Operation\": \"Ride\",   \"Service\": \"WildRydes\" }."
-          },
-          "locationInModule": {
-            "filename": "src/services/OperationMetricDetails.ts",
-            "line": 92
-          },
-          "name": "regionalDimensions",
-          "overrides": "multi-az-observability.IOperationMetricDetails",
-          "parameters": [
-            {
-              "name": "region",
-              "type": {
-                "primitive": "string"
-              }
-            }
-          ],
-          "returns": {
-            "type": {
-              "collection": {
-                "elementtype": {
-                  "primitive": "string"
-                },
-                "kind": "map"
-              }
-            }
-          }
-        },
-        {
-          "docs": {
-            "stability": "stable",
-            "summary": "Gets the zonal dimensions for these metrics, expected to return something like  {   \"Region\": \"us-east-1\",   \"AZ-ID\": \"use1-az1\",   \"Operation\": \"Ride\",   \"Service\": \"WildRydes\" }."
-          },
-          "locationInModule": {
-            "filename": "src/services/OperationMetricDetails.ts",
-            "line": 108
-          },
-          "name": "zonalDimensions",
-          "overrides": "multi-az-observability.IOperationMetricDetails",
-          "parameters": [
-            {
-              "name": "availabilityZoneId",
-              "type": {
-                "primitive": "string"
-              }
-            },
-            {
-              "name": "region",
-              "type": {
-                "primitive": "string"
-              }
-            }
-          ],
-          "returns": {
-            "type": {
-              "collection": {
-                "elementtype": {
-                  "primitive": "string"
-                },
-                "kind": "map"
-              }
-            }
-          }
-        }
-      ],
       "name": "OperationMetricDetails",
       "properties": [
         {
@@ -6652,7 +6492,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/OperationMetricDetails.ts",
-            "line": 34
+            "line": 36
           },
           "name": "alarmStatistic",
           "overrides": "multi-az-observability.IOperationMetricDetails",
@@ -6668,7 +6508,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/OperationMetricDetails.ts",
-            "line": 65
+            "line": 74
           },
           "name": "datapointsToAlarm",
           "overrides": "multi-az-observability.IOperationMetricDetails",
@@ -6684,7 +6524,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/OperationMetricDetails.ts",
-            "line": 61
+            "line": 69
           },
           "name": "evaluationPeriods",
           "overrides": "multi-az-observability.IOperationMetricDetails",
@@ -6700,7 +6540,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/OperationMetricDetails.ts",
-            "line": 80
+            "line": 88
           },
           "name": "faultAlarmThreshold",
           "overrides": "multi-az-observability.IOperationMetricDetails",
@@ -6716,7 +6556,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/OperationMetricDetails.ts",
-            "line": 29
+            "line": 30
           },
           "name": "faultMetricNames",
           "overrides": "multi-az-observability.IOperationMetricDetails",
@@ -6727,6 +6567,22 @@
               },
               "kind": "array"
             }
+          }
+        },
+        {
+          "docs": {
+            "stability": "stable",
+            "summary": "The metric dimensions for this operation, must be implemented as a concrete class by the user."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/OperationMetricDetails.ts",
+            "line": 94
+          },
+          "name": "metricDimensions",
+          "overrides": "multi-az-observability.IOperationMetricDetails",
+          "type": {
+            "fqn": "multi-az-observability.IMetricDimensions"
           }
         },
         {
@@ -6769,7 +6625,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/OperationMetricDetails.ts",
-            "line": 56
+            "line": 64
           },
           "name": "period",
           "overrides": "multi-az-observability.IOperationMetricDetails",
@@ -6785,7 +6641,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/OperationMetricDetails.ts",
-            "line": 72
+            "line": 81
           },
           "name": "successAlarmThreshold",
           "overrides": "multi-az-observability.IOperationMetricDetails",
@@ -6822,7 +6678,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/OperationMetricDetails.ts",
-            "line": 51
+            "line": 59
           },
           "name": "unit",
           "overrides": "multi-az-observability.IOperationMetricDetails",
@@ -6832,6 +6688,7 @@
         },
         {
           "docs": {
+            "default": "- For availability metrics, this will be \"Sum\", for latency metrics it will be just \"p99\"",
             "remarks": "For availability\nmetrics this will typically just be \"Sum\".",
             "stability": "stable",
             "summary": "The statistics for faults you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99."
@@ -6839,7 +6696,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/OperationMetricDetails.ts",
-            "line": 46
+            "line": 54
           },
           "name": "graphedFaultStatistics",
           "optional": true,
@@ -6855,6 +6712,7 @@
         },
         {
           "docs": {
+            "default": "- For availability metrics, this will be \"Sum\", for latency metrics it will be just \"p99\"",
             "remarks": "For availability\nmetrics this will typically just be \"Sum\".",
             "stability": "stable",
             "summary": "The statistics for successes you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99."
@@ -6862,7 +6720,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/OperationMetricDetails.ts",
-            "line": 40
+            "line": 45
           },
           "name": "graphedSuccessStatistics",
           "optional": true,
@@ -6903,7 +6761,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/OperationMetricDetailsProps.ts",
-            "line": 32
+            "line": 34
           },
           "name": "alarmStatistic",
           "type": {
@@ -6919,27 +6777,11 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/OperationMetricDetailsProps.ts",
-            "line": 63
+            "line": 72
           },
           "name": "datapointsToAlarm",
           "type": {
             "primitive": "number"
-          }
-        },
-        {
-          "abstract": true,
-          "docs": {
-            "stability": "stable",
-            "summary": "The dimensions interface for getting regional and zonal metric dimensions."
-          },
-          "immutable": true,
-          "locationInModule": {
-            "filename": "src/services/props/OperationMetricDetailsProps.ts",
-            "line": 84
-          },
-          "name": "dimensions",
-          "type": {
-            "fqn": "multi-az-observability.IDimensions"
           }
         },
         {
@@ -6951,7 +6793,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/OperationMetricDetailsProps.ts",
-            "line": 59
+            "line": 67
           },
           "name": "evaluationPeriods",
           "type": {
@@ -6967,7 +6809,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/OperationMetricDetailsProps.ts",
-            "line": 78
+            "line": 86
           },
           "name": "faultAlarmThreshold",
           "type": {
@@ -6983,7 +6825,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/OperationMetricDetailsProps.ts",
-            "line": 27
+            "line": 28
           },
           "name": "faultMetricNames",
           "type": {
@@ -6993,6 +6835,22 @@
               },
               "kind": "array"
             }
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The user implemented functions for providing the metric's dimensions."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/OperationMetricDetailsProps.ts",
+            "line": 91
+          },
+          "name": "metricDimensions",
+          "type": {
+            "fqn": "multi-az-observability.IMetricDimensions"
           }
         },
         {
@@ -7036,7 +6894,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/OperationMetricDetailsProps.ts",
-            "line": 54
+            "line": 62
           },
           "name": "period",
           "type": {
@@ -7052,7 +6910,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/OperationMetricDetailsProps.ts",
-            "line": 70
+            "line": 79
           },
           "name": "successAlarmThreshold",
           "type": {
@@ -7089,7 +6947,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/OperationMetricDetailsProps.ts",
-            "line": 49
+            "line": 57
           },
           "name": "unit",
           "type": {
@@ -7099,6 +6957,7 @@
         {
           "abstract": true,
           "docs": {
+            "default": "- For availability metrics, this will be \"Sum\", for latency metrics it will be just \"p99\"",
             "remarks": "For availability\nmetrics this will typically just be \"Sum\".",
             "stability": "stable",
             "summary": "The statistics for faults you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99."
@@ -7106,7 +6965,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/OperationMetricDetailsProps.ts",
-            "line": 44
+            "line": 52
           },
           "name": "graphedFaultStatistics",
           "optional": true,
@@ -7122,6 +6981,7 @@
         {
           "abstract": true,
           "docs": {
+            "default": "- For availability metrics, this will be \"Sum\", for latency metrics it will be just \"p99\"",
             "remarks": "For availability\nmetrics this will typically just be \"Sum\".",
             "stability": "stable",
             "summary": "The statistics for successes you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99."
@@ -7129,7 +6989,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/OperationMetricDetailsProps.ts",
-            "line": 38
+            "line": 43
           },
           "name": "graphedSuccessStatistics",
           "optional": true,
@@ -7169,7 +7029,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/OperationProps.ts",
-            "line": 64
+            "line": 74
           },
           "name": "httpMethods",
           "type": {
@@ -7190,7 +7050,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/OperationProps.ts",
-            "line": 53
+            "line": 61
           },
           "name": "isCritical",
           "type": {
@@ -7280,13 +7140,14 @@
         {
           "abstract": true,
           "docs": {
+            "default": "- No alarms, rules, or dashboards will be created\nfrom canary metrics",
             "stability": "stable",
             "summary": "Optional metric details if the service has a canary."
           },
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/OperationProps.ts",
-            "line": 41
+            "line": 44
           },
           "name": "canaryMetricDetails",
           "optional": true,
@@ -7297,30 +7158,32 @@
         {
           "abstract": true,
           "docs": {
+            "default": "- No canary will be created for this operation",
             "stability": "stable",
             "summary": "If you define this property, a synthetic canary will be provisioned to test the operation."
           },
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/OperationProps.ts",
-            "line": 59
+            "line": 69
           },
           "name": "canaryTestProps",
           "optional": true,
           "type": {
-            "fqn": "multi-az-observability.CanaryTestProps"
+            "fqn": "multi-az-observability.AddCanaryTestProps"
           }
         },
         {
           "abstract": true,
           "docs": {
+            "default": "- No Contributor Insight rules will be created and\nthe number of instances contributing to AZ faults or high latency\nwill not be considered, so a single bad instance could make the\nAZ appear to look impaired.",
             "stability": "stable",
             "summary": "The server side details for contributor insights rules."
           },
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/OperationProps.ts",
-            "line": 46
+            "line": 54
           },
           "name": "serverSideContributorInsightRuleDetails",
           "optional": true,
@@ -7645,6 +7508,6 @@
       "symbolId": "src/services/props/ServiceProps:ServiceProps"
     }
   },
-  "version": "0.1.8",
-  "fingerprint": "iSbhyKQ2jPwBhjKBtP95nNVATK0SCtm60zcBPYENnng="
+  "version": "0.1.11",
+  "fingerprint": "+fdEBsH21UtXss4o+M/IyecebK7T9DDBS+PC0MJziZc="
 }

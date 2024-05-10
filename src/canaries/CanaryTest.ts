@@ -17,12 +17,12 @@ export class CanaryTest extends Construct
         this.timedEventRules = {};
 
         let azMapper: IAvailabilityZoneMapper = new AvailabilityZoneMapper(this, "AZMapper", {
-            availabilityZoneNames: props.availabilityZoneNames
+            availabilityZoneNames: props.operation.service.availabilityZoneNames
         });
 
         this.metricNamespace = props.operation.canaryMetricDetails ? props.operation.canaryMetricDetails.canaryAvailabilityMetricDetails.metricNamespace : "canary/metrics";
 
-        props.availabilityZoneNames.forEach((availabilityZoneName, index) => {
+        props.operation.service.availabilityZoneNames.forEach((availabilityZoneName, index) => {
             let availabilityZoneId: string = azMapper.availabilityZoneId(availabilityZoneName);
 
             let scheme: string =  props.operation.service.baseUrl.split(":")[0]
@@ -30,7 +30,7 @@ export class CanaryTest extends Construct
 
             let data: {[key: string]: any} = {
                 "parameters": {
-                    "methods": props.operation.httpMethods,
+                    "methods": props.httpMethods !== undefined ? props.httpMethods : props.operation.httpMethods,
                     "url": url,
                     "postData": props.postData,
                     "headers": props.headers,
@@ -53,7 +53,7 @@ export class CanaryTest extends Construct
 
         let data: {[key: string]: any} = {
             "parameters": {
-                "methods": props.operation.httpMethods,
+                "methods": props.httpMethods !== undefined ? props.httpMethods : props.operation.httpMethods,
                 "url": props.operation.service.baseUrl.toString() + props.operation.path,
                 "postData": props.postData,
                 "headers": props.headers,

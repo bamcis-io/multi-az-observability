@@ -1,8 +1,9 @@
+
 import * as cdk from 'aws-cdk-lib';
 import { Template } from 'aws-cdk-lib/assertions';
 import { SelectedSubnets, SubnetType, Vpc } from 'aws-cdk-lib/aws-ec2';
-import { ApplicationLoadBalancer } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
-import { MultiAvailabilityZoneObservability } from '../src/MultiAvailabilityZoneObservability';
+import { ApplicationLoadBalancer, ILoadBalancerV2 } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
+import { MultiAvailabilityZoneObservability, OperationMetricDetails } from '../src/MultiAvailabilityZoneObservability';
 import { Duration } from 'aws-cdk-lib';
 import { IService } from '../src/services/IService';
 import { IOperation } from '../src/services/IOperation';
@@ -64,7 +65,7 @@ test('Fully instrumented service', () => {
             instanceIdJsonPath: "$.InstanceId",
             availabilityZoneIdJsonPath: "$.AZ-ID"
         },
-        serverSideAvailabilityMetricDetails: {
+        serverSideAvailabilityMetricDetails: new OperationMetricDetails({
             operationName: "ride",
             metricNamespace: "front-end/metrics",
             successMetricNames: [ "Success" ],
@@ -78,21 +79,23 @@ test('Fully instrumented service', () => {
             faultAlarmThreshold: 0.1,
             graphedFaultStatistics: [ "Sum" ],
             graphedSuccessStatistics: [ "Sum" ],
-            regionalDimensions(region: string) {
-                return {
-                    "Region": region,
-                    "Operation": this.operationName
-                }
-            },
-            zonalDimensions(availabilityZoneId: string, region: string) {
-                return {
-                    "Region": region,
-                    "Operation": this.operationName,
-                    "AZ-ID": availabilityZoneId
+            metricDimensions: {
+                zonalDimensions(availabilityZoneId: string, region: string) {
+                    return {
+                        "AZ-ID": availabilityZoneId,
+                        "Region": region,
+                        "Operation": "ride"
+                    }
+                },
+                regionalDimensions(region: string) {
+                    return {
+                        "Region": region,
+                        "Operation": "ride"
+                    }
                 }
             }
-        },
-        serverSideLatencyMetricDetails: {
+        }),
+        serverSideLatencyMetricDetails: new OperationMetricDetails({
             operationName: "ride",
             metricNamespace: "front-end/metrics",
             successMetricNames: [ "SuccessLatency" ],
@@ -106,20 +109,22 @@ test('Fully instrumented service', () => {
             faultAlarmThreshold: 1,
             graphedFaultStatistics: [ "p99" ],
             graphedSuccessStatistics: [ "p50", "p99", "tm99" ],
-            regionalDimensions(region: string) {
-                return {
-                    "Region": region,
-                    "Operation": this.operationName
-                }
-            },
-            zonalDimensions(availabilityZoneId: string, region: string) {
-                return {
-                    "Region": region,
-                    "Operation": this.operationName,
-                    "AZ-ID": availabilityZoneId
+            metricDimensions: {
+                zonalDimensions(availabilityZoneId: string, region: string) {
+                    return {
+                        "AZ-ID": availabilityZoneId,
+                        "Region": region,
+                        "Operation": "ride"
+                    }
+                },
+                regionalDimensions(region: string) {
+                    return {
+                        "Region": region,
+                        "Operation": "ride"
+                    }
                 }
             }
-        }
+        })
     });
 
     service.addOperation(rideOperation);
@@ -141,7 +146,7 @@ test('Fully instrumented service', () => {
     Template.fromStack(stack);
 });
 
-test('Fully instrumented service with canaries', () => {
+test('Fully instrumented service adding canaries', () => {
     const app = new cdk.App();
     const stack = new cdk.Stack(app, "TestStack");
 
@@ -164,11 +169,16 @@ test('Fully instrumented service with canaries', () => {
         natGateways: 0
     });
 
-    
     let subnets: SelectedSubnets = vpc.selectSubnets({
         subnetType: SubnetType.PRIVATE_WITH_EGRESS
     });
 
+    let loadbalancer: ILoadBalancerV2 = new ApplicationLoadBalancer(stack, "alb", {
+        vpc: vpc,
+        crossZoneEnabled: false,
+        vpcSubnets: subnets
+    });
+  
     let service: IService = new Service({
         serviceName: "test",
         availabilityZoneNames: vpc.availabilityZones,
@@ -194,7 +204,7 @@ test('Fully instrumented service with canaries', () => {
             instanceIdJsonPath: "$.InstanceId",
             availabilityZoneIdJsonPath: "$.AZ-ID"
         },
-        serverSideAvailabilityMetricDetails: {
+        serverSideAvailabilityMetricDetails: new OperationMetricDetails({
             operationName: "ride",
             metricNamespace: "front-end/metrics",
             successMetricNames: [ "Success" ],
@@ -208,21 +218,23 @@ test('Fully instrumented service with canaries', () => {
             faultAlarmThreshold: 0.1,
             graphedFaultStatistics: [ "Sum" ],
             graphedSuccessStatistics: [ "Sum" ],
-            regionalDimensions(region: string) {
-                return {
-                    "Region": region,
-                    "Operation": this.operationName
-                }
-            },
-            zonalDimensions(availabilityZoneId: string, region: string) {
-                return {
-                    "Region": region,
-                    "Operation": this.operationName,
-                    "AZ-ID": availabilityZoneId
+            metricDimensions: {
+                zonalDimensions(availabilityZoneId: string, region: string) {
+                    return {
+                        "AZ-ID": availabilityZoneId,
+                        "Region": region,
+                        "Operation": "ride"
+                    }
+                },
+                regionalDimensions(region: string) {
+                    return {
+                        "Region": region,
+                        "Operation": "ride"
+                    }
                 }
             }
-        },
-        serverSideLatencyMetricDetails: {
+        }),
+        serverSideLatencyMetricDetails: new OperationMetricDetails({
             operationName: "ride",
             metricNamespace: "front-end/metrics",
             successMetricNames: [ "SuccessLatency" ],
@@ -236,78 +248,27 @@ test('Fully instrumented service with canaries', () => {
             faultAlarmThreshold: 1,
             graphedFaultStatistics: [ "p99" ],
             graphedSuccessStatistics: [ "p50", "p99", "tm99" ],
-            regionalDimensions(region: string) {
-                return {
-                    "Region": region,
-                    "Operation": this.operationName
-                }
-            },
-            zonalDimensions(availabilityZoneId: string, region: string) {
-                return {
-                    "Region": region,
-                    "Operation": this.operationName,
-                    "AZ-ID": availabilityZoneId
-                }
-            }
-        },
-        canaryMetricDetails: {
-            canaryAvailabilityMetricDetails: {
-                operationName: "ride",
-                metricNamespace: "front-end/metrics",
-                successMetricNames: [ "Success" ],
-                faultMetricNames: [ "Fault", "Error" ],
-                alarmStatistic: "Sum",
-                unit: Unit.COUNT,
-                period: Duration.seconds(60),
-                evaluationPeriods: 5,
-                datapointsToAlarm: 3,
-                successAlarmThreshold: 99.9,
-                faultAlarmThreshold: 0.1,
-                graphedFaultStatistics: [ "Sum" ],
-                graphedSuccessStatistics: [ "Sum" ],
+            metricDimensions: {
+                zonalDimensions(availabilityZoneId: string, region: string) {
+                    return {
+                        "AZ-ID": availabilityZoneId,
+                        "Region": region,
+                        "Operation": "ride"
+                    }
+                },
                 regionalDimensions(region: string) {
                     return {
                         "Region": region,
-                        "Operation": this.operationName
-                    }
-                },
-                zonalDimensions(availabilityZoneId: string, region: string) {
-                    return {
-                        "Region": region,
-                        "Operation": this.operationName,
-                        "AZ-ID": availabilityZoneId
-                    }
-                }
-            },
-            canaryLatencyMetricDetails: {
-                operationName: "ride",
-                metricNamespace: "front-end/metrics",
-                successMetricNames: [ "SuccessLatency" ],
-                faultMetricNames: [ "FaultLatency" ],
-                alarmStatistic: "p99",
-                unit: Unit.MILLISECONDS,
-                period: Duration.seconds(60),
-                evaluationPeriods: 5,
-                datapointsToAlarm: 3,
-                successAlarmThreshold: 100,
-                faultAlarmThreshold: 1,
-                graphedFaultStatistics: [ "p99" ],
-                graphedSuccessStatistics: [ "p50", "p99", "tm99" ],
-                regionalDimensions(region: string) {
-                    return {
-                        "Region": region,
-                        "Operation": this.operationName
-                    }
-                },
-                zonalDimensions(availabilityZoneId: string, region: string) {
-                    return {
-                        "Region": region,
-                        "Operation": this.operationName,
-                        "AZ-ID": availabilityZoneId
+                        "Operation": "ride"
                     }
                 }
             }
-        }   
+        }),
+        canaryTestProps: {
+          requestCount: 10,
+          schedule: "rate(1 minute)",
+          loadBalancer: loadbalancer
+        }
     };
 
     let payOperation: Operation = {
@@ -324,7 +285,7 @@ test('Fully instrumented service with canaries', () => {
             instanceIdJsonPath: "$.InstanceId",
             availabilityZoneIdJsonPath: "$.AZ-ID"
         },
-        serverSideAvailabilityMetricDetails: {
+        serverSideAvailabilityMetricDetails: new OperationMetricDetails({
             operationName: "pay",
             metricNamespace: "front-end/metrics",
             successMetricNames: [ "Success" ],
@@ -338,21 +299,23 @@ test('Fully instrumented service with canaries', () => {
             faultAlarmThreshold: 0.1,
             graphedFaultStatistics: [ "Sum" ],
             graphedSuccessStatistics: [ "Sum" ],
-            regionalDimensions(region: string) {
-                return {
-                    "Region": region,
-                    "Operation": this.operationName
+            metricDimensions: {
+                zonalDimensions(availabilityZoneId: string, region: string) {
+                    return {
+                        "AZ-ID": availabilityZoneId,
+                        "Region": region,
+                        "Operation": "pay"
+                    }
+                },
+                regionalDimensions(region: string) {
+                    return {
+                        "Region": region,
+                        "Operation": "pay"
+                    }
                 }
-            },
-            zonalDimensions(availabilityZoneId: string, region: string) {
-                return {
-                    "Region": region,
-                    "Operation": this.operationName,
-                    "AZ-ID": availabilityZoneId
-                }
-            }
-        },
-        serverSideLatencyMetricDetails: {
+            }       
+        }),
+        serverSideLatencyMetricDetails: new OperationMetricDetails({
             operationName: "pay",
             metricNamespace: "front-end/metrics",
             successMetricNames: [ "SuccessLatency" ],
@@ -366,78 +329,27 @@ test('Fully instrumented service with canaries', () => {
             faultAlarmThreshold: 1,
             graphedFaultStatistics: [ "p99" ],
             graphedSuccessStatistics: [ "p50", "p99", "tm99" ],
-            regionalDimensions(region: string) {
-                return {
-                    "Region": region,
-                    "Operation": this.operationName
-                }
-            },
-            zonalDimensions(availabilityZoneId: string, region: string) {
-                return {
-                    "Region": region,
-                    "Operation": this.operationName,
-                    "AZ-ID": availabilityZoneId
-                }
-            }
-        },
-        canaryMetricDetails: {
-            canaryAvailabilityMetricDetails: {
-                operationName: "pay",
-                metricNamespace: "front-end/metrics",
-                successMetricNames: [ "Success" ],
-                faultMetricNames: [ "Fault", "Error" ],
-                alarmStatistic: "Sum",
-                unit: Unit.COUNT,
-                period: Duration.seconds(60),
-                evaluationPeriods: 5,
-                datapointsToAlarm: 3,
-                successAlarmThreshold: 99.9,
-                faultAlarmThreshold: 0.1,
-                graphedFaultStatistics: [ "Sum" ],
-                graphedSuccessStatistics: [ "Sum" ],
+            metricDimensions: {
+                zonalDimensions(availabilityZoneId: string, region: string) {
+                    return {
+                        "AZ-ID": availabilityZoneId,
+                        "Region": region,
+                        "Operation": "pay"
+                    }
+                },
                 regionalDimensions(region: string) {
                     return {
                         "Region": region,
-                        "Operation": this.operationName
-                    }
-                },
-                zonalDimensions(availabilityZoneId: string, region: string) {
-                    return {
-                        "Region": region,
-                        "Operation": this.operationName,
-                        "AZ-ID": availabilityZoneId
+                        "Operation": "pay"
                     }
                 }
-            },
-            canaryLatencyMetricDetails: {
-                operationName: "pay",
-                metricNamespace: "front-end/metrics",
-                successMetricNames: [ "SuccessLatency" ],
-                faultMetricNames: [ "FaultLatency" ],
-                alarmStatistic: "p99",
-                unit: Unit.MILLISECONDS,
-                period: Duration.seconds(60),
-                evaluationPeriods: 5,
-                datapointsToAlarm: 3,
-                successAlarmThreshold: 100,
-                faultAlarmThreshold: 1,
-                graphedFaultStatistics: [ "p99" ],
-                graphedSuccessStatistics: [ "p50", "p99", "tm99" ],
-                regionalDimensions(region: string) {
-                    return {
-                        "Region": region,
-                        "Operation": this.operationName
-                    }
-                },
-                zonalDimensions(availabilityZoneId: string, region: string) {
-                    return {
-                        "Region": region,
-                        "Operation": this.operationName,
-                        "AZ-ID": availabilityZoneId
-                    }
-                }
-            }
-        }   
+            } 
+        }),
+        canaryTestProps: {
+          requestCount: 10,
+          schedule: "rate(1 minute)",
+          loadBalancer: loadbalancer
+        }
     };
 
     service.addOperation(rideOperation);
@@ -446,15 +358,10 @@ test('Fully instrumented service with canaries', () => {
     new MultiAvailabilityZoneObservability(stack, "MAZObservability", {
         instrumentedServiceObservabilityProps: {
             createDashboards: true,
-            loadBalancer: new ApplicationLoadBalancer(stack, "alb", {
-                vpc: vpc,
-                crossZoneEnabled: false,
-                vpcSubnets: subnets
-            }),
+            loadBalancer: loadbalancer,
             service: service,
             outlierThreshold: 0.7,
-            interval: Duration.minutes(30),
-            addSyntheticCanaries: true
+            interval: Duration.minutes(30)
         }
     });
 

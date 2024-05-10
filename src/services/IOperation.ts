@@ -1,10 +1,12 @@
-import { CanaryTestProps } from "../canaries/props/CanaryTestProps";
+import { AddCanaryTestProps } from "../canaries/props/AddCanaryTestProps";
 import { ICanaryMetrics } from "./ICanaryMetrics";
 import { IContributorInsightRuleDetails } from "./IContributorInsightRuleDetails";
 import { IOperationMetricDetails } from "./IOperationMetricDetails";
 import { IService } from "./IService";
 
-
+/**
+ * Represents an operation in a service
+ */
 export interface IOperation
 {
     /**
@@ -51,13 +53,13 @@ export interface IOperation
     readonly isCritical: boolean;
 
     /**
-     * If you define this property, a synthetic
-     * canary will be provisioned to test the operation
-     */
-    readonly canaryTestProps?: CanaryTestProps;
-
-    /**
      * The http methods supported by the operation
      */
     readonly httpMethods: string[];
+
+    /**
+     * If they have been added, the properties for
+     * creating new canary tests on this operation
+     */
+    readonly canaryTestProps?: AddCanaryTestProps;
 }

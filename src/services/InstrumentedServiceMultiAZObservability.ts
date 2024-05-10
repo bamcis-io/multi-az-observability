@@ -3,7 +3,7 @@ import { InstrumentedServiceMultiAZObservabilityProps } from "./props/Instrument
 import { OperationAlarmsAndRules } from "../alarmsandrules/OperationAlarmsAndRules";
 import { ServiceAlarmsAndRules } from "../alarmsandrules/ServiceAlarmsAndRules";
 import { IOperation } from "./IOperation";
-import { CanaryMetrics, Operation, OutlierDetectionAlgorithm } from "../MultiAvailabilityZoneObservability";
+import { CanaryMetrics, Operation, OperationMetricDetails, OutlierDetectionAlgorithm } from "../MultiAvailabilityZoneObservability";
 import { Dashboard, Unit } from "aws-cdk-lib/aws-cloudwatch";
 import { OperationAvailabilityAndLatencyDashboard } from "../dashboards/OperationAvailabilityAndLatencyDashboard";
 import { ServiceAvailabilityAndLatencyDashboard } from "../dashboards/ServiceAvailabilityAndLatencyDashboard";
@@ -30,108 +30,110 @@ export class InstrumentedServiceMultiAZObservability extends Construct
     {
         super(scope, id);
         this.operationDashboards = [];
-        
-        if (props.addSyntheticCanaries !== undefined && props.addSyntheticCanaries == true)
-        {
-            let canaryNestedStack: NestedStack = new NestedStack(this, "CanaryStack");
 
-            let canary = new CanaryFunction(canaryNestedStack, "CanaryFunction", {
+        if (props.service.operations.filter(x => x.canaryTestProps !== undefined).length > 0)
+        {
+            let canary = new CanaryFunction(new NestedStack(this, "CanaryStack"), "CanaryFunction", {
             });
 
             props.service.operations.forEach((operation, index) => {
-                let nestedStack: NestedStack = new NestedStack(this, operation.operationName + "CanaryTestStack");
 
-                // TODO: headers and post data need to be configurable,
-                // probably through the IOperation interface,
-                let test = new CanaryTest(nestedStack, operation.operationName + "CanaryTest", {
-                    function: canary.function,
-                    requestCount: 10,
-                    schedule: "rate(1 minute)",
-                    operation: operation,
-                    loadBalancer: props.loadBalancer,
-                    availabilityZoneNames: props.service.availabilityZoneNames,
-                    headers: {},
-                    postData: ""
-                });
+                if (operation.canaryTestProps !== undefined)
+                {
+                    let nestedStack: NestedStack = new NestedStack(this, operation.operationName + "CanaryTestStack");
 
-                let newOperation = new Operation({
-                    serverSideAvailabilityMetricDetails: operation.serverSideAvailabilityMetricDetails,
-                    serverSideLatencyMetricDetails: operation.serverSideLatencyMetricDetails,
-                    serverSideContributorInsightRuleDetails: operation.serverSideContributorInsightRuleDetails,
-                    service: operation.service,
-                    operationName: operation.operationName,
-                    path: operation.path,
-                    isCritical: operation.isCritical,
-                    httpMethods: operation.httpMethods,
-                    canaryMetricDetails: new CanaryMetrics({
-                        canaryAvailabilityMetricDetails: {
-                            operationName: operation.operationName,
-                            metricNamespace: test.metricNamespace,
-                            successMetricNames: [ "Success" ],
-                            faultMetricNames: [ "Fault", "Error" ],
-                            alarmStatistic: operation.serverSideAvailabilityMetricDetails.alarmStatistic,
-                            unit: Unit.COUNT,
-                            period: operation.serverSideAvailabilityMetricDetails.period,
-                            evaluationPeriods: operation.serverSideAvailabilityMetricDetails.evaluationPeriods,
-                            datapointsToAlarm: operation.serverSideAvailabilityMetricDetails.datapointsToAlarm,
-                            successAlarmThreshold: operation.serverSideAvailabilityMetricDetails.successAlarmThreshold,
-                            faultAlarmThreshold: operation.serverSideAvailabilityMetricDetails.faultAlarmThreshold,
-                            graphedFaultStatistics: [ "Sum" ],
-                            graphedSuccessStatistics: [ "Sum" ],
-                            regionalDimensions(region: string) {
-                                return {
-                                    "Region": region,
-                                    "Operation": this.operationName
+                    let test = new CanaryTest(nestedStack, operation.operationName + "CanaryTest", {
+                        function: canary.function,
+                        requestCount: operation.canaryTestProps.requestCount,
+                        schedule: operation.canaryTestProps.schedule,
+                        operation: operation,
+                        loadBalancer: operation.canaryTestProps?.loadBalancer,
+                        headers: operation.canaryTestProps.headers,
+                        postData: operation.canaryTestProps.postData
+                    });
+
+                    let newOperation = new Operation({
+                        serverSideAvailabilityMetricDetails: operation.serverSideAvailabilityMetricDetails,
+                        serverSideLatencyMetricDetails: operation.serverSideLatencyMetricDetails,
+                        serverSideContributorInsightRuleDetails: operation.serverSideContributorInsightRuleDetails,
+                        service: operation.service,
+                        operationName: operation.operationName,
+                        path: operation.path,
+                        isCritical: operation.isCritical,
+                        httpMethods: operation.httpMethods,
+                        canaryMetricDetails: new CanaryMetrics({
+                            canaryAvailabilityMetricDetails: new OperationMetricDetails({
+                                operationName: operation.operationName,
+                                metricNamespace: test.metricNamespace,
+                                successMetricNames: [ "Success" ],
+                                faultMetricNames: [ "Fault", "Error" ],
+                                alarmStatistic: operation.serverSideAvailabilityMetricDetails.alarmStatistic,
+                                unit: Unit.COUNT,
+                                period: operation.serverSideAvailabilityMetricDetails.period,
+                                evaluationPeriods: operation.serverSideAvailabilityMetricDetails.evaluationPeriods,
+                                datapointsToAlarm: operation.serverSideAvailabilityMetricDetails.datapointsToAlarm,
+                                successAlarmThreshold: operation.serverSideAvailabilityMetricDetails.successAlarmThreshold,
+                                faultAlarmThreshold: operation.serverSideAvailabilityMetricDetails.faultAlarmThreshold,
+                                graphedFaultStatistics: [ "Sum" ],
+                                graphedSuccessStatistics: [ "Sum" ],
+                                metricDimensions: {
+                                    zonalDimensions(availabilityZoneId: string, region: string) {
+                                        return {
+                                            "AZ-ID": availabilityZoneId,
+                                            "Region": region,
+                                            "Operation": operation.operationName
+                                        }
+                                    },
+                                    regionalDimensions(region: string) {
+                                        return {
+                                            "Region": region,
+                                            "Operation": operation.operationName
+                                        }
+                                    }
                                 }
-                            },
-                            zonalDimensions(availabilityZoneId: string, region: string) {
-                                return {
-                                    "Region": region,
-                                    "Operation": this.operationName,
-                                    "AZ-ID": availabilityZoneId
+                            }),
+                            canaryLatencyMetricDetails: new OperationMetricDetails({
+                                operationName: operation.operationName,
+                                metricNamespace: test.metricNamespace,
+                                successMetricNames: [ "SuccessLatency" ],
+                                faultMetricNames: [ "FaultLatency" ],
+                                alarmStatistic: operation.serverSideLatencyMetricDetails.alarmStatistic,
+                                unit: Unit.MILLISECONDS,
+                                period: operation.serverSideLatencyMetricDetails.period,
+                                evaluationPeriods: operation.serverSideLatencyMetricDetails.evaluationPeriods,
+                                datapointsToAlarm: operation.serverSideLatencyMetricDetails.datapointsToAlarm,
+                                successAlarmThreshold: operation.serverSideLatencyMetricDetails.successAlarmThreshold,
+                                faultAlarmThreshold: operation.serverSideLatencyMetricDetails.faultAlarmThreshold,
+                                graphedFaultStatistics: operation.serverSideLatencyMetricDetails.graphedFaultStatistics,
+                                graphedSuccessStatistics: operation.serverSideLatencyMetricDetails.graphedSuccessStatistics,
+                                metricDimensions: {
+                                    zonalDimensions(availabilityZoneId: string, region: string) {
+                                        return {
+                                            "AZ-ID": availabilityZoneId,
+                                            "Region": region,
+                                            "Operation": operation.operationName
+                                        }
+                                    },
+                                    regionalDimensions(region: string) {
+                                        return {
+                                            "Region": region,
+                                            "Operation": operation.operationName
+                                        }
+                                    }
                                 }
+                            }),
+                            canaryContributorInsightRuleDetails: {
+                                logGroups: [ canary.logGroup ],
+                                successLatencyMetricJsonPath: "$.SuccessLatency",
+                                faultMetricJsonPath: "$.Faults",
+                                operationNameJsonPath: "$.Operation",
+                                instanceIdJsonPath: "$.InstanceId",
+                                availabilityZoneIdJsonPath: "$.AZ-ID"
                             }
-                        },
-                        canaryLatencyMetricDetails: {
-                            operationName: operation.operationName,
-                            metricNamespace: test.metricNamespace,
-                            successMetricNames: [ "SuccessLatency" ],
-                            faultMetricNames: [ "FaultLatency" ],
-                            alarmStatistic: operation.serverSideLatencyMetricDetails.alarmStatistic,
-                            unit: Unit.MILLISECONDS,
-                            period: operation.serverSideLatencyMetricDetails.period,
-                            evaluationPeriods: operation.serverSideLatencyMetricDetails.evaluationPeriods,
-                            datapointsToAlarm: operation.serverSideLatencyMetricDetails.datapointsToAlarm,
-                            successAlarmThreshold: operation.serverSideLatencyMetricDetails.successAlarmThreshold,
-                            faultAlarmThreshold: operation.serverSideLatencyMetricDetails.faultAlarmThreshold,
-                            graphedFaultStatistics: operation.serverSideLatencyMetricDetails.graphedFaultStatistics,
-                            graphedSuccessStatistics: operation.serverSideLatencyMetricDetails.graphedSuccessStatistics,
-                            regionalDimensions(region: string) {
-                                return {
-                                    "Region": region,
-                                    "Operation": this.operationName
-                                }
-                            },
-                            zonalDimensions(availabilityZoneId: string, region: string) {
-                                return {
-                                    "Region": region,
-                                    "Operation": this.operationName,
-                                    "AZ-ID": availabilityZoneId
-                                }
-                            }
-                        },
-                        canaryContributorInsightRuleDetails: {
-                            logGroups: [ canary.logGroup ],
-                            successLatencyMetricJsonPath: "$.SuccessLatency",
-                            faultMetricJsonPath: "$.Faults",
-                            operationNameJsonPath: "$.Operation",
-                            instanceIdJsonPath: "$.InstanceId",
-                            availabilityZoneIdJsonPath: "$.AZ-ID"
-                        }
+                        })
                     })
-                })
-
-                props.service.operations[index] = newOperation;
+                    props.service.operations[index] = newOperation;
+                }
             });
         }
 
@@ -146,7 +148,8 @@ export class InstrumentedServiceMultiAZObservability extends Construct
                 })
             ]
         ));
-
+        
+        
         let serviceAlarmsStack: NestedStack = new NestedStack(this, "ServiceAlarmsStack");
 
         this.serviceAlarms = new ServiceAlarmsAndRules(serviceAlarmsStack, "ServiceAlarmsNestedStack", {

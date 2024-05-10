@@ -1,7 +1,7 @@
 /**
  * Interface for defining the operation's dimensions
  */
-export interface IDimensions
+export interface IMetricDimensions
 {
     /**
      * Gets the regional dimensions for these metrics, expected to return something

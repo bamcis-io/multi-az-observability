@@ -65,11 +65,13 @@ export class CanaryFunction extends Construct implements ICanaryFunction {
         const dir: string = path.resolve(__dirname, './src');
         let code: AssetCode = Code.fromAsset(dir, {
             bundling: {
+                //image: new Runtime('python3.12:latest-arm64', RuntimeFamily.PYTHON).bundlingImage,
                 image: Runtime.PYTHON_3_12.bundlingImage,
                 command: [
                     "bash", "-c",
                     "pip install --no-cache -r requirements.txt -t /asset-output && cp --archive --update . /asset-output"
-                ]
+                ],
+                platform: "linux/arm64"
             }
         });
 

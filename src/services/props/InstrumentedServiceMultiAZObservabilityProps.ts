@@ -40,12 +40,4 @@ export interface InstrumentedServiceMultiAZObservabilityProps
      * @default - 60 minutes
      */
     readonly interval?: Duration;
-
-    /**
-     * An option to automatically create synthetic canaries to test each 
-     * operation in each AZ as well as via the regional
-     * 
-     * @default - No synthetic canaries are created
-     */
-    readonly addSyntheticCanaries?: boolean;
 }

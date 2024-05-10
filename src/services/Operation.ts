@@ -1,11 +1,11 @@
 
 import { IContributorInsightRuleDetails } from "./IContributorInsightRuleDetails";
 import { IService } from "./IService";
-import { CanaryTestProps } from "../canaries/props/CanaryTestProps";
 import { OperationProps } from "./props/OperationProps";
 import { IOperation } from "./IOperation";
 import { IOperationMetricDetails } from "./IOperationMetricDetails";
 import { ICanaryMetrics } from "./ICanaryMetrics";
+import { AddCanaryTestProps } from "../canaries/props/AddCanaryTestProps";
 
 /**
  * A single operation that is part of a service
@@ -56,20 +56,19 @@ export class Operation implements IOperation
     readonly isCritical: boolean;
 
     /**
-     * If you define this property, a synthetic
-     * canary will be provisioned to test the operation
-     */
-    readonly canaryTestProps?: CanaryTestProps;
-
-    /**
      * The http methods supported by the operation
      */
     readonly httpMethods: string[];
 
+    /**
+     * If they have been added, the properties for
+     * creating new canary tests on this operation
+     */
+    readonly canaryTestProps?: AddCanaryTestProps;
+
     constructor(props: OperationProps)
     {
       this.canaryMetricDetails = props.canaryMetricDetails;
-      this.canaryTestProps = props.canaryTestProps;
       this.httpMethods = props.httpMethods;
       this.isCritical = props.isCritical;
       this.operationName = props.operationName;
@@ -78,5 +77,6 @@ export class Operation implements IOperation
       this.serverSideLatencyMetricDetails = props.serverSideLatencyMetricDetails;
       this.serverSideContributorInsightRuleDetails = props.serverSideContributorInsightRuleDetails;
       this.service = props.service;
+      this.canaryTestProps = props.canaryTestProps;
     }
 }
