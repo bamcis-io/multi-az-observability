@@ -28,8 +28,8 @@ const project = new awscdk.AwsCdkConstructLibrary({
   ],
   packageName: 'multi-az-observability',
   publishToNuget: {
-    dotNetNamespace: 'BAMCISIO.Constructs.MultiAZObservability',
-    packageId: 'BAMCISIO.Constructs.MultiAZObservability',
+    dotNetNamespace: 'BAMCISIO.MultiAZObservability',
+    packageId: 'BAMCISIO.MultiAZObservability',
   },
   publishToGo: {
     moduleName: 'bamcis.io/constructs',

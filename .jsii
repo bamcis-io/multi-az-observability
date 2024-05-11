@@ -3743,8 +3743,8 @@
   "schema": "jsii/0.10.0",
   "targets": {
     "dotnet": {
-      "namespace": "BAMCISIO.Constructs.MultiAZObservability",
-      "packageId": "BAMCISIO.Constructs.MultiAZObservability"
+      "namespace": "BAMCISIO.MultiAZObservability",
+      "packageId": "BAMCISIO.MultiAZObservability"
     },
     "go": {
       "moduleName": "bamcis.io/constructs",
@@ -7640,5 +7640,5 @@
     }
   },
   "version": "0.1.15",
-  "fingerprint": "ORPJwv57XhmK9KLN4mkYKaA+5OoVoo+1WCzOw88XgPE="
+  "fingerprint": "LP9TDsXBM96MT3rjdBwATeskMfds+oO8XBSBsWO8krQ="
 }

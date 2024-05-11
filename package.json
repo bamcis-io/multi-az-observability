@@ -141,8 +141,8 @@
         "module": "bamcis.io.constructs.multi_az_observability"
       },
       "dotnet": {
-        "namespace": "BAMCISIO.Constructs.MultiAZObservability",
-        "packageId": "BAMCISIO.Constructs.MultiAZObservability"
+        "namespace": "BAMCISIO.MultiAZObservability",
+        "packageId": "BAMCISIO.MultiAZObservability"
       },
       "go": {
         "moduleName": "bamcis.io/constructs",
