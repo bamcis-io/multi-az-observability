@@ -28,8 +28,21 @@ const project = new awscdk.AwsCdkConstructLibrary({
   ],
   packageName: 'multi-az-observability',
   publishToNuget: {
-    dotNetNamespace: 'BAMCISIO.MultiAZObservability',
-    packageId: 'BAMCISIO.MultiAZObservability',
+    dotNetNamespace: 'BAMCISIO.Constructs.MultiAZObservability',
+    packageId: 'BAMCISIO.Constructs.MultiAZObservability',
+  },
+  publishToGo: {
+    moduleName: 'bamcis.io/constructs',
+    packageName: 'multiazobservability',
+  },
+  publishToPypi: {
+    distName: 'bamcis.io.constructs.multi_az_observability',
+    module: 'bamcis.io.constructs.multi_az_observability',
+  },
+  publishToMaven: {
+    javaPackage: 'io.bamcis.constructs.multiazobservability',
+    mavenGroupId: 'io.bamcis.constructs.multiazobservability',
+    mavenArtifactId: 'multiazobservability',
   },
   jest: true,
   jestOptions: {
@@ -44,11 +57,26 @@ const project = new awscdk.AwsCdkConstructLibrary({
   },
 });
 
-project.addScripts({
-  build: 'export CDK_DOCKER=build.sh && npx projen build',
+project.addTask('awslint', {
+  exec: 'awslint',
+});
+
+project.tasks.addTask('build2', {
+  steps: [
+    {
+      exec: 'export DOCKER_DEFAULT_PLATFORM="linux/arm64"',
+    },
+    {
+      spawn: 'awslint',
+    },
+    {
+      spawn: 'build',
+    },
+  ],
 });
 
 project.addFields({
   version: '0.1.15',
 });
+
 project.synth();

@@ -1,5 +1,4 @@
 import { Duration } from 'aws-cdk-lib';
-import { ILoadBalancerV2 } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import { IService } from '../IService';
 
 /**
@@ -27,11 +26,6 @@ export interface InstrumentedServiceMultiAZObservabilityProps
      * faults or high latency responses
      */
   readonly outlierThreshold: number;
-
-  /**
-     * The load balancer used by the service
-     */
-  readonly loadBalancer: ILoadBalancerV2;
 
   /**
      * The interval used in the dashboard, defaults to

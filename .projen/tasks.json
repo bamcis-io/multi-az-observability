@@ -1,5 +1,13 @@
 {
   "tasks": {
+    "awslint": {
+      "name": "awslint",
+      "steps": [
+        {
+          "exec": "awslint"
+        }
+      ]
+    },
     "build": {
       "name": "build",
       "description": "Full release build",
@@ -21,6 +29,20 @@
         },
         {
           "spawn": "package"
+        }
+      ]
+    },
+    "build2": {
+      "name": "build2",
+      "steps": [
+        {
+          "exec": "export DOCKER_DEFAULT_PLATFORM=\"linux/arm64\""
+        },
+        {
+          "spawn": "awslint"
+        },
+        {
+          "spawn": "build"
         }
       ]
     },
@@ -166,7 +188,16 @@
           "spawn": "package:js"
         },
         {
+          "spawn": "package:java"
+        },
+        {
+          "spawn": "package:python"
+        },
+        {
           "spawn": "package:dotnet"
+        },
+        {
+          "spawn": "package:go"
         }
       ]
     },
@@ -179,12 +210,39 @@
         }
       ]
     },
+    "package:go": {
+      "name": "package:go",
+      "description": "Create go language bindings",
+      "steps": [
+        {
+          "exec": "jsii-pacmak -v --target go"
+        }
+      ]
+    },
+    "package:java": {
+      "name": "package:java",
+      "description": "Create java language bindings",
+      "steps": [
+        {
+          "exec": "jsii-pacmak -v --target java"
+        }
+      ]
+    },
     "package:js": {
       "name": "package:js",
       "description": "Create js language bindings",
       "steps": [
         {
           "exec": "jsii-pacmak -v --target js"
+        }
+      ]
+    },
+    "package:python": {
+      "name": "package:python",
+      "description": "Create python language bindings",
+      "steps": [
+        {
+          "exec": "jsii-pacmak -v --target python"
         }
       ]
     },

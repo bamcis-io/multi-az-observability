@@ -842,23 +842,10 @@ const instrumentedServiceMultiAZObservabilityProps: InstrumentedServiceMultiAZOb
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#multi-az-observability.InstrumentedServiceMultiAZObservabilityProps.property.loadBalancer">loadBalancer</a></code> | <code>aws-cdk-lib.aws_elasticloadbalancingv2.ILoadBalancerV2</code> | The load balancer used by the service. |
 | <code><a href="#multi-az-observability.InstrumentedServiceMultiAZObservabilityProps.property.outlierThreshold">outlierThreshold</a></code> | <code>number</code> | The threshold as a percentage between 0 and 1 on when to consider an AZ as an outlier for faults or high latency responses. |
 | <code><a href="#multi-az-observability.InstrumentedServiceMultiAZObservabilityProps.property.service">service</a></code> | <code><a href="#multi-az-observability.IService">IService</a></code> | The service that the alarms and dashboards are being crated for. |
 | <code><a href="#multi-az-observability.InstrumentedServiceMultiAZObservabilityProps.property.createDashboards">createDashboards</a></code> | <code>boolean</code> | Indicates whether to create per operation and overall service dashboards. |
 | <code><a href="#multi-az-observability.InstrumentedServiceMultiAZObservabilityProps.property.interval">interval</a></code> | <code>aws-cdk-lib.Duration</code> | The interval used in the dashboard, defaults to 60 minutes. |
-
----
-
-##### `loadBalancer`<sup>Required</sup> <a name="loadBalancer" id="multi-az-observability.InstrumentedServiceMultiAZObservabilityProps.property.loadBalancer"></a>
-
-```typescript
-public readonly loadBalancer: ILoadBalancerV2;
-```
-
-- *Type:* aws-cdk-lib.aws_elasticloadbalancingv2.ILoadBalancerV2
-
-The load balancer used by the service.
 
 ---
 
@@ -1348,6 +1335,7 @@ const serviceProps: ServiceProps = { ... }
 | <code><a href="#multi-az-observability.ServiceProps.property.availabilityZoneNames">availabilityZoneNames</a></code> | <code>string[]</code> | A list of the Availability Zone names used by this application. |
 | <code><a href="#multi-az-observability.ServiceProps.property.baseUrl">baseUrl</a></code> | <code>string</code> | The base endpoint for this service, like "https://www.example.com". Operation paths will be appended to this endpoint for canary testing the service. |
 | <code><a href="#multi-az-observability.ServiceProps.property.faultCountThreshold">faultCountThreshold</a></code> | <code>number</code> | The fault count threshold that indicates the service is unhealthy. |
+| <code><a href="#multi-az-observability.ServiceProps.property.loadBalancer">loadBalancer</a></code> | <code>aws-cdk-lib.aws_elasticloadbalancingv2.ILoadBalancerV2</code> | The load balancer this service sits behind. |
 | <code><a href="#multi-az-observability.ServiceProps.property.period">period</a></code> | <code>aws-cdk-lib.Duration</code> | The period for which metrics for the service should be aggregated. |
 | <code><a href="#multi-az-observability.ServiceProps.property.serviceName">serviceName</a></code> | <code>string</code> | The name of your service. |
 
@@ -1389,6 +1377,18 @@ The fault count threshold that indicates the service is unhealthy.
 
 This is an absolute value of faults
 being produced by all critical operations in aggregate.
+
+---
+
+##### `loadBalancer`<sup>Required</sup> <a name="loadBalancer" id="multi-az-observability.ServiceProps.property.loadBalancer"></a>
+
+```typescript
+public readonly loadBalancer: ILoadBalancerV2;
+```
+
+- *Type:* aws-cdk-lib.aws_elasticloadbalancingv2.ILoadBalancerV2
+
+The load balancer this service sits behind.
 
 ---
 
@@ -1616,6 +1616,8 @@ latency depending on the alarms and rules you are creating.
 
 ### MetricDimensions <a name="MetricDimensions" id="multi-az-observability.MetricDimensions"></a>
 
+Provides the ability to get operation specific metric dimensions for metrics at the regional level as well as Availability Zone level.
+
 #### Initializers <a name="Initializers" id="multi-az-observability.MetricDimensions.Initializer"></a>
 
 ```typescript
@@ -1654,8 +1656,8 @@ new MetricDimensions(staticDimensions: {[ key: string ]: string}, availabilityZo
 
 | **Name** | **Description** |
 | --- | --- |
-| <code><a href="#multi-az-observability.MetricDimensions.regionalDimensions">regionalDimensions</a></code> | *No description.* |
-| <code><a href="#multi-az-observability.MetricDimensions.zonalDimensions">zonalDimensions</a></code> | *No description.* |
+| <code><a href="#multi-az-observability.MetricDimensions.regionalDimensions">regionalDimensions</a></code> | Gets the regional dimensions for these metrics by combining the static metric dimensions with the keys provided the optional Region key, expected to return something like {   "Region": "us-east-1",   "Operation": "ride",   "Service": "WildRydes" }. |
+| <code><a href="#multi-az-observability.MetricDimensions.zonalDimensions">zonalDimensions</a></code> | Gets the zonal dimensions for these metrics by combining the static metric dimensions with the keys provided for Availability Zone and optional Region, expected to return something like {   "Region": "us-east-1",   "AZ-ID": "use1-az1",   "Operation": "ride",   "Service": "WildRydes" }. |
 
 ---
 
@@ -1664,6 +1666,8 @@ new MetricDimensions(staticDimensions: {[ key: string ]: string}, availabilityZo
 ```typescript
 public regionalDimensions(region: string): {[ key: string ]: string}
 ```
+
+Gets the regional dimensions for these metrics by combining the static metric dimensions with the keys provided the optional Region key, expected to return something like {   "Region": "us-east-1",   "Operation": "ride",   "Service": "WildRydes" }.
 
 ###### `region`<sup>Required</sup> <a name="region" id="multi-az-observability.MetricDimensions.regionalDimensions.parameter.region"></a>
 
@@ -1676,6 +1680,8 @@ public regionalDimensions(region: string): {[ key: string ]: string}
 ```typescript
 public zonalDimensions(availabilityZoneId: string, region: string): {[ key: string ]: string}
 ```
+
+Gets the zonal dimensions for these metrics by combining the static metric dimensions with the keys provided for Availability Zone and optional Region, expected to return something like {   "Region": "us-east-1",   "AZ-ID": "use1-az1",   "Operation": "ride",   "Service": "WildRydes" }.
 
 ###### `availabilityZoneId`<sup>Required</sup> <a name="availabilityZoneId" id="multi-az-observability.MetricDimensions.zonalDimensions.parameter.availabilityZoneId"></a>
 
@@ -1694,9 +1700,9 @@ public zonalDimensions(availabilityZoneId: string, region: string): {[ key: stri
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#multi-az-observability.MetricDimensions.property.availabilityZoneIdKey">availabilityZoneIdKey</a></code> | <code>string</code> | *No description.* |
-| <code><a href="#multi-az-observability.MetricDimensions.property.staticDimensions">staticDimensions</a></code> | <code>{[ key: string ]: string}</code> | *No description.* |
-| <code><a href="#multi-az-observability.MetricDimensions.property.regionKey">regionKey</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#multi-az-observability.MetricDimensions.property.availabilityZoneIdKey">availabilityZoneIdKey</a></code> | <code>string</code> | The key used to specify an Availability Zone specific metric dimension, for example: "AZ-ID". |
+| <code><a href="#multi-az-observability.MetricDimensions.property.staticDimensions">staticDimensions</a></code> | <code>{[ key: string ]: string}</code> | The dimensions that are the same for all Availability Zones for example: {   "Operation": "ride",   "Service": "WildRydes" }. |
+| <code><a href="#multi-az-observability.MetricDimensions.property.regionKey">regionKey</a></code> | <code>string</code> | The key used for the Region in your dimensions, if you provide one. |
 
 ---
 
@@ -1708,6 +1714,8 @@ public readonly availabilityZoneIdKey: string;
 
 - *Type:* string
 
+The key used to specify an Availability Zone specific metric dimension, for example: "AZ-ID".
+
 ---
 
 ##### `staticDimensions`<sup>Required</sup> <a name="staticDimensions" id="multi-az-observability.MetricDimensions.property.staticDimensions"></a>
@@ -1718,6 +1726,8 @@ public readonly staticDimensions: {[ key: string ]: string};
 
 - *Type:* {[ key: string ]: string}
 
+The dimensions that are the same for all Availability Zones for example: {   "Operation": "ride",   "Service": "WildRydes" }.
+
 ---
 
 ##### `regionKey`<sup>Optional</sup> <a name="regionKey" id="multi-az-observability.MetricDimensions.property.regionKey"></a>
@@ -1727,6 +1737,9 @@ public readonly regionKey: string;
 ```
 
 - *Type:* string
+- *Default:* A region specific key and value is not added to your zonal and regional metric dimensions
+
+The key used for the Region in your dimensions, if you provide one.
 
 ---
 
@@ -2179,6 +2192,7 @@ Adds an operation to this service and sets the operation's service property.
 | <code><a href="#multi-az-observability.Service.property.availabilityZoneNames">availabilityZoneNames</a></code> | <code>string[]</code> | A list of the Availability Zone names used by this application. |
 | <code><a href="#multi-az-observability.Service.property.baseUrl">baseUrl</a></code> | <code>string</code> | The base endpoint for this service, like "https://www.example.com". Operation paths will be appended to this endpoint for canary testing the service. |
 | <code><a href="#multi-az-observability.Service.property.faultCountThreshold">faultCountThreshold</a></code> | <code>number</code> | The fault count threshold that indicates the service is unhealthy. |
+| <code><a href="#multi-az-observability.Service.property.loadBalancer">loadBalancer</a></code> | <code>aws-cdk-lib.aws_elasticloadbalancingv2.ILoadBalancerV2</code> | The load balancer this service sits behind. |
 | <code><a href="#multi-az-observability.Service.property.operations">operations</a></code> | <code><a href="#multi-az-observability.IOperation">IOperation</a>[]</code> | The operations that are part of this service. |
 | <code><a href="#multi-az-observability.Service.property.period">period</a></code> | <code>aws-cdk-lib.Duration</code> | The period for which metrics for the service should be aggregated. |
 | <code><a href="#multi-az-observability.Service.property.serviceName">serviceName</a></code> | <code>string</code> | The name of your service. |
@@ -2221,6 +2235,18 @@ The fault count threshold that indicates the service is unhealthy.
 
 This is an absolute value of faults
 being produced by all critical operations in aggregate.
+
+---
+
+##### `loadBalancer`<sup>Required</sup> <a name="loadBalancer" id="multi-az-observability.Service.property.loadBalancer"></a>
+
+```typescript
+public readonly loadBalancer: ILoadBalancerV2;
+```
+
+- *Type:* aws-cdk-lib.aws_elasticloadbalancingv2.ILoadBalancerV2
+
+The load balancer this service sits behind.
 
 ---
 
@@ -3020,6 +3046,7 @@ Adds an operation to this service and sets the operation's service property.
 | <code><a href="#multi-az-observability.IService.property.availabilityZoneNames">availabilityZoneNames</a></code> | <code>string[]</code> | A list of the Availability Zone names used by this application. |
 | <code><a href="#multi-az-observability.IService.property.baseUrl">baseUrl</a></code> | <code>string</code> | The base endpoint for this service, like "https://www.example.com". Operation paths will be appended to this endpoint for canary testing the service. |
 | <code><a href="#multi-az-observability.IService.property.faultCountThreshold">faultCountThreshold</a></code> | <code>number</code> | The fault count threshold that indicates the service is unhealthy. |
+| <code><a href="#multi-az-observability.IService.property.loadBalancer">loadBalancer</a></code> | <code>aws-cdk-lib.aws_elasticloadbalancingv2.ILoadBalancerV2</code> | The load balancer this service sits behind. |
 | <code><a href="#multi-az-observability.IService.property.operations">operations</a></code> | <code><a href="#multi-az-observability.IOperation">IOperation</a>[]</code> | The operations that are part of this service. |
 | <code><a href="#multi-az-observability.IService.property.period">period</a></code> | <code>aws-cdk-lib.Duration</code> | The period for which metrics for the service should be aggregated. |
 | <code><a href="#multi-az-observability.IService.property.serviceName">serviceName</a></code> | <code>string</code> | The name of your service. |
@@ -3062,6 +3089,18 @@ The fault count threshold that indicates the service is unhealthy.
 
 This is an absolute value of faults
 being produced by all critical operations in aggregate.
+
+---
+
+##### `loadBalancer`<sup>Required</sup> <a name="loadBalancer" id="multi-az-observability.IService.property.loadBalancer"></a>
+
+```typescript
+public readonly loadBalancer: ILoadBalancerV2;
+```
+
+- *Type:* aws-cdk-lib.aws_elasticloadbalancingv2.ILoadBalancerV2
+
+The load balancer this service sits behind.
 
 ---
 

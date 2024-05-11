@@ -77,22 +77,6 @@ export class InstrumentedServiceMultiAZObservability extends Construct {
                 graphedFaultStatistics: ['Sum'],
                 graphedSuccessStatistics: ['Sum'],
                 metricDimensions: new MetricDimensions({ Operation: operation.operationName }, 'AZ-ID', 'Region'),
-                /*
-                metricDimensions: {
-                  zonalDimensions(availabilityZoneId: string, region: string) {
-                    return {
-                      'AZ-ID': availabilityZoneId,
-                      'Region': region,
-                      'Operation': operation.operationName,
-                    };
-                  },
-                  regionalDimensions(region: string) {
-                    return {
-                      Region: region,
-                      Operation: operation.operationName,
-                    };
-                  },
-                },*/
               }),
               canaryLatencyMetricDetails: new OperationMetricDetails({
                 operationName: operation.operationName,
@@ -109,22 +93,6 @@ export class InstrumentedServiceMultiAZObservability extends Construct {
                 graphedFaultStatistics: operation.serverSideLatencyMetricDetails.graphedFaultStatistics,
                 graphedSuccessStatistics: operation.serverSideLatencyMetricDetails.graphedSuccessStatistics,
                 metricDimensions: new MetricDimensions({ Operation: operation.operationName }, 'AZ-ID', 'Region'),
-                /*
-                metricDimensions: {
-                  zonalDimensions(availabilityZoneId: string, region: string) {
-                    return {
-                      'AZ-ID': availabilityZoneId,
-                      'Region': region,
-                      'Operation': operation.operationName,
-                    };
-                  },
-                  regionalDimensions(region: string) {
-                    return {
-                      Region: region,
-                      Operation: operation.operationName,
-                    };
-                  },
-                },*/
               }),
               canaryContributorInsightRuleDetails: {
                 logGroups: [canary.logGroup],
@@ -148,7 +116,7 @@ export class InstrumentedServiceMultiAZObservability extends Construct {
           operation: operation,
           outlierDetectionAlgorithm: OutlierDetectionAlgorithm.STATIC,
           outlierThreshold: props.outlierThreshold,
-          loadBalancer: props.loadBalancer,
+          loadBalancer: props.service.loadBalancer,
         }),
       ],
     ));
@@ -169,7 +137,7 @@ export class InstrumentedServiceMultiAZObservability extends Construct {
           new OperationAvailabilityAndLatencyDashboard(dashboardStack, x.operationName + 'Dashboard', {
             operation: x,
             interval: props.interval ? props.interval : Duration.minutes(60),
-            loadBalancer: props.loadBalancer,
+            loadBalancer: props.service.loadBalancer,
 
             regionalEndpointCanaryAvailabilityAlarm:
               this.perOperationAlarmsAndRules[x.operationName].canaryRegionalAlarmsAndRules?.availabilityAlarm,

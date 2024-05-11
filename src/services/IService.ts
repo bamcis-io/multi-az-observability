@@ -1,4 +1,5 @@
 import { Duration } from 'aws-cdk-lib';
+import { ILoadBalancerV2 } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import { IOperation } from './IOperation';
 
 /**
@@ -22,6 +23,7 @@ export interface IService
      */
   readonly faultCountThreshold: number;
 
+  // TODO: should this just be the AZ names or an IVpc object?
   /**
      * A list of the Availability Zone names used by this application
      */
@@ -36,6 +38,12 @@ export interface IService
      * The operations that are part of this service
      */
   readonly operations: IOperation[];
+
+  // TODO: Should this just be the load balancer DNS name?
+  /**
+   * The load balancer this service sits behind
+   */
+  readonly loadBalancer: ILoadBalancerV2;
 
   /**
      * Adds an operation to this service and sets the operation's

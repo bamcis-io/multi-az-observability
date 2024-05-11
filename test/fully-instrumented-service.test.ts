@@ -42,12 +42,19 @@ test('Fully instrumented service', () => {
     subnetType: SubnetType.PRIVATE_WITH_EGRESS,
   });
 
+  let loadBalancer: ILoadBalancerV2 = new ApplicationLoadBalancer(stack, 'alb', {
+    vpc: vpc,
+    crossZoneEnabled: false,
+    vpcSubnets: subnets,
+  });
+
   let service: IService = new Service({
     serviceName: 'test',
     availabilityZoneNames: vpc.availabilityZones,
     baseUrl: 'http://www.example.com',
     faultCountThreshold: 25,
     period: Duration.seconds(60),
+    loadBalancer: loadBalancer,
   });
 
   let logGroup: ILogGroup = new LogGroup(stack, 'Logs', {
@@ -81,7 +88,7 @@ test('Fully instrumented service', () => {
       faultAlarmThreshold: 0.1,
       graphedFaultStatistics: ['Sum'],
       graphedSuccessStatistics: ['Sum'],
-      metricDimensions: new MetricDimensions({ Operation: 'ride' }, 'AZ-ID', 'Region')
+      metricDimensions: new MetricDimensions({ Operation: 'ride' }, 'AZ-ID', 'Region'),
     }),
     serverSideLatencyMetricDetails: new OperationMetricDetails({
       operationName: 'ride',
@@ -106,11 +113,6 @@ test('Fully instrumented service', () => {
   new MultiAvailabilityZoneObservability(stack, 'MAZObservability', {
     instrumentedServiceObservabilityProps: {
       createDashboards: true,
-      loadBalancer: new ApplicationLoadBalancer(stack, 'alb', {
-        vpc: vpc,
-        crossZoneEnabled: false,
-        vpcSubnets: subnets,
-      }),
       service: service,
       outlierThreshold: 0.7,
       interval: Duration.minutes(30),
@@ -147,7 +149,7 @@ test('Fully instrumented service adding canaries', () => {
     subnetType: SubnetType.PRIVATE_WITH_EGRESS,
   });
 
-  let loadbalancer: ILoadBalancerV2 = new ApplicationLoadBalancer(stack, 'alb', {
+  let loadBalancer: ILoadBalancerV2 = new ApplicationLoadBalancer(stack, 'alb', {
     vpc: vpc,
     crossZoneEnabled: false,
     vpcSubnets: subnets,
@@ -159,6 +161,7 @@ test('Fully instrumented service adding canaries', () => {
     baseUrl: 'http://www.example.com',
     faultCountThreshold: 25,
     period: Duration.seconds(60),
+    loadBalancer: loadBalancer,
   });
 
   let logGroup: ILogGroup = new LogGroup(stack, 'Logs', {
@@ -213,8 +216,8 @@ test('Fully instrumented service adding canaries', () => {
     canaryTestProps: {
       requestCount: 10,
       schedule: 'rate(1 minute)',
-      loadBalancer: loadbalancer,
-    }
+      loadBalancer: loadBalancer,
+    },
   };
 
   let payOperation: Operation = {
@@ -245,7 +248,7 @@ test('Fully instrumented service adding canaries', () => {
       faultAlarmThreshold: 0.1,
       graphedFaultStatistics: ['Sum'],
       graphedSuccessStatistics: ['Sum'],
-      metricDimensions: new MetricDimensions({ Operation: 'ride' }, 'AZ-ID', 'Region')
+      metricDimensions: new MetricDimensions({ Operation: 'ride' }, 'AZ-ID', 'Region'),
     }),
     serverSideLatencyMetricDetails: new OperationMetricDetails({
       operationName: 'pay',
@@ -261,12 +264,12 @@ test('Fully instrumented service adding canaries', () => {
       faultAlarmThreshold: 1,
       graphedFaultStatistics: ['p99'],
       graphedSuccessStatistics: ['p50', 'p99', 'tm99'],
-      metricDimensions: new MetricDimensions({ Operation: 'ride' }, 'AZ-ID', 'Region')
+      metricDimensions: new MetricDimensions({ Operation: 'ride' }, 'AZ-ID', 'Region'),
     }),
     canaryTestProps: {
       requestCount: 10,
       schedule: 'rate(1 minute)',
-      loadBalancer: loadbalancer,
+      loadBalancer: loadBalancer,
     },
   };
 
@@ -276,7 +279,6 @@ test('Fully instrumented service adding canaries', () => {
   new MultiAvailabilityZoneObservability(stack, 'MAZObservability', {
     instrumentedServiceObservabilityProps: {
       createDashboards: true,
-      loadBalancer: loadbalancer,
       service: service,
       outlierThreshold: 0.7,
       interval: Duration.minutes(30),

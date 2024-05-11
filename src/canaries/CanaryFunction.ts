@@ -75,7 +75,6 @@ export class CanaryFunction extends Construct implements ICanaryFunction {
       },
     });
 
-
     if (props.vpc !== undefined && props.vpc != null) {
       let sg: ISecurityGroup = new SecurityGroup(this, 'canarySecurityGroup', {
         description: 'Allow canary to communicate with load balancer',

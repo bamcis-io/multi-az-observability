@@ -3746,8 +3746,23 @@
       "namespace": "BAMCISIO.MultiAZObservability",
       "packageId": "BAMCISIO.MultiAZObservability"
     },
+    "go": {
+      "moduleName": "multi-az-observability",
+      "packageName": "bamcis.io/multi-az-observability"
+    },
+    "java": {
+      "maven": {
+        "artifactId": "multiazobservability",
+        "groupId": "io.bamcis.multiazobservability"
+      },
+      "package": "io.bamcis.multiazobservability"
+    },
     "js": {
       "npm": "multi-az-observability"
+    },
+    "python": {
+      "distName": "bamcis.io.multi-az-observability",
+      "module": "bamcis.io.multi-az-observability"
     }
   },
   "types": {
@@ -5813,7 +5828,7 @@
       "kind": "interface",
       "locationInModule": {
         "filename": "src/services/IService.ts",
-        "line": 7
+        "line": 8
       },
       "methods": [
         {
@@ -5824,7 +5839,7 @@
           },
           "locationInModule": {
             "filename": "src/services/IService.ts",
-            "line": 44
+            "line": 52
           },
           "name": "addOperation",
           "parameters": [
@@ -5853,7 +5868,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IService.ts",
-            "line": 28
+            "line": 30
           },
           "name": "availabilityZoneNames",
           "type": {
@@ -5874,7 +5889,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IService.ts",
-            "line": 17
+            "line": 18
           },
           "name": "baseUrl",
           "type": {
@@ -5891,11 +5906,27 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IService.ts",
-            "line": 23
+            "line": 24
           },
           "name": "faultCountThreshold",
           "type": {
             "primitive": "number"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The load balancer this service sits behind."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/IService.ts",
+            "line": 46
+          },
+          "name": "loadBalancer",
+          "type": {
+            "fqn": "aws-cdk-lib.aws_elasticloadbalancingv2.ILoadBalancerV2"
           }
         },
         {
@@ -5907,7 +5938,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IService.ts",
-            "line": 38
+            "line": 40
           },
           "name": "operations",
           "type": {
@@ -5928,7 +5959,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IService.ts",
-            "line": 33
+            "line": 35
           },
           "name": "period",
           "type": {
@@ -5944,7 +5975,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IService.ts",
-            "line": 12
+            "line": 13
           },
           "name": "serviceName",
           "type": {
@@ -5965,26 +5996,10 @@
       "kind": "interface",
       "locationInModule": {
         "filename": "src/services/props/InstrumentedServiceMultiAZObservabilityProps.ts",
-        "line": 9
+        "line": 8
       },
       "name": "InstrumentedServiceMultiAZObservabilityProps",
       "properties": [
-        {
-          "abstract": true,
-          "docs": {
-            "stability": "stable",
-            "summary": "The load balancer used by the service."
-          },
-          "immutable": true,
-          "locationInModule": {
-            "filename": "src/services/props/InstrumentedServiceMultiAZObservabilityProps.ts",
-            "line": 34
-          },
-          "name": "loadBalancer",
-          "type": {
-            "fqn": "aws-cdk-lib.aws_elasticloadbalancingv2.ILoadBalancerV2"
-          }
-        },
         {
           "abstract": true,
           "docs": {
@@ -5994,7 +6009,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/InstrumentedServiceMultiAZObservabilityProps.ts",
-            "line": 29
+            "line": 28
           },
           "name": "outlierThreshold",
           "type": {
@@ -6010,7 +6025,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/InstrumentedServiceMultiAZObservabilityProps.ts",
-            "line": 14
+            "line": 13
           },
           "name": "service",
           "type": {
@@ -6027,7 +6042,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/InstrumentedServiceMultiAZObservabilityProps.ts",
-            "line": 22
+            "line": 21
           },
           "name": "createDashboards",
           "optional": true,
@@ -6045,7 +6060,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/InstrumentedServiceMultiAZObservabilityProps.ts",
-            "line": 42
+            "line": 36
           },
           "name": "interval",
           "optional": true,
@@ -6059,7 +6074,8 @@
     "multi-az-observability.MetricDimensions": {
       "assembly": "multi-az-observability",
       "docs": {
-        "stability": "stable"
+        "stability": "stable",
+        "summary": "Provides the ability to get operation specific metric dimensions for metrics at the regional level as well as Availability Zone level."
       },
       "fqn": "multi-az-observability.MetricDimensions",
       "initializer": {
@@ -6068,7 +6084,7 @@
         },
         "locationInModule": {
           "filename": "src/services/props/MetricDimensions.ts",
-          "line": 9
+          "line": 30
         },
         "parameters": [
           {
@@ -6100,16 +6116,17 @@
       "kind": "class",
       "locationInModule": {
         "filename": "src/services/props/MetricDimensions.ts",
-        "line": 1
+        "line": 5
       },
       "methods": [
         {
           "docs": {
-            "stability": "stable"
+            "stability": "stable",
+            "summary": "Gets the regional dimensions for these metrics by combining the static metric dimensions with the keys provided the optional Region key, expected to return something like {   \"Region\": \"us-east-1\",   \"Operation\": \"ride\",   \"Service\": \"WildRydes\" }."
           },
           "locationInModule": {
             "filename": "src/services/props/MetricDimensions.ts",
-            "line": 29
+            "line": 72
           },
           "name": "regionalDimensions",
           "parameters": [
@@ -6133,11 +6150,12 @@
         },
         {
           "docs": {
-            "stability": "stable"
+            "stability": "stable",
+            "summary": "Gets the zonal dimensions for these metrics by combining the static metric dimensions with the keys provided for Availability Zone and optional Region, expected to return something like {   \"Region\": \"us-east-1\",   \"AZ-ID\": \"use1-az1\",   \"Operation\": \"ride\",   \"Service\": \"WildRydes\" }."
           },
           "locationInModule": {
             "filename": "src/services/props/MetricDimensions.ts",
-            "line": 16
+            "line": 49
           },
           "name": "zonalDimensions",
           "parameters": [
@@ -6170,11 +6188,12 @@
       "properties": [
         {
           "docs": {
-            "stability": "stable"
+            "stability": "stable",
+            "summary": "The key used to specify an Availability Zone specific metric dimension, for example: \"AZ-ID\"."
           },
           "locationInModule": {
             "filename": "src/services/props/MetricDimensions.ts",
-            "line": 5
+            "line": 20
           },
           "name": "availabilityZoneIdKey",
           "type": {
@@ -6183,11 +6202,12 @@
         },
         {
           "docs": {
-            "stability": "stable"
+            "stability": "stable",
+            "summary": "The dimensions that are the same for all Availability Zones for example: {   \"Operation\": \"ride\",   \"Service\": \"WildRydes\" }."
           },
           "locationInModule": {
             "filename": "src/services/props/MetricDimensions.ts",
-            "line": 3
+            "line": 14
           },
           "name": "staticDimensions",
           "type": {
@@ -6201,11 +6221,13 @@
         },
         {
           "docs": {
-            "stability": "stable"
+            "default": "- A region specific key and value is not added to your\nzonal and regional metric dimensions",
+            "stability": "stable",
+            "summary": "The key used for the Region in your dimensions, if you provide one."
           },
           "locationInModule": {
             "filename": "src/services/props/MetricDimensions.ts",
-            "line": 7
+            "line": 28
           },
           "name": "regionKey",
           "optional": true,
@@ -7322,7 +7344,7 @@
         },
         "locationInModule": {
           "filename": "src/services/Service.ts",
-          "line": 41
+          "line": 47
         },
         "parameters": [
           {
@@ -7339,7 +7361,7 @@
       "kind": "class",
       "locationInModule": {
         "filename": "src/services/Service.ts",
-        "line": 9
+        "line": 10
       },
       "methods": [
         {
@@ -7349,7 +7371,7 @@
           },
           "locationInModule": {
             "filename": "src/services/Service.ts",
-            "line": 54
+            "line": 61
           },
           "name": "addOperation",
           "overrides": "multi-az-observability.IService",
@@ -7378,7 +7400,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/Service.ts",
-            "line": 29
+            "line": 30
           },
           "name": "availabilityZoneNames",
           "overrides": "multi-az-observability.IService",
@@ -7399,7 +7421,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/Service.ts",
-            "line": 18
+            "line": 19
           },
           "name": "baseUrl",
           "overrides": "multi-az-observability.IService",
@@ -7416,7 +7438,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/Service.ts",
-            "line": 24
+            "line": 25
           },
           "name": "faultCountThreshold",
           "overrides": "multi-az-observability.IService",
@@ -7427,12 +7449,28 @@
         {
           "docs": {
             "stability": "stable",
+            "summary": "The load balancer this service sits behind."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/Service.ts",
+            "line": 45
+          },
+          "name": "loadBalancer",
+          "overrides": "multi-az-observability.IService",
+          "type": {
+            "fqn": "aws-cdk-lib.aws_elasticloadbalancingv2.ILoadBalancerV2"
+          }
+        },
+        {
+          "docs": {
+            "stability": "stable",
             "summary": "The operations that are part of this service."
           },
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/Service.ts",
-            "line": 39
+            "line": 40
           },
           "name": "operations",
           "overrides": "multi-az-observability.IService",
@@ -7453,7 +7491,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/Service.ts",
-            "line": 34
+            "line": 35
           },
           "name": "period",
           "overrides": "multi-az-observability.IService",
@@ -7469,7 +7507,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/Service.ts",
-            "line": 13
+            "line": 14
           },
           "name": "serviceName",
           "overrides": "multi-az-observability.IService",
@@ -7491,7 +7529,7 @@
       "kind": "interface",
       "locationInModule": {
         "filename": "src/services/props/ServiceProps.ts",
-        "line": 6
+        "line": 7
       },
       "name": "ServiceProps",
       "properties": [
@@ -7504,7 +7542,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/ServiceProps.ts",
-            "line": 27
+            "line": 28
           },
           "name": "availabilityZoneNames",
           "type": {
@@ -7525,7 +7563,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/ServiceProps.ts",
-            "line": 16
+            "line": 17
           },
           "name": "baseUrl",
           "type": {
@@ -7542,11 +7580,27 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/ServiceProps.ts",
-            "line": 22
+            "line": 23
           },
           "name": "faultCountThreshold",
           "type": {
             "primitive": "number"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The load balancer this service sits behind."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/ServiceProps.ts",
+            "line": 38
+          },
+          "name": "loadBalancer",
+          "type": {
+            "fqn": "aws-cdk-lib.aws_elasticloadbalancingv2.ILoadBalancerV2"
           }
         },
         {
@@ -7558,7 +7612,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/ServiceProps.ts",
-            "line": 32
+            "line": 33
           },
           "name": "period",
           "type": {
@@ -7574,7 +7628,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/ServiceProps.ts",
-            "line": 11
+            "line": 12
           },
           "name": "serviceName",
           "type": {
@@ -7586,5 +7640,5 @@
     }
   },
   "version": "0.1.15",
-  "fingerprint": "6W39BQvveZvgjzW9XxfzhInnO1YGvO+jnawam/CM+MU="
+  "fingerprint": "l6jqN0ehanFTSKOH+q6FX2hVRcg+zXy430C9r2l5t6M="
 }

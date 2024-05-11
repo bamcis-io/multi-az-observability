@@ -1,4 +1,5 @@
 import { Duration } from 'aws-cdk-lib';
+import { ILoadBalancerV2 } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import { IOperation } from './IOperation';
 import { IService } from './IService';
 import { ServiceProps } from './props/ServiceProps';
@@ -38,6 +39,11 @@ export class Service implements IService {
       */
   readonly operations: IOperation[];
 
+  /**
+   * The load balancer this service sits behind
+   */
+  readonly loadBalancer: ILoadBalancerV2;
+
   constructor(props: ServiceProps) {
     this.serviceName = props.serviceName;
     this.availabilityZoneNames = props.availabilityZoneNames;
@@ -45,6 +51,7 @@ export class Service implements IService {
     this.faultCountThreshold = props.faultCountThreshold;
     this.operations = [];
     this.period = props.period;
+    this.loadBalancer = props.loadBalancer;
   }
 
   /**

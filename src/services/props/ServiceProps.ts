@@ -1,4 +1,5 @@
 import { Duration } from 'aws-cdk-lib';
+import { ILoadBalancerV2 } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 
 /**
  * Properties to initialize a service
@@ -30,4 +31,9 @@ export interface ServiceProps
      * The period for which metrics for the service should be aggregated
      */
   readonly period: Duration;
+
+  /**
+   * The load balancer this service sits behind
+   */
+  readonly loadBalancer: ILoadBalancerV2;
 }

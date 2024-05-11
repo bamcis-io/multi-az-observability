@@ -40,12 +40,19 @@ test('Partially instrumented service', () => {
     subnetType: SubnetType.PRIVATE_WITH_EGRESS,
   });
 
+  let loadBalancer: ILoadBalancerV2 = new ApplicationLoadBalancer(stack, 'alb', {
+    vpc: vpc,
+    crossZoneEnabled: false,
+    vpcSubnets: subnets,
+  });
+
   let service: IService = new Service({
     serviceName: 'test',
     availabilityZoneNames: vpc.availabilityZones,
     baseUrl: 'http://www.example.com',
     faultCountThreshold: 25,
     period: Duration.seconds(60),
+    loadBalancer: loadBalancer,
   });
 
   let rideOperation: IOperation = new Operation({
@@ -68,7 +75,7 @@ test('Partially instrumented service', () => {
       faultAlarmThreshold: 0.1,
       graphedFaultStatistics: ['Sum'],
       graphedSuccessStatistics: ['Sum'],
-      metricDimensions: new MetricDimensions({ Operation: 'ride' }, 'AZ-ID', 'Region')
+      metricDimensions: new MetricDimensions({ Operation: 'ride' }, 'AZ-ID', 'Region'),
     }),
     serverSideLatencyMetricDetails: new OperationMetricDetails({
       operationName: 'ride',
@@ -93,11 +100,6 @@ test('Partially instrumented service', () => {
   new MultiAvailabilityZoneObservability(stack, 'MAZObservability', {
     instrumentedServiceObservabilityProps: {
       createDashboards: false,
-      loadBalancer: new ApplicationLoadBalancer(stack, 'alb', {
-        vpc: vpc,
-        crossZoneEnabled: false,
-        vpcSubnets: subnets,
-      }),
       service: service,
       outlierThreshold: 0.7,
       interval: Duration.minutes(30),
@@ -147,6 +149,7 @@ test('Partially instrumented service adds canaries', () => {
     baseUrl: 'http://www.example.com',
     faultCountThreshold: 25,
     period: Duration.seconds(60),
+    loadBalancer: loadBalancer,
   });
 
   let rideOperation: IOperation = new Operation({
@@ -169,7 +172,7 @@ test('Partially instrumented service adds canaries', () => {
       faultAlarmThreshold: 0.1,
       graphedFaultStatistics: ['Sum'],
       graphedSuccessStatistics: ['Sum'],
-      metricDimensions: new MetricDimensions({ Operation: 'ride' }, 'AZ-ID', 'Region')
+      metricDimensions: new MetricDimensions({ Operation: 'ride' }, 'AZ-ID', 'Region'),
     }),
     serverSideLatencyMetricDetails: new OperationMetricDetails({
       operationName: 'ride',
@@ -185,7 +188,7 @@ test('Partially instrumented service adds canaries', () => {
       faultAlarmThreshold: 1,
       graphedFaultStatistics: ['p99'],
       graphedSuccessStatistics: ['p50', 'p99', 'tm99'],
-      metricDimensions: new MetricDimensions({ Operation: 'ride' }, 'AZ-ID', 'Region')
+      metricDimensions: new MetricDimensions({ Operation: 'ride' }, 'AZ-ID', 'Region'),
     }),
     canaryTestProps: {
       requestCount: 10,
@@ -199,7 +202,6 @@ test('Partially instrumented service adds canaries', () => {
   new MultiAvailabilityZoneObservability(stack, 'MAZObservability', {
     instrumentedServiceObservabilityProps: {
       createDashboards: false,
-      loadBalancer: loadBalancer,
       service: service,
       outlierThreshold: 0.7,
       interval: Duration.minutes(30),
@@ -236,12 +238,19 @@ test('Partially instrumented service with canaries', () => {
     subnetType: SubnetType.PRIVATE_WITH_EGRESS,
   });
 
+  let loadBalancer: ILoadBalancerV2 = new ApplicationLoadBalancer(stack, 'alb', {
+    vpc: vpc,
+    crossZoneEnabled: false,
+    vpcSubnets: subnets,
+  });
+
   let service: IService = new Service({
     serviceName: 'test',
     availabilityZoneNames: vpc.availabilityZones,
     baseUrl: 'http://www.example.com',
     faultCountThreshold: 25,
     period: Duration.seconds(60),
+    loadBalancer: loadBalancer,
   });
 
   let rideOperation: Operation = {
@@ -264,7 +273,7 @@ test('Partially instrumented service with canaries', () => {
       faultAlarmThreshold: 0.1,
       graphedFaultStatistics: ['Sum'],
       graphedSuccessStatistics: ['Sum'],
-      metricDimensions: new MetricDimensions({ Operation: 'ride' }, 'AZ-ID', 'Region')
+      metricDimensions: new MetricDimensions({ Operation: 'ride' }, 'AZ-ID', 'Region'),
     }),
     serverSideLatencyMetricDetails: new OperationMetricDetails({
       operationName: 'ride',
@@ -280,7 +289,7 @@ test('Partially instrumented service with canaries', () => {
       faultAlarmThreshold: 1,
       graphedFaultStatistics: ['p99'],
       graphedSuccessStatistics: ['p50', 'p99', 'tm99'],
-      metricDimensions: new MetricDimensions({ Operation: 'ride' }, 'AZ-ID', 'Region')
+      metricDimensions: new MetricDimensions({ Operation: 'ride' }, 'AZ-ID', 'Region'),
     }),
     canaryMetricDetails: {
       canaryAvailabilityMetricDetails: new OperationMetricDetails({
@@ -297,7 +306,7 @@ test('Partially instrumented service with canaries', () => {
         faultAlarmThreshold: 0.1,
         graphedFaultStatistics: ['Sum'],
         graphedSuccessStatistics: ['Sum'],
-        metricDimensions: new MetricDimensions({ Operation: 'ride' }, 'AZ-ID', 'Region')
+        metricDimensions: new MetricDimensions({ Operation: 'ride' }, 'AZ-ID', 'Region'),
       }),
       canaryLatencyMetricDetails: new OperationMetricDetails({
         operationName: 'ride',
@@ -313,8 +322,8 @@ test('Partially instrumented service with canaries', () => {
         faultAlarmThreshold: 1,
         graphedFaultStatistics: ['p99'],
         graphedSuccessStatistics: ['p50', 'p99', 'tm99'],
-        metricDimensions: new MetricDimensions({ Operation: 'ride' }, 'AZ-ID', 'Region')
-      })
+        metricDimensions: new MetricDimensions({ Operation: 'ride' }, 'AZ-ID', 'Region'),
+      }),
     },
   };
 
@@ -323,11 +332,6 @@ test('Partially instrumented service with canaries', () => {
   new MultiAvailabilityZoneObservability(stack, 'MAZObservability', {
     instrumentedServiceObservabilityProps: {
       createDashboards: true,
-      loadBalancer: new ApplicationLoadBalancer(stack, 'alb', {
-        vpc: vpc,
-        crossZoneEnabled: false,
-        vpcSubnets: subnets,
-      }),
       service: service,
       outlierThreshold: 0.7,
       interval: Duration.minutes(30),

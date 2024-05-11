@@ -22,7 +22,6 @@ export class MultiAvailabilityZoneObservability extends Construct implements IMu
         new InstrumentedServiceMultiAZObservability(this, 'FullyInstrumentedServiceObservability', {
           service: props.instrumentedServiceObservabilityProps.service,
           outlierThreshold: props.instrumentedServiceObservabilityProps.outlierThreshold,
-          loadBalancer: props.instrumentedServiceObservabilityProps.loadBalancer,
           createDashboards: props.instrumentedServiceObservabilityProps.createDashboards,
           interval: props.instrumentedServiceObservabilityProps.interval,
         });
