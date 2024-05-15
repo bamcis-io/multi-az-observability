@@ -3734,7 +3734,7 @@
   },
   "name": "multi-az-observability",
   "readme": {
-    "markdown": "# multi-az-observability"
+    "markdown": "# multi-az-observability\n\n## TODO\n\n- Add algorithms for chi-squared and z-score outlier detection\n- Test using a single AZ mapper resource across stacks with new way\n  of reference AZ names using just the letter"
   },
   "repository": {
     "type": "git",
@@ -3909,7 +3909,7 @@
           "stability": "stable"
         },
         "locationInModule": {
-          "filename": "src/utilities/AvailabilityZoneMapper.ts",
+          "filename": "src/azmapper/AvailabilityZoneMapper.ts",
           "line": 32
         },
         "parameters": [
@@ -3939,7 +3939,7 @@
       ],
       "kind": "class",
       "locationInModule": {
-        "filename": "src/utilities/AvailabilityZoneMapper.ts",
+        "filename": "src/azmapper/AvailabilityZoneMapper.ts",
         "line": 14
       },
       "methods": [
@@ -3950,8 +3950,8 @@
             "summary": "Returns a reference that can be cast to a string array with all of the Availability Zone Ids."
           },
           "locationInModule": {
-            "filename": "src/utilities/AvailabilityZoneMapper.ts",
-            "line": 201
+            "filename": "src/azmapper/AvailabilityZoneMapper.ts",
+            "line": 214
           },
           "name": "allAvailabilityZoneIdsAsArray",
           "overrides": "multi-az-observability.IAvailabilityZoneMapper",
@@ -3969,8 +3969,8 @@
             "summary": "Returns a comma delimited list of Availability Zone Ids for the supplied Availability Zone names."
           },
           "locationInModule": {
-            "filename": "src/utilities/AvailabilityZoneMapper.ts",
-            "line": 192
+            "filename": "src/azmapper/AvailabilityZoneMapper.ts",
+            "line": 205
           },
           "name": "allAvailabilityZoneIdsAsCommaDelimitedList",
           "overrides": "multi-az-observability.IAvailabilityZoneMapper",
@@ -3988,8 +3988,8 @@
             "summary": "Gets all of the Availability Zone names in this Region as a comma delimited list."
           },
           "locationInModule": {
-            "filename": "src/utilities/AvailabilityZoneMapper.ts",
-            "line": 221
+            "filename": "src/azmapper/AvailabilityZoneMapper.ts",
+            "line": 234
           },
           "name": "allAvailabilityZoneNamesAsCommaDelimitedList",
           "overrides": "multi-az-observability.IAvailabilityZoneMapper",
@@ -4006,8 +4006,8 @@
             "summary": "Gets the Availability Zone Id for the given Availability Zone Name in this account."
           },
           "locationInModule": {
-            "filename": "src/utilities/AvailabilityZoneMapper.ts",
-            "line": 131
+            "filename": "src/azmapper/AvailabilityZoneMapper.ts",
+            "line": 144
           },
           "name": "availabilityZoneId",
           "overrides": "multi-az-observability.IAvailabilityZoneMapper",
@@ -4032,8 +4032,8 @@
             "summary": "Given a letter like \"f\" or \"a\", returns the Availability Zone Id for that Availability Zone name in this account."
           },
           "locationInModule": {
-            "filename": "src/utilities/AvailabilityZoneMapper.ts",
-            "line": 211
+            "filename": "src/azmapper/AvailabilityZoneMapper.ts",
+            "line": 224
           },
           "name": "availabilityZoneIdFromAvailabilityZoneLetter",
           "overrides": "multi-az-observability.IAvailabilityZoneMapper",
@@ -4058,8 +4058,8 @@
             "summary": "Returns an array for Availability Zone Ids for the supplied Availability Zone names, they are returned in the same order the names were provided."
           },
           "locationInModule": {
-            "filename": "src/utilities/AvailabilityZoneMapper.ts",
-            "line": 159
+            "filename": "src/azmapper/AvailabilityZoneMapper.ts",
+            "line": 172
           },
           "name": "availabilityZoneIdsAsArray",
           "overrides": "multi-az-observability.IAvailabilityZoneMapper",
@@ -4095,8 +4095,8 @@
             "summary": "Returns a comma delimited list of Availability Zone Ids for the supplied Availability Zone names."
           },
           "locationInModule": {
-            "filename": "src/utilities/AvailabilityZoneMapper.ts",
-            "line": 176
+            "filename": "src/azmapper/AvailabilityZoneMapper.ts",
+            "line": 189
           },
           "name": "availabilityZoneIdsAsCommaDelimitedList",
           "overrides": "multi-az-observability.IAvailabilityZoneMapper",
@@ -4126,8 +4126,8 @@
             "summary": "Gets the Availability Zone Name for the given Availability Zone Id in this account."
           },
           "locationInModule": {
-            "filename": "src/utilities/AvailabilityZoneMapper.ts",
-            "line": 140
+            "filename": "src/azmapper/AvailabilityZoneMapper.ts",
+            "line": 153
           },
           "name": "availabilityZoneName",
           "overrides": "multi-az-observability.IAvailabilityZoneMapper",
@@ -4152,8 +4152,8 @@
             "summary": "Gets the prefix for the region used with Availability Zone Ids, for example in us-east-1, this returns \"use1\"."
           },
           "locationInModule": {
-            "filename": "src/utilities/AvailabilityZoneMapper.ts",
-            "line": 149
+            "filename": "src/azmapper/AvailabilityZoneMapper.ts",
+            "line": 162
           },
           "name": "regionPrefixForAvailabilityZoneIds",
           "overrides": "multi-az-observability.IAvailabilityZoneMapper",
@@ -4172,7 +4172,7 @@
             "summary": "The function that does the mapping."
           },
           "locationInModule": {
-            "filename": "src/utilities/AvailabilityZoneMapper.ts",
+            "filename": "src/azmapper/AvailabilityZoneMapper.ts",
             "line": 18
           },
           "name": "function",
@@ -4187,7 +4187,7 @@
             "summary": "The log group for the function's logs."
           },
           "locationInModule": {
-            "filename": "src/utilities/AvailabilityZoneMapper.ts",
+            "filename": "src/azmapper/AvailabilityZoneMapper.ts",
             "line": 23
           },
           "name": "logGroup",
@@ -4202,7 +4202,7 @@
             "summary": "The custom resource that can be referenced to use Fn::GetAtt functions on to retrieve availability zone names and ids."
           },
           "locationInModule": {
-            "filename": "src/utilities/AvailabilityZoneMapper.ts",
+            "filename": "src/azmapper/AvailabilityZoneMapper.ts",
             "line": 30
           },
           "name": "mapper",
@@ -4212,7 +4212,7 @@
           }
         }
       ],
-      "symbolId": "src/utilities/AvailabilityZoneMapper:AvailabilityZoneMapper"
+      "symbolId": "src/azmapper/AvailabilityZoneMapper:AvailabilityZoneMapper"
     },
     "multi-az-observability.AvailabilityZoneMapperProps": {
       "assembly": "multi-az-observability",
@@ -4224,7 +4224,7 @@
       "fqn": "multi-az-observability.AvailabilityZoneMapperProps",
       "kind": "interface",
       "locationInModule": {
-        "filename": "src/utilities/AvailabilityZoneMapperProps.ts",
+        "filename": "src/azmapper/props/AvailabilityZoneMapperProps.ts",
         "line": 4
       },
       "name": "AvailabilityZoneMapperProps",
@@ -4238,7 +4238,7 @@
           },
           "immutable": true,
           "locationInModule": {
-            "filename": "src/utilities/AvailabilityZoneMapperProps.ts",
+            "filename": "src/azmapper/props/AvailabilityZoneMapperProps.ts",
             "line": 13
           },
           "name": "availabilityZoneNames",
@@ -4253,7 +4253,7 @@
           }
         }
       ],
-      "symbolId": "src/utilities/AvailabilityZoneMapperProps:AvailabilityZoneMapperProps"
+      "symbolId": "src/azmapper/props/AvailabilityZoneMapperProps:AvailabilityZoneMapperProps"
     },
     "multi-az-observability.BasicServiceMultiAZObservabilityProps": {
       "assembly": "multi-az-observability",
@@ -4887,7 +4887,7 @@
       ],
       "kind": "interface",
       "locationInModule": {
-        "filename": "src/utilities/IAvailabilityZoneMapper.ts",
+        "filename": "src/azmapper/IAvailabilityZoneMapper.ts",
         "line": 12
       },
       "methods": [
@@ -4899,7 +4899,7 @@
             "summary": "Returns a reference that can be cast to a string array with all of the Availability Zone Ids."
           },
           "locationInModule": {
-            "filename": "src/utilities/IAvailabilityZoneMapper.ts",
+            "filename": "src/azmapper/IAvailabilityZoneMapper.ts",
             "line": 82
           },
           "name": "allAvailabilityZoneIdsAsArray",
@@ -4918,7 +4918,7 @@
             "summary": "Returns a comma delimited list of Availability Zone Ids for the supplied Availability Zone names."
           },
           "locationInModule": {
-            "filename": "src/utilities/IAvailabilityZoneMapper.ts",
+            "filename": "src/azmapper/IAvailabilityZoneMapper.ts",
             "line": 75
           },
           "name": "allAvailabilityZoneIdsAsCommaDelimitedList",
@@ -4937,7 +4937,7 @@
             "summary": "Gets all of the Availability Zone names in this Region as a comma delimited list."
           },
           "locationInModule": {
-            "filename": "src/utilities/IAvailabilityZoneMapper.ts",
+            "filename": "src/azmapper/IAvailabilityZoneMapper.ts",
             "line": 98
           },
           "name": "allAvailabilityZoneNamesAsCommaDelimitedList",
@@ -4955,7 +4955,7 @@
             "summary": "Gets the Availability Zone Id for the given Availability Zone Name in this account."
           },
           "locationInModule": {
-            "filename": "src/utilities/IAvailabilityZoneMapper.ts",
+            "filename": "src/azmapper/IAvailabilityZoneMapper.ts",
             "line": 36
           },
           "name": "availabilityZoneId",
@@ -4981,7 +4981,7 @@
             "summary": "Given a letter like \"f\" or \"a\", returns the Availability Zone Id for that Availability Zone name in this account."
           },
           "locationInModule": {
-            "filename": "src/utilities/IAvailabilityZoneMapper.ts",
+            "filename": "src/azmapper/IAvailabilityZoneMapper.ts",
             "line": 90
           },
           "name": "availabilityZoneIdFromAvailabilityZoneLetter",
@@ -5007,7 +5007,7 @@
             "summary": "Returns an array for Availability Zone Ids for the supplied Availability Zone names, they are returned in the same order the names were provided."
           },
           "locationInModule": {
-            "filename": "src/utilities/IAvailabilityZoneMapper.ts",
+            "filename": "src/azmapper/IAvailabilityZoneMapper.ts",
             "line": 58
           },
           "name": "availabilityZoneIdsAsArray",
@@ -5044,7 +5044,7 @@
             "summary": "Returns a comma delimited list of Availability Zone Ids for the supplied Availability Zone names."
           },
           "locationInModule": {
-            "filename": "src/utilities/IAvailabilityZoneMapper.ts",
+            "filename": "src/azmapper/IAvailabilityZoneMapper.ts",
             "line": 67
           },
           "name": "availabilityZoneIdsAsCommaDelimitedList",
@@ -5075,7 +5075,7 @@
             "summary": "Gets the Availability Zone Name for the given Availability Zone Id in this account."
           },
           "locationInModule": {
-            "filename": "src/utilities/IAvailabilityZoneMapper.ts",
+            "filename": "src/azmapper/IAvailabilityZoneMapper.ts",
             "line": 43
           },
           "name": "availabilityZoneName",
@@ -5101,7 +5101,7 @@
             "summary": "Gets the prefix for the region used with Availability Zone Ids, for example in us-east-1, this returns \"use1\"."
           },
           "locationInModule": {
-            "filename": "src/utilities/IAvailabilityZoneMapper.ts",
+            "filename": "src/azmapper/IAvailabilityZoneMapper.ts",
             "line": 50
           },
           "name": "regionPrefixForAvailabilityZoneIds",
@@ -5121,7 +5121,7 @@
             "summary": "The function that does the mapping."
           },
           "locationInModule": {
-            "filename": "src/utilities/IAvailabilityZoneMapper.ts",
+            "filename": "src/azmapper/IAvailabilityZoneMapper.ts",
             "line": 17
           },
           "name": "function",
@@ -5136,7 +5136,7 @@
             "summary": "The log group for the function's logs."
           },
           "locationInModule": {
-            "filename": "src/utilities/IAvailabilityZoneMapper.ts",
+            "filename": "src/azmapper/IAvailabilityZoneMapper.ts",
             "line": 22
           },
           "name": "logGroup",
@@ -5151,7 +5151,7 @@
             "summary": "The custom resource that can be referenced to use Fn::GetAtt functions on to retrieve availability zone names and ids."
           },
           "locationInModule": {
-            "filename": "src/utilities/IAvailabilityZoneMapper.ts",
+            "filename": "src/azmapper/IAvailabilityZoneMapper.ts",
             "line": 29
           },
           "name": "mapper",
@@ -5160,7 +5160,7 @@
           }
         }
       ],
-      "symbolId": "src/utilities/IAvailabilityZoneMapper:IAvailabilityZoneMapper"
+      "symbolId": "src/azmapper/IAvailabilityZoneMapper:IAvailabilityZoneMapper"
     },
     "multi-az-observability.ICanaryMetrics": {
       "assembly": "multi-az-observability",
@@ -5384,6 +5384,22 @@
           "abstract": true,
           "docs": {
             "stability": "stable",
+            "summary": "Indicates this is a critical operation for the service and will be included in service level metrics and dashboards."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/IOperation.ts",
+            "line": 53
+          },
+          "name": "critical",
+          "type": {
+            "primitive": "boolean"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
             "summary": "The http methods supported by the operation."
           },
           "immutable": true,
@@ -5399,22 +5415,6 @@
               },
               "kind": "array"
             }
-          }
-        },
-        {
-          "abstract": true,
-          "docs": {
-            "stability": "stable",
-            "summary": "Indicates this is a critical operation for the service and will be included in service level metrics and dashboards."
-          },
-          "immutable": true,
-          "locationInModule": {
-            "filename": "src/services/IOperation.ts",
-            "line": 53
-          },
-          "name": "isCritical",
-          "type": {
-            "primitive": "boolean"
           }
         },
         {
@@ -5835,11 +5835,11 @@
           "abstract": true,
           "docs": {
             "stability": "stable",
-            "summary": "Adds an operation to this service and sets the operation's service property."
+            "summary": "Adds an operation to this service."
           },
           "locationInModule": {
             "filename": "src/services/IService.ts",
-            "line": 52
+            "line": 53
           },
           "name": "addOperation",
           "parameters": [
@@ -5849,12 +5849,7 @@
                 "fqn": "multi-az-observability.IOperation"
               }
             }
-          ],
-          "returns": {
-            "type": {
-              "fqn": "multi-az-observability.IService"
-            }
-          }
+          ]
         }
       ],
       "name": "IService",
@@ -5868,7 +5863,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IService.ts",
-            "line": 30
+            "line": 29
           },
           "name": "availabilityZoneNames",
           "type": {
@@ -5917,28 +5912,12 @@
           "abstract": true,
           "docs": {
             "stability": "stable",
-            "summary": "The load balancer this service sits behind."
-          },
-          "immutable": true,
-          "locationInModule": {
-            "filename": "src/services/IService.ts",
-            "line": 46
-          },
-          "name": "loadBalancer",
-          "type": {
-            "fqn": "aws-cdk-lib.aws_elasticloadbalancingv2.ILoadBalancerV2"
-          }
-        },
-        {
-          "abstract": true,
-          "docs": {
-            "stability": "stable",
             "summary": "The operations that are part of this service."
           },
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IService.ts",
-            "line": 40
+            "line": 39
           },
           "name": "operations",
           "type": {
@@ -5959,7 +5938,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IService.ts",
-            "line": 35
+            "line": 34
           },
           "name": "period",
           "type": {
@@ -5980,6 +5959,24 @@
           "name": "serviceName",
           "type": {
             "primitive": "string"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "default": "- No load balancer metrics are included in\ndashboards and its ARN is not added to top level AZ\nalarm descriptions.",
+            "stability": "stable",
+            "summary": "The load balancer this service sits behind."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/IService.ts",
+            "line": 48
+          },
+          "name": "loadBalancer",
+          "optional": true,
+          "type": {
+            "fqn": "aws-cdk-lib.aws_elasticloadbalancingv2.ILoadBalancerV2"
           }
         }
       ],
@@ -6030,6 +6027,44 @@
           "name": "service",
           "type": {
             "fqn": "multi-az-observability.IService"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "default": "- The assets will be uploaded to the default defined\nasset location.",
+            "remarks": "It will override the bucket location CDK provides by\ndefault for bundled assets.",
+            "stability": "stable",
+            "summary": "If you are not using a static bucket to deploy assets, for example you are synthing this and it gets uploaded to a bucket whose name is unknown to you (maybe used as part of a central CI/CD system) and is provided as a parameter to your stack, specify that parameter name here."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/InstrumentedServiceMultiAZObservabilityProps.ts",
+            "line": 49
+          },
+          "name": "assetsBucketParameterName",
+          "optional": true,
+          "type": {
+            "primitive": "string"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "default": "- No object prefix will be added to your custom assets location.",
+            "remarks": "It will override the bucket prefix CDK provides by\ndefault for bundled assets. This property only takes effect if you\ndefined the assetsBucketParameterName.",
+            "stability": "stable",
+            "summary": "If you are not using a static bucket to deploy assets, for example you are synthing this and it gets uploaded to a bucket that uses a prefix that is unknown to you (maybe used as part of a central CI/CD system) and is provided as a parameter to your stack, specify that parameter name here."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/InstrumentedServiceMultiAZObservabilityProps.ts",
+            "line": 62
+          },
+          "name": "assetsBucketPrefixParameterName",
+          "optional": true,
+          "type": {
+            "primitive": "string"
           }
         },
         {
@@ -6381,6 +6416,22 @@
         {
           "docs": {
             "stability": "stable",
+            "summary": "Indicates this is a critical operation for the service and will be included in service level metrics and dashboards."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/Operation.ts",
+            "line": 55
+          },
+          "name": "critical",
+          "overrides": "multi-az-observability.IOperation",
+          "type": {
+            "primitive": "boolean"
+          }
+        },
+        {
+          "docs": {
+            "stability": "stable",
             "summary": "The http methods supported by the operation."
           },
           "immutable": true,
@@ -6397,22 +6448,6 @@
               },
               "kind": "array"
             }
-          }
-        },
-        {
-          "docs": {
-            "stability": "stable",
-            "summary": "Indicates this is a critical operation for the service and will be included in service level metrics and dashboards."
-          },
-          "immutable": true,
-          "locationInModule": {
-            "filename": "src/services/Operation.ts",
-            "line": 55
-          },
-          "name": "isCritical",
-          "overrides": "multi-az-observability.IOperation",
-          "type": {
-            "primitive": "boolean"
           }
         },
         {
@@ -7123,6 +7158,22 @@
           "abstract": true,
           "docs": {
             "stability": "stable",
+            "summary": "Indicates this is a critical operation for the service and will be included in service level metrics and dashboards."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/OperationProps.ts",
+            "line": 61
+          },
+          "name": "critical",
+          "type": {
+            "primitive": "boolean"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
             "summary": "The http methods supported by the operation."
           },
           "immutable": true,
@@ -7138,22 +7189,6 @@
               },
               "kind": "array"
             }
-          }
-        },
-        {
-          "abstract": true,
-          "docs": {
-            "stability": "stable",
-            "summary": "Indicates this is a critical operation for the service and will be included in service level metrics and dashboards."
-          },
-          "immutable": true,
-          "locationInModule": {
-            "filename": "src/services/props/OperationProps.ts",
-            "line": 61
-          },
-          "name": "isCritical",
-          "type": {
-            "primitive": "boolean"
           }
         },
         {
@@ -7344,7 +7379,7 @@
         },
         "locationInModule": {
           "filename": "src/services/Service.ts",
-          "line": 47
+          "line": 51
         },
         "parameters": [
           {
@@ -7371,7 +7406,7 @@
           },
           "locationInModule": {
             "filename": "src/services/Service.ts",
-            "line": 61
+            "line": 65
           },
           "name": "addOperation",
           "overrides": "multi-az-observability.IService",
@@ -7382,12 +7417,7 @@
                 "fqn": "multi-az-observability.IOperation"
               }
             }
-          ],
-          "returns": {
-            "type": {
-              "fqn": "multi-az-observability.IService"
-            }
-          }
+          ]
         }
       ],
       "name": "Service",
@@ -7449,22 +7479,6 @@
         {
           "docs": {
             "stability": "stable",
-            "summary": "The load balancer this service sits behind."
-          },
-          "immutable": true,
-          "locationInModule": {
-            "filename": "src/services/Service.ts",
-            "line": 45
-          },
-          "name": "loadBalancer",
-          "overrides": "multi-az-observability.IService",
-          "type": {
-            "fqn": "aws-cdk-lib.aws_elasticloadbalancingv2.ILoadBalancerV2"
-          }
-        },
-        {
-          "docs": {
-            "stability": "stable",
             "summary": "The operations that are part of this service."
           },
           "immutable": true,
@@ -7514,6 +7528,24 @@
           "type": {
             "primitive": "string"
           }
+        },
+        {
+          "docs": {
+            "default": "- No load balancer metrics will be included in\ndashboards and its ARN will not be added to top level AZ\nalarm descriptions.",
+            "stability": "stable",
+            "summary": "The load balancer this service sits behind."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/Service.ts",
+            "line": 49
+          },
+          "name": "loadBalancer",
+          "optional": true,
+          "overrides": "multi-az-observability.IService",
+          "type": {
+            "fqn": "aws-cdk-lib.aws_elasticloadbalancingv2.ILoadBalancerV2"
+          }
         }
       ],
       "symbolId": "src/services/Service:Service"
@@ -7542,7 +7574,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/ServiceProps.ts",
-            "line": 28
+            "line": 29
           },
           "name": "availabilityZoneNames",
           "type": {
@@ -7563,7 +7595,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/ServiceProps.ts",
-            "line": 17
+            "line": 18
           },
           "name": "baseUrl",
           "type": {
@@ -7580,27 +7612,11 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/ServiceProps.ts",
-            "line": 23
+            "line": 24
           },
           "name": "faultCountThreshold",
           "type": {
             "primitive": "number"
-          }
-        },
-        {
-          "abstract": true,
-          "docs": {
-            "stability": "stable",
-            "summary": "The load balancer this service sits behind."
-          },
-          "immutable": true,
-          "locationInModule": {
-            "filename": "src/services/props/ServiceProps.ts",
-            "line": 38
-          },
-          "name": "loadBalancer",
-          "type": {
-            "fqn": "aws-cdk-lib.aws_elasticloadbalancingv2.ILoadBalancerV2"
           }
         },
         {
@@ -7612,7 +7628,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/ServiceProps.ts",
-            "line": 33
+            "line": 34
           },
           "name": "period",
           "type": {
@@ -7634,11 +7650,29 @@
           "type": {
             "primitive": "string"
           }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "default": "- Load balancer metrics won't be shown on dashboards\nand its ARN won't be included in top level alarm descriptions\nthat automation can use to implement a zonal shift.",
+            "stability": "stable",
+            "summary": "The load balancer this service sits behind."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/ServiceProps.ts",
+            "line": 43
+          },
+          "name": "loadBalancer",
+          "optional": true,
+          "type": {
+            "fqn": "aws-cdk-lib.aws_elasticloadbalancingv2.ILoadBalancerV2"
+          }
         }
       ],
       "symbolId": "src/services/props/ServiceProps:ServiceProps"
     }
   },
-  "version": "0.1.15",
-  "fingerprint": "LP9TDsXBM96MT3rjdBwATeskMfds+oO8XBSBsWO8krQ="
+  "version": "0.1.0",
+  "fingerprint": "nLJGZ0m31JCWrMwY0LM+jbCojtOmUruAZPU25Hxm+AY="
 }

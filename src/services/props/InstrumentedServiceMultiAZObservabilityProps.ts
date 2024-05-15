@@ -34,4 +34,30 @@ export interface InstrumentedServiceMultiAZObservabilityProps
      * @default - 60 minutes
      */
   readonly interval?: Duration;
+
+  /**
+   * If you are not using a static bucket to deploy assets, for example
+   * you are synthing this and it gets uploaded to a bucket whose name
+   * is unknown to you (maybe used as part of a central CI/CD system)
+   * and is provided as a parameter to your stack, specify that parameter
+   * name here. It will override the bucket location CDK provides by
+   * default for bundled assets.
+   *
+   * @default - The assets will be uploaded to the default defined
+   * asset location.
+   */
+  readonly assetsBucketParameterName?: string;
+
+  /**
+   * If you are not using a static bucket to deploy assets, for example
+   * you are synthing this and it gets uploaded to a bucket that uses a prefix
+   * that is unknown to you (maybe used as part of a central CI/CD system)
+   * and is provided as a parameter to your stack, specify that parameter
+   * name here. It will override the bucket prefix CDK provides by
+   * default for bundled assets. This property only takes effect if you
+   * defined the assetsBucketParameterName.
+   *
+   * @default - No object prefix will be added to your custom assets location.
+   */
+  readonly assetsBucketPrefixParameterName?: string;
 }

@@ -14,10 +14,14 @@ export interface OperationAlarmsAndRulesProps
   readonly operation: Operation;
 
   /**
-     * The load balancer associated with this operation. If not provided, its
-     * ARN will not be included in top level alarm descriptions
+     * The load balancer associated with this operation.
+     *
+     * @default - If not provided, its ARN will not be included
+     * in top level alarm descriptions that can be referenced by
+     * automation to identify which load balancers should execute
+     * a zonal shift.
      */
-  readonly loadBalancer: ILoadBalancerV2;
+  readonly loadBalancer?: ILoadBalancerV2;
 
   /**
      * Rule details for contributor insight rules

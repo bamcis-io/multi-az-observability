@@ -119,6 +119,21 @@ export class CanaryFunction extends Construct implements ICanaryFunction {
       });
     }
 
+    /*
+    if (props.assetsBucketParameterName !== undefined) {
+      let tmp = this.function.node.defaultChild as CfnFunction;
+
+      tmp.addPropertyOverride('Code.S3Bucket', Fn.ref(props.assetsBucketParameterName));
+
+      if (props.assetsBucketPrefixParameterName !== undefined) {
+        let key: string | undefined = (tmp.code as CfnFunction.CodeProperty).s3Key;
+        if (key !== undefined) {
+          tmp.addPropertyOverride('Code.S3Key', Fn.ref(props.assetsBucketPrefixParameterName) + key);
+        }
+      }
+    }
+    */
+
     this.function.addPermission('invokePermission', {
       action: 'lambda:InvokeFunction',
       principal: new ServicePrincipal('events.amazonaws.com'),

@@ -52,7 +52,7 @@ export class Operation implements IOperation {
      * and will be included in service level metrics and
      * dashboards
      */
-  readonly isCritical: boolean;
+  readonly critical: boolean;
 
   /**
      * The http methods supported by the operation
@@ -68,7 +68,7 @@ export class Operation implements IOperation {
   constructor(props: OperationProps) {
     this.canaryMetricDetails = props.canaryMetricDetails;
     this.httpMethods = props.httpMethods;
-    this.isCritical = props.isCritical;
+    this.critical = props.critical;
     this.operationName = props.operationName;
     this.path = props.path;
     this.serverSideAvailabilityMetricDetails = props.serverSideAvailabilityMetricDetails;

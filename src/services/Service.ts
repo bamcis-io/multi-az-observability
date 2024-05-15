@@ -41,8 +41,12 @@ export class Service implements IService {
 
   /**
    * The load balancer this service sits behind
+   *
+   * @default - No load balancer metrics will be included in
+   * dashboards and its ARN will not be added to top level AZ
+   * alarm descriptions.
    */
-  readonly loadBalancer: ILoadBalancerV2;
+  readonly loadBalancer?: ILoadBalancerV2;
 
   constructor(props: ServiceProps) {
     this.serviceName = props.serviceName;
@@ -58,8 +62,7 @@ export class Service implements IService {
       * Adds an operation to this service and sets the operation's
       * service property
       */
-  addOperation(operation: IOperation): IService {
+  addOperation(operation: IOperation): void {
     this.operations.push(operation);
-    return this;
   }
 }

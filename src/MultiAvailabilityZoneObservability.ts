@@ -19,12 +19,7 @@ export class MultiAvailabilityZoneObservability extends Construct implements IMu
       if (props.basicServiceObservabilityProps !== undefined && props.basicServiceObservabilityProps != null) {
         new BasicServiceMultiAZObservability(this, 'BasicServiceObservability', props.basicServiceObservabilityProps);
       } else if (props.instrumentedServiceObservabilityProps !== undefined && props.instrumentedServiceObservabilityProps != null) {
-        new InstrumentedServiceMultiAZObservability(this, 'FullyInstrumentedServiceObservability', {
-          service: props.instrumentedServiceObservabilityProps.service,
-          outlierThreshold: props.instrumentedServiceObservabilityProps.outlierThreshold,
-          createDashboards: props.instrumentedServiceObservabilityProps.createDashboards,
-          interval: props.instrumentedServiceObservabilityProps.interval,
-        });
+        new InstrumentedServiceMultiAZObservability(this, 'FullyInstrumentedServiceObservability', props.instrumentedServiceObservabilityProps);
       }
     }
   }

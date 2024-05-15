@@ -3,8 +3,8 @@ import { IRule, Rule, RuleTargetInput, Schedule } from 'aws-cdk-lib/aws-events';
 import { LambdaFunction } from 'aws-cdk-lib/aws-events-targets';
 import { Construct } from 'constructs';
 import { CanaryTestProps } from './props/CanaryTestProps';
-import { AvailabilityZoneMapper } from '../utilities/AvailabilityZoneMapper';
-import { IAvailabilityZoneMapper } from '../utilities/IAvailabilityZoneMapper';
+import { AvailabilityZoneMapper } from '../azmapper/AvailabilityZoneMapper';
+import { IAvailabilityZoneMapper } from '../azmapper/IAvailabilityZoneMapper';
 
 export class CanaryTest extends Construct {
   timedEventRules: {[key: string]: IRule};
@@ -19,10 +19,14 @@ export class CanaryTest extends Construct {
       availabilityZoneNames: props.operation.service.availabilityZoneNames,
     });
 
-    this.metricNamespace = props.operation.canaryMetricDetails ? props.operation.canaryMetricDetails.canaryAvailabilityMetricDetails.metricNamespace : 'canary/metrics';
+    this.metricNamespace = props.operation.canaryMetricDetails ?
+      props.operation.canaryMetricDetails.canaryAvailabilityMetricDetails.metricNamespace : 'canary/metrics';
 
     props.operation.service.availabilityZoneNames.forEach((availabilityZoneName, index) => {
-      let availabilityZoneId: string = azMapper.availabilityZoneId(availabilityZoneName);
+
+      let availabilityZoneId: string = azMapper.availabilityZoneIdFromAvailabilityZoneLetter(
+        availabilityZoneName.substring(availabilityZoneName.length - 1),
+      );
 
       let scheme: string = props.operation.service.baseUrl.split(':')[0];
       let url: string = scheme + '://' + availabilityZoneName + '.' + props.loadBalancer.loadBalancerDnsName + props.operation.path;

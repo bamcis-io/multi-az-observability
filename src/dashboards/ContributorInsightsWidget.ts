@@ -38,15 +38,15 @@ export class ContributorInsightsWidget extends ConcreteWidget implements IWidget
           orderBy: this.properties.orderStatistic,
           ruleName: this.properties.insightRule.attrRuleName,
         },
+        region: this.properties.region !== undefined ? this.properties.region : Fn.ref('AWS::Region'),
+        legend: {
+          position: this.properties.legendPosition,
+        },
+        view: 'timeSeries',
+        period: this.properties.period.toSeconds(),
+        title: this.properties.title,
+        accountId: this.properties.accountId,
       },
-      region: this.properties.region !== undefined ? this.properties.region : Fn.ref('AWS::Region'),
-      legend: {
-        position: this.properties.legendPosition,
-      },
-      view: 'timeSeries',
-      period: this.properties.period.toSeconds(),
-      title: this.properties.title,
-      accountId: this.properties.accountId,
     }];
   }
 }

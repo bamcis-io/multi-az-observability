@@ -844,6 +844,8 @@ const instrumentedServiceMultiAZObservabilityProps: InstrumentedServiceMultiAZOb
 | --- | --- | --- |
 | <code><a href="#multi-az-observability.InstrumentedServiceMultiAZObservabilityProps.property.outlierThreshold">outlierThreshold</a></code> | <code>number</code> | The threshold as a percentage between 0 and 1 on when to consider an AZ as an outlier for faults or high latency responses. |
 | <code><a href="#multi-az-observability.InstrumentedServiceMultiAZObservabilityProps.property.service">service</a></code> | <code><a href="#multi-az-observability.IService">IService</a></code> | The service that the alarms and dashboards are being crated for. |
+| <code><a href="#multi-az-observability.InstrumentedServiceMultiAZObservabilityProps.property.assetsBucketParameterName">assetsBucketParameterName</a></code> | <code>string</code> | If you are not using a static bucket to deploy assets, for example you are synthing this and it gets uploaded to a bucket whose name is unknown to you (maybe used as part of a central CI/CD system) and is provided as a parameter to your stack, specify that parameter name here. |
+| <code><a href="#multi-az-observability.InstrumentedServiceMultiAZObservabilityProps.property.assetsBucketPrefixParameterName">assetsBucketPrefixParameterName</a></code> | <code>string</code> | If you are not using a static bucket to deploy assets, for example you are synthing this and it gets uploaded to a bucket that uses a prefix that is unknown to you (maybe used as part of a central CI/CD system) and is provided as a parameter to your stack, specify that parameter name here. |
 | <code><a href="#multi-az-observability.InstrumentedServiceMultiAZObservabilityProps.property.createDashboards">createDashboards</a></code> | <code>boolean</code> | Indicates whether to create per operation and overall service dashboards. |
 | <code><a href="#multi-az-observability.InstrumentedServiceMultiAZObservabilityProps.property.interval">interval</a></code> | <code>aws-cdk-lib.Duration</code> | The interval used in the dashboard, defaults to 60 minutes. |
 
@@ -870,6 +872,39 @@ public readonly service: IService;
 - *Type:* <a href="#multi-az-observability.IService">IService</a>
 
 The service that the alarms and dashboards are being crated for.
+
+---
+
+##### `assetsBucketParameterName`<sup>Optional</sup> <a name="assetsBucketParameterName" id="multi-az-observability.InstrumentedServiceMultiAZObservabilityProps.property.assetsBucketParameterName"></a>
+
+```typescript
+public readonly assetsBucketParameterName: string;
+```
+
+- *Type:* string
+- *Default:* The assets will be uploaded to the default defined asset location.
+
+If you are not using a static bucket to deploy assets, for example you are synthing this and it gets uploaded to a bucket whose name is unknown to you (maybe used as part of a central CI/CD system) and is provided as a parameter to your stack, specify that parameter name here.
+
+It will override the bucket location CDK provides by
+default for bundled assets.
+
+---
+
+##### `assetsBucketPrefixParameterName`<sup>Optional</sup> <a name="assetsBucketPrefixParameterName" id="multi-az-observability.InstrumentedServiceMultiAZObservabilityProps.property.assetsBucketPrefixParameterName"></a>
+
+```typescript
+public readonly assetsBucketPrefixParameterName: string;
+```
+
+- *Type:* string
+- *Default:* No object prefix will be added to your custom assets location.
+
+If you are not using a static bucket to deploy assets, for example you are synthing this and it gets uploaded to a bucket that uses a prefix that is unknown to you (maybe used as part of a central CI/CD system) and is provided as a parameter to your stack, specify that parameter name here.
+
+It will override the bucket prefix CDK provides by
+default for bundled assets. This property only takes effect if you
+defined the assetsBucketParameterName.
 
 ---
 
@@ -1180,8 +1215,8 @@ const operationProps: OperationProps = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
+| <code><a href="#multi-az-observability.OperationProps.property.critical">critical</a></code> | <code>boolean</code> | Indicates this is a critical operation for the service and will be included in service level metrics and dashboards. |
 | <code><a href="#multi-az-observability.OperationProps.property.httpMethods">httpMethods</a></code> | <code>string[]</code> | The http methods supported by the operation. |
-| <code><a href="#multi-az-observability.OperationProps.property.isCritical">isCritical</a></code> | <code>boolean</code> | Indicates this is a critical operation for the service and will be included in service level metrics and dashboards. |
 | <code><a href="#multi-az-observability.OperationProps.property.operationName">operationName</a></code> | <code>string</code> | The name of the operation. |
 | <code><a href="#multi-az-observability.OperationProps.property.path">path</a></code> | <code>string</code> | The HTTP path for the operation for canaries to run against, something like "/products/list". |
 | <code><a href="#multi-az-observability.OperationProps.property.serverSideAvailabilityMetricDetails">serverSideAvailabilityMetricDetails</a></code> | <code><a href="#multi-az-observability.IOperationMetricDetails">IOperationMetricDetails</a></code> | The server side availability metric details. |
@@ -1190,6 +1225,18 @@ const operationProps: OperationProps = { ... }
 | <code><a href="#multi-az-observability.OperationProps.property.canaryMetricDetails">canaryMetricDetails</a></code> | <code><a href="#multi-az-observability.ICanaryMetrics">ICanaryMetrics</a></code> | Optional metric details if the service has a canary. |
 | <code><a href="#multi-az-observability.OperationProps.property.canaryTestProps">canaryTestProps</a></code> | <code><a href="#multi-az-observability.AddCanaryTestProps">AddCanaryTestProps</a></code> | If you define this property, a synthetic canary will be provisioned to test the operation. |
 | <code><a href="#multi-az-observability.OperationProps.property.serverSideContributorInsightRuleDetails">serverSideContributorInsightRuleDetails</a></code> | <code><a href="#multi-az-observability.IContributorInsightRuleDetails">IContributorInsightRuleDetails</a></code> | The server side details for contributor insights rules. |
+
+---
+
+##### `critical`<sup>Required</sup> <a name="critical" id="multi-az-observability.OperationProps.property.critical"></a>
+
+```typescript
+public readonly critical: boolean;
+```
+
+- *Type:* boolean
+
+Indicates this is a critical operation for the service and will be included in service level metrics and dashboards.
 
 ---
 
@@ -1202,18 +1249,6 @@ public readonly httpMethods: string[];
 - *Type:* string[]
 
 The http methods supported by the operation.
-
----
-
-##### `isCritical`<sup>Required</sup> <a name="isCritical" id="multi-az-observability.OperationProps.property.isCritical"></a>
-
-```typescript
-public readonly isCritical: boolean;
-```
-
-- *Type:* boolean
-
-Indicates this is a critical operation for the service and will be included in service level metrics and dashboards.
 
 ---
 
@@ -1335,9 +1370,9 @@ const serviceProps: ServiceProps = { ... }
 | <code><a href="#multi-az-observability.ServiceProps.property.availabilityZoneNames">availabilityZoneNames</a></code> | <code>string[]</code> | A list of the Availability Zone names used by this application. |
 | <code><a href="#multi-az-observability.ServiceProps.property.baseUrl">baseUrl</a></code> | <code>string</code> | The base endpoint for this service, like "https://www.example.com". Operation paths will be appended to this endpoint for canary testing the service. |
 | <code><a href="#multi-az-observability.ServiceProps.property.faultCountThreshold">faultCountThreshold</a></code> | <code>number</code> | The fault count threshold that indicates the service is unhealthy. |
-| <code><a href="#multi-az-observability.ServiceProps.property.loadBalancer">loadBalancer</a></code> | <code>aws-cdk-lib.aws_elasticloadbalancingv2.ILoadBalancerV2</code> | The load balancer this service sits behind. |
 | <code><a href="#multi-az-observability.ServiceProps.property.period">period</a></code> | <code>aws-cdk-lib.Duration</code> | The period for which metrics for the service should be aggregated. |
 | <code><a href="#multi-az-observability.ServiceProps.property.serviceName">serviceName</a></code> | <code>string</code> | The name of your service. |
+| <code><a href="#multi-az-observability.ServiceProps.property.loadBalancer">loadBalancer</a></code> | <code>aws-cdk-lib.aws_elasticloadbalancingv2.ILoadBalancerV2</code> | The load balancer this service sits behind. |
 
 ---
 
@@ -1380,18 +1415,6 @@ being produced by all critical operations in aggregate.
 
 ---
 
-##### `loadBalancer`<sup>Required</sup> <a name="loadBalancer" id="multi-az-observability.ServiceProps.property.loadBalancer"></a>
-
-```typescript
-public readonly loadBalancer: ILoadBalancerV2;
-```
-
-- *Type:* aws-cdk-lib.aws_elasticloadbalancingv2.ILoadBalancerV2
-
-The load balancer this service sits behind.
-
----
-
 ##### `period`<sup>Required</sup> <a name="period" id="multi-az-observability.ServiceProps.property.period"></a>
 
 ```typescript
@@ -1413,6 +1436,19 @@ public readonly serviceName: string;
 - *Type:* string
 
 The name of your service.
+
+---
+
+##### `loadBalancer`<sup>Optional</sup> <a name="loadBalancer" id="multi-az-observability.ServiceProps.property.loadBalancer"></a>
+
+```typescript
+public readonly loadBalancer: ILoadBalancerV2;
+```
+
+- *Type:* aws-cdk-lib.aws_elasticloadbalancingv2.ILoadBalancerV2
+- *Default:* Load balancer metrics won't be shown on dashboards and its ARN won't be included in top level alarm descriptions that automation can use to implement a zonal shift.
+
+The load balancer this service sits behind.
 
 ---
 
@@ -1776,8 +1812,8 @@ new Operation(props: OperationProps)
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
+| <code><a href="#multi-az-observability.Operation.property.critical">critical</a></code> | <code>boolean</code> | Indicates this is a critical operation for the service and will be included in service level metrics and dashboards. |
 | <code><a href="#multi-az-observability.Operation.property.httpMethods">httpMethods</a></code> | <code>string[]</code> | The http methods supported by the operation. |
-| <code><a href="#multi-az-observability.Operation.property.isCritical">isCritical</a></code> | <code>boolean</code> | Indicates this is a critical operation for the service and will be included in service level metrics and dashboards. |
 | <code><a href="#multi-az-observability.Operation.property.operationName">operationName</a></code> | <code>string</code> | The name of the operation. |
 | <code><a href="#multi-az-observability.Operation.property.path">path</a></code> | <code>string</code> | The HTTP path for the operation for canaries to run against, something like "/products/list". |
 | <code><a href="#multi-az-observability.Operation.property.serverSideAvailabilityMetricDetails">serverSideAvailabilityMetricDetails</a></code> | <code><a href="#multi-az-observability.IOperationMetricDetails">IOperationMetricDetails</a></code> | The server side availability metric details. |
@@ -1786,6 +1822,18 @@ new Operation(props: OperationProps)
 | <code><a href="#multi-az-observability.Operation.property.canaryMetricDetails">canaryMetricDetails</a></code> | <code><a href="#multi-az-observability.ICanaryMetrics">ICanaryMetrics</a></code> | Optional metric details if the service has a canary. |
 | <code><a href="#multi-az-observability.Operation.property.canaryTestProps">canaryTestProps</a></code> | <code><a href="#multi-az-observability.AddCanaryTestProps">AddCanaryTestProps</a></code> | If they have been added, the properties for creating new canary tests on this operation. |
 | <code><a href="#multi-az-observability.Operation.property.serverSideContributorInsightRuleDetails">serverSideContributorInsightRuleDetails</a></code> | <code><a href="#multi-az-observability.IContributorInsightRuleDetails">IContributorInsightRuleDetails</a></code> | The server side details for contributor insights rules. |
+
+---
+
+##### `critical`<sup>Required</sup> <a name="critical" id="multi-az-observability.Operation.property.critical"></a>
+
+```typescript
+public readonly critical: boolean;
+```
+
+- *Type:* boolean
+
+Indicates this is a critical operation for the service and will be included in service level metrics and dashboards.
 
 ---
 
@@ -1798,18 +1846,6 @@ public readonly httpMethods: string[];
 - *Type:* string[]
 
 The http methods supported by the operation.
-
----
-
-##### `isCritical`<sup>Required</sup> <a name="isCritical" id="multi-az-observability.Operation.property.isCritical"></a>
-
-```typescript
-public readonly isCritical: boolean;
-```
-
-- *Type:* boolean
-
-Indicates this is a critical operation for the service and will be included in service level metrics and dashboards.
 
 ---
 
@@ -2173,7 +2209,7 @@ new Service(props: ServiceProps)
 ##### `addOperation` <a name="addOperation" id="multi-az-observability.Service.addOperation"></a>
 
 ```typescript
-public addOperation(operation: IOperation): IService
+public addOperation(operation: IOperation): void
 ```
 
 Adds an operation to this service and sets the operation's service property.
@@ -2192,10 +2228,10 @@ Adds an operation to this service and sets the operation's service property.
 | <code><a href="#multi-az-observability.Service.property.availabilityZoneNames">availabilityZoneNames</a></code> | <code>string[]</code> | A list of the Availability Zone names used by this application. |
 | <code><a href="#multi-az-observability.Service.property.baseUrl">baseUrl</a></code> | <code>string</code> | The base endpoint for this service, like "https://www.example.com". Operation paths will be appended to this endpoint for canary testing the service. |
 | <code><a href="#multi-az-observability.Service.property.faultCountThreshold">faultCountThreshold</a></code> | <code>number</code> | The fault count threshold that indicates the service is unhealthy. |
-| <code><a href="#multi-az-observability.Service.property.loadBalancer">loadBalancer</a></code> | <code>aws-cdk-lib.aws_elasticloadbalancingv2.ILoadBalancerV2</code> | The load balancer this service sits behind. |
 | <code><a href="#multi-az-observability.Service.property.operations">operations</a></code> | <code><a href="#multi-az-observability.IOperation">IOperation</a>[]</code> | The operations that are part of this service. |
 | <code><a href="#multi-az-observability.Service.property.period">period</a></code> | <code>aws-cdk-lib.Duration</code> | The period for which metrics for the service should be aggregated. |
 | <code><a href="#multi-az-observability.Service.property.serviceName">serviceName</a></code> | <code>string</code> | The name of your service. |
+| <code><a href="#multi-az-observability.Service.property.loadBalancer">loadBalancer</a></code> | <code>aws-cdk-lib.aws_elasticloadbalancingv2.ILoadBalancerV2</code> | The load balancer this service sits behind. |
 
 ---
 
@@ -2238,18 +2274,6 @@ being produced by all critical operations in aggregate.
 
 ---
 
-##### `loadBalancer`<sup>Required</sup> <a name="loadBalancer" id="multi-az-observability.Service.property.loadBalancer"></a>
-
-```typescript
-public readonly loadBalancer: ILoadBalancerV2;
-```
-
-- *Type:* aws-cdk-lib.aws_elasticloadbalancingv2.ILoadBalancerV2
-
-The load balancer this service sits behind.
-
----
-
 ##### `operations`<sup>Required</sup> <a name="operations" id="multi-az-observability.Service.property.operations"></a>
 
 ```typescript
@@ -2283,6 +2307,19 @@ public readonly serviceName: string;
 - *Type:* string
 
 The name of your service.
+
+---
+
+##### `loadBalancer`<sup>Optional</sup> <a name="loadBalancer" id="multi-az-observability.Service.property.loadBalancer"></a>
+
+```typescript
+public readonly loadBalancer: ILoadBalancerV2;
+```
+
+- *Type:* aws-cdk-lib.aws_elasticloadbalancingv2.ILoadBalancerV2
+- *Default:* No load balancer metrics will be included in dashboards and its ARN will not be added to top level AZ alarm descriptions.
+
+The load balancer this service sits behind.
 
 ---
 
@@ -2674,8 +2711,8 @@ Represents an operation in a service.
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
+| <code><a href="#multi-az-observability.IOperation.property.critical">critical</a></code> | <code>boolean</code> | Indicates this is a critical operation for the service and will be included in service level metrics and dashboards. |
 | <code><a href="#multi-az-observability.IOperation.property.httpMethods">httpMethods</a></code> | <code>string[]</code> | The http methods supported by the operation. |
-| <code><a href="#multi-az-observability.IOperation.property.isCritical">isCritical</a></code> | <code>boolean</code> | Indicates this is a critical operation for the service and will be included in service level metrics and dashboards. |
 | <code><a href="#multi-az-observability.IOperation.property.operationName">operationName</a></code> | <code>string</code> | The name of the operation. |
 | <code><a href="#multi-az-observability.IOperation.property.path">path</a></code> | <code>string</code> | The HTTP path for the operation for canaries to run against, something like "/products/list". |
 | <code><a href="#multi-az-observability.IOperation.property.serverSideAvailabilityMetricDetails">serverSideAvailabilityMetricDetails</a></code> | <code><a href="#multi-az-observability.IOperationMetricDetails">IOperationMetricDetails</a></code> | The server side availability metric details. |
@@ -2684,6 +2721,18 @@ Represents an operation in a service.
 | <code><a href="#multi-az-observability.IOperation.property.canaryMetricDetails">canaryMetricDetails</a></code> | <code><a href="#multi-az-observability.ICanaryMetrics">ICanaryMetrics</a></code> | Optional metric details if the service has a canary. |
 | <code><a href="#multi-az-observability.IOperation.property.canaryTestProps">canaryTestProps</a></code> | <code><a href="#multi-az-observability.AddCanaryTestProps">AddCanaryTestProps</a></code> | If they have been added, the properties for creating new canary tests on this operation. |
 | <code><a href="#multi-az-observability.IOperation.property.serverSideContributorInsightRuleDetails">serverSideContributorInsightRuleDetails</a></code> | <code><a href="#multi-az-observability.IContributorInsightRuleDetails">IContributorInsightRuleDetails</a></code> | The server side details for contributor insights rules. |
+
+---
+
+##### `critical`<sup>Required</sup> <a name="critical" id="multi-az-observability.IOperation.property.critical"></a>
+
+```typescript
+public readonly critical: boolean;
+```
+
+- *Type:* boolean
+
+Indicates this is a critical operation for the service and will be included in service level metrics and dashboards.
 
 ---
 
@@ -2696,18 +2745,6 @@ public readonly httpMethods: string[];
 - *Type:* string[]
 
 The http methods supported by the operation.
-
----
-
-##### `isCritical`<sup>Required</sup> <a name="isCritical" id="multi-az-observability.IOperation.property.isCritical"></a>
-
-```typescript
-public readonly isCritical: boolean;
-```
-
-- *Type:* boolean
-
-Indicates this is a critical operation for the service and will be included in service level metrics and dashboards.
 
 ---
 
@@ -3021,17 +3058,17 @@ Represents a complete service composed of one or more operations.
 
 | **Name** | **Description** |
 | --- | --- |
-| <code><a href="#multi-az-observability.IService.addOperation">addOperation</a></code> | Adds an operation to this service and sets the operation's service property. |
+| <code><a href="#multi-az-observability.IService.addOperation">addOperation</a></code> | Adds an operation to this service. |
 
 ---
 
 ##### `addOperation` <a name="addOperation" id="multi-az-observability.IService.addOperation"></a>
 
 ```typescript
-public addOperation(operation: IOperation): IService
+public addOperation(operation: IOperation): void
 ```
 
-Adds an operation to this service and sets the operation's service property.
+Adds an operation to this service.
 
 ###### `operation`<sup>Required</sup> <a name="operation" id="multi-az-observability.IService.addOperation.parameter.operation"></a>
 
@@ -3046,10 +3083,10 @@ Adds an operation to this service and sets the operation's service property.
 | <code><a href="#multi-az-observability.IService.property.availabilityZoneNames">availabilityZoneNames</a></code> | <code>string[]</code> | A list of the Availability Zone names used by this application. |
 | <code><a href="#multi-az-observability.IService.property.baseUrl">baseUrl</a></code> | <code>string</code> | The base endpoint for this service, like "https://www.example.com". Operation paths will be appended to this endpoint for canary testing the service. |
 | <code><a href="#multi-az-observability.IService.property.faultCountThreshold">faultCountThreshold</a></code> | <code>number</code> | The fault count threshold that indicates the service is unhealthy. |
-| <code><a href="#multi-az-observability.IService.property.loadBalancer">loadBalancer</a></code> | <code>aws-cdk-lib.aws_elasticloadbalancingv2.ILoadBalancerV2</code> | The load balancer this service sits behind. |
 | <code><a href="#multi-az-observability.IService.property.operations">operations</a></code> | <code><a href="#multi-az-observability.IOperation">IOperation</a>[]</code> | The operations that are part of this service. |
 | <code><a href="#multi-az-observability.IService.property.period">period</a></code> | <code>aws-cdk-lib.Duration</code> | The period for which metrics for the service should be aggregated. |
 | <code><a href="#multi-az-observability.IService.property.serviceName">serviceName</a></code> | <code>string</code> | The name of your service. |
+| <code><a href="#multi-az-observability.IService.property.loadBalancer">loadBalancer</a></code> | <code>aws-cdk-lib.aws_elasticloadbalancingv2.ILoadBalancerV2</code> | The load balancer this service sits behind. |
 
 ---
 
@@ -3092,18 +3129,6 @@ being produced by all critical operations in aggregate.
 
 ---
 
-##### `loadBalancer`<sup>Required</sup> <a name="loadBalancer" id="multi-az-observability.IService.property.loadBalancer"></a>
-
-```typescript
-public readonly loadBalancer: ILoadBalancerV2;
-```
-
-- *Type:* aws-cdk-lib.aws_elasticloadbalancingv2.ILoadBalancerV2
-
-The load balancer this service sits behind.
-
----
-
 ##### `operations`<sup>Required</sup> <a name="operations" id="multi-az-observability.IService.property.operations"></a>
 
 ```typescript
@@ -3137,6 +3162,19 @@ public readonly serviceName: string;
 - *Type:* string
 
 The name of your service.
+
+---
+
+##### `loadBalancer`<sup>Optional</sup> <a name="loadBalancer" id="multi-az-observability.IService.property.loadBalancer"></a>
+
+```typescript
+public readonly loadBalancer: ILoadBalancerV2;
+```
+
+- *Type:* aws-cdk-lib.aws_elasticloadbalancingv2.ILoadBalancerV2
+- *Default:* No load balancer metrics are included in dashboards and its ARN is not added to top level AZ alarm descriptions.
+
+The load balancer this service sits behind.
 
 ---
 

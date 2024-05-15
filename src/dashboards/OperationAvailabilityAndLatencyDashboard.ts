@@ -6,10 +6,10 @@ import { ContributorInsightsWidget } from './ContributorInsightsWidget';
 import { IOperationAvailabilityAndLatencyDashboard } from './IOperationAvailabilityAndLatencyDashboard';
 import { OperationAvailabilityAndLatencyDashboardProps } from './props/OperationAvailabilityAndLatencyDashboardProps';
 import { OperationAvailabilityAndLatencyWidgetProps } from './props/OperationAvailabilityAndLatencyWidgetProps';
+import { AvailabilityZoneMapper } from '../azmapper/AvailabilityZoneMapper';
+import { IAvailabilityZoneMapper } from '../azmapper/IAvailabilityZoneMapper';
 import { AvailabilityAndLatencyMetrics } from '../metrics/AvailabilityAndLatencyMetrics';
 import { AvailabilityMetricType } from '../utilities/AvailabilityMetricType';
-import { AvailabilityZoneMapper } from '../utilities/AvailabilityZoneMapper';
-import { IAvailabilityZoneMapper } from '../utilities/IAvailabilityZoneMapper';
 import { LatencyMetricType } from '../utilities/LatencyMetricType';
 
 /**
@@ -511,7 +511,7 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
     });
 
     let availabilityZoneIds: string[] = props.operation.service.availabilityZoneNames.map(x => {
-      return this.azMapper.availabilityZoneId(x);
+      return this.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(x.substring(x.length - 1));
     });
 
     widgets.push(
@@ -563,7 +563,7 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
         this.createApplicationLoadBalancerWidgets(
           props,
           '**Application Load Balancer Metrics**',
-          availabilityZoneIds,
+          props.operation.service.availabilityZoneNames,
         ),
       );
     }
@@ -573,7 +573,7 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
         operation: props.operation,
         availabilityMetricDetails: props.operation.canaryMetricDetails.canaryAvailabilityMetricDetails,
         latencyMetricDetails: props.operation.serverSideLatencyMetricDetails,
-        availabilityZoneIds: props.operation.service.availabilityZoneNames,
+        availabilityZoneIds: availabilityZoneIds,
         interval: props.interval,
         isCanary: false,
         resolutionPeriod: Duration.minutes(60),
@@ -590,7 +590,7 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
         operation: props.operation,
         availabilityMetricDetails: props.operation.canaryMetricDetails.canaryAvailabilityMetricDetails,
         latencyMetricDetails: props.operation.serverSideLatencyMetricDetails,
-        availabilityZoneIds: props.operation.service.availabilityZoneNames,
+        availabilityZoneIds: availabilityZoneIds,
         interval: props.interval,
         isCanary: false,
         resolutionPeriod: Duration.minutes(60),
@@ -604,7 +604,7 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
       }, '**Canary Measured Latency**'));
     }
 
-    this.dashboard = new Dashboard(this, props.operation.operationName + 'dashboard', {
+    this.dashboard = new Dashboard(this, 'Dashboard', {
       dashboardName: props.operation.operationName.toLowerCase() + Fn.sub('-operation-availability-and-latency-${AWS::Region}'),
       defaultInterval: props.interval,
       periodOverride: PeriodOverride.INHERIT,
@@ -614,7 +614,7 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
 
   private createApplicationLoadBalancerWidgets(
     props: OperationAvailabilityAndLatencyDashboardProps,
-    title: string, availabilityZoneIds: string[],
+    title: string, availabilityZoneNames: string[],
   ) : IWidget[] {
     let albWidgets: IWidget[] = [];
     let loadBalancerFullName: string = (props.loadBalancer as BaseLoadBalancer).loadBalancerFullName;
@@ -648,8 +648,10 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
       ],
     }));
 
-    availabilityZoneIds.forEach((availabilityZoneId) => {
-      let availabilityZoneName: string = this.azMapper.availabilityZoneName(availabilityZoneId);
+    availabilityZoneNames.forEach((availabilityZoneName) => {
+      let availabilityZoneId: string = this.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(
+        availabilityZoneName.substring(availabilityZoneName.length - 1),
+      );
 
       albWidgets.push(new GraphWidget({
         height: 6,
@@ -696,8 +698,10 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
       },
     }));
 
-    availabilityZoneIds.forEach(availabilityZoneId => {
-      let availabilityZoneName: string = this.azMapper.availabilityZoneName(availabilityZoneId);
+    availabilityZoneNames.forEach(availabilityZoneName => {
+      let availabilityZoneId: string = this.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(
+        availabilityZoneName.substring(availabilityZoneName.length - 1),
+      );
 
       albWidgets.push(new GraphWidget({
         height: 6,

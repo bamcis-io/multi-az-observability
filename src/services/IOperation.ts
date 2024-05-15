@@ -50,7 +50,7 @@ export interface IOperation
      * and will be included in service level metrics and
      * dashboards
      */
-  readonly isCritical: boolean;
+  readonly critical: boolean;
 
   /**
      * The http methods supported by the operation

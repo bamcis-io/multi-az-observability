@@ -126,7 +126,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
     outlierThreshold: number,
     nameSuffix?: string,
   ): IAlarm {
-    // TODO: This is creating metrics with the same names
+
     let zonalFaults: IMetric = AvailabilityAndLatencyMetrics.createZonalAvailabilityMetric({
       availabilityZoneId: availabilityZoneId,
       metricDetails: metricDetails,
@@ -227,6 +227,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
     let ruleBody = new InsightRuleBody();
     ruleBody.logGroupNames = ruleDetails.logGroups.map(x => x.logGroupName);
     ruleBody.aggregateOn = 'Count';
+    ruleBody.logFormat = 'JSON';
 
     ruleBody.contribution = {
       keys: [ruleDetails.instanceIdJsonPath],
@@ -275,6 +276,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
     let ruleBody = new InsightRuleBody();
     ruleBody.logGroupNames = ruleDetails.logGroups.map(x => x.logGroupName);
     ruleBody.aggregateOn = 'Count';
+    ruleBody.logFormat = 'JSON';
     ruleBody.contribution = {
       keys: [ruleDetails.instanceIdJsonPath],
       filters: [
@@ -322,6 +324,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
     let ruleBody = new InsightRuleBody();
     ruleBody.logGroupNames = ruleDetails.logGroups.map(x => x.logGroupName);
     ruleBody.aggregateOn = 'Count';
+    ruleBody.logFormat = 'JSON';
     ruleBody.contribution = {
       keys: [ruleDetails.instanceIdJsonPath],
       filters: [
@@ -612,6 +615,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
     let ruleBody = new InsightRuleBody();
     ruleBody.logGroupNames = ruleDetails.logGroups.map(x => x.logGroupName);
     ruleBody.aggregateOn = 'Count';
+    ruleBody.logFormat = 'JSON';
     ruleBody.contribution = {
       keys: [ruleDetails.instanceIdJsonPath],
       filters: [
@@ -641,6 +645,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
     let ruleBody = new InsightRuleBody();
     ruleBody.logGroupNames = ruleDetails.logGroups.map(x => x.logGroupName);
     ruleBody.aggregateOn = 'Count';
+    ruleBody.logFormat = 'JSON';
     ruleBody.contribution = {
       keys: [ruleDetails.instanceIdJsonPath],
       filters: [

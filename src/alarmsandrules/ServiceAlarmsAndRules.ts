@@ -5,13 +5,11 @@ import { ICanaryOperationRegionalAlarmsAndRules } from './ICanaryOperationRegion
 import { IOperationAlarmsAndRules } from './IOperationAlarmsAndRules';
 import { IServiceAlarmsAndRules } from './IServiceAlarmsAndRules';
 import { ServiceAlarmsAndRulesProps } from './props/ServiceAlarmsAndRulesProps';
-//import { AlarmRule, CompositeAlarm, IAlarm } from "aws-cdk-lib/aws-cloudwatch";
-//import { Alarm, AlarmRule, ComparisonOperator, CompositeAlarm, IAlarm, IMetric, MathExpression } from "aws-cdk-lib/aws-cloudwatch";
+import { AvailabilityZoneMapper } from '../azmapper/AvailabilityZoneMapper';
+import { IAvailabilityZoneMapper } from '../azmapper/IAvailabilityZoneMapper';
 import { AvailabilityAndLatencyMetrics } from '../metrics/AvailabilityAndLatencyMetrics';
 import { IService } from '../services/IService';
 import { AvailabilityMetricType } from '../utilities/AvailabilityMetricType';
-import { AvailabilityZoneMapper } from '../utilities/AvailabilityZoneMapper';
-import { IAvailabilityZoneMapper } from '../utilities/IAvailabilityZoneMapper';
 
 /**
  * Service level alarms and rules using critical operations
@@ -48,7 +46,7 @@ export class ServiceAlarmsAndRules extends Construct implements IServiceAlarmsAn
     super(scope, id);
     this.service = props.service;
 
-    let criticalOperations: string[] = props.service.operations.filter(x => x.isCritical == true).map(x => x.operationName);
+    let criticalOperations: string[] = props.service.operations.filter(x => x.critical == true).map(x => x.operationName);
     let counter: number = 1;
     this.zonalAggregateIsolatedImpactAlarms = [];
 
@@ -56,8 +54,12 @@ export class ServiceAlarmsAndRules extends Construct implements IServiceAlarmsAn
       availabilityZoneNames: props.service.availabilityZoneNames,
     });
 
-    for (let i = 0; i < props.service.availabilityZoneNames.length; i++) {
-      let availabilityZonedId: string = azMapper.availabilityZoneId(props.service.availabilityZoneNames[i]);
+    let availabilityZoneIds: string[] = props.service.availabilityZoneNames.map(x => {
+      return azMapper.availabilityZoneIdFromAvailabilityZoneLetter(x.substring(x.length - 1));
+    });
+
+    for (let i = 0; i < availabilityZoneIds.length; i++) {
+      let availabilityZonedId: string = availabilityZoneIds[i];
 
       this.zonalAggregateIsolatedImpactAlarms.push(new CompositeAlarm(this, 'AZ' + counter + 'ServiceAggregateIsolatedImpactAlarm', {
         compositeAlarmName: availabilityZonedId + '-' + props.service.serviceName.toLowerCase() + '-isolated-impact-aggregate-alarm',
@@ -76,15 +78,11 @@ export class ServiceAlarmsAndRules extends Construct implements IServiceAlarmsAn
       counter++;
     }
 
-    this.regionalAvailabilityServerSideAlarm = new CompositeAlarm(this, 'tesT', {
-      alarmRule: AlarmRule.fromString('ALARM(TEST)'),
-    });
-
     let keyPrefix: string = '';
 
     let regionalOperationFaultCountMetrics: {[key: string]: IMetric} = {};
 
-    props.service.operations.filter(x => x.isCritical == true).forEach(x => {
+    props.service.operations.filter(x => x.critical == true).forEach(x => {
       keyPrefix = AvailabilityAndLatencyMetrics.nextChar(keyPrefix);
 
       regionalOperationFaultCountMetrics[keyPrefix] = AvailabilityAndLatencyMetrics.createRegionalAvailabilityMetric({

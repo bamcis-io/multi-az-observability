@@ -45,7 +45,19 @@ export class InsightRuleBody {
      * @returns
      */
   toJson(): string {
-    return JSON.stringify(this);
+    let objectKeysToUpperCase = function (input: {[key: string]: any}) : {[key: string]: any} {
+      if (typeof input !== 'object') return input;
+      if (Array.isArray(input)) return input.map(objectKeysToUpperCase);
+      return Object.keys(input).reduce(function (newObj: {[key: string]: any}, key: string) {
+        let val = input[key];
+        let newVal = (typeof val === 'object') && val !== null ? objectKeysToUpperCase(val) : val;
+        let newKey: string = key.slice(0, 1).toUpperCase() + key.substring(1);
+        newObj[newKey] = newVal;
+        return newObj;
+      }, {});
+    };
+
+    return JSON.stringify(objectKeysToUpperCase(this));
   }
 }
 

@@ -9,7 +9,6 @@
     "awslint": "npx projen awslint",
     "build": "npx projen build",
     "build2": "npx projen build2",
-    "bump": "npx projen bump",
     "clobber": "npx projen clobber",
     "compat": "npx projen compat",
     "compile": "npx projen compile",
@@ -25,13 +24,9 @@
     "package:js": "npx projen package:js",
     "package:python": "npx projen package:python",
     "post-compile": "npx projen post-compile",
-    "post-upgrade": "npx projen post-upgrade",
     "pre-compile": "npx projen pre-compile",
-    "release": "npx projen release",
     "test": "npx projen test",
     "test:watch": "npx projen test:watch",
-    "unbump": "npx projen unbump",
-    "upgrade": "npx projen upgrade",
     "watch": "npx projen watch",
     "projen": "npx projen"
   },
@@ -58,7 +53,6 @@
     "jsii-pacmak": "^1.98.0",
     "jsii-rosetta": "~5.4.0",
     "projen": "^0.81.10",
-    "standard-version": "^9",
     "ts-jest": "^29.1.2",
     "ts-node": "^10.9.2",
     "typescript": "~5.4.5"
@@ -77,7 +71,7 @@
   ],
   "main": "lib/index.js",
   "license": "MIT",
-  "version": "0.1.15",
+  "version": "0.1.0",
   "jest": {
     "roots": [
       "<rootDir>/test"

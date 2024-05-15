@@ -5,8 +5,8 @@ import { Effect, IManagedPolicy, IRole, ManagedPolicy, PolicyStatement, Role, Se
 import { Architecture, Code, Function, IFunction, Runtime, Tracing } from 'aws-cdk-lib/aws-lambda';
 import { ILogGroup, LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { Construct } from 'constructs';
-import { AvailabilityZoneMapperProps } from './AvailabilityZoneMapperProps';
 import { IAvailabilityZoneMapper } from './IAvailabilityZoneMapper';
+import { AvailabilityZoneMapperProps } from './props/AvailabilityZoneMapperProps';
 
 /**
  * A construct that allows you to map AZ names to ids and back
@@ -31,6 +31,19 @@ export class AvailabilityZoneMapper extends Construct implements IAvailabilityZo
 
   constructor(scope: Construct, id: string, props?: AvailabilityZoneMapperProps) {
     super(scope, id);
+
+    /*
+    let currentNode: Construct | undefined = this.node.scope;
+
+    while (currentNode !== undefined && !(currentNode instanceof Stack)) {
+      currentNode = currentNode.node.scope;
+    }
+
+    if (currentNode !== undefined) {
+      (currentNode as Stack).addTransform('AWS::LanguageExtensions');
+    }
+    */
+
     let xrayManagedPolicy: IManagedPolicy = new ManagedPolicy(this, 'XrayManagedPolicy', {
       path: '/azmapper/',
       statements: [
@@ -70,7 +83,7 @@ export class AvailabilityZoneMapper extends Construct implements IAvailabilityZo
       ],
     });
 
-    const file: string = fs.readFileSync(path.resolve(__dirname, './../azmapper/index.py'), 'utf-8');
+    const file: string = fs.readFileSync(path.resolve(__dirname, './../azmapper/src/index.py'), 'utf-8');
 
     this.function = new Function(this, 'AvailabilityZoneMapperFunction', {
       runtime: Runtime.PYTHON_3_12,

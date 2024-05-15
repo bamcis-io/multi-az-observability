@@ -10,6 +10,21 @@ const project = new awscdk.AwsCdkConstructLibrary({
   projenrcTs: true,
   repositoryUrl: 'https://github.com/bamcis-io/multi-az-observability',
   description: 'A construct for implementing multi-AZ observability to detect single AZ impairments',
+  dependabot: false,
+  buildWorkflow: false,
+  depsUpgrade: false,
+  release: false,
+  gitIgnoreOptions: {
+    ignorePatterns: [
+      '.cdk.staging',
+      'cdk.out',
+      '/cdk/bin/',
+      '/cdk/obj/',
+      '.DS_Store',
+      '**/.DS_Store',
+      'yarn.lock',
+    ],
+  },
   keywords: [
     'cdk',
     'cloudwatch',
@@ -67,16 +82,43 @@ project.tasks.addTask('build2', {
       exec: 'export DOCKER_DEFAULT_PLATFORM="linux/arm64"',
     },
     {
+      spawn: 'default',
+    },
+    {
+      spawn: 'pre-compile',
+    },
+    {
+      spawn: 'compile',
+    },
+    {
+      exec: 'rm -rf lib/canaries/src',
+    },
+    {
+      exec: 'cp -R src/canaries/src lib/canaries',
+    },
+    {
+      exec: 'rm -rf lib/azmapper/src',
+    },
+    {
+      exec: 'cp -R src/azmapper/src lib/azmapper',
+    },
+    {
+      spawn: 'post-compile',
+    },
+    {
       spawn: 'awslint',
     },
     {
-      spawn: 'build',
+      spawn: 'test',
+    },
+    {
+      spawn: 'package',
     },
   ],
 });
 
 project.addFields({
-  version: '0.1.15',
+  version: '0.1.0',
 });
 
 project.synth();

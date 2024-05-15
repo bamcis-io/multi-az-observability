@@ -20,10 +20,12 @@ export interface OperationAvailabilityAndLatencyDashboardProps
   readonly interval: Duration;
 
   /**
-     * (Optional) The load balancer supporting this operation, if this is not
+     * The load balancer supporting this operation, if this is not
      * provided, no load balancer metrics will be shown
+     *
+     * @default - No load balancer metrics will be shown on the dashboard
      */
-  readonly loadBalancer: ILoadBalancerV2;
+  readonly loadBalancer?: ILoadBalancerV2;
 
   /**
      * Per AZ server-side availability alarms
@@ -78,12 +80,16 @@ export interface OperationAvailabilityAndLatencyDashboardProps
   /**
      * Insight rule that shows instance contributors to
      * high latency for this operation
+     *
+     * @default - Insight rule will not be shown on the dashboard
      */
   readonly instanceContributorsToHighLatency?: CfnInsightRule;
 
   /**
      * Insight rule that shows instance contributors to
      * faults for this operation
+     *
+     * @default - Insight rule will not be shown on the dashboard
      */
   readonly instanceContributorsToFaults?: CfnInsightRule;
 }

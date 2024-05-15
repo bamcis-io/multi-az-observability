@@ -28,4 +28,8 @@ export interface CanaryFunctionProps
      * 2 seconds
      */
   readonly httpTimeout?: Duration;
+
+  readonly assetsBucketParameterName?: string;
+
+  readonly assetsBucketPrefixParameterName?: string;
 }

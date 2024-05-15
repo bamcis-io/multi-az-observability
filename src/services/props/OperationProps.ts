@@ -58,7 +58,7 @@ export interface OperationProps
      * and will be included in service level metrics and
      * dashboards
      */
-  readonly isCritical: boolean;
+  readonly critical: boolean;
 
   /**
      * If you define this property, a synthetic

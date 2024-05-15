@@ -5,9 +5,9 @@ import { BaseLoadBalancer, HttpCodeElb, HttpCodeTarget, IApplicationLoadBalancer
 import { Construct } from 'constructs';
 import { IBasicServiceMultiAZObservability } from './IBasicServiceMultiAZObservability';
 import { BasicServiceMultiAZObservabilityProps } from './props/BasicServiceMultiAZObservabilityProps';
+import { AvailabilityZoneMapper } from '../azmapper/AvailabilityZoneMapper';
 import { BasicServiceDashboard } from '../dashboards/BasicServiceDashboard';
 import { AvailabilityAndLatencyMetrics } from '../metrics/AvailabilityAndLatencyMetrics';
-import { AvailabilityZoneMapper } from '../utilities/AvailabilityZoneMapper';
 import { OutlierDetectionAlgorithm } from '../utilities/OutlierDetectionAlgorithm';
 
 export class BasicServiceMultiAZObservability extends Construct implements IBasicServiceMultiAZObservability {

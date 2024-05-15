@@ -12,7 +12,8 @@ export interface ServiceProps
   readonly serviceName: string;
 
   /**
-     * The base endpoint for this service, like "https://www.example.com". Operation paths will be appended to this endpoint for canary testing the service.
+     * The base endpoint for this service, like "https://www.example.com". Operation
+     * paths will be appended to this endpoint for canary testing the service.
      */
   readonly baseUrl: string;
 
@@ -34,6 +35,10 @@ export interface ServiceProps
 
   /**
    * The load balancer this service sits behind
+   *
+   * @default - Load balancer metrics won't be shown on dashboards
+   * and its ARN won't be included in top level alarm descriptions
+   * that automation can use to implement a zonal shift.
    */
-  readonly loadBalancer: ILoadBalancerV2;
+  readonly loadBalancer?: ILoadBalancerV2;
 }

@@ -11,9 +11,9 @@ import { IServerSideOperationZonalAlarmsAndRules } from './IServerSideOperationZ
 import { OperationAlarmsAndRulesProps } from './props/OperationAlarmsAndRulesProps';
 import { ServerSideOperationRegionalAlarmsAndRules } from './ServerSideOperationRegionalAlarmsAndRules';
 import { ServerSideOperationZonalAlarmsAndRules } from './ServerSideOperationZonalAlarmsAndRules';
+import { AvailabilityZoneMapper } from '../azmapper/AvailabilityZoneMapper';
+import { IAvailabilityZoneMapper } from '../azmapper/IAvailabilityZoneMapper';
 import { IOperation } from '../services/IOperation';
-import { AvailabilityZoneMapper } from '../utilities/AvailabilityZoneMapper';
-import { IAvailabilityZoneMapper } from '../utilities/IAvailabilityZoneMapper';
 
 /**
  * Creates alarms and rules for an operation for both regional and zonal metrics
@@ -69,7 +69,15 @@ export class OperationAlarmsAndRules extends Construct implements IOperationAlar
       availabilityZoneNames: props.operation.service.availabilityZoneNames,
     });
 
-    let loadBalancerArn = (props.loadBalancer as BaseLoadBalancer).loadBalancerArn;
+    let availabilityZoneIds: string[] = props.operation.service.availabilityZoneNames.map(x => {
+      return azMapper.availabilityZoneIdFromAvailabilityZoneLetter(x.substring(x.length - 1));
+    });
+
+    let loadBalancerArn: string = '';
+
+    if (props.loadBalancer !== undefined) {
+      loadBalancerArn = (props.loadBalancer as BaseLoadBalancer).loadBalancerArn;
+    }
 
     this.serverSideRegionalAlarmsAndRules = new ServerSideOperationRegionalAlarmsAndRules(
       this,
@@ -110,8 +118,8 @@ export class OperationAlarmsAndRules extends Construct implements IOperationAlar
 
     let counter: number = 1;
 
-    for (let i = 0; i < props.operation.service.availabilityZoneNames.length; i++) {
-      let availabilityZoneId: string = azMapper.availabilityZoneId(props.operation.service.availabilityZoneNames[i]);
+    for (let i = 0; i < availabilityZoneIds.length; i++) {
+      let availabilityZoneId: string = availabilityZoneIds[i];
 
       this.serverSideZonalAlarmsAndRules.push(new ServerSideOperationZonalAlarmsAndRules(
         this,
