@@ -1,5 +1,8 @@
 import { Duration } from 'aws-cdk-lib';
 import { ILoadBalancerV2 } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
+import { AddCanaryTestProps } from '../../canaries/props/AddCanaryTestProps';
+import { IContributorInsightRuleDetails } from '../IContributorInsightRuleDetails';
+import { IServiceMetricDetails } from '../IServiceMetricDetails';
 
 /**
  * Properties to initialize a service
@@ -41,4 +44,37 @@ export interface ServiceProps
    * that automation can use to implement a zonal shift.
    */
   readonly loadBalancer?: ILoadBalancerV2;
+
+  /**
+   * Define these settings if you want to automatically add canary
+   * tests to your operations. Operations can individually opt out
+   * of canary test creation if you define this setting.
+   *
+   * @default - Automatic canary tests will not be created for
+   * operations in this service.
+   */
+  readonly canaryTestProps?: AddCanaryTestProps;
+
+  /**
+   * The default settings that are used for availability metrics
+   * for all operations unless specifically overridden in an
+   * operation definition.
+   */
+  readonly defaultAvailabilityMetricDetails: IServiceMetricDetails;
+
+  /**
+   * The default settings that are used for availability metrics
+   * for all operations unless specifically overridden in an
+   * operation definition.
+   */
+  readonly defaultLatencyMetricDetails: IServiceMetricDetails;
+
+  /**
+   * The default settings that are used for contributor insight
+   * rules.
+   *
+   * @default - No defaults are provided and must be specified per operation
+   * if the operation has logs that can be queried by contributor insights
+   */
+  readonly defaultContributorInsightRuleDetails?: IContributorInsightRuleDetails;
 }

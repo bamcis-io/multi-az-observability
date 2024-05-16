@@ -6,6 +6,8 @@ cdk.out
 .DS_Store
 **/.DS_Store
 yarn.lock
+src/canaries/src/package
+src/canaries/src/canary.zip
 !/.gitattributes
 !/.projen/tasks.json
 !/.projen/deps.json

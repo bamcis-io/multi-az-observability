@@ -454,7 +454,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
     latencyImpactAlarm: IAlarm,
     nameSuffix?: string,
   ) : IAlarm {
-    return new CompositeAlarm(scope, operationName + 'AZ' + counter + 'IsolatedImpactAlarm', {
+    return new CompositeAlarm(scope, operationName + 'AZ' + counter + 'IsolatedImpactAlarm' + nameSuffix, {
       compositeAlarmName: availabilityZoneId + `-${operationName.toLowerCase()}-isolated-impact-alarm` + nameSuffix,
       alarmRule: AlarmRule.anyOf(
         AlarmRule.allOf(azIsOutlierForFaultsAlarm, availabilityImpactAlarm),

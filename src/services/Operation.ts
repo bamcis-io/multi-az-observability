@@ -65,6 +65,15 @@ export class Operation implements IOperation {
      */
   readonly canaryTestProps?: AddCanaryTestProps;
 
+  /**
+   * Set to true if you have defined CanaryTestProps for your
+   * service, which applies to all operations, but you want to
+   * opt out of creating the canary test for this operation.
+   *
+   * @default - The operation is not opted out
+   */
+  readonly optOutOfServiceCreatedCanary?: boolean;
+
   constructor(props: OperationProps) {
     this.canaryMetricDetails = props.canaryMetricDetails;
     this.httpMethods = props.httpMethods;
@@ -76,5 +85,6 @@ export class Operation implements IOperation {
     this.serverSideContributorInsightRuleDetails = props.serverSideContributorInsightRuleDetails;
     this.service = props.service;
     this.canaryTestProps = props.canaryTestProps;
+    this.optOutOfServiceCreatedCanary = props.optOutOfServiceCreatedCanary;
   }
 }

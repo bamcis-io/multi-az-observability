@@ -5,8 +5,6 @@ import { ICanaryOperationRegionalAlarmsAndRules } from './ICanaryOperationRegion
 import { IOperationAlarmsAndRules } from './IOperationAlarmsAndRules';
 import { IServiceAlarmsAndRules } from './IServiceAlarmsAndRules';
 import { ServiceAlarmsAndRulesProps } from './props/ServiceAlarmsAndRulesProps';
-import { AvailabilityZoneMapper } from '../azmapper/AvailabilityZoneMapper';
-import { IAvailabilityZoneMapper } from '../azmapper/IAvailabilityZoneMapper';
 import { AvailabilityAndLatencyMetrics } from '../metrics/AvailabilityAndLatencyMetrics';
 import { IService } from '../services/IService';
 import { AvailabilityMetricType } from '../utilities/AvailabilityMetricType';
@@ -50,12 +48,8 @@ export class ServiceAlarmsAndRules extends Construct implements IServiceAlarmsAn
     let counter: number = 1;
     this.zonalAggregateIsolatedImpactAlarms = [];
 
-    let azMapper: IAvailabilityZoneMapper = new AvailabilityZoneMapper(this, 'AZMapper', {
-      availabilityZoneNames: props.service.availabilityZoneNames,
-    });
-
     let availabilityZoneIds: string[] = props.service.availabilityZoneNames.map(x => {
-      return azMapper.availabilityZoneIdFromAvailabilityZoneLetter(x.substring(x.length - 1));
+      return props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(x.substring(x.length - 1));
     });
 
     for (let i = 0; i < availabilityZoneIds.length; i++) {

@@ -8,6 +8,7 @@
   "scripts": {
     "awslint": "npx projen awslint",
     "build": "npx projen build",
+    "build-function": "npx projen build-function",
     "build2": "npx projen build2",
     "clobber": "npx projen clobber",
     "compat": "npx projen compat",
@@ -71,7 +72,7 @@
   ],
   "main": "lib/index.js",
   "license": "MIT",
-  "version": "0.1.0",
+  "version": "0.0.1-alpha.1",
   "jest": {
     "roots": [
       "<rootDir>/test"

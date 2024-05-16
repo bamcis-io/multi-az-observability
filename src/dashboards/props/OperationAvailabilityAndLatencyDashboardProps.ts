@@ -1,6 +1,7 @@
 import { Duration } from 'aws-cdk-lib';
 import { IAlarm, CfnInsightRule } from 'aws-cdk-lib/aws-cloudwatch';
 import { ILoadBalancerV2 } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
+import { IAvailabilityZoneMapper } from '../../azmapper/IAvailabilityZoneMapper';
 import { IOperation } from '../../services/IOperation';
 
 /**
@@ -92,4 +93,9 @@ export interface OperationAvailabilityAndLatencyDashboardProps
      * @default - Insight rule will not be shown on the dashboard
      */
   readonly instanceContributorsToFaults?: CfnInsightRule;
+
+  /**
+    * The AZ Mapper
+    */
+  readonly azMapper: IAvailabilityZoneMapper;
 }

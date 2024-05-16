@@ -1,5 +1,6 @@
 import { Duration } from 'aws-cdk-lib';
 import { IAlarm } from 'aws-cdk-lib/aws-cloudwatch';
+import { IAvailabilityZoneMapper } from '../../azmapper/IAvailabilityZoneMapper';
 import { IService } from '../../services/IService';
 
 /**
@@ -27,4 +28,9 @@ export interface ServiceAvailabilityAndLatencyDashboardProps
      * The interval for the dashboard
      */
   readonly interval: Duration;
+
+  /**
+    * The AZ Mapper
+    */
+  readonly azMapper: IAvailabilityZoneMapper;
 }

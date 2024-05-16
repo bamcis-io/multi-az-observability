@@ -32,6 +32,26 @@
         }
       ]
     },
+    "build-function": {
+      "name": "build-function",
+      "steps": [
+        {
+          "exec": "rm -rf src/canaries/src/package"
+        },
+        {
+          "exec": "mkdir src/canaries/src/package"
+        },
+        {
+          "exec": "docker run --rm --platform \"linux/arm64\" --user \"0:0\" --volume \"$PWD/src/canaries/src:/asset-input:delegated\" --volume \"$PWD/src/canaries/src/package:/asset-output:delegated\" --workdir \"/asset-input\" \"public.ecr.aws/sam/build-python3.12\" bash -c \"pip install --no-cache --requirement requirements.txt --target /asset-output && cp --archive --update index.py /asset-output\""
+        },
+        {
+          "exec": "cd src/canaries/src/package && zip -r ../canary.zip ."
+        },
+        {
+          "exec": "cp src/canaries/src/canary.zip lib/canaries/src/canary.zip"
+        }
+      ]
+    },
     "build2": {
       "name": "build2",
       "steps": [
@@ -48,10 +68,7 @@
           "spawn": "compile"
         },
         {
-          "exec": "rm -rf lib/canaries/src"
-        },
-        {
-          "exec": "cp -R src/canaries/src lib/canaries"
+          "spawn": "build-function"
         },
         {
           "exec": "rm -rf lib/azmapper/src"

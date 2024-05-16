@@ -1,5 +1,6 @@
 import { IFunction } from 'aws-cdk-lib/aws-lambda';
 import { AddCanaryTestProps } from './AddCanaryTestProps';
+import { IAvailabilityZoneMapper } from '../../azmapper/IAvailabilityZoneMapper';
 import { IOperation } from '../../services/IOperation';
 
 /**
@@ -16,4 +17,9 @@ export interface CanaryTestProps extends AddCanaryTestProps
      * The operation for the canary test
      */
   readonly operation: IOperation;
+
+  /**
+   * The AZ Mapper
+   */
+  readonly azMapper: IAvailabilityZoneMapper;
 }

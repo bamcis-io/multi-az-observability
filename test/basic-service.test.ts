@@ -2,7 +2,7 @@ import * as cdk from 'aws-cdk-lib';
 import { Template } from 'aws-cdk-lib/assertions';
 import { CfnNatGateway, SelectedSubnets, SubnetType, Vpc } from 'aws-cdk-lib/aws-ec2';
 import { ApplicationLoadBalancer } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
-import { MultiAvailabilityZoneObservability } from '../src/MultiAvailabilityZoneObservability';
+import { BasicServiceMultiAZObservability } from '../src/services/BasicServiceMultiAZObservability';
 import { OutlierDetectionAlgorithm } from '../src/utilities/OutlierDetectionAlgorithm';
 
 test('Basic service observability', () => {
@@ -45,23 +45,21 @@ test('Basic service observability', () => {
     ];
   });
 
-  new MultiAvailabilityZoneObservability(stack, 'MAZObservability', {
-    basicServiceObservabilityProps: {
-      applicationLoadBalancers: [
-        new ApplicationLoadBalancer(stack, 'alb', {
-          vpc: vpc,
-          crossZoneEnabled: false,
-        }),
-      ],
-      natGateways: natGateways,
-      outlierDetectionAlgorithm: OutlierDetectionAlgorithm.STATIC,
-      outlierThreshold: 0.7,
-      faultCountPercentageThreshold: 1.0,
-      packetLossImpactPercentageThreshold: 0.01,
-      serviceName: 'test',
-      period: cdk.Duration.seconds(60),
-      createDashboard: true,
-    },
+  new BasicServiceMultiAZObservability(stack, 'MAZObservability', {
+    applicationLoadBalancers: [
+      new ApplicationLoadBalancer(stack, 'alb', {
+        vpc: vpc,
+        crossZoneEnabled: false,
+      }),
+    ],
+    natGateways: natGateways,
+    outlierDetectionAlgorithm: OutlierDetectionAlgorithm.STATIC,
+    outlierThreshold: 0.7,
+    faultCountPercentageThreshold: 1.0,
+    packetLossImpactPercentageThreshold: 0.01,
+    serviceName: 'test',
+    period: cdk.Duration.seconds(60),
+    createDashboard: true,
   });
 
   Template.fromStack(stack);

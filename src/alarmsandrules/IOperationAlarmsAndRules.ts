@@ -48,4 +48,9 @@ export interface IOperationAlarmsAndRules
      * evaluated
      */
   aggregateZonalAlarms: IAlarm[];
+
+  /**
+   * The aggregate zonal alarm indexed by Availability Zone Id.
+   */
+  aggregateZonalAlarmsMap: {[key: string]: IAlarm};
 }

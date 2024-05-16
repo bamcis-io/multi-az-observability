@@ -1,6 +1,3 @@
-export { MultiAvailabilityZoneObservability } from './MultiAvailabilityZoneObservability';
-export { MultiAvailabilityZoneObservabilityProps } from './MultiAvailabilityZoneObservabilityProps';
-export { IMultiAvailabilityZoneObservability } from './IMultiAvailabiliyZoneObservability';
 export { OutlierDetectionAlgorithm } from './utilities/OutlierDetectionAlgorithm';
 export { BasicServiceMultiAZObservabilityProps } from './services/props/BasicServiceMultiAZObservabilityProps';
 export { InstrumentedServiceMultiAZObservabilityProps } from './services/props/InstrumentedServiceMultiAZObservabilityProps';
@@ -10,6 +7,8 @@ export { IOperation } from './services/IOperation';
 export { Operation } from './services/Operation';
 export { OperationMetricDetails } from './services/OperationMetricDetails';
 export { IOperationMetricDetails } from './services/IOperationMetricDetails';
+export { ServiceMetricDetails } from './services/ServiceMetricDetails';
+export { IServiceMetricDetails } from './services/IServiceMetricDetails';
 export { AddCanaryTestProps } from './canaries/props/AddCanaryTestProps';
 export { ICanaryMetrics } from './services/ICanaryMetrics';
 export { IContributorInsightRuleDetails } from './services/IContributorInsightRuleDetails';
@@ -24,3 +23,10 @@ export { OperationMetricDetailsProps } from './services/props/OperationMetricDet
 export { ContributorInsightRuleDetails } from './services/ContributorInsightRuleDetails';
 export { ContributorInsightRuleDetailsProps } from './services/props/ContributorInsightRuleDetailsProps';
 export { MetricDimensions } from './services/props/MetricDimensions';
+export { NetworkConfigurationProps } from './canaries/props/NetworkConfigurationProps';
+export { ServiceMetricDetailsProps } from './services/props/ServiceMetricDetailsProps';
+export { InstrumentedServiceMultiAZObservability } from './services/InstrumentedServiceMultiAZObservability';
+export { BasicServiceMultiAZObservability } from './services/BasicServiceMultiAZObservability';
+export { IBasicServiceMultiAZObservability } from './services/IBasicServiceMultiAZObservability';
+export { IInstrumentedServiceMultiAZObservability } from './services/IInstrumentedServiceMultiAZObservability';
+export { IServiceAlarmsAndRules } from './alarmsandrules/IServiceAlarmsAndRules';

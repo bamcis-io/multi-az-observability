@@ -368,7 +368,7 @@ export class AvailabilityAndLatencyMetrics {
     let faultKeys: string[] = [];
 
     if (props.metricDetails.successMetricNames !== undefined && props.metricType != AvailabilityMetricType.FAULT_COUNT) {
-      props.metricDetails.successMetricNames.forEach((successMetric) => {
+      props.metricDetails.successMetricNames.forEach((successMetric: string) => {
         let keyPrefix = ((props.keyPrefix === undefined || props.keyPrefix == '') ? '' : props.keyPrefix.toLowerCase() + '_') +
                     props.metricDetails.operationName.toLowerCase() + '_' +
                     successMetric.toLowerCase();

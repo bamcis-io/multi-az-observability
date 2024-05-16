@@ -1,5 +1,4 @@
 import { ICanaryMetrics } from './ICanaryMetrics';
-import { IContributorInsightRuleDetails } from './IContributorInsightRuleDetails';
 import { IOperationMetricDetails } from './IOperationMetricDetails';
 import { CanaryMetricProps } from './props/CanaryMetricProps';
 
@@ -17,17 +16,8 @@ export class CanaryMetrics implements ICanaryMetrics {
      */
   readonly canaryLatencyMetricDetails: IOperationMetricDetails;
 
-  /**
-     * The canary details for contributor insights rules
-     *
-     * @default - No contributor insights rules will be created for the
-     * canary metrics
-     */
-  readonly canaryContributorInsightRuleDetails?: IContributorInsightRuleDetails;
-
   constructor(props: CanaryMetricProps) {
     this.canaryAvailabilityMetricDetails = props.canaryAvailabilityMetricDetails;
-    this.canaryContributorInsightRuleDetails = props.canaryContributorInsightRuleDetails;
     this.canaryLatencyMetricDetails = props.canaryLatencyMetricDetails;
   }
 }

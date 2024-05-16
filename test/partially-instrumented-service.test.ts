@@ -4,13 +4,14 @@ import { Template } from 'aws-cdk-lib/assertions';
 import { Unit } from 'aws-cdk-lib/aws-cloudwatch';
 import { SelectedSubnets, SubnetType, Vpc } from 'aws-cdk-lib/aws-ec2';
 import { ApplicationLoadBalancer, ILoadBalancerV2 } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
-import { MultiAvailabilityZoneObservability } from '../src/MultiAvailabilityZoneObservability';
+import { InstrumentedServiceMultiAZObservability } from '../src/services/InstrumentedServiceMultiAZObservability';
 import { IOperation } from '../src/services/IOperation';
 import { IService } from '../src/services/IService';
 import { Operation } from '../src/services/Operation';
 import { OperationMetricDetails } from '../src/services/OperationMetricDetails';
 import { MetricDimensions } from '../src/services/props/MetricDimensions';
 import { Service } from '../src/services/Service';
+import { ServiceMetricDetails } from '../src/services/ServiceMetricDetails';
 
 test('Partially instrumented service', () => {
   const app = new cdk.App();
@@ -53,16 +54,7 @@ test('Partially instrumented service', () => {
     faultCountThreshold: 25,
     period: Duration.seconds(60),
     loadBalancer: loadBalancer,
-  });
-
-  let rideOperation: IOperation = new Operation({
-    operationName: 'ride',
-    service: service,
-    path: '/ride',
-    critical: true,
-    httpMethods: ['GET'],
-    serverSideAvailabilityMetricDetails: new OperationMetricDetails({
-      operationName: 'ride',
+    defaultAvailabilityMetricDetails: new ServiceMetricDetails({
       metricNamespace: 'front-end/metrics',
       successMetricNames: ['Success'],
       faultMetricNames: ['Fault', 'Error'],
@@ -75,10 +67,8 @@ test('Partially instrumented service', () => {
       faultAlarmThreshold: 0.1,
       graphedFaultStatistics: ['Sum'],
       graphedSuccessStatistics: ['Sum'],
-      metricDimensions: new MetricDimensions({ Operation: 'ride' }, 'AZ-ID', 'Region'),
     }),
-    serverSideLatencyMetricDetails: new OperationMetricDetails({
-      operationName: 'ride',
+    defaultLatencyMetricDetails: new ServiceMetricDetails({
       metricNamespace: 'front-end/metrics',
       successMetricNames: ['SuccessLatency'],
       faultMetricNames: ['FaultLatency'],
@@ -91,19 +81,32 @@ test('Partially instrumented service', () => {
       faultAlarmThreshold: 1,
       graphedFaultStatistics: ['p99'],
       graphedSuccessStatistics: ['p50', 'p99', 'tm99'],
-      metricDimensions: new MetricDimensions({ Operation: 'ride' }, 'AZ-ID', 'Region'),
     }),
+  });
+
+  let rideOperation: IOperation = new Operation({
+    operationName: 'ride',
+    service: service,
+    path: '/ride',
+    critical: true,
+    httpMethods: ['GET'],
+    serverSideAvailabilityMetricDetails: new OperationMetricDetails({
+      operationName: 'ride',
+      metricDimensions: new MetricDimensions({ Operation: 'ride' }, 'AZ-ID', 'Region'),
+    }, service.defaultAvailabilityMetricDetails),
+    serverSideLatencyMetricDetails: new OperationMetricDetails({
+      operationName: 'ride',
+      metricDimensions: new MetricDimensions({ Operation: 'ride' }, 'AZ-ID', 'Region'),
+    }, service.defaultLatencyMetricDetails),
   });
 
   service.addOperation(rideOperation);
 
-  new MultiAvailabilityZoneObservability(stack, 'MAZObservability', {
-    instrumentedServiceObservabilityProps: {
-      createDashboards: false,
-      service: service,
-      outlierThreshold: 0.7,
-      interval: Duration.minutes(30),
-    },
+  new InstrumentedServiceMultiAZObservability(stack, 'MAZObservability', {
+    createDashboards: false,
+    service: service,
+    outlierThreshold: 0.7,
+    interval: Duration.minutes(30),
   });
 
   Template.fromStack(stack);
@@ -253,16 +256,7 @@ test('Partially instrumented service with canaries', () => {
     faultCountThreshold: 25,
     period: Duration.seconds(60),
     loadBalancer: loadBalancer,
-  });
-
-  let rideOperation: Operation = {
-    operationName: 'ride',
-    service: service,
-    path: '/ride',
-    critical: true,
-    httpMethods: ['GET'],
-    serverSideAvailabilityMetricDetails: new OperationMetricDetails({
-      operationName: 'ride',
+    defaultAvailabilityMetricDetails: new ServiceMetricDetails({
       metricNamespace: 'front-end/metrics',
       successMetricNames: ['Success'],
       faultMetricNames: ['Fault', 'Error'],
@@ -275,10 +269,8 @@ test('Partially instrumented service with canaries', () => {
       faultAlarmThreshold: 0.1,
       graphedFaultStatistics: ['Sum'],
       graphedSuccessStatistics: ['Sum'],
-      metricDimensions: new MetricDimensions({ Operation: 'ride' }, 'AZ-ID', 'Region'),
     }),
-    serverSideLatencyMetricDetails: new OperationMetricDetails({
-      operationName: 'ride',
+    defaultLatencyMetricDetails: new ServiceMetricDetails({
       metricNamespace: 'front-end/metrics',
       successMetricNames: ['SuccessLatency'],
       faultMetricNames: ['FaultLatency'],
@@ -291,53 +283,44 @@ test('Partially instrumented service with canaries', () => {
       faultAlarmThreshold: 1,
       graphedFaultStatistics: ['p99'],
       graphedSuccessStatistics: ['p50', 'p99', 'tm99'],
-      metricDimensions: new MetricDimensions({ Operation: 'ride' }, 'AZ-ID', 'Region'),
     }),
+  });
+
+  let rideOperation: Operation = {
+    operationName: 'ride',
+    service: service,
+    path: '/ride',
+    critical: true,
+    httpMethods: ['GET'],
+    serverSideAvailabilityMetricDetails: new OperationMetricDetails({
+      operationName: 'ride',
+      metricDimensions: new MetricDimensions({ Operation: 'ride' }, 'AZ-ID', 'Region'),
+    }, service.defaultAvailabilityMetricDetails),
+    serverSideLatencyMetricDetails: new OperationMetricDetails({
+      operationName: 'ride',
+      metricDimensions: new MetricDimensions({ Operation: 'ride' }, 'AZ-ID', 'Region'),
+    }, service.defaultLatencyMetricDetails),
     canaryMetricDetails: {
       canaryAvailabilityMetricDetails: new OperationMetricDetails({
         operationName: 'ride',
-        metricNamespace: 'front-end/metrics',
-        successMetricNames: ['Success'],
-        faultMetricNames: ['Fault', 'Error'],
-        alarmStatistic: 'Sum',
-        unit: Unit.COUNT,
-        period: Duration.seconds(60),
-        evaluationPeriods: 5,
-        datapointsToAlarm: 3,
-        successAlarmThreshold: 99.9,
-        faultAlarmThreshold: 0.1,
-        graphedFaultStatistics: ['Sum'],
-        graphedSuccessStatistics: ['Sum'],
+        metricNamespace: 'canary/metrics',
         metricDimensions: new MetricDimensions({ Operation: 'ride' }, 'AZ-ID', 'Region'),
-      }),
+      }, service.defaultAvailabilityMetricDetails),
       canaryLatencyMetricDetails: new OperationMetricDetails({
         operationName: 'ride',
-        metricNamespace: 'front-end/metrics',
-        successMetricNames: ['SuccessLatency'],
-        faultMetricNames: ['FaultLatency'],
-        alarmStatistic: 'p99',
-        unit: Unit.MILLISECONDS,
-        period: Duration.seconds(60),
-        evaluationPeriods: 5,
-        datapointsToAlarm: 3,
-        successAlarmThreshold: 100,
-        faultAlarmThreshold: 1,
-        graphedFaultStatistics: ['p99'],
-        graphedSuccessStatistics: ['p50', 'p99', 'tm99'],
+        metricNamespace: 'canary/metrics',
         metricDimensions: new MetricDimensions({ Operation: 'ride' }, 'AZ-ID', 'Region'),
-      }),
+      }, service.defaultLatencyMetricDetails),
     },
   };
 
   service.addOperation(rideOperation);
 
-  new MultiAvailabilityZoneObservability(stack, 'MAZObservability', {
-    instrumentedServiceObservabilityProps: {
-      createDashboards: true,
-      service: service,
-      outlierThreshold: 0.7,
-      interval: Duration.minutes(30),
-    },
+  new InstrumentedServiceMultiAZObservability(stack, 'MAZObservability', {
+    createDashboards: true,
+    service: service,
+    outlierThreshold: 0.7,
+    interval: Duration.minutes(30),
   });
 
   Template.fromStack(stack);

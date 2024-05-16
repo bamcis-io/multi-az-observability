@@ -14,17 +14,6 @@ const project = new awscdk.AwsCdkConstructLibrary({
   buildWorkflow: false,
   depsUpgrade: false,
   release: false,
-  gitIgnoreOptions: {
-    ignorePatterns: [
-      '.cdk.staging',
-      'cdk.out',
-      '/cdk/bin/',
-      '/cdk/obj/',
-      '.DS_Store',
-      '**/.DS_Store',
-      'yarn.lock',
-    ],
-  },
   keywords: [
     'cdk',
     'cloudwatch',
@@ -40,6 +29,15 @@ const project = new awscdk.AwsCdkConstructLibrary({
     'lib/',
     'coverage/',
     'test-reports/',
+    'yarn.lock',
+    '.cdk.staging',
+    'cdk.out',
+    '/cdk/bin/',
+    '/cdk/obj/',
+    '.DS_Store',
+    '**/.DS_Store',
+    'src/canaries/src/package',
+    'src/canaries/src/canary.zip',
   ],
   packageName: 'multi-az-observability',
   publishToNuget: {
@@ -76,6 +74,26 @@ project.addTask('awslint', {
   exec: 'awslint',
 });
 
+project.tasks.addTask('build-function', {
+  steps: [
+    {
+      exec: 'rm -rf src/canaries/src/package',
+    },
+    {
+      exec: 'mkdir src/canaries/src/package',
+    },
+    {
+      exec: 'docker run --rm --platform "linux/arm64" --user "0:0" --volume "$PWD/src/canaries/src:/asset-input:delegated" --volume "$PWD/src/canaries/src/package:/asset-output:delegated" --workdir "/asset-input" "public.ecr.aws/sam/build-python3.12" bash -c "pip install --no-cache --requirement requirements.txt --target /asset-output && cp --archive --update index.py /asset-output"',
+    },
+    {
+      exec: 'cd src/canaries/src/package && zip -r ../canary.zip .',
+    },
+    {
+      exec: 'cp src/canaries/src/canary.zip lib/canaries/src/canary.zip',
+    },
+  ],
+});
+
 project.tasks.addTask('build2', {
   steps: [
     {
@@ -91,10 +109,7 @@ project.tasks.addTask('build2', {
       spawn: 'compile',
     },
     {
-      exec: 'rm -rf lib/canaries/src',
-    },
-    {
-      exec: 'cp -R src/canaries/src lib/canaries',
+      spawn: 'build-function',
     },
     {
       exec: 'rm -rf lib/azmapper/src',
@@ -118,7 +133,7 @@ project.tasks.addTask('build2', {
 });
 
 project.addFields({
-  version: '0.1.0',
+  version: '0.0.1-alpha.1',
 });
 
 project.synth();

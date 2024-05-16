@@ -1,4 +1,5 @@
 import { ILoadBalancerV2 } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
+import { IAvailabilityZoneMapper } from '../../azmapper/IAvailabilityZoneMapper';
 import { ContributorInsightRuleDetails } from '../../services/ContributorInsightRuleDetails';
 import { Operation } from '../../services/Operation';
 import { OutlierDetectionAlgorithm } from '../../utilities/OutlierDetectionAlgorithm';
@@ -37,4 +38,9 @@ export interface OperationAlarmsAndRulesProps
      * The outlier detection algorithm, currently only STATIC is supported
      */
   readonly outlierDetectionAlgorithm: OutlierDetectionAlgorithm;
+
+  /**
+   * The AZ Mapper
+   */
+  readonly azMapper: IAvailabilityZoneMapper;
 }

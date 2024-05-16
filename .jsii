@@ -3734,7 +3734,7 @@
   },
   "name": "multi-az-observability",
   "readme": {
-    "markdown": "# multi-az-observability\n\n## TODO\n\n- Add algorithms for chi-squared and z-score outlier detection\n- Test using a single AZ mapper resource across stacks with new way\n  of reference AZ names using just the letter"
+    "markdown": "# multi-az-observability\n\n## TODO\n\n- Add algorithms for chi-squared and z-score outlier detection\n\n## problems worth noting\n\n- Named Java package with hyphens, which broke java file syntax and spewed tons of errors\n- Typescript class and interfaces that were being exported were importing other classes/interfaces\nfrom the main file, which caused an error that something couldn't be imported from outside a module\nwhen trying to use the construct from .NET\n- Building CDK constructs that produce reusable CFN templates, for example, for use in workshop studio,\nneed to specific assets bucket and prefix in the default sythensizer as a variable and then pass parameters from parent\nto nested stack with the variable name\n- Packaging content synth'd by CDK for use in a CI/CD pipeline\n- Using typescript property naming for interfaces/classes that need to be converted to a json string (like an insight rule body)\n- Testing new local builds of nuget packages for .net without having to increment the version each test by deleting\nexisting content from the nuget package cache\n- Trouble using AWS::LanguageExtensions to use intrinsic functions with Fn::GetAtt, instead used the last letter of the az\nname as the attribute to reference which worked\n- Starting with projen and understanding how it manages a project and how to build your own test\n- Copying files over for bundled lambda functions in the projen definition\n- Building arm64 Lambda functions locally for packaging and setting default platform via environment variable\n- Finding first parent stack of a construct to be able to add CfnParameters to it or tranforms\n- Understanding how props and constructs are intended to be built and reconciling required other non-construct classes that other languages would need to use to define things like a Service and Operation.\n- Focusing too much on how logic would be translated into other languages, not realizing the typescript implementation still\nruns in the background and the language specific results are just shims to calling the original code"
   },
   "repository": {
     "type": "git",
@@ -3777,7 +3777,7 @@
       "kind": "interface",
       "locationInModule": {
         "filename": "src/canaries/props/AddCanaryTestProps.ts",
-        "line": 6
+        "line": 7
       },
       "name": "AddCanaryTestProps",
       "properties": [
@@ -3790,7 +3790,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/canaries/props/AddCanaryTestProps.ts",
-            "line": 35
+            "line": 36
           },
           "name": "loadBalancer",
           "type": {
@@ -3806,7 +3806,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/canaries/props/AddCanaryTestProps.ts",
-            "line": 11
+            "line": 12
           },
           "name": "requestCount",
           "type": {
@@ -3822,7 +3822,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/canaries/props/AddCanaryTestProps.ts",
-            "line": 16
+            "line": 17
           },
           "name": "schedule",
           "type": {
@@ -3839,7 +3839,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/canaries/props/AddCanaryTestProps.ts",
-            "line": 30
+            "line": 31
           },
           "name": "headers",
           "optional": true,
@@ -3862,7 +3862,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/canaries/props/AddCanaryTestProps.ts",
-            "line": 44
+            "line": 45
           },
           "name": "httpMethods",
           "optional": true,
@@ -3878,6 +3878,24 @@
         {
           "abstract": true,
           "docs": {
+            "default": "- The Lambda function is not run in a VPC",
+            "stability": "stable",
+            "summary": "The VPC network configuration."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/canaries/props/AddCanaryTestProps.ts",
+            "line": 52
+          },
+          "name": "networkConfiguration",
+          "optional": true,
+          "type": {
+            "fqn": "multi-az-observability.NetworkConfigurationProps"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
             "default": "- No data is sent in a POST, PUT, or PATCH request",
             "stability": "stable",
             "summary": "Data to supply in a POST, PUT, or PATCH operation."
@@ -3885,7 +3903,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/canaries/props/AddCanaryTestProps.ts",
-            "line": 23
+            "line": 24
           },
           "name": "postData",
           "optional": true,
@@ -4255,6 +4273,195 @@
       ],
       "symbolId": "src/azmapper/props/AvailabilityZoneMapperProps:AvailabilityZoneMapperProps"
     },
+    "multi-az-observability.BasicServiceMultiAZObservability": {
+      "assembly": "multi-az-observability",
+      "base": "constructs.Construct",
+      "docs": {
+        "stability": "stable",
+        "summary": "Basic observability for a service using metrics from ALBs and NAT Gateways."
+      },
+      "fqn": "multi-az-observability.BasicServiceMultiAZObservability",
+      "initializer": {
+        "docs": {
+          "stability": "stable"
+        },
+        "locationInModule": {
+          "filename": "src/services/BasicServiceMultiAZObservability.ts",
+          "line": 59
+        },
+        "parameters": [
+          {
+            "name": "scope",
+            "type": {
+              "fqn": "constructs.Construct"
+            }
+          },
+          {
+            "name": "id",
+            "type": {
+              "primitive": "string"
+            }
+          },
+          {
+            "name": "props",
+            "type": {
+              "fqn": "multi-az-observability.BasicServiceMultiAZObservabilityProps"
+            }
+          }
+        ]
+      },
+      "interfaces": [
+        "multi-az-observability.IBasicServiceMultiAZObservability"
+      ],
+      "kind": "class",
+      "locationInModule": {
+        "filename": "src/services/BasicServiceMultiAZObservability.ts",
+        "line": 17
+      },
+      "name": "BasicServiceMultiAZObservability",
+      "properties": [
+        {
+          "docs": {
+            "stability": "stable",
+            "summary": "The alarms indicating if an AZ has isolated impact from either ALB or NAT GW metrics."
+          },
+          "locationInModule": {
+            "filename": "src/services/BasicServiceMultiAZObservability.ts",
+            "line": 52
+          },
+          "name": "aggregateZonalIsolatedImpactAlarms",
+          "overrides": "multi-az-observability.IBasicServiceMultiAZObservability",
+          "type": {
+            "collection": {
+              "elementtype": {
+                "fqn": "aws-cdk-lib.aws_cloudwatch.IAlarm"
+              },
+              "kind": "map"
+            }
+          }
+        },
+        {
+          "docs": {
+            "stability": "stable",
+            "summary": "The name of the service."
+          },
+          "locationInModule": {
+            "filename": "src/services/BasicServiceMultiAZObservability.ts",
+            "line": 34
+          },
+          "name": "serviceName",
+          "overrides": "multi-az-observability.IBasicServiceMultiAZObservability",
+          "type": {
+            "primitive": "string"
+          }
+        },
+        {
+          "docs": {
+            "stability": "stable",
+            "summary": "The alarms indicating if an AZ is an outlier for ALB faults and has isolated impact."
+          },
+          "locationInModule": {
+            "filename": "src/services/BasicServiceMultiAZObservability.ts",
+            "line": 46
+          },
+          "name": "albZonalIsolatedImpactAlarms",
+          "optional": true,
+          "overrides": "multi-az-observability.IBasicServiceMultiAZObservability",
+          "type": {
+            "collection": {
+              "elementtype": {
+                "fqn": "aws-cdk-lib.aws_cloudwatch.IAlarm"
+              },
+              "kind": "map"
+            }
+          }
+        },
+        {
+          "docs": {
+            "stability": "stable",
+            "summary": "The application load balancers being used by the service."
+          },
+          "locationInModule": {
+            "filename": "src/services/BasicServiceMultiAZObservability.ts",
+            "line": 29
+          },
+          "name": "applicationLoadBalancers",
+          "optional": true,
+          "overrides": "multi-az-observability.IBasicServiceMultiAZObservability",
+          "type": {
+            "collection": {
+              "elementtype": {
+                "fqn": "aws-cdk-lib.aws_elasticloadbalancingv2.IApplicationLoadBalancer"
+              },
+              "kind": "array"
+            }
+          }
+        },
+        {
+          "docs": {
+            "stability": "stable",
+            "summary": "The dashboard that is optionally created."
+          },
+          "locationInModule": {
+            "filename": "src/services/BasicServiceMultiAZObservability.ts",
+            "line": 57
+          },
+          "name": "dashboard",
+          "optional": true,
+          "type": {
+            "fqn": "aws-cdk-lib.aws_cloudwatch.Dashboard"
+          }
+        },
+        {
+          "docs": {
+            "stability": "stable",
+            "summary": "The NAT Gateways being used in the service, each set of NAT Gateways are keyed by their Availability Zone Id."
+          },
+          "locationInModule": {
+            "filename": "src/services/BasicServiceMultiAZObservability.ts",
+            "line": 24
+          },
+          "name": "natGateways",
+          "optional": true,
+          "overrides": "multi-az-observability.IBasicServiceMultiAZObservability",
+          "type": {
+            "collection": {
+              "elementtype": {
+                "collection": {
+                  "elementtype": {
+                    "fqn": "aws-cdk-lib.aws_ec2.CfnNatGateway"
+                  },
+                  "kind": "array"
+                }
+              },
+              "kind": "map"
+            }
+          }
+        },
+        {
+          "docs": {
+            "stability": "stable",
+            "summary": "The alarms indicating if an AZ is an outlier for NAT GW packet loss and has isolated impact."
+          },
+          "locationInModule": {
+            "filename": "src/services/BasicServiceMultiAZObservability.ts",
+            "line": 40
+          },
+          "name": "natGWZonalIsolatedImpactAlarms",
+          "optional": true,
+          "overrides": "multi-az-observability.IBasicServiceMultiAZObservability",
+          "type": {
+            "collection": {
+              "elementtype": {
+                "fqn": "aws-cdk-lib.aws_cloudwatch.IAlarm"
+              },
+              "kind": "map"
+            }
+          }
+        }
+      ],
+      "symbolId": "src/services/BasicServiceMultiAZObservability:BasicServiceMultiAZObservability"
+    },
     "multi-az-observability.BasicServiceMultiAZObservabilityProps": {
       "assembly": "multi-az-observability",
       "datatype": true,
@@ -4470,7 +4677,7 @@
       "kind": "interface",
       "locationInModule": {
         "filename": "src/services/props/CanaryMetricProps.ts",
-        "line": 7
+        "line": 6
       },
       "name": "CanaryMetricProps",
       "properties": [
@@ -4483,7 +4690,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/CanaryMetricProps.ts",
-            "line": 12
+            "line": 11
           },
           "name": "canaryAvailabilityMetricDetails",
           "type": {
@@ -4499,29 +4706,11 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/CanaryMetricProps.ts",
-            "line": 17
+            "line": 16
           },
           "name": "canaryLatencyMetricDetails",
           "type": {
             "fqn": "multi-az-observability.IOperationMetricDetails"
-          }
-        },
-        {
-          "abstract": true,
-          "docs": {
-            "default": "- No contributor insight rules will be created",
-            "stability": "stable",
-            "summary": "The canary details for contributor insights rules."
-          },
-          "immutable": true,
-          "locationInModule": {
-            "filename": "src/services/props/CanaryMetricProps.ts",
-            "line": 24
-          },
-          "name": "canaryContributorInsightRuleDetails",
-          "optional": true,
-          "type": {
-            "fqn": "multi-az-observability.IContributorInsightRuleDetails"
           }
         }
       ],
@@ -4540,7 +4729,7 @@
         },
         "locationInModule": {
           "filename": "src/services/CanaryMetrics.ts",
-          "line": 28
+          "line": 19
         },
         "parameters": [
           {
@@ -4557,7 +4746,7 @@
       "kind": "class",
       "locationInModule": {
         "filename": "src/services/CanaryMetrics.ts",
-        "line": 9
+        "line": 8
       },
       "name": "CanaryMetrics",
       "properties": [
@@ -4569,7 +4758,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/CanaryMetrics.ts",
-            "line": 13
+            "line": 12
           },
           "name": "canaryAvailabilityMetricDetails",
           "overrides": "multi-az-observability.ICanaryMetrics",
@@ -4585,30 +4774,12 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/CanaryMetrics.ts",
-            "line": 18
+            "line": 17
           },
           "name": "canaryLatencyMetricDetails",
           "overrides": "multi-az-observability.ICanaryMetrics",
           "type": {
             "fqn": "multi-az-observability.IOperationMetricDetails"
-          }
-        },
-        {
-          "docs": {
-            "default": "- No contributor insights rules will be created for the\ncanary metrics",
-            "stability": "stable",
-            "summary": "The canary details for contributor insights rules."
-          },
-          "immutable": true,
-          "locationInModule": {
-            "filename": "src/services/CanaryMetrics.ts",
-            "line": 26
-          },
-          "name": "canaryContributorInsightRuleDetails",
-          "optional": true,
-          "overrides": "multi-az-observability.ICanaryMetrics",
-          "type": {
-            "fqn": "multi-az-observability.IContributorInsightRuleDetails"
           }
         }
       ],
@@ -5162,6 +5333,150 @@
       ],
       "symbolId": "src/azmapper/IAvailabilityZoneMapper:IAvailabilityZoneMapper"
     },
+    "multi-az-observability.IBasicServiceMultiAZObservability": {
+      "assembly": "multi-az-observability",
+      "docs": {
+        "stability": "stable",
+        "summary": "Properties of a basic service."
+      },
+      "fqn": "multi-az-observability.IBasicServiceMultiAZObservability",
+      "interfaces": [
+        "constructs.IConstruct"
+      ],
+      "kind": "interface",
+      "locationInModule": {
+        "filename": "src/services/IBasicServiceMultiAZObservability.ts",
+        "line": 9
+      },
+      "name": "IBasicServiceMultiAZObservability",
+      "properties": [
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The alarms indicating if an AZ has isolated impact from either ALB or NAT GW metrics."
+          },
+          "locationInModule": {
+            "filename": "src/services/IBasicServiceMultiAZObservability.ts",
+            "line": 43
+          },
+          "name": "aggregateZonalIsolatedImpactAlarms",
+          "type": {
+            "collection": {
+              "elementtype": {
+                "fqn": "aws-cdk-lib.aws_cloudwatch.IAlarm"
+              },
+              "kind": "map"
+            }
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The name of the service."
+          },
+          "locationInModule": {
+            "filename": "src/services/IBasicServiceMultiAZObservability.ts",
+            "line": 25
+          },
+          "name": "serviceName",
+          "type": {
+            "primitive": "string"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The alarms indicating if an AZ is an outlier for ALB faults and has isolated impact."
+          },
+          "locationInModule": {
+            "filename": "src/services/IBasicServiceMultiAZObservability.ts",
+            "line": 37
+          },
+          "name": "albZonalIsolatedImpactAlarms",
+          "optional": true,
+          "type": {
+            "collection": {
+              "elementtype": {
+                "fqn": "aws-cdk-lib.aws_cloudwatch.IAlarm"
+              },
+              "kind": "map"
+            }
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The application load balancers being used by the service."
+          },
+          "locationInModule": {
+            "filename": "src/services/IBasicServiceMultiAZObservability.ts",
+            "line": 20
+          },
+          "name": "applicationLoadBalancers",
+          "optional": true,
+          "type": {
+            "collection": {
+              "elementtype": {
+                "fqn": "aws-cdk-lib.aws_elasticloadbalancingv2.IApplicationLoadBalancer"
+              },
+              "kind": "array"
+            }
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The NAT Gateways being used in the service, each set of NAT Gateways are keyed by their Availability Zone Id."
+          },
+          "locationInModule": {
+            "filename": "src/services/IBasicServiceMultiAZObservability.ts",
+            "line": 15
+          },
+          "name": "natGateways",
+          "optional": true,
+          "type": {
+            "collection": {
+              "elementtype": {
+                "collection": {
+                  "elementtype": {
+                    "fqn": "aws-cdk-lib.aws_ec2.CfnNatGateway"
+                  },
+                  "kind": "array"
+                }
+              },
+              "kind": "map"
+            }
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The alarms indicating if an AZ is an outlier for NAT GW packet loss and has isolated impact."
+          },
+          "locationInModule": {
+            "filename": "src/services/IBasicServiceMultiAZObservability.ts",
+            "line": 31
+          },
+          "name": "natGWZonalIsolatedImpactAlarms",
+          "optional": true,
+          "type": {
+            "collection": {
+              "elementtype": {
+                "fqn": "aws-cdk-lib.aws_cloudwatch.IAlarm"
+              },
+              "kind": "map"
+            }
+          }
+        }
+      ],
+      "symbolId": "src/services/IBasicServiceMultiAZObservability:IBasicServiceMultiAZObservability"
+    },
     "multi-az-observability.ICanaryMetrics": {
       "assembly": "multi-az-observability",
       "docs": {
@@ -5206,23 +5521,6 @@
           "name": "canaryLatencyMetricDetails",
           "type": {
             "fqn": "multi-az-observability.IOperationMetricDetails"
-          }
-        },
-        {
-          "abstract": true,
-          "docs": {
-            "stability": "stable",
-            "summary": "The canary details for contributor insights rules."
-          },
-          "immutable": true,
-          "locationInModule": {
-            "filename": "src/services/ICanaryMetrics.ts",
-            "line": 22
-          },
-          "name": "canaryContributorInsightRuleDetails",
-          "optional": true,
-          "type": {
-            "fqn": "multi-az-observability.IContributorInsightRuleDetails"
           }
         }
       ],
@@ -5348,23 +5646,125 @@
       ],
       "symbolId": "src/services/IContributorInsightRuleDetails:IContributorInsightRuleDetails"
     },
-    "multi-az-observability.IMultiAvailabilityZoneObservability": {
+    "multi-az-observability.IInstrumentedServiceMultiAZObservability": {
       "assembly": "multi-az-observability",
       "docs": {
         "stability": "stable",
-        "summary": "Represents the components of the multi-AZ observability construct."
+        "summary": "Observability for an instrumented service."
       },
-      "fqn": "multi-az-observability.IMultiAvailabilityZoneObservability",
+      "fqn": "multi-az-observability.IInstrumentedServiceMultiAZObservability",
       "interfaces": [
         "constructs.IConstruct"
       ],
       "kind": "interface",
       "locationInModule": {
-        "filename": "src/IMultiAvailabiliyZoneObservability.ts",
-        "line": 6
+        "filename": "src/services/IInstrumentedServiceMultiAZObservability.ts",
+        "line": 9
       },
-      "name": "IMultiAvailabilityZoneObservability",
-      "symbolId": "src/IMultiAvailabiliyZoneObservability:IMultiAvailabilityZoneObservability"
+      "name": "IInstrumentedServiceMultiAZObservability",
+      "properties": [
+        {
+          "abstract": true,
+          "docs": {
+            "remarks": "These are the alarms\nyou would want to use to trigger automation to evacuate an AZ.",
+            "stability": "stable",
+            "summary": "Index into the dictionary by operation name, then by Availability Zone Id to get the alarms that indicate an AZ shows isolated impact from availability or latency as seen by either the server-side or canary."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/IInstrumentedServiceMultiAZObservability.ts",
+            "line": 22
+          },
+          "name": "perOperationZonalImpactAlarms",
+          "type": {
+            "collection": {
+              "elementtype": {
+                "collection": {
+                  "elementtype": {
+                    "fqn": "aws-cdk-lib.aws_cloudwatch.IAlarm"
+                  },
+                  "kind": "map"
+                }
+              },
+              "kind": "map"
+            }
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The alarms and rules for the overall service."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/IInstrumentedServiceMultiAZObservability.ts",
+            "line": 14
+          },
+          "name": "serviceAlarms",
+          "type": {
+            "fqn": "multi-az-observability.IServiceAlarmsAndRules"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "default": "- No log group is created if the canary is not requested.",
+            "stability": "stable",
+            "summary": "If the service is configured to have canary tests created, this will be the log group where the canary's logs are stored."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/IInstrumentedServiceMultiAZObservability.ts",
+            "line": 40
+          },
+          "name": "canaryLogGroup",
+          "optional": true,
+          "type": {
+            "fqn": "aws-cdk-lib.aws_logs.ILogGroup"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The dashboards for each operation."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/IInstrumentedServiceMultiAZObservability.ts",
+            "line": 27
+          },
+          "name": "operationDashboards",
+          "optional": true,
+          "type": {
+            "collection": {
+              "elementtype": {
+                "fqn": "aws-cdk-lib.aws_cloudwatch.Dashboard"
+              },
+              "kind": "array"
+            }
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The service level dashboard."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/IInstrumentedServiceMultiAZObservability.ts",
+            "line": 32
+          },
+          "name": "serviceDashboard",
+          "optional": true,
+          "type": {
+            "fqn": "aws-cdk-lib.aws_cloudwatch.Dashboard"
+          }
+        }
+      ],
+      "symbolId": "src/services/IInstrumentedServiceMultiAZObservability:IInstrumentedServiceMultiAZObservability"
     },
     "multi-az-observability.IOperation": {
       "assembly": "multi-az-observability",
@@ -5529,6 +5929,24 @@
           "optional": true,
           "type": {
             "fqn": "multi-az-observability.AddCanaryTestProps"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "default": "- The operation is not opted out",
+            "stability": "stable",
+            "summary": "Set to true if you have defined CanaryTestProps for your service, which applies to all operations, but you want to opt out of creating the canary test for this operation."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/IOperation.ts",
+            "line": 73
+          },
+          "name": "optOutOfServiceCreatedCanary",
+          "optional": true,
+          "type": {
+            "primitive": "boolean"
           }
         },
         {
@@ -5828,7 +6246,7 @@
       "kind": "interface",
       "locationInModule": {
         "filename": "src/services/IService.ts",
-        "line": 8
+        "line": 11
       },
       "methods": [
         {
@@ -5839,7 +6257,7 @@
           },
           "locationInModule": {
             "filename": "src/services/IService.ts",
-            "line": 53
+            "line": 88
           },
           "name": "addOperation",
           "parameters": [
@@ -5863,7 +6281,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IService.ts",
-            "line": 29
+            "line": 32
           },
           "name": "availabilityZoneNames",
           "type": {
@@ -5884,11 +6302,43 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IService.ts",
-            "line": 18
+            "line": 21
           },
           "name": "baseUrl",
           "type": {
             "primitive": "string"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The default settings that are used for availability metrics for all operations unless specifically overridden in an operation definition."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/IService.ts",
+            "line": 68
+          },
+          "name": "defaultAvailabilityMetricDetails",
+          "type": {
+            "fqn": "multi-az-observability.IServiceMetricDetails"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The default settings that are used for availability metrics for all operations unless specifically overridden in an operation definition."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/IService.ts",
+            "line": 75
+          },
+          "name": "defaultLatencyMetricDetails",
+          "type": {
+            "fqn": "multi-az-observability.IServiceMetricDetails"
           }
         },
         {
@@ -5901,7 +6351,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IService.ts",
-            "line": 24
+            "line": 27
           },
           "name": "faultCountThreshold",
           "type": {
@@ -5917,7 +6367,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IService.ts",
-            "line": 39
+            "line": 42
           },
           "name": "operations",
           "type": {
@@ -5938,7 +6388,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IService.ts",
-            "line": 34
+            "line": 37
           },
           "name": "period",
           "type": {
@@ -5954,11 +6404,48 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IService.ts",
-            "line": 13
+            "line": 16
           },
           "name": "serviceName",
           "type": {
             "primitive": "string"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "default": "- Automatic canary tests will not be created for\noperations in this service.",
+            "remarks": "Operations can individually opt out\nof canary test creation if you define this setting.",
+            "stability": "stable",
+            "summary": "Define these settings if you want to automatically add canary tests to your operations."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/IService.ts",
+            "line": 61
+          },
+          "name": "canaryTestProps",
+          "optional": true,
+          "type": {
+            "fqn": "multi-az-observability.AddCanaryTestProps"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "default": "- No defaults are provided and must be specified per operation",
+            "stability": "stable",
+            "summary": "The default settings that are used for contributor insight rules."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/IService.ts",
+            "line": 83
+          },
+          "name": "defaultContributorInsightRuleDetails",
+          "optional": true,
+          "type": {
+            "fqn": "multi-az-observability.IContributorInsightRuleDetails"
           }
         },
         {
@@ -5971,7 +6458,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IService.ts",
-            "line": 48
+            "line": 51
           },
           "name": "loadBalancer",
           "optional": true,
@@ -5981,6 +6468,490 @@
         }
       ],
       "symbolId": "src/services/IService:IService"
+    },
+    "multi-az-observability.IServiceAlarmsAndRules": {
+      "assembly": "multi-az-observability",
+      "docs": {
+        "stability": "stable",
+        "summary": "Service level alarms and rules using critical operations."
+      },
+      "fqn": "multi-az-observability.IServiceAlarmsAndRules",
+      "kind": "interface",
+      "locationInModule": {
+        "filename": "src/alarmsandrules/IServiceAlarmsAndRules.ts",
+        "line": 7
+      },
+      "name": "IServiceAlarmsAndRules",
+      "properties": [
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "An alarm for regional impact of any critical operation as measured by the server-side."
+          },
+          "locationInModule": {
+            "filename": "src/alarmsandrules/IServiceAlarmsAndRules.ts",
+            "line": 29
+          },
+          "name": "regionalAvailabilityServerSideAlarm",
+          "type": {
+            "fqn": "aws-cdk-lib.aws_cloudwatch.IAlarm"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "An alarm for fault count exceeding a regional threshold for all critical operations."
+          },
+          "locationInModule": {
+            "filename": "src/alarmsandrules/IServiceAlarmsAndRules.ts",
+            "line": 34
+          },
+          "name": "regionalFaultCountServerSideAlarm",
+          "type": {
+            "fqn": "aws-cdk-lib.aws_cloudwatch.IAlarm"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The service these alarms and rules are for."
+          },
+          "locationInModule": {
+            "filename": "src/alarmsandrules/IServiceAlarmsAndRules.ts",
+            "line": 12
+          },
+          "name": "service",
+          "type": {
+            "fqn": "multi-az-observability.IService"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "remarks": "There is 1 alarm per AZ that\ntriggers for availability or latency impact to any critical operation in that AZ\nthat indicates it has isolated impact as measured by canaries or server-side.",
+            "stability": "stable",
+            "summary": "The zonal aggregate isolated impact alarms."
+          },
+          "locationInModule": {
+            "filename": "src/alarmsandrules/IServiceAlarmsAndRules.ts",
+            "line": 19
+          },
+          "name": "zonalAggregateIsolatedImpactAlarms",
+          "type": {
+            "collection": {
+              "elementtype": {
+                "fqn": "aws-cdk-lib.aws_cloudwatch.IAlarm"
+              },
+              "kind": "array"
+            }
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "An alarm for regional impact of any critical operation as measured by the canary."
+          },
+          "locationInModule": {
+            "filename": "src/alarmsandrules/IServiceAlarmsAndRules.ts",
+            "line": 24
+          },
+          "name": "regionalAvailabilityCanaryAlarm",
+          "optional": true,
+          "type": {
+            "fqn": "aws-cdk-lib.aws_cloudwatch.IAlarm"
+          }
+        }
+      ],
+      "symbolId": "src/alarmsandrules/IServiceAlarmsAndRules:IServiceAlarmsAndRules"
+    },
+    "multi-az-observability.IServiceMetricDetails": {
+      "assembly": "multi-az-observability",
+      "docs": {
+        "stability": "stable",
+        "summary": "Details for the defaults used in a service for metrics in one perspective, such as server side latency."
+      },
+      "fqn": "multi-az-observability.IServiceMetricDetails",
+      "kind": "interface",
+      "locationInModule": {
+        "filename": "src/services/IServiceMetricDetails.ts",
+        "line": 7
+      },
+      "name": "IServiceMetricDetails",
+      "properties": [
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The statistic used for alarms, for availability metrics this should be \"Sum\", for latency metrics it could something like \"p99\" or \"p99.9\"."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/IServiceMetricDetails.ts",
+            "line": 28
+          },
+          "name": "alarmStatistic",
+          "type": {
+            "primitive": "string"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The number of datapoints to alarm on for latency and availability alarms."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/IServiceMetricDetails.ts",
+            "line": 66
+          },
+          "name": "datapointsToAlarm",
+          "type": {
+            "primitive": "number"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The number of evaluation periods for latency and availabiltiy alarms."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/IServiceMetricDetails.ts",
+            "line": 61
+          },
+          "name": "evaluationPeriods",
+          "type": {
+            "primitive": "number"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The threshold for alarms associated with fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/IServiceMetricDetails.ts",
+            "line": 80
+          },
+          "name": "faultAlarmThreshold",
+          "type": {
+            "primitive": "number"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The names of fault indicating metrics."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/IServiceMetricDetails.ts",
+            "line": 22
+          },
+          "name": "faultMetricNames",
+          "type": {
+            "collection": {
+              "elementtype": {
+                "primitive": "string"
+              },
+              "kind": "array"
+            }
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The CloudWatch metric namespace for these metrics."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/IServiceMetricDetails.ts",
+            "line": 12
+          },
+          "name": "metricNamespace",
+          "type": {
+            "primitive": "string"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The period for the metrics."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/IServiceMetricDetails.ts",
+            "line": 56
+          },
+          "name": "period",
+          "type": {
+            "fqn": "aws-cdk-lib.Duration"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The threshold for alarms associated with success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/IServiceMetricDetails.ts",
+            "line": 73
+          },
+          "name": "successAlarmThreshold",
+          "type": {
+            "primitive": "number"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The names of success indicating metrics."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/IServiceMetricDetails.ts",
+            "line": 17
+          },
+          "name": "successMetricNames",
+          "type": {
+            "collection": {
+              "elementtype": {
+                "primitive": "string"
+              },
+              "kind": "array"
+            }
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The unit used for these metrics."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/IServiceMetricDetails.ts",
+            "line": 51
+          },
+          "name": "unit",
+          "type": {
+            "fqn": "aws-cdk-lib.aws_cloudwatch.Unit"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "default": "- For availability metrics, this will be \"Sum\", for latency metrics it will be just \"p99\"",
+            "remarks": "For availability\nmetrics this will typically just be \"Sum\".",
+            "stability": "stable",
+            "summary": "The statistics for faults you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/IServiceMetricDetails.ts",
+            "line": 46
+          },
+          "name": "graphedFaultStatistics",
+          "optional": true,
+          "type": {
+            "collection": {
+              "elementtype": {
+                "primitive": "string"
+              },
+              "kind": "array"
+            }
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "default": "- For availability metrics, this will be \"Sum\", for latency metrics it will be just \"p99\"",
+            "remarks": "For availability\nmetrics this will typically just be \"Sum\".",
+            "stability": "stable",
+            "summary": "The statistics for successes you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/IServiceMetricDetails.ts",
+            "line": 37
+          },
+          "name": "graphedSuccessStatistics",
+          "optional": true,
+          "type": {
+            "collection": {
+              "elementtype": {
+                "primitive": "string"
+              },
+              "kind": "array"
+            }
+          }
+        }
+      ],
+      "symbolId": "src/services/IServiceMetricDetails:IServiceMetricDetails"
+    },
+    "multi-az-observability.InstrumentedServiceMultiAZObservability": {
+      "assembly": "multi-az-observability",
+      "base": "constructs.Construct",
+      "docs": {
+        "stability": "stable",
+        "summary": "An service that implements its own instrumentation to record availability and latency metrics that can be used to create alarms, rules, and dashboards from."
+      },
+      "fqn": "multi-az-observability.InstrumentedServiceMultiAZObservability",
+      "initializer": {
+        "docs": {
+          "stability": "stable"
+        },
+        "locationInModule": {
+          "filename": "src/services/InstrumentedServiceMultiAZObservability.ts",
+          "line": 76
+        },
+        "parameters": [
+          {
+            "name": "scope",
+            "type": {
+              "fqn": "constructs.Construct"
+            }
+          },
+          {
+            "name": "id",
+            "type": {
+              "primitive": "string"
+            }
+          },
+          {
+            "name": "props",
+            "type": {
+              "fqn": "multi-az-observability.InstrumentedServiceMultiAZObservabilityProps"
+            }
+          }
+        ]
+      },
+      "interfaces": [
+        "multi-az-observability.IInstrumentedServiceMultiAZObservability"
+      ],
+      "kind": "class",
+      "locationInModule": {
+        "filename": "src/services/InstrumentedServiceMultiAZObservability.ts",
+        "line": 32
+      },
+      "name": "InstrumentedServiceMultiAZObservability",
+      "properties": [
+        {
+          "docs": {
+            "remarks": "These are the alarms\nyou would want to use to trigger automation to evacuate an AZ.",
+            "stability": "stable",
+            "summary": "Index into the dictionary by operation name, then by Availability Zone Id to get the alarms that indicate an AZ shows isolated impact from availability or latency as seen by either the server-side or canary."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/InstrumentedServiceMultiAZObservability.ts",
+            "line": 46
+          },
+          "name": "perOperationZonalImpactAlarms",
+          "overrides": "multi-az-observability.IInstrumentedServiceMultiAZObservability",
+          "type": {
+            "collection": {
+              "elementtype": {
+                "collection": {
+                  "elementtype": {
+                    "fqn": "aws-cdk-lib.aws_cloudwatch.IAlarm"
+                  },
+                  "kind": "map"
+                }
+              },
+              "kind": "map"
+            }
+          }
+        },
+        {
+          "docs": {
+            "stability": "stable",
+            "summary": "The alarms and rules for the overall service."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/InstrumentedServiceMultiAZObservability.ts",
+            "line": 51
+          },
+          "name": "serviceAlarms",
+          "overrides": "multi-az-observability.IInstrumentedServiceMultiAZObservability",
+          "type": {
+            "fqn": "multi-az-observability.IServiceAlarmsAndRules"
+          }
+        },
+        {
+          "docs": {
+            "default": "- No log group is created if the canary is not requested.",
+            "stability": "stable",
+            "summary": "If the service is configured to have canary tests created, this will be the log group where the canary's logs are stored."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/InstrumentedServiceMultiAZObservability.ts",
+            "line": 74
+          },
+          "name": "canaryLogGroup",
+          "optional": true,
+          "overrides": "multi-az-observability.IInstrumentedServiceMultiAZObservability",
+          "type": {
+            "fqn": "aws-cdk-lib.aws_logs.ILogGroup"
+          }
+        },
+        {
+          "docs": {
+            "stability": "stable",
+            "summary": "The dashboards for each operation."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/InstrumentedServiceMultiAZObservability.ts",
+            "line": 56
+          },
+          "name": "operationDashboards",
+          "optional": true,
+          "overrides": "multi-az-observability.IInstrumentedServiceMultiAZObservability",
+          "type": {
+            "collection": {
+              "elementtype": {
+                "fqn": "aws-cdk-lib.aws_cloudwatch.Dashboard"
+              },
+              "kind": "array"
+            }
+          }
+        },
+        {
+          "docs": {
+            "stability": "stable",
+            "summary": "The service level dashboard."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/InstrumentedServiceMultiAZObservability.ts",
+            "line": 61
+          },
+          "name": "serviceDashboard",
+          "optional": true,
+          "overrides": "multi-az-observability.IInstrumentedServiceMultiAZObservability",
+          "type": {
+            "fqn": "aws-cdk-lib.aws_cloudwatch.Dashboard"
+          }
+        }
+      ],
+      "symbolId": "src/services/InstrumentedServiceMultiAZObservability:InstrumentedServiceMultiAZObservability"
     },
     "multi-az-observability.InstrumentedServiceMultiAZObservabilityProps": {
       "assembly": "multi-az-observability",
@@ -6273,111 +7244,56 @@
       ],
       "symbolId": "src/services/props/MetricDimensions:MetricDimensions"
     },
-    "multi-az-observability.MultiAvailabilityZoneObservability": {
-      "assembly": "multi-az-observability",
-      "base": "constructs.Construct",
-      "docs": {
-        "remarks": "It will create alarms that indicate if a single AZ is\nimpacted so you can take appropriate action to mitigate the event, for example,\nusing zonal shift. It will also optionally create dashboards for your service so\nyou can visualize the metrics used to feed the alarms as well as the alarm states.",
-        "stability": "stable",
-        "summary": "The construct will create multi-AZ observability for your service based on the parameters you provide."
-      },
-      "fqn": "multi-az-observability.MultiAvailabilityZoneObservability",
-      "initializer": {
-        "docs": {
-          "stability": "stable"
-        },
-        "locationInModule": {
-          "filename": "src/MultiAvailabilityZoneObservability.ts",
-          "line": 15
-        },
-        "parameters": [
-          {
-            "name": "scope",
-            "type": {
-              "fqn": "constructs.Construct"
-            }
-          },
-          {
-            "name": "id",
-            "type": {
-              "primitive": "string"
-            }
-          },
-          {
-            "name": "props",
-            "optional": true,
-            "type": {
-              "fqn": "multi-az-observability.MultiAvailabilityZoneObservabilityProps"
-            }
-          }
-        ]
-      },
-      "interfaces": [
-        "multi-az-observability.IMultiAvailabilityZoneObservability"
-      ],
-      "kind": "class",
-      "locationInModule": {
-        "filename": "src/MultiAvailabilityZoneObservability.ts",
-        "line": 14
-      },
-      "name": "MultiAvailabilityZoneObservability",
-      "symbolId": "src/MultiAvailabilityZoneObservability:MultiAvailabilityZoneObservability"
-    },
-    "multi-az-observability.MultiAvailabilityZoneObservabilityProps": {
+    "multi-az-observability.NetworkConfigurationProps": {
       "assembly": "multi-az-observability",
       "datatype": true,
       "docs": {
         "stability": "stable",
-        "summary": "The properties for creating multi-AZ observability alarms and dashboards."
+        "summary": "The network configuration for the canary function."
       },
-      "fqn": "multi-az-observability.MultiAvailabilityZoneObservabilityProps",
+      "fqn": "multi-az-observability.NetworkConfigurationProps",
       "kind": "interface",
       "locationInModule": {
-        "filename": "src/MultiAvailabilityZoneObservabilityProps.ts",
-        "line": 7
+        "filename": "src/canaries/props/NetworkConfigurationProps.ts",
+        "line": 6
       },
-      "name": "MultiAvailabilityZoneObservabilityProps",
+      "name": "NetworkConfigurationProps",
       "properties": [
         {
           "abstract": true,
           "docs": {
-            "default": "- No basic service observability alarms are created",
-            "remarks": "This will create\nalarms based on Application Load Balancer metrics and optionally\nNAT Gateway metrics to determine single AZ impact. Specify either\nthis or instrumentedServiceObservabilityProps, but not both.",
             "stability": "stable",
-            "summary": "The properties for a basic service that does not emit its own metrics or logs for latency and availability."
+            "summary": "The subnets the Lambda function will be deployed in the VPC."
           },
           "immutable": true,
           "locationInModule": {
-            "filename": "src/MultiAvailabilityZoneObservabilityProps.ts",
+            "filename": "src/canaries/props/NetworkConfigurationProps.ts",
             "line": 18
           },
-          "name": "basicServiceObservabilityProps",
-          "optional": true,
+          "name": "subnetSelection",
           "type": {
-            "fqn": "multi-az-observability.BasicServiceMultiAZObservabilityProps"
+            "fqn": "aws-cdk-lib.aws_ec2.SubnetSelection"
           }
         },
         {
           "abstract": true,
           "docs": {
-            "default": "- No instrumented service observability alarms are created",
-            "remarks": "This will create alarms based\non those metrics to determine single AZ impact. Specify either this or\nbasicServiceObservabilityProps, but not both.",
+            "remarks": "A security group will be created\nthat allows the function to communicate with the VPC as well\nas the required IAM permissions.",
             "stability": "stable",
-            "summary": "The properties for a service that has implemented its own instrumentation to emit availability and latency metrics."
+            "summary": "The VPC to run the canary in."
           },
           "immutable": true,
           "locationInModule": {
-            "filename": "src/MultiAvailabilityZoneObservabilityProps.ts",
-            "line": 28
+            "filename": "src/canaries/props/NetworkConfigurationProps.ts",
+            "line": 13
           },
-          "name": "instrumentedServiceObservabilityProps",
-          "optional": true,
+          "name": "vpc",
           "type": {
-            "fqn": "multi-az-observability.InstrumentedServiceMultiAZObservabilityProps"
+            "fqn": "aws-cdk-lib.aws_ec2.IVpc"
           }
         }
       ],
-      "symbolId": "src/MultiAvailabilityZoneObservabilityProps:MultiAvailabilityZoneObservabilityProps"
+      "symbolId": "src/canaries/props/NetworkConfigurationProps:NetworkConfigurationProps"
     },
     "multi-az-observability.Operation": {
       "assembly": "multi-az-observability",
@@ -6392,7 +7308,7 @@
         },
         "locationInModule": {
           "filename": "src/services/Operation.ts",
-          "line": 68
+          "line": 77
         },
         "parameters": [
           {
@@ -6566,6 +7482,24 @@
         },
         {
           "docs": {
+            "default": "- The operation is not opted out",
+            "stability": "stable",
+            "summary": "Set to true if you have defined CanaryTestProps for your service, which applies to all operations, but you want to opt out of creating the canary test for this operation."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/Operation.ts",
+            "line": 75
+          },
+          "name": "optOutOfServiceCreatedCanary",
+          "optional": true,
+          "overrides": "multi-az-observability.IOperation",
+          "type": {
+            "primitive": "boolean"
+          }
+        },
+        {
+          "docs": {
             "stability": "stable",
             "summary": "The server side details for contributor insights rules."
           },
@@ -6597,13 +7531,19 @@
         },
         "locationInModule": {
           "filename": "src/services/OperationMetricDetails.ts",
-          "line": 95
+          "line": 96
         },
         "parameters": [
           {
             "name": "props",
             "type": {
               "fqn": "multi-az-observability.OperationMetricDetailsProps"
+            }
+          },
+          {
+            "name": "defaultProps",
+            "type": {
+              "fqn": "multi-az-observability.IServiceMetricDetails"
             }
           }
         ]
@@ -6614,7 +7554,7 @@
       "kind": "class",
       "locationInModule": {
         "filename": "src/services/OperationMetricDetails.ts",
-        "line": 10
+        "line": 11
       },
       "name": "OperationMetricDetails",
       "properties": [
@@ -6626,7 +7566,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/OperationMetricDetails.ts",
-            "line": 35
+            "line": 36
           },
           "name": "alarmStatistic",
           "overrides": "multi-az-observability.IOperationMetricDetails",
@@ -6642,7 +7582,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/OperationMetricDetails.ts",
-            "line": 73
+            "line": 74
           },
           "name": "datapointsToAlarm",
           "overrides": "multi-az-observability.IOperationMetricDetails",
@@ -6658,7 +7598,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/OperationMetricDetails.ts",
-            "line": 68
+            "line": 69
           },
           "name": "evaluationPeriods",
           "overrides": "multi-az-observability.IOperationMetricDetails",
@@ -6674,7 +7614,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/OperationMetricDetails.ts",
-            "line": 87
+            "line": 88
           },
           "name": "faultAlarmThreshold",
           "overrides": "multi-az-observability.IOperationMetricDetails",
@@ -6690,7 +7630,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/OperationMetricDetails.ts",
-            "line": 29
+            "line": 30
           },
           "name": "faultMetricNames",
           "overrides": "multi-az-observability.IOperationMetricDetails",
@@ -6711,7 +7651,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/OperationMetricDetails.ts",
-            "line": 93
+            "line": 94
           },
           "name": "metricDimensions",
           "overrides": "multi-az-observability.IOperationMetricDetails",
@@ -6727,7 +7667,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/OperationMetricDetails.ts",
-            "line": 19
+            "line": 20
           },
           "name": "metricNamespace",
           "overrides": "multi-az-observability.IOperationMetricDetails",
@@ -6743,7 +7683,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/OperationMetricDetails.ts",
-            "line": 14
+            "line": 15
           },
           "name": "operationName",
           "overrides": "multi-az-observability.IOperationMetricDetails",
@@ -6759,7 +7699,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/OperationMetricDetails.ts",
-            "line": 63
+            "line": 64
           },
           "name": "period",
           "overrides": "multi-az-observability.IOperationMetricDetails",
@@ -6775,7 +7715,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/OperationMetricDetails.ts",
-            "line": 80
+            "line": 81
           },
           "name": "successAlarmThreshold",
           "overrides": "multi-az-observability.IOperationMetricDetails",
@@ -6791,7 +7731,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/OperationMetricDetails.ts",
-            "line": 24
+            "line": 25
           },
           "name": "successMetricNames",
           "overrides": "multi-az-observability.IOperationMetricDetails",
@@ -6812,7 +7752,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/OperationMetricDetails.ts",
-            "line": 58
+            "line": 59
           },
           "name": "unit",
           "overrides": "multi-az-observability.IOperationMetricDetails",
@@ -6830,7 +7770,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/OperationMetricDetails.ts",
-            "line": 53
+            "line": 54
           },
           "name": "graphedFaultStatistics",
           "optional": true,
@@ -6854,7 +7794,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/OperationMetricDetails.ts",
-            "line": 44
+            "line": 45
           },
           "name": "graphedSuccessStatistics",
           "optional": true,
@@ -6890,117 +7830,16 @@
           "abstract": true,
           "docs": {
             "stability": "stable",
-            "summary": "The statistic used for alarms, for availability metrics this should be \"Sum\", for latency metrics it could something like \"p99\" or \"p99.9\"."
-          },
-          "immutable": true,
-          "locationInModule": {
-            "filename": "src/services/props/OperationMetricDetailsProps.ts",
-            "line": 34
-          },
-          "name": "alarmStatistic",
-          "type": {
-            "primitive": "string"
-          }
-        },
-        {
-          "abstract": true,
-          "docs": {
-            "stability": "stable",
-            "summary": "The number of datapoints to alarm on for latency and availability alarms."
-          },
-          "immutable": true,
-          "locationInModule": {
-            "filename": "src/services/props/OperationMetricDetailsProps.ts",
-            "line": 72
-          },
-          "name": "datapointsToAlarm",
-          "type": {
-            "primitive": "number"
-          }
-        },
-        {
-          "abstract": true,
-          "docs": {
-            "stability": "stable",
-            "summary": "The number of evaluation periods for latency and availabiltiy alarms."
-          },
-          "immutable": true,
-          "locationInModule": {
-            "filename": "src/services/props/OperationMetricDetailsProps.ts",
-            "line": 67
-          },
-          "name": "evaluationPeriods",
-          "type": {
-            "primitive": "number"
-          }
-        },
-        {
-          "abstract": true,
-          "docs": {
-            "stability": "stable",
-            "summary": "The threshold for alarms associated with fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%."
-          },
-          "immutable": true,
-          "locationInModule": {
-            "filename": "src/services/props/OperationMetricDetailsProps.ts",
-            "line": 86
-          },
-          "name": "faultAlarmThreshold",
-          "type": {
-            "primitive": "number"
-          }
-        },
-        {
-          "abstract": true,
-          "docs": {
-            "stability": "stable",
-            "summary": "The names of fault indicating metrics."
-          },
-          "immutable": true,
-          "locationInModule": {
-            "filename": "src/services/props/OperationMetricDetailsProps.ts",
-            "line": 28
-          },
-          "name": "faultMetricNames",
-          "type": {
-            "collection": {
-              "elementtype": {
-                "primitive": "string"
-              },
-              "kind": "array"
-            }
-          }
-        },
-        {
-          "abstract": true,
-          "docs": {
-            "stability": "stable",
             "summary": "The user implemented functions for providing the metric's dimensions."
           },
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/OperationMetricDetailsProps.ts",
-            "line": 92
+            "line": 111
           },
           "name": "metricDimensions",
           "type": {
             "fqn": "multi-az-observability.MetricDimensions"
-          }
-        },
-        {
-          "abstract": true,
-          "docs": {
-            "stability": "stable",
-            "summary": "The CloudWatch metric namespace for these metrics."
-          },
-          "immutable": true,
-          "locationInModule": {
-            "filename": "src/services/props/OperationMetricDetailsProps.ts",
-            "line": 18
-          },
-          "name": "metricNamespace",
-          "type": {
-            "primitive": "string"
           }
         },
         {
@@ -7022,31 +7861,35 @@
         {
           "abstract": true,
           "docs": {
+            "default": "- The service default is used",
             "stability": "stable",
-            "summary": "The period for the metrics."
+            "summary": "The statistic used for alarms, for availability metrics this should be \"Sum\", for latency metrics it could something like \"p99\" or \"p99.9\"."
           },
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/OperationMetricDetailsProps.ts",
-            "line": 62
+            "line": 42
           },
-          "name": "period",
+          "name": "alarmStatistic",
+          "optional": true,
           "type": {
-            "fqn": "aws-cdk-lib.Duration"
+            "primitive": "string"
           }
         },
         {
           "abstract": true,
           "docs": {
+            "default": "- The service default is used",
             "stability": "stable",
-            "summary": "The threshold for alarms associated with success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%."
+            "summary": "The number of datapoints to alarm on for latency and availability alarms."
           },
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/OperationMetricDetailsProps.ts",
-            "line": 79
+            "line": 88
           },
-          "name": "successAlarmThreshold",
+          "name": "datapointsToAlarm",
+          "optional": true,
           "type": {
             "primitive": "number"
           }
@@ -7054,15 +7897,53 @@
         {
           "abstract": true,
           "docs": {
+            "default": "- The service default is used",
             "stability": "stable",
-            "summary": "The names of success indicating metrics."
+            "summary": "The number of evaluation periods for latency and availabiltiy alarms."
           },
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/OperationMetricDetailsProps.ts",
-            "line": 23
+            "line": 81
           },
-          "name": "successMetricNames",
+          "name": "evaluationPeriods",
+          "optional": true,
+          "type": {
+            "primitive": "number"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "default": "- The service default is used",
+            "stability": "stable",
+            "summary": "The threshold for alarms associated with fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/OperationMetricDetailsProps.ts",
+            "line": 106
+          },
+          "name": "faultAlarmThreshold",
+          "optional": true,
+          "type": {
+            "primitive": "number"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "default": "- The service default is used",
+            "stability": "stable",
+            "summary": "The names of fault indicating metrics."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/OperationMetricDetailsProps.ts",
+            "line": 34
+          },
+          "name": "faultMetricNames",
+          "optional": true,
           "type": {
             "collection": {
               "elementtype": {
@@ -7075,23 +7956,7 @@
         {
           "abstract": true,
           "docs": {
-            "stability": "stable",
-            "summary": "The unit used for these metrics."
-          },
-          "immutable": true,
-          "locationInModule": {
-            "filename": "src/services/props/OperationMetricDetailsProps.ts",
-            "line": 57
-          },
-          "name": "unit",
-          "type": {
-            "fqn": "aws-cdk-lib.aws_cloudwatch.Unit"
-          }
-        },
-        {
-          "abstract": true,
-          "docs": {
-            "default": "- For availability metrics, this will be \"Sum\", for latency metrics it will be just \"p99\"",
+            "default": "- The service default is used",
             "remarks": "For availability\nmetrics this will typically just be \"Sum\".",
             "stability": "stable",
             "summary": "The statistics for faults you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99."
@@ -7099,7 +7964,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/OperationMetricDetailsProps.ts",
-            "line": 52
+            "line": 60
           },
           "name": "graphedFaultStatistics",
           "optional": true,
@@ -7115,7 +7980,7 @@
         {
           "abstract": true,
           "docs": {
-            "default": "- For availability metrics, this will be \"Sum\", for latency metrics it will be just \"p99\"",
+            "default": "- The service default is used",
             "remarks": "For availability\nmetrics this will typically just be \"Sum\".",
             "stability": "stable",
             "summary": "The statistics for successes you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99."
@@ -7123,7 +7988,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/OperationMetricDetailsProps.ts",
-            "line": 43
+            "line": 51
           },
           "name": "graphedSuccessStatistics",
           "optional": true,
@@ -7134,6 +7999,101 @@
               },
               "kind": "array"
             }
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "default": "- The service default is used",
+            "stability": "stable",
+            "summary": "The CloudWatch metric namespace for these metrics."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/OperationMetricDetailsProps.ts",
+            "line": 20
+          },
+          "name": "metricNamespace",
+          "optional": true,
+          "type": {
+            "primitive": "string"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "default": "- The service default is used",
+            "stability": "stable",
+            "summary": "The period for the metrics."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/OperationMetricDetailsProps.ts",
+            "line": 74
+          },
+          "name": "period",
+          "optional": true,
+          "type": {
+            "fqn": "aws-cdk-lib.Duration"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "default": "- The service default is used",
+            "stability": "stable",
+            "summary": "The threshold for alarms associated with success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/OperationMetricDetailsProps.ts",
+            "line": 97
+          },
+          "name": "successAlarmThreshold",
+          "optional": true,
+          "type": {
+            "primitive": "number"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "default": "- The service default is used",
+            "stability": "stable",
+            "summary": "The names of success indicating metrics."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/OperationMetricDetailsProps.ts",
+            "line": 27
+          },
+          "name": "successMetricNames",
+          "optional": true,
+          "type": {
+            "collection": {
+              "elementtype": {
+                "primitive": "string"
+              },
+              "kind": "array"
+            }
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "default": "- The service default is used",
+            "stability": "stable",
+            "summary": "The unit used for these metrics."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/OperationMetricDetailsProps.ts",
+            "line": 67
+          },
+          "name": "unit",
+          "optional": true,
+          "type": {
+            "fqn": "aws-cdk-lib.aws_cloudwatch.Unit"
           }
         }
       ],
@@ -7163,7 +8123,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/OperationProps.ts",
-            "line": 61
+            "line": 62
           },
           "name": "critical",
           "type": {
@@ -7179,7 +8139,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/OperationProps.ts",
-            "line": 74
+            "line": 86
           },
           "name": "httpMethods",
           "type": {
@@ -7292,14 +8252,14 @@
         {
           "abstract": true,
           "docs": {
-            "default": "- No canary will be created for this operation",
+            "default": "- The default for the service will be used, if that\nis undefined, then no canary will be provisioned for this operation.",
             "stability": "stable",
             "summary": "If you define this property, a synthetic canary will be provisioned to test the operation."
           },
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/OperationProps.ts",
-            "line": 69
+            "line": 71
           },
           "name": "canaryTestProps",
           "optional": true,
@@ -7310,14 +8270,32 @@
         {
           "abstract": true,
           "docs": {
-            "default": "- No Contributor Insight rules will be created and\nthe number of instances contributing to AZ faults or high latency\nwill not be considered, so a single bad instance could make the\nAZ appear to look impaired.",
+            "default": "- The operation is not opted out",
+            "stability": "stable",
+            "summary": "Set to true if you have defined CanaryTestProps for your service, which applies to all operations, but you want to opt out of creating the canary test for this operation."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/OperationProps.ts",
+            "line": 81
+          },
+          "name": "optOutOfServiceCreatedCanary",
+          "optional": true,
+          "type": {
+            "primitive": "boolean"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "default": "- The default service contributor insight rule\ndetails will be used. If those are not defined no Contributor Insight\nrules will be created and the number of instances contributing to AZ\nfaults or high latency will not be considered, so a single bad instance\ncould make the AZ appear to look impaired.",
             "stability": "stable",
             "summary": "The server side details for contributor insights rules."
           },
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/OperationProps.ts",
-            "line": 54
+            "line": 55
           },
           "name": "serverSideContributorInsightRuleDetails",
           "optional": true,
@@ -7379,7 +8357,7 @@
         },
         "locationInModule": {
           "filename": "src/services/Service.ts",
-          "line": 51
+          "line": 86
         },
         "parameters": [
           {
@@ -7396,7 +8374,7 @@
       "kind": "class",
       "locationInModule": {
         "filename": "src/services/Service.ts",
-        "line": 10
+        "line": 13
       },
       "methods": [
         {
@@ -7406,7 +8384,7 @@
           },
           "locationInModule": {
             "filename": "src/services/Service.ts",
-            "line": 65
+            "line": 104
           },
           "name": "addOperation",
           "overrides": "multi-az-observability.IService",
@@ -7430,7 +8408,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/Service.ts",
-            "line": 30
+            "line": 33
           },
           "name": "availabilityZoneNames",
           "overrides": "multi-az-observability.IService",
@@ -7451,12 +8429,44 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/Service.ts",
-            "line": 19
+            "line": 22
           },
           "name": "baseUrl",
           "overrides": "multi-az-observability.IService",
           "type": {
             "primitive": "string"
+          }
+        },
+        {
+          "docs": {
+            "stability": "stable",
+            "summary": "The default settings that are used for availability metrics for all operations unless specifically overridden in an operation definition."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/Service.ts",
+            "line": 69
+          },
+          "name": "defaultAvailabilityMetricDetails",
+          "overrides": "multi-az-observability.IService",
+          "type": {
+            "fqn": "multi-az-observability.IServiceMetricDetails"
+          }
+        },
+        {
+          "docs": {
+            "stability": "stable",
+            "summary": "The default settings that are used for availability metrics for all operations unless specifically overridden in an operation definition."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/Service.ts",
+            "line": 76
+          },
+          "name": "defaultLatencyMetricDetails",
+          "overrides": "multi-az-observability.IService",
+          "type": {
+            "fqn": "multi-az-observability.IServiceMetricDetails"
           }
         },
         {
@@ -7468,7 +8478,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/Service.ts",
-            "line": 25
+            "line": 28
           },
           "name": "faultCountThreshold",
           "overrides": "multi-az-observability.IService",
@@ -7484,7 +8494,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/Service.ts",
-            "line": 40
+            "line": 43
           },
           "name": "operations",
           "overrides": "multi-az-observability.IService",
@@ -7505,7 +8515,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/Service.ts",
-            "line": 35
+            "line": 38
           },
           "name": "period",
           "overrides": "multi-az-observability.IService",
@@ -7521,12 +8531,49 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/Service.ts",
-            "line": 14
+            "line": 17
           },
           "name": "serviceName",
           "overrides": "multi-az-observability.IService",
           "type": {
             "primitive": "string"
+          }
+        },
+        {
+          "docs": {
+            "default": "- Automatic canary tests will not be created for\noperations in this service.",
+            "remarks": "Operations can individually opt out\nof canary test creation if you define this setting.",
+            "stability": "stable",
+            "summary": "Define these settings if you want to automatically add canary tests to your operations."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/Service.ts",
+            "line": 62
+          },
+          "name": "canaryTestProps",
+          "optional": true,
+          "overrides": "multi-az-observability.IService",
+          "type": {
+            "fqn": "multi-az-observability.AddCanaryTestProps"
+          }
+        },
+        {
+          "docs": {
+            "default": "- No defaults are provided and must be specified per operation",
+            "stability": "stable",
+            "summary": "The default settings that are used for contributor insight rules."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/Service.ts",
+            "line": 84
+          },
+          "name": "defaultContributorInsightRuleDetails",
+          "optional": true,
+          "overrides": "multi-az-observability.IService",
+          "type": {
+            "fqn": "multi-az-observability.IContributorInsightRuleDetails"
           }
         },
         {
@@ -7538,7 +8585,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/Service.ts",
-            "line": 49
+            "line": 52
           },
           "name": "loadBalancer",
           "optional": true,
@@ -7549,6 +8596,497 @@
         }
       ],
       "symbolId": "src/services/Service:Service"
+    },
+    "multi-az-observability.ServiceMetricDetails": {
+      "assembly": "multi-az-observability",
+      "docs": {
+        "stability": "stable",
+        "summary": "Default metric details for a service."
+      },
+      "fqn": "multi-az-observability.ServiceMetricDetails",
+      "initializer": {
+        "docs": {
+          "stability": "stable"
+        },
+        "locationInModule": {
+          "filename": "src/services/ServiceMetricDetails.ts",
+          "line": 83
+        },
+        "parameters": [
+          {
+            "name": "props",
+            "type": {
+              "fqn": "multi-az-observability.ServiceMetricDetailsProps"
+            }
+          }
+        ]
+      },
+      "interfaces": [
+        "multi-az-observability.IServiceMetricDetails"
+      ],
+      "kind": "class",
+      "locationInModule": {
+        "filename": "src/services/ServiceMetricDetails.ts",
+        "line": 9
+      },
+      "name": "ServiceMetricDetails",
+      "properties": [
+        {
+          "docs": {
+            "stability": "stable",
+            "summary": "The statistic used for alarms, for availability metrics this should be \"Sum\", for latency metrics it could something like \"p99\" or \"p99.9\"."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/ServiceMetricDetails.ts",
+            "line": 29
+          },
+          "name": "alarmStatistic",
+          "overrides": "multi-az-observability.IServiceMetricDetails",
+          "type": {
+            "primitive": "string"
+          }
+        },
+        {
+          "docs": {
+            "stability": "stable",
+            "summary": "The number of datapoints to alarm on for latency and availability alarms."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/ServiceMetricDetails.ts",
+            "line": 67
+          },
+          "name": "datapointsToAlarm",
+          "overrides": "multi-az-observability.IServiceMetricDetails",
+          "type": {
+            "primitive": "number"
+          }
+        },
+        {
+          "docs": {
+            "stability": "stable",
+            "summary": "The number of evaluation periods for latency and availabiltiy alarms."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/ServiceMetricDetails.ts",
+            "line": 62
+          },
+          "name": "evaluationPeriods",
+          "overrides": "multi-az-observability.IServiceMetricDetails",
+          "type": {
+            "primitive": "number"
+          }
+        },
+        {
+          "docs": {
+            "stability": "stable",
+            "summary": "The threshold for alarms associated with fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/ServiceMetricDetails.ts",
+            "line": 81
+          },
+          "name": "faultAlarmThreshold",
+          "overrides": "multi-az-observability.IServiceMetricDetails",
+          "type": {
+            "primitive": "number"
+          }
+        },
+        {
+          "docs": {
+            "stability": "stable",
+            "summary": "The names of fault indicating metrics."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/ServiceMetricDetails.ts",
+            "line": 23
+          },
+          "name": "faultMetricNames",
+          "overrides": "multi-az-observability.IServiceMetricDetails",
+          "type": {
+            "collection": {
+              "elementtype": {
+                "primitive": "string"
+              },
+              "kind": "array"
+            }
+          }
+        },
+        {
+          "docs": {
+            "stability": "stable",
+            "summary": "The CloudWatch metric namespace for these metrics."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/ServiceMetricDetails.ts",
+            "line": 13
+          },
+          "name": "metricNamespace",
+          "overrides": "multi-az-observability.IServiceMetricDetails",
+          "type": {
+            "primitive": "string"
+          }
+        },
+        {
+          "docs": {
+            "stability": "stable",
+            "summary": "The period for the metrics."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/ServiceMetricDetails.ts",
+            "line": 57
+          },
+          "name": "period",
+          "overrides": "multi-az-observability.IServiceMetricDetails",
+          "type": {
+            "fqn": "aws-cdk-lib.Duration"
+          }
+        },
+        {
+          "docs": {
+            "stability": "stable",
+            "summary": "The threshold for alarms associated with success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/ServiceMetricDetails.ts",
+            "line": 74
+          },
+          "name": "successAlarmThreshold",
+          "overrides": "multi-az-observability.IServiceMetricDetails",
+          "type": {
+            "primitive": "number"
+          }
+        },
+        {
+          "docs": {
+            "stability": "stable",
+            "summary": "The names of success indicating metrics."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/ServiceMetricDetails.ts",
+            "line": 18
+          },
+          "name": "successMetricNames",
+          "overrides": "multi-az-observability.IServiceMetricDetails",
+          "type": {
+            "collection": {
+              "elementtype": {
+                "primitive": "string"
+              },
+              "kind": "array"
+            }
+          }
+        },
+        {
+          "docs": {
+            "stability": "stable",
+            "summary": "The unit used for these metrics."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/ServiceMetricDetails.ts",
+            "line": 52
+          },
+          "name": "unit",
+          "overrides": "multi-az-observability.IServiceMetricDetails",
+          "type": {
+            "fqn": "aws-cdk-lib.aws_cloudwatch.Unit"
+          }
+        },
+        {
+          "docs": {
+            "default": "- For availability metrics, this will be \"Sum\", for latency metrics it will be just \"p99\"",
+            "remarks": "For availability\nmetrics this will typically just be \"Sum\".",
+            "stability": "stable",
+            "summary": "The statistics for faults you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/ServiceMetricDetails.ts",
+            "line": 47
+          },
+          "name": "graphedFaultStatistics",
+          "optional": true,
+          "overrides": "multi-az-observability.IServiceMetricDetails",
+          "type": {
+            "collection": {
+              "elementtype": {
+                "primitive": "string"
+              },
+              "kind": "array"
+            }
+          }
+        },
+        {
+          "docs": {
+            "default": "- For availability metrics, this will be \"Sum\", for latency metrics it will be just \"p99\"",
+            "remarks": "For availability\nmetrics this will typically just be \"Sum\".",
+            "stability": "stable",
+            "summary": "The statistics for successes you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/ServiceMetricDetails.ts",
+            "line": 38
+          },
+          "name": "graphedSuccessStatistics",
+          "optional": true,
+          "overrides": "multi-az-observability.IServiceMetricDetails",
+          "type": {
+            "collection": {
+              "elementtype": {
+                "primitive": "string"
+              },
+              "kind": "array"
+            }
+          }
+        }
+      ],
+      "symbolId": "src/services/ServiceMetricDetails:ServiceMetricDetails"
+    },
+    "multi-az-observability.ServiceMetricDetailsProps": {
+      "assembly": "multi-az-observability",
+      "datatype": true,
+      "docs": {
+        "stability": "stable",
+        "summary": "The properties for default service metric details."
+      },
+      "fqn": "multi-az-observability.ServiceMetricDetailsProps",
+      "kind": "interface",
+      "locationInModule": {
+        "filename": "src/services/props/ServiceMetricDetailsProps.ts",
+        "line": 7
+      },
+      "name": "ServiceMetricDetailsProps",
+      "properties": [
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The statistic used for alarms, for availability metrics this should be \"Sum\", for latency metrics it could something like \"p99\" or \"p99.9\"."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/ServiceMetricDetailsProps.ts",
+            "line": 28
+          },
+          "name": "alarmStatistic",
+          "type": {
+            "primitive": "string"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The number of datapoints to alarm on for latency and availability alarms."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/ServiceMetricDetailsProps.ts",
+            "line": 66
+          },
+          "name": "datapointsToAlarm",
+          "type": {
+            "primitive": "number"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The number of evaluation periods for latency and availabiltiy alarms."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/ServiceMetricDetailsProps.ts",
+            "line": 61
+          },
+          "name": "evaluationPeriods",
+          "type": {
+            "primitive": "number"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The threshold for alarms associated with fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/ServiceMetricDetailsProps.ts",
+            "line": 80
+          },
+          "name": "faultAlarmThreshold",
+          "type": {
+            "primitive": "number"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The names of fault indicating metrics."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/ServiceMetricDetailsProps.ts",
+            "line": 22
+          },
+          "name": "faultMetricNames",
+          "type": {
+            "collection": {
+              "elementtype": {
+                "primitive": "string"
+              },
+              "kind": "array"
+            }
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The CloudWatch metric namespace for these metrics."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/ServiceMetricDetailsProps.ts",
+            "line": 12
+          },
+          "name": "metricNamespace",
+          "type": {
+            "primitive": "string"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The period for the metrics."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/ServiceMetricDetailsProps.ts",
+            "line": 56
+          },
+          "name": "period",
+          "type": {
+            "fqn": "aws-cdk-lib.Duration"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The threshold for alarms associated with success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/ServiceMetricDetailsProps.ts",
+            "line": 73
+          },
+          "name": "successAlarmThreshold",
+          "type": {
+            "primitive": "number"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The names of success indicating metrics."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/ServiceMetricDetailsProps.ts",
+            "line": 17
+          },
+          "name": "successMetricNames",
+          "type": {
+            "collection": {
+              "elementtype": {
+                "primitive": "string"
+              },
+              "kind": "array"
+            }
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The unit used for these metrics."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/ServiceMetricDetailsProps.ts",
+            "line": 51
+          },
+          "name": "unit",
+          "type": {
+            "fqn": "aws-cdk-lib.aws_cloudwatch.Unit"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "default": "- For availability metrics, this will be \"Sum\", for latency metrics it will be just \"p99\"",
+            "remarks": "For availability\nmetrics this will typically just be \"Sum\".",
+            "stability": "stable",
+            "summary": "The statistics for faults you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/ServiceMetricDetailsProps.ts",
+            "line": 46
+          },
+          "name": "graphedFaultStatistics",
+          "optional": true,
+          "type": {
+            "collection": {
+              "elementtype": {
+                "primitive": "string"
+              },
+              "kind": "array"
+            }
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "default": "- For availability metrics, this will be \"Sum\", for latency metrics it will be just \"p99\"",
+            "remarks": "For availability\nmetrics this will typically just be \"Sum\".",
+            "stability": "stable",
+            "summary": "The statistics for successes you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/ServiceMetricDetailsProps.ts",
+            "line": 37
+          },
+          "name": "graphedSuccessStatistics",
+          "optional": true,
+          "type": {
+            "collection": {
+              "elementtype": {
+                "primitive": "string"
+              },
+              "kind": "array"
+            }
+          }
+        }
+      ],
+      "symbolId": "src/services/props/ServiceMetricDetailsProps:ServiceMetricDetailsProps"
     },
     "multi-az-observability.ServiceProps": {
       "assembly": "multi-az-observability",
@@ -7561,7 +9099,7 @@
       "kind": "interface",
       "locationInModule": {
         "filename": "src/services/props/ServiceProps.ts",
-        "line": 7
+        "line": 10
       },
       "name": "ServiceProps",
       "properties": [
@@ -7574,7 +9112,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/ServiceProps.ts",
-            "line": 29
+            "line": 32
           },
           "name": "availabilityZoneNames",
           "type": {
@@ -7595,11 +9133,43 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/ServiceProps.ts",
-            "line": 18
+            "line": 21
           },
           "name": "baseUrl",
           "type": {
             "primitive": "string"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The default settings that are used for availability metrics for all operations unless specifically overridden in an operation definition."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/ServiceProps.ts",
+            "line": 63
+          },
+          "name": "defaultAvailabilityMetricDetails",
+          "type": {
+            "fqn": "multi-az-observability.IServiceMetricDetails"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The default settings that are used for availability metrics for all operations unless specifically overridden in an operation definition."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/ServiceProps.ts",
+            "line": 70
+          },
+          "name": "defaultLatencyMetricDetails",
+          "type": {
+            "fqn": "multi-az-observability.IServiceMetricDetails"
           }
         },
         {
@@ -7612,7 +9182,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/ServiceProps.ts",
-            "line": 24
+            "line": 27
           },
           "name": "faultCountThreshold",
           "type": {
@@ -7628,7 +9198,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/ServiceProps.ts",
-            "line": 34
+            "line": 37
           },
           "name": "period",
           "type": {
@@ -7644,11 +9214,48 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/ServiceProps.ts",
-            "line": 12
+            "line": 15
           },
           "name": "serviceName",
           "type": {
             "primitive": "string"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "default": "- Automatic canary tests will not be created for\noperations in this service.",
+            "remarks": "Operations can individually opt out\nof canary test creation if you define this setting.",
+            "stability": "stable",
+            "summary": "Define these settings if you want to automatically add canary tests to your operations."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/ServiceProps.ts",
+            "line": 56
+          },
+          "name": "canaryTestProps",
+          "optional": true,
+          "type": {
+            "fqn": "multi-az-observability.AddCanaryTestProps"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "default": "- No defaults are provided and must be specified per operation\nif the operation has logs that can be queried by contributor insights",
+            "stability": "stable",
+            "summary": "The default settings that are used for contributor insight rules."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/ServiceProps.ts",
+            "line": 79
+          },
+          "name": "defaultContributorInsightRuleDetails",
+          "optional": true,
+          "type": {
+            "fqn": "multi-az-observability.IContributorInsightRuleDetails"
           }
         },
         {
@@ -7661,7 +9268,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/ServiceProps.ts",
-            "line": 43
+            "line": 46
           },
           "name": "loadBalancer",
           "optional": true,
@@ -7673,6 +9280,6 @@
       "symbolId": "src/services/props/ServiceProps:ServiceProps"
     }
   },
-  "version": "0.1.0",
-  "fingerprint": "nLJGZ0m31JCWrMwY0LM+jbCojtOmUruAZPU25Hxm+AY="
+  "version": "0.0.1-alpha.1",
+  "fingerprint": "zw6mEYjFZFEkg67PvSpH7iKZXlL20cnKTvrE/YDyoU4="
 }

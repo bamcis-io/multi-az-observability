@@ -1,12 +1,12 @@
-import { Duration, Fn } from 'aws-cdk-lib';
+import { Fn } from 'aws-cdk-lib';
 import { Dashboard, IMetric, PeriodOverride, IWidget, TextWidget, AlarmStatusWidget, GraphWidget, Color, AlarmWidget, LegendPosition } from 'aws-cdk-lib/aws-cloudwatch';
 import { BaseLoadBalancer } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import { Construct } from 'constructs';
 import { ContributorInsightsWidget } from './ContributorInsightsWidget';
 import { IOperationAvailabilityAndLatencyDashboard } from './IOperationAvailabilityAndLatencyDashboard';
 import { OperationAvailabilityAndLatencyDashboardProps } from './props/OperationAvailabilityAndLatencyDashboardProps';
-import { OperationAvailabilityAndLatencyWidgetProps } from './props/OperationAvailabilityAndLatencyWidgetProps';
-import { AvailabilityZoneMapper } from '../azmapper/AvailabilityZoneMapper';
+import { OperationAvailabilityWidgetProps } from './props/OperationAvailabilityWidgetProps';
+import { OperationLatencyWidgetProps } from './props/OperationLatencyWidgetProps';
 import { IAvailabilityZoneMapper } from '../azmapper/IAvailabilityZoneMapper';
 import { AvailabilityAndLatencyMetrics } from '../metrics/AvailabilityAndLatencyMetrics';
 import { AvailabilityMetricType } from '../utilities/AvailabilityMetricType';
@@ -133,7 +133,7 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
       }));
     }
 
-    topLevelAggregateAlarms.push(new TextWidget({ height: 2, width: 24, markdown: '**Top Level Metrics**' }));
+    topLevelAggregateAlarms.push(new TextWidget({ height: 2, width: 24, markdown: '**TPS Metrics**' }));
 
     topLevelAggregateAlarms.push(new GraphWidget({
       height: 6,
@@ -181,7 +181,7 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
     return topLevelAggregateAlarms;
   }
 
-  private static createAvailabilityWidgets(props: OperationAvailabilityAndLatencyWidgetProps, title: string) : IWidget[] {
+  private static createAvailabilityWidgets(props: OperationAvailabilityWidgetProps, title: string) : IWidget[] {
     let availabilityWidgets: IWidget[] = [];
     availabilityWidgets.push(new TextWidget({ height: 2, width: 24, markdown: title }));
 
@@ -325,7 +325,7 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
     return availabilityWidgets;
   }
 
-  private static createLatencyWidgets(props: OperationAvailabilityAndLatencyWidgetProps, title: string) : IWidget[] {
+  private static createLatencyWidgets(props: OperationLatencyWidgetProps, title: string) : IWidget[] {
     let latencyWidgets: IWidget[] = [];
     latencyWidgets.push(new TextWidget({ height: 2, width: 24, markdown: title }));
 
@@ -346,7 +346,6 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
         keyPrefix: keyPrefix,
       })[0];
     });
-    latencyMetrics.concat(latencySuccessMetrics);
 
     stats = props.latencyMetricDetails.graphedFaultStatistics !== undefined ? props.latencyMetricDetails.graphedFaultStatistics : ['p99'];
 
@@ -361,8 +360,7 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
       })[0];
     });
 
-    latencyMetrics.concat(latencyFaultMetrics);
-
+    latencyMetrics = latencySuccessMetrics.concat(latencyFaultMetrics);
 
     if (latencyMetrics.length > 0) {
       latencyWidgets.push(new GraphWidget({
@@ -404,7 +402,7 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
 
       let latencyMetrics2: IMetric[] = [];
 
-      let stats2: string[] = props.latencyMetricDetails.graphedSuccessStatistics !== undefined ? props.latencyMetricDetails.graphedSuccessStatistics : ['p99'];
+      let stats2: string[] = props.latencyMetricDetails.graphedSuccessStatistics ? props.latencyMetricDetails.graphedSuccessStatistics : ['p99'];
 
       let zonalSuccessLatencyMetrics: IMetric[] = stats2.map(x => {
 
@@ -418,9 +416,8 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
           keyPrefix: keyPrefix,
         })[0];
       });
-      latencyMetrics2.concat(zonalSuccessLatencyMetrics);
 
-      stats2 = props.latencyMetricDetails.graphedFaultStatistics !== undefined ? props.latencyMetricDetails.graphedFaultStatistics : ['p99'];
+      stats2 = props.latencyMetricDetails.graphedFaultStatistics ? props.latencyMetricDetails.graphedFaultStatistics : ['p99'];
 
       let zonalFaultLatencyMetrics: IMetric[] = stats2.map(x => {
         keyPrefix = AvailabilityAndLatencyMetrics.nextChar(keyPrefix);
@@ -433,8 +430,8 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
           keyPrefix: keyPrefix,
         })[0];
       });
-      latencyMetrics2.concat(zonalFaultLatencyMetrics);
 
+      latencyMetrics2 = zonalSuccessLatencyMetrics.concat(zonalFaultLatencyMetrics);
 
       if (latencyMetrics2.length > 0) {
         latencyWidgets.push(new GraphWidget({
@@ -506,9 +503,7 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
 
     let widgets: IWidget[][] = [];
 
-    this.azMapper = new AvailabilityZoneMapper(this, 'AZMapper', {
-      availabilityZoneNames: props.operation.service.availabilityZoneNames,
-    });
+    this.azMapper = props.azMapper;
 
     let availabilityZoneIds: string[] = props.operation.service.availabilityZoneNames.map(x => {
       return this.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(x.substring(x.length - 1));
@@ -526,34 +521,22 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
       OperationAvailabilityAndLatencyDashboard.createAvailabilityWidgets({
         operation: props.operation,
         availabilityMetricDetails: props.operation.serverSideAvailabilityMetricDetails,
-        latencyMetricDetails: props.operation.serverSideLatencyMetricDetails,
         availabilityZoneIds: availabilityZoneIds,
-        interval: props.interval,
         isCanary: false,
-        resolutionPeriod: Duration.minutes(60),
         zonalEndpointAvailabilityAlarms: props.zonalEndpointServerAvailabilityAlarms,
-        zonalEndpointLatencyAlarms: props.zonalEndpointServerLatencyAlarms,
         regionalEndpointAvailabilityAlarm: props.regionalEndpointServerAvailabilityAlarm,
-        regionalEndpointLatencyAlarm: props.regionalEndpointServerLatencyAlarm,
         instanceContributorsToFaults: props.instanceContributorsToFaults,
-        instanceContributorsToHighLatency: props.instanceContributorsToHighLatency,
       }, '**Server-side Availability**'),
     );
 
     widgets.push(
       OperationAvailabilityAndLatencyDashboard.createLatencyWidgets({
         operation: props.operation,
-        availabilityMetricDetails: props.operation.serverSideAvailabilityMetricDetails,
         latencyMetricDetails: props.operation.serverSideLatencyMetricDetails,
         availabilityZoneIds: availabilityZoneIds,
-        interval: props.interval,
         isCanary: false,
-        resolutionPeriod: Duration.minutes(60),
-        zonalEndpointAvailabilityAlarms: props.zonalEndpointServerAvailabilityAlarms,
         zonalEndpointLatencyAlarms: props.zonalEndpointServerLatencyAlarms,
-        regionalEndpointAvailabilityAlarm: props.regionalEndpointServerAvailabilityAlarm,
         regionalEndpointLatencyAlarm: props.regionalEndpointServerLatencyAlarm,
-        instanceContributorsToFaults: props.instanceContributorsToFaults,
         instanceContributorsToHighLatency: props.instanceContributorsToHighLatency,
       }, '**Server-side Latency**'),
     );
@@ -569,43 +552,31 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
     }
 
     if (props.operation.canaryMetricDetails !== undefined && props.operation.canaryMetricDetails != null) {
-      widgets.push(OperationAvailabilityAndLatencyDashboard.createAvailabilityWidgets({
-        operation: props.operation,
-        availabilityMetricDetails: props.operation.canaryMetricDetails.canaryAvailabilityMetricDetails,
-        latencyMetricDetails: props.operation.serverSideLatencyMetricDetails,
-        availabilityZoneIds: availabilityZoneIds,
-        interval: props.interval,
-        isCanary: false,
-        resolutionPeriod: Duration.minutes(60),
-        zonalEndpointAvailabilityAlarms: props.zonalEndpointServerAvailabilityAlarms,
-        zonalEndpointLatencyAlarms: props.zonalEndpointServerLatencyAlarms,
-        regionalEndpointAvailabilityAlarm: props.regionalEndpointServerAvailabilityAlarm,
-        regionalEndpointLatencyAlarm: props.regionalEndpointServerLatencyAlarm,
-        instanceContributorsToFaults: props.instanceContributorsToFaults,
-        instanceContributorsToHighLatency: props.instanceContributorsToHighLatency,
+      if (props.zonalEndpointCanaryAvailabilityAlarms && props.zonalEndpointCanaryLatencyAlarms &&
+        props.regionalEndpointCanaryAvailabilityAlarm && props.regionalEndpointCanaryLatencyAlarm) {
 
-      }, '**Canary Measured Availability**'));
+        widgets.push(OperationAvailabilityAndLatencyDashboard.createAvailabilityWidgets({
+          operation: props.operation,
+          availabilityMetricDetails: props.operation.canaryMetricDetails.canaryAvailabilityMetricDetails,
+          availabilityZoneIds: availabilityZoneIds,
+          isCanary: true,
+          zonalEndpointAvailabilityAlarms: props.zonalEndpointCanaryAvailabilityAlarms,
+          regionalEndpointAvailabilityAlarm: props.regionalEndpointCanaryAvailabilityAlarm,
+        }, '**Canary Measured Availability**'));
 
-      widgets.push(OperationAvailabilityAndLatencyDashboard.createLatencyWidgets({
-        operation: props.operation,
-        availabilityMetricDetails: props.operation.canaryMetricDetails.canaryAvailabilityMetricDetails,
-        latencyMetricDetails: props.operation.serverSideLatencyMetricDetails,
-        availabilityZoneIds: availabilityZoneIds,
-        interval: props.interval,
-        isCanary: false,
-        resolutionPeriod: Duration.minutes(60),
-        zonalEndpointAvailabilityAlarms: props.zonalEndpointServerAvailabilityAlarms,
-        zonalEndpointLatencyAlarms: props.zonalEndpointServerLatencyAlarms,
-        regionalEndpointAvailabilityAlarm: props.regionalEndpointServerAvailabilityAlarm,
-        regionalEndpointLatencyAlarm: props.regionalEndpointServerLatencyAlarm,
-        instanceContributorsToFaults: props.instanceContributorsToFaults,
-        instanceContributorsToHighLatency: props.instanceContributorsToHighLatency,
-
-      }, '**Canary Measured Latency**'));
+        widgets.push(OperationAvailabilityAndLatencyDashboard.createLatencyWidgets({
+          operation: props.operation,
+          latencyMetricDetails: props.operation.canaryMetricDetails.canaryLatencyMetricDetails,
+          availabilityZoneIds: availabilityZoneIds,
+          isCanary: true,
+          zonalEndpointLatencyAlarms: props.zonalEndpointCanaryLatencyAlarms,
+          regionalEndpointLatencyAlarm: props.regionalEndpointCanaryLatencyAlarm,
+        }, '**Canary Measured Latency**'));
+      }
     }
 
     this.dashboard = new Dashboard(this, 'Dashboard', {
-      dashboardName: props.operation.operationName.toLowerCase() + Fn.sub('-operation-availability-and-latency-${AWS::Region}'),
+      dashboardName: props.operation.service.serviceName.toLowerCase() + '-' + props.operation.operationName.toLowerCase() + Fn.sub('-operation-availability-and-latency-${AWS::Region}'),
       defaultInterval: props.interval,
       periodOverride: PeriodOverride.INHERIT,
       widgets: widgets,

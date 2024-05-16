@@ -3,8 +3,6 @@ import { AlarmStatusWidget, Color, Dashboard, GraphWidget, IMetric, IWidget, Mat
 import { Construct } from 'constructs';
 import { IServiceAvailabilityAndLatencyDashboard } from './IServiceAvailabilityAndLatencyDashboard';
 import { ServiceAvailabilityAndLatencyDashboardProps } from './props/ServiceAvailabilityAndLatencyDashboardProps';
-import { AvailabilityZoneMapper } from '../azmapper/AvailabilityZoneMapper';
-import { IAvailabilityZoneMapper } from '../azmapper/IAvailabilityZoneMapper';
 import { AvailabilityAndLatencyMetrics } from '../metrics/AvailabilityAndLatencyMetrics';
 import { AvailabilityMetricProps } from '../metrics/props/AvailabilityMetricProps';
 import { IOperation } from '../services/IOperation';
@@ -84,7 +82,7 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
     let widgets: IWidget[] = [];
 
     widgets.push(
-      new TextWidget({ height: 2, width: 24, markdown: '**Server-side Availability**\n(Each operation is equally weighted regardless of request volume)' }),
+      new TextWidget({ height: 2, width: 24, markdown: '**Server-side Availability**\n(Each critical operation is equally weighted regardless of request volume)' }),
     );
 
     widgets = widgets.concat(
@@ -219,7 +217,7 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
     }, [] as IOperationMetricDetails[])
       .map(x => {
         return {
-          label: x.operationName + ' faults',
+          label: x.operationName + ' ' + metricType.toString().toLowerCase().replace('_', ' '),
           metricDetails: x,
           metricType: metricType,
         };
@@ -242,7 +240,7 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
     }, [] as IOperationMetricDetails[])
       .map(x => {
         return {
-          label: x.operationName + ' faults',
+          label: x.operationName + ' ' + metricType.toString().toLowerCase().replace('_', ' '),
           metricDetails: x,
           metricType: metricType,
           availabilityZoneId: availabilityZoneId,
@@ -259,12 +257,8 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
 
     let topLevelAggregateAlarmWidgets: IWidget[] = [];
 
-    let azMapper: IAvailabilityZoneMapper = new AvailabilityZoneMapper(this, 'AZMapper', {
-      availabilityZoneNames: props.service.availabilityZoneNames,
-    });
-
     let availabilityZoneIds: string[] = props.service.availabilityZoneNames.map(x => {
-      return azMapper.availabilityZoneIdFromAvailabilityZoneLetter(x.substring(x.length - 1));
+      return props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(x.substring(x.length - 1));
     });
 
     topLevelAggregateAlarmWidgets.push(new TextWidget({

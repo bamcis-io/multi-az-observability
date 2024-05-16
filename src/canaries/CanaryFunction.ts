@@ -2,7 +2,7 @@ import * as path from 'path';
 import { Duration, Fn, RemovalPolicy } from 'aws-cdk-lib';
 import { ISecurityGroup, SecurityGroup } from 'aws-cdk-lib/aws-ec2';
 import { Effect, IManagedPolicy, IRole, ManagedPolicy, PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
-import { Architecture, AssetCode, Code, Function, IFunction, Runtime, Tracing } from 'aws-cdk-lib/aws-lambda';
+import { Architecture, Code, Function, IFunction, Runtime, Tracing } from 'aws-cdk-lib/aws-lambda';
 import { ILogGroup, LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { Construct } from 'constructs';
 import { ICanaryFunction } from './ICanaryFunction';
@@ -62,8 +62,8 @@ export class CanaryFunction extends Construct implements ICanaryFunction {
       ],
     });
 
-    const dir: string = path.resolve(__dirname, './src');
-    let code: AssetCode = Code.fromAsset(dir, {
+    /*
+    let code: AssetCode = Code.fromAsset(path.join(__dirname, "src/"), {
       bundling: {
         //image: new Runtime('python3.12:latest-arm64', RuntimeFamily.PYTHON).bundlingImage,
         image: Runtime.PYTHON_3_12.bundlingImage,
@@ -74,16 +74,18 @@ export class CanaryFunction extends Construct implements ICanaryFunction {
         platform: 'linux/arm64',
       },
     });
+    */
 
     if (props.vpc !== undefined && props.vpc != null) {
       let sg: ISecurityGroup = new SecurityGroup(this, 'canarySecurityGroup', {
         description: 'Allow canary to communicate with load balancer',
         vpc: props.vpc,
+        allowAllOutbound: true,
       });
 
       this.function = new Function(this, 'canary', {
         runtime: Runtime.PYTHON_3_12,
-        code: code,
+        code: Code.fromAsset(path.join(__dirname, 'src/canary.zip')),
         handler: 'index.handler',
         role: executionRole,
         architecture: Architecture.ARM_64,
@@ -98,12 +100,12 @@ export class CanaryFunction extends Construct implements ICanaryFunction {
         },
         vpc: props.vpc,
         securityGroups: [sg],
-        vpcSubnets: props.subnetSelect,
+        vpcSubnets: props.subnetSelection,
       });
     } else {
       this.function = new Function(this, 'canary', {
         runtime: Runtime.PYTHON_3_12,
-        code: code,
+        code: Code.fromAsset(path.join(__dirname, 'src/canary.zip')),
         handler: 'index.handler',
         role: executionRole,
         architecture: Architecture.ARM_64,
@@ -118,21 +120,6 @@ export class CanaryFunction extends Construct implements ICanaryFunction {
         },
       });
     }
-
-    /*
-    if (props.assetsBucketParameterName !== undefined) {
-      let tmp = this.function.node.defaultChild as CfnFunction;
-
-      tmp.addPropertyOverride('Code.S3Bucket', Fn.ref(props.assetsBucketParameterName));
-
-      if (props.assetsBucketPrefixParameterName !== undefined) {
-        let key: string | undefined = (tmp.code as CfnFunction.CodeProperty).s3Key;
-        if (key !== undefined) {
-          tmp.addPropertyOverride('Code.S3Key', Fn.ref(props.assetsBucketPrefixParameterName) + key);
-        }
-      }
-    }
-    */
 
     this.function.addPermission('invokePermission', {
       action: 'lambda:InvokeFunction',

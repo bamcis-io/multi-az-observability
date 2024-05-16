@@ -1,11 +1,12 @@
 import { IAlarm } from 'aws-cdk-lib/aws-cloudwatch';
 import { CfnNatGateway } from 'aws-cdk-lib/aws-ec2';
 import { IApplicationLoadBalancer } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
+import { IConstruct } from 'constructs';
 
 /**
  * Properties of a basic service
  */
-export interface IBasicServiceMultiAZObservability
+export interface IBasicServiceMultiAZObservability extends IConstruct
 {
   /**
      * The NAT Gateways being used in the service, each set of NAT Gateways

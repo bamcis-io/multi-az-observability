@@ -1,4 +1,5 @@
 import { ILoadBalancerV2 } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
+import { NetworkConfigurationProps } from './NetworkConfigurationProps';
 
 /**
  * The props for requesting a canary be made for an operation
@@ -42,4 +43,11 @@ export interface AddCanaryTestProps
      * conduct the canary tests
      */
   readonly httpMethods?: string[];
+
+  /**
+   * The VPC network configuration.
+   *
+   * @default - The Lambda function is not run in a VPC
+   */
+  readonly networkConfiguration?: NetworkConfigurationProps;
 }

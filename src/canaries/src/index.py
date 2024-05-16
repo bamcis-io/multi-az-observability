@@ -72,8 +72,17 @@ def verify_request(context, item, method, metrics = None):
   method_start = (time.time() * 1000)
   metrics.set_property("MethodStartTime", round(method_start))
   code = None
-  post_data = item["postData"]
-  headers = item["headers"]
+  
+  if "postData" in item:
+    post_data = item["postData"]
+  else:
+    post_data = ""
+
+  if "headers" in item:
+    headers = item["headers"]
+  else:
+    headers = {}
+
   url = item["url"]
   operation = item["operation"]
   fault_boundary_id = item["faultBoundaryId"]

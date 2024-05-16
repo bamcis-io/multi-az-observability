@@ -264,48 +264,43 @@ The custom resource that can be referenced to use Fn::GetAtt functions on to ret
 ---
 
 
-### MultiAvailabilityZoneObservability <a name="MultiAvailabilityZoneObservability" id="multi-az-observability.MultiAvailabilityZoneObservability"></a>
+### BasicServiceMultiAZObservability <a name="BasicServiceMultiAZObservability" id="multi-az-observability.BasicServiceMultiAZObservability"></a>
 
-- *Implements:* <a href="#multi-az-observability.IMultiAvailabilityZoneObservability">IMultiAvailabilityZoneObservability</a>
+- *Implements:* <a href="#multi-az-observability.IBasicServiceMultiAZObservability">IBasicServiceMultiAZObservability</a>
 
-The construct will create multi-AZ observability for your service based on the parameters you provide.
+Basic observability for a service using metrics from ALBs and NAT Gateways.
 
-It will create alarms that indicate if a single AZ is
-impacted so you can take appropriate action to mitigate the event, for example,
-using zonal shift. It will also optionally create dashboards for your service so
-you can visualize the metrics used to feed the alarms as well as the alarm states.
-
-#### Initializers <a name="Initializers" id="multi-az-observability.MultiAvailabilityZoneObservability.Initializer"></a>
+#### Initializers <a name="Initializers" id="multi-az-observability.BasicServiceMultiAZObservability.Initializer"></a>
 
 ```typescript
-import { MultiAvailabilityZoneObservability } from 'multi-az-observability'
+import { BasicServiceMultiAZObservability } from 'multi-az-observability'
 
-new MultiAvailabilityZoneObservability(scope: Construct, id: string, props?: MultiAvailabilityZoneObservabilityProps)
+new BasicServiceMultiAZObservability(scope: Construct, id: string, props: BasicServiceMultiAZObservabilityProps)
 ```
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#multi-az-observability.MultiAvailabilityZoneObservability.Initializer.parameter.scope">scope</a></code> | <code>constructs.Construct</code> | *No description.* |
-| <code><a href="#multi-az-observability.MultiAvailabilityZoneObservability.Initializer.parameter.id">id</a></code> | <code>string</code> | *No description.* |
-| <code><a href="#multi-az-observability.MultiAvailabilityZoneObservability.Initializer.parameter.props">props</a></code> | <code><a href="#multi-az-observability.MultiAvailabilityZoneObservabilityProps">MultiAvailabilityZoneObservabilityProps</a></code> | *No description.* |
+| <code><a href="#multi-az-observability.BasicServiceMultiAZObservability.Initializer.parameter.scope">scope</a></code> | <code>constructs.Construct</code> | *No description.* |
+| <code><a href="#multi-az-observability.BasicServiceMultiAZObservability.Initializer.parameter.id">id</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#multi-az-observability.BasicServiceMultiAZObservability.Initializer.parameter.props">props</a></code> | <code><a href="#multi-az-observability.BasicServiceMultiAZObservabilityProps">BasicServiceMultiAZObservabilityProps</a></code> | *No description.* |
 
 ---
 
-##### `scope`<sup>Required</sup> <a name="scope" id="multi-az-observability.MultiAvailabilityZoneObservability.Initializer.parameter.scope"></a>
+##### `scope`<sup>Required</sup> <a name="scope" id="multi-az-observability.BasicServiceMultiAZObservability.Initializer.parameter.scope"></a>
 
 - *Type:* constructs.Construct
 
 ---
 
-##### `id`<sup>Required</sup> <a name="id" id="multi-az-observability.MultiAvailabilityZoneObservability.Initializer.parameter.id"></a>
+##### `id`<sup>Required</sup> <a name="id" id="multi-az-observability.BasicServiceMultiAZObservability.Initializer.parameter.id"></a>
 
 - *Type:* string
 
 ---
 
-##### `props`<sup>Optional</sup> <a name="props" id="multi-az-observability.MultiAvailabilityZoneObservability.Initializer.parameter.props"></a>
+##### `props`<sup>Required</sup> <a name="props" id="multi-az-observability.BasicServiceMultiAZObservability.Initializer.parameter.props"></a>
 
-- *Type:* <a href="#multi-az-observability.MultiAvailabilityZoneObservabilityProps">MultiAvailabilityZoneObservabilityProps</a>
+- *Type:* <a href="#multi-az-observability.BasicServiceMultiAZObservabilityProps">BasicServiceMultiAZObservabilityProps</a>
 
 ---
 
@@ -313,11 +308,11 @@ new MultiAvailabilityZoneObservability(scope: Construct, id: string, props?: Mul
 
 | **Name** | **Description** |
 | --- | --- |
-| <code><a href="#multi-az-observability.MultiAvailabilityZoneObservability.toString">toString</a></code> | Returns a string representation of this construct. |
+| <code><a href="#multi-az-observability.BasicServiceMultiAZObservability.toString">toString</a></code> | Returns a string representation of this construct. |
 
 ---
 
-##### `toString` <a name="toString" id="multi-az-observability.MultiAvailabilityZoneObservability.toString"></a>
+##### `toString` <a name="toString" id="multi-az-observability.BasicServiceMultiAZObservability.toString"></a>
 
 ```typescript
 public toString(): string
@@ -329,21 +324,21 @@ Returns a string representation of this construct.
 
 | **Name** | **Description** |
 | --- | --- |
-| <code><a href="#multi-az-observability.MultiAvailabilityZoneObservability.isConstruct">isConstruct</a></code> | Checks if `x` is a construct. |
+| <code><a href="#multi-az-observability.BasicServiceMultiAZObservability.isConstruct">isConstruct</a></code> | Checks if `x` is a construct. |
 
 ---
 
-##### ~~`isConstruct`~~ <a name="isConstruct" id="multi-az-observability.MultiAvailabilityZoneObservability.isConstruct"></a>
+##### ~~`isConstruct`~~ <a name="isConstruct" id="multi-az-observability.BasicServiceMultiAZObservability.isConstruct"></a>
 
 ```typescript
-import { MultiAvailabilityZoneObservability } from 'multi-az-observability'
+import { BasicServiceMultiAZObservability } from 'multi-az-observability'
 
-MultiAvailabilityZoneObservability.isConstruct(x: any)
+BasicServiceMultiAZObservability.isConstruct(x: any)
 ```
 
 Checks if `x` is a construct.
 
-###### `x`<sup>Required</sup> <a name="x" id="multi-az-observability.MultiAvailabilityZoneObservability.isConstruct.parameter.x"></a>
+###### `x`<sup>Required</sup> <a name="x" id="multi-az-observability.BasicServiceMultiAZObservability.isConstruct.parameter.x"></a>
 
 - *Type:* any
 
@@ -355,11 +350,18 @@ Any object.
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#multi-az-observability.MultiAvailabilityZoneObservability.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
+| <code><a href="#multi-az-observability.BasicServiceMultiAZObservability.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
+| <code><a href="#multi-az-observability.BasicServiceMultiAZObservability.property.aggregateZonalIsolatedImpactAlarms">aggregateZonalIsolatedImpactAlarms</a></code> | <code>{[ key: string ]: aws-cdk-lib.aws_cloudwatch.IAlarm}</code> | The alarms indicating if an AZ has isolated impact from either ALB or NAT GW metrics. |
+| <code><a href="#multi-az-observability.BasicServiceMultiAZObservability.property.serviceName">serviceName</a></code> | <code>string</code> | The name of the service. |
+| <code><a href="#multi-az-observability.BasicServiceMultiAZObservability.property.albZonalIsolatedImpactAlarms">albZonalIsolatedImpactAlarms</a></code> | <code>{[ key: string ]: aws-cdk-lib.aws_cloudwatch.IAlarm}</code> | The alarms indicating if an AZ is an outlier for ALB faults and has isolated impact. |
+| <code><a href="#multi-az-observability.BasicServiceMultiAZObservability.property.applicationLoadBalancers">applicationLoadBalancers</a></code> | <code>aws-cdk-lib.aws_elasticloadbalancingv2.IApplicationLoadBalancer[]</code> | The application load balancers being used by the service. |
+| <code><a href="#multi-az-observability.BasicServiceMultiAZObservability.property.dashboard">dashboard</a></code> | <code>aws-cdk-lib.aws_cloudwatch.Dashboard</code> | The dashboard that is optionally created. |
+| <code><a href="#multi-az-observability.BasicServiceMultiAZObservability.property.natGateways">natGateways</a></code> | <code>{[ key: string ]: aws-cdk-lib.aws_ec2.CfnNatGateway[]}</code> | The NAT Gateways being used in the service, each set of NAT Gateways are keyed by their Availability Zone Id. |
+| <code><a href="#multi-az-observability.BasicServiceMultiAZObservability.property.natGWZonalIsolatedImpactAlarms">natGWZonalIsolatedImpactAlarms</a></code> | <code>{[ key: string ]: aws-cdk-lib.aws_cloudwatch.IAlarm}</code> | The alarms indicating if an AZ is an outlier for NAT GW packet loss and has isolated impact. |
 
 ---
 
-##### `node`<sup>Required</sup> <a name="node" id="multi-az-observability.MultiAvailabilityZoneObservability.property.node"></a>
+##### `node`<sup>Required</sup> <a name="node" id="multi-az-observability.BasicServiceMultiAZObservability.property.node"></a>
 
 ```typescript
 public readonly node: Node;
@@ -368,6 +370,262 @@ public readonly node: Node;
 - *Type:* constructs.Node
 
 The tree node.
+
+---
+
+##### `aggregateZonalIsolatedImpactAlarms`<sup>Required</sup> <a name="aggregateZonalIsolatedImpactAlarms" id="multi-az-observability.BasicServiceMultiAZObservability.property.aggregateZonalIsolatedImpactAlarms"></a>
+
+```typescript
+public readonly aggregateZonalIsolatedImpactAlarms: {[ key: string ]: IAlarm};
+```
+
+- *Type:* {[ key: string ]: aws-cdk-lib.aws_cloudwatch.IAlarm}
+
+The alarms indicating if an AZ has isolated impact from either ALB or NAT GW metrics.
+
+---
+
+##### `serviceName`<sup>Required</sup> <a name="serviceName" id="multi-az-observability.BasicServiceMultiAZObservability.property.serviceName"></a>
+
+```typescript
+public readonly serviceName: string;
+```
+
+- *Type:* string
+
+The name of the service.
+
+---
+
+##### `albZonalIsolatedImpactAlarms`<sup>Optional</sup> <a name="albZonalIsolatedImpactAlarms" id="multi-az-observability.BasicServiceMultiAZObservability.property.albZonalIsolatedImpactAlarms"></a>
+
+```typescript
+public readonly albZonalIsolatedImpactAlarms: {[ key: string ]: IAlarm};
+```
+
+- *Type:* {[ key: string ]: aws-cdk-lib.aws_cloudwatch.IAlarm}
+
+The alarms indicating if an AZ is an outlier for ALB faults and has isolated impact.
+
+---
+
+##### `applicationLoadBalancers`<sup>Optional</sup> <a name="applicationLoadBalancers" id="multi-az-observability.BasicServiceMultiAZObservability.property.applicationLoadBalancers"></a>
+
+```typescript
+public readonly applicationLoadBalancers: IApplicationLoadBalancer[];
+```
+
+- *Type:* aws-cdk-lib.aws_elasticloadbalancingv2.IApplicationLoadBalancer[]
+
+The application load balancers being used by the service.
+
+---
+
+##### `dashboard`<sup>Optional</sup> <a name="dashboard" id="multi-az-observability.BasicServiceMultiAZObservability.property.dashboard"></a>
+
+```typescript
+public readonly dashboard: Dashboard;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.Dashboard
+
+The dashboard that is optionally created.
+
+---
+
+##### `natGateways`<sup>Optional</sup> <a name="natGateways" id="multi-az-observability.BasicServiceMultiAZObservability.property.natGateways"></a>
+
+```typescript
+public readonly natGateways: {[ key: string ]: CfnNatGateway[]};
+```
+
+- *Type:* {[ key: string ]: aws-cdk-lib.aws_ec2.CfnNatGateway[]}
+
+The NAT Gateways being used in the service, each set of NAT Gateways are keyed by their Availability Zone Id.
+
+---
+
+##### `natGWZonalIsolatedImpactAlarms`<sup>Optional</sup> <a name="natGWZonalIsolatedImpactAlarms" id="multi-az-observability.BasicServiceMultiAZObservability.property.natGWZonalIsolatedImpactAlarms"></a>
+
+```typescript
+public readonly natGWZonalIsolatedImpactAlarms: {[ key: string ]: IAlarm};
+```
+
+- *Type:* {[ key: string ]: aws-cdk-lib.aws_cloudwatch.IAlarm}
+
+The alarms indicating if an AZ is an outlier for NAT GW packet loss and has isolated impact.
+
+---
+
+
+### InstrumentedServiceMultiAZObservability <a name="InstrumentedServiceMultiAZObservability" id="multi-az-observability.InstrumentedServiceMultiAZObservability"></a>
+
+- *Implements:* <a href="#multi-az-observability.IInstrumentedServiceMultiAZObservability">IInstrumentedServiceMultiAZObservability</a>
+
+An service that implements its own instrumentation to record availability and latency metrics that can be used to create alarms, rules, and dashboards from.
+
+#### Initializers <a name="Initializers" id="multi-az-observability.InstrumentedServiceMultiAZObservability.Initializer"></a>
+
+```typescript
+import { InstrumentedServiceMultiAZObservability } from 'multi-az-observability'
+
+new InstrumentedServiceMultiAZObservability(scope: Construct, id: string, props: InstrumentedServiceMultiAZObservabilityProps)
+```
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#multi-az-observability.InstrumentedServiceMultiAZObservability.Initializer.parameter.scope">scope</a></code> | <code>constructs.Construct</code> | *No description.* |
+| <code><a href="#multi-az-observability.InstrumentedServiceMultiAZObservability.Initializer.parameter.id">id</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#multi-az-observability.InstrumentedServiceMultiAZObservability.Initializer.parameter.props">props</a></code> | <code><a href="#multi-az-observability.InstrumentedServiceMultiAZObservabilityProps">InstrumentedServiceMultiAZObservabilityProps</a></code> | *No description.* |
+
+---
+
+##### `scope`<sup>Required</sup> <a name="scope" id="multi-az-observability.InstrumentedServiceMultiAZObservability.Initializer.parameter.scope"></a>
+
+- *Type:* constructs.Construct
+
+---
+
+##### `id`<sup>Required</sup> <a name="id" id="multi-az-observability.InstrumentedServiceMultiAZObservability.Initializer.parameter.id"></a>
+
+- *Type:* string
+
+---
+
+##### `props`<sup>Required</sup> <a name="props" id="multi-az-observability.InstrumentedServiceMultiAZObservability.Initializer.parameter.props"></a>
+
+- *Type:* <a href="#multi-az-observability.InstrumentedServiceMultiAZObservabilityProps">InstrumentedServiceMultiAZObservabilityProps</a>
+
+---
+
+#### Methods <a name="Methods" id="Methods"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#multi-az-observability.InstrumentedServiceMultiAZObservability.toString">toString</a></code> | Returns a string representation of this construct. |
+
+---
+
+##### `toString` <a name="toString" id="multi-az-observability.InstrumentedServiceMultiAZObservability.toString"></a>
+
+```typescript
+public toString(): string
+```
+
+Returns a string representation of this construct.
+
+#### Static Functions <a name="Static Functions" id="Static Functions"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#multi-az-observability.InstrumentedServiceMultiAZObservability.isConstruct">isConstruct</a></code> | Checks if `x` is a construct. |
+
+---
+
+##### ~~`isConstruct`~~ <a name="isConstruct" id="multi-az-observability.InstrumentedServiceMultiAZObservability.isConstruct"></a>
+
+```typescript
+import { InstrumentedServiceMultiAZObservability } from 'multi-az-observability'
+
+InstrumentedServiceMultiAZObservability.isConstruct(x: any)
+```
+
+Checks if `x` is a construct.
+
+###### `x`<sup>Required</sup> <a name="x" id="multi-az-observability.InstrumentedServiceMultiAZObservability.isConstruct.parameter.x"></a>
+
+- *Type:* any
+
+Any object.
+
+---
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#multi-az-observability.InstrumentedServiceMultiAZObservability.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
+| <code><a href="#multi-az-observability.InstrumentedServiceMultiAZObservability.property.perOperationZonalImpactAlarms">perOperationZonalImpactAlarms</a></code> | <code>{[ key: string ]: {[ key: string ]: aws-cdk-lib.aws_cloudwatch.IAlarm}}</code> | Index into the dictionary by operation name, then by Availability Zone Id to get the alarms that indicate an AZ shows isolated impact from availability or latency as seen by either the server-side or canary. |
+| <code><a href="#multi-az-observability.InstrumentedServiceMultiAZObservability.property.serviceAlarms">serviceAlarms</a></code> | <code><a href="#multi-az-observability.IServiceAlarmsAndRules">IServiceAlarmsAndRules</a></code> | The alarms and rules for the overall service. |
+| <code><a href="#multi-az-observability.InstrumentedServiceMultiAZObservability.property.canaryLogGroup">canaryLogGroup</a></code> | <code>aws-cdk-lib.aws_logs.ILogGroup</code> | If the service is configured to have canary tests created, this will be the log group where the canary's logs are stored. |
+| <code><a href="#multi-az-observability.InstrumentedServiceMultiAZObservability.property.operationDashboards">operationDashboards</a></code> | <code>aws-cdk-lib.aws_cloudwatch.Dashboard[]</code> | The dashboards for each operation. |
+| <code><a href="#multi-az-observability.InstrumentedServiceMultiAZObservability.property.serviceDashboard">serviceDashboard</a></code> | <code>aws-cdk-lib.aws_cloudwatch.Dashboard</code> | The service level dashboard. |
+
+---
+
+##### `node`<sup>Required</sup> <a name="node" id="multi-az-observability.InstrumentedServiceMultiAZObservability.property.node"></a>
+
+```typescript
+public readonly node: Node;
+```
+
+- *Type:* constructs.Node
+
+The tree node.
+
+---
+
+##### `perOperationZonalImpactAlarms`<sup>Required</sup> <a name="perOperationZonalImpactAlarms" id="multi-az-observability.InstrumentedServiceMultiAZObservability.property.perOperationZonalImpactAlarms"></a>
+
+```typescript
+public readonly perOperationZonalImpactAlarms: {[ key: string ]: {[ key: string ]: IAlarm}};
+```
+
+- *Type:* {[ key: string ]: {[ key: string ]: aws-cdk-lib.aws_cloudwatch.IAlarm}}
+
+Index into the dictionary by operation name, then by Availability Zone Id to get the alarms that indicate an AZ shows isolated impact from availability or latency as seen by either the server-side or canary.
+
+These are the alarms
+you would want to use to trigger automation to evacuate an AZ.
+
+---
+
+##### `serviceAlarms`<sup>Required</sup> <a name="serviceAlarms" id="multi-az-observability.InstrumentedServiceMultiAZObservability.property.serviceAlarms"></a>
+
+```typescript
+public readonly serviceAlarms: IServiceAlarmsAndRules;
+```
+
+- *Type:* <a href="#multi-az-observability.IServiceAlarmsAndRules">IServiceAlarmsAndRules</a>
+
+The alarms and rules for the overall service.
+
+---
+
+##### `canaryLogGroup`<sup>Optional</sup> <a name="canaryLogGroup" id="multi-az-observability.InstrumentedServiceMultiAZObservability.property.canaryLogGroup"></a>
+
+```typescript
+public readonly canaryLogGroup: ILogGroup;
+```
+
+- *Type:* aws-cdk-lib.aws_logs.ILogGroup
+- *Default:* No log group is created if the canary is not requested.
+
+If the service is configured to have canary tests created, this will be the log group where the canary's logs are stored.
+
+---
+
+##### `operationDashboards`<sup>Optional</sup> <a name="operationDashboards" id="multi-az-observability.InstrumentedServiceMultiAZObservability.property.operationDashboards"></a>
+
+```typescript
+public readonly operationDashboards: Dashboard[];
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.Dashboard[]
+
+The dashboards for each operation.
+
+---
+
+##### `serviceDashboard`<sup>Optional</sup> <a name="serviceDashboard" id="multi-az-observability.InstrumentedServiceMultiAZObservability.property.serviceDashboard"></a>
+
+```typescript
+public readonly serviceDashboard: Dashboard;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.Dashboard
+
+The service level dashboard.
 
 ---
 
@@ -395,6 +653,7 @@ const addCanaryTestProps: AddCanaryTestProps = { ... }
 | <code><a href="#multi-az-observability.AddCanaryTestProps.property.schedule">schedule</a></code> | <code>string</code> | A schedule expression. |
 | <code><a href="#multi-az-observability.AddCanaryTestProps.property.headers">headers</a></code> | <code>{[ key: string ]: string}</code> | Any headers to include. |
 | <code><a href="#multi-az-observability.AddCanaryTestProps.property.httpMethods">httpMethods</a></code> | <code>string[]</code> | Defining this will override the methods defined in the operation and will use these instead. |
+| <code><a href="#multi-az-observability.AddCanaryTestProps.property.networkConfiguration">networkConfiguration</a></code> | <code><a href="#multi-az-observability.NetworkConfigurationProps">NetworkConfigurationProps</a></code> | The VPC network configuration. |
 | <code><a href="#multi-az-observability.AddCanaryTestProps.property.postData">postData</a></code> | <code>string</code> | Data to supply in a POST, PUT, or PATCH operation. |
 
 ---
@@ -458,6 +717,19 @@ public readonly httpMethods: string[];
 - *Default:* The operation's defined HTTP methods will be used to conduct the canary tests
 
 Defining this will override the methods defined in the operation and will use these instead.
+
+---
+
+##### `networkConfiguration`<sup>Optional</sup> <a name="networkConfiguration" id="multi-az-observability.AddCanaryTestProps.property.networkConfiguration"></a>
+
+```typescript
+public readonly networkConfiguration: NetworkConfigurationProps;
+```
+
+- *Type:* <a href="#multi-az-observability.NetworkConfigurationProps">NetworkConfigurationProps</a>
+- *Default:* The Lambda function is not run in a VPC
+
+The VPC network configuration.
 
 ---
 
@@ -682,7 +954,6 @@ const canaryMetricProps: CanaryMetricProps = { ... }
 | --- | --- | --- |
 | <code><a href="#multi-az-observability.CanaryMetricProps.property.canaryAvailabilityMetricDetails">canaryAvailabilityMetricDetails</a></code> | <code><a href="#multi-az-observability.IOperationMetricDetails">IOperationMetricDetails</a></code> | The canary availability metric details. |
 | <code><a href="#multi-az-observability.CanaryMetricProps.property.canaryLatencyMetricDetails">canaryLatencyMetricDetails</a></code> | <code><a href="#multi-az-observability.IOperationMetricDetails">IOperationMetricDetails</a></code> | The canary latency metric details. |
-| <code><a href="#multi-az-observability.CanaryMetricProps.property.canaryContributorInsightRuleDetails">canaryContributorInsightRuleDetails</a></code> | <code><a href="#multi-az-observability.IContributorInsightRuleDetails">IContributorInsightRuleDetails</a></code> | The canary details for contributor insights rules. |
 
 ---
 
@@ -707,19 +978,6 @@ public readonly canaryLatencyMetricDetails: IOperationMetricDetails;
 - *Type:* <a href="#multi-az-observability.IOperationMetricDetails">IOperationMetricDetails</a>
 
 The canary latency metric details.
-
----
-
-##### `canaryContributorInsightRuleDetails`<sup>Optional</sup> <a name="canaryContributorInsightRuleDetails" id="multi-az-observability.CanaryMetricProps.property.canaryContributorInsightRuleDetails"></a>
-
-```typescript
-public readonly canaryContributorInsightRuleDetails: IContributorInsightRuleDetails;
-```
-
-- *Type:* <a href="#multi-az-observability.IContributorInsightRuleDetails">IContributorInsightRuleDetails</a>
-- *Default:* No contributor insight rules will be created
-
-The canary details for contributor insights rules.
 
 ---
 
@@ -934,59 +1192,52 @@ The interval used in the dashboard, defaults to 60 minutes.
 
 ---
 
-### MultiAvailabilityZoneObservabilityProps <a name="MultiAvailabilityZoneObservabilityProps" id="multi-az-observability.MultiAvailabilityZoneObservabilityProps"></a>
+### NetworkConfigurationProps <a name="NetworkConfigurationProps" id="multi-az-observability.NetworkConfigurationProps"></a>
 
-The properties for creating multi-AZ observability alarms and dashboards.
+The network configuration for the canary function.
 
-#### Initializer <a name="Initializer" id="multi-az-observability.MultiAvailabilityZoneObservabilityProps.Initializer"></a>
+#### Initializer <a name="Initializer" id="multi-az-observability.NetworkConfigurationProps.Initializer"></a>
 
 ```typescript
-import { MultiAvailabilityZoneObservabilityProps } from 'multi-az-observability'
+import { NetworkConfigurationProps } from 'multi-az-observability'
 
-const multiAvailabilityZoneObservabilityProps: MultiAvailabilityZoneObservabilityProps = { ... }
+const networkConfigurationProps: NetworkConfigurationProps = { ... }
 ```
 
 #### Properties <a name="Properties" id="Properties"></a>
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#multi-az-observability.MultiAvailabilityZoneObservabilityProps.property.basicServiceObservabilityProps">basicServiceObservabilityProps</a></code> | <code><a href="#multi-az-observability.BasicServiceMultiAZObservabilityProps">BasicServiceMultiAZObservabilityProps</a></code> | The properties for a basic service that does not emit its own metrics or logs for latency and availability. |
-| <code><a href="#multi-az-observability.MultiAvailabilityZoneObservabilityProps.property.instrumentedServiceObservabilityProps">instrumentedServiceObservabilityProps</a></code> | <code><a href="#multi-az-observability.InstrumentedServiceMultiAZObservabilityProps">InstrumentedServiceMultiAZObservabilityProps</a></code> | The properties for a service that has implemented its own instrumentation to emit availability and latency metrics. |
+| <code><a href="#multi-az-observability.NetworkConfigurationProps.property.subnetSelection">subnetSelection</a></code> | <code>aws-cdk-lib.aws_ec2.SubnetSelection</code> | The subnets the Lambda function will be deployed in the VPC. |
+| <code><a href="#multi-az-observability.NetworkConfigurationProps.property.vpc">vpc</a></code> | <code>aws-cdk-lib.aws_ec2.IVpc</code> | The VPC to run the canary in. |
 
 ---
 
-##### `basicServiceObservabilityProps`<sup>Optional</sup> <a name="basicServiceObservabilityProps" id="multi-az-observability.MultiAvailabilityZoneObservabilityProps.property.basicServiceObservabilityProps"></a>
+##### `subnetSelection`<sup>Required</sup> <a name="subnetSelection" id="multi-az-observability.NetworkConfigurationProps.property.subnetSelection"></a>
 
 ```typescript
-public readonly basicServiceObservabilityProps: BasicServiceMultiAZObservabilityProps;
+public readonly subnetSelection: SubnetSelection;
 ```
 
-- *Type:* <a href="#multi-az-observability.BasicServiceMultiAZObservabilityProps">BasicServiceMultiAZObservabilityProps</a>
-- *Default:* No basic service observability alarms are created
+- *Type:* aws-cdk-lib.aws_ec2.SubnetSelection
 
-The properties for a basic service that does not emit its own metrics or logs for latency and availability.
-
-This will create
-alarms based on Application Load Balancer metrics and optionally
-NAT Gateway metrics to determine single AZ impact. Specify either
-this or instrumentedServiceObservabilityProps, but not both.
+The subnets the Lambda function will be deployed in the VPC.
 
 ---
 
-##### `instrumentedServiceObservabilityProps`<sup>Optional</sup> <a name="instrumentedServiceObservabilityProps" id="multi-az-observability.MultiAvailabilityZoneObservabilityProps.property.instrumentedServiceObservabilityProps"></a>
+##### `vpc`<sup>Required</sup> <a name="vpc" id="multi-az-observability.NetworkConfigurationProps.property.vpc"></a>
 
 ```typescript
-public readonly instrumentedServiceObservabilityProps: InstrumentedServiceMultiAZObservabilityProps;
+public readonly vpc: IVpc;
 ```
 
-- *Type:* <a href="#multi-az-observability.InstrumentedServiceMultiAZObservabilityProps">InstrumentedServiceMultiAZObservabilityProps</a>
-- *Default:* No instrumented service observability alarms are created
+- *Type:* aws-cdk-lib.aws_ec2.IVpc
 
-The properties for a service that has implemented its own instrumentation to emit availability and latency metrics.
+The VPC to run the canary in.
 
-This will create alarms based
-on those metrics to determine single AZ impact. Specify either this or
-basicServiceObservabilityProps, but not both.
+A security group will be created
+that allows the function to communicate with the VPC as well
+as the required IAM permissions.
 
 ---
 
@@ -1006,80 +1257,20 @@ const operationMetricDetailsProps: OperationMetricDetailsProps = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
+| <code><a href="#multi-az-observability.OperationMetricDetailsProps.property.metricDimensions">metricDimensions</a></code> | <code><a href="#multi-az-observability.MetricDimensions">MetricDimensions</a></code> | The user implemented functions for providing the metric's dimensions. |
+| <code><a href="#multi-az-observability.OperationMetricDetailsProps.property.operationName">operationName</a></code> | <code>string</code> | The operation these metric details are for. |
 | <code><a href="#multi-az-observability.OperationMetricDetailsProps.property.alarmStatistic">alarmStatistic</a></code> | <code>string</code> | The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9". |
 | <code><a href="#multi-az-observability.OperationMetricDetailsProps.property.datapointsToAlarm">datapointsToAlarm</a></code> | <code>number</code> | The number of datapoints to alarm on for latency and availability alarms. |
 | <code><a href="#multi-az-observability.OperationMetricDetailsProps.property.evaluationPeriods">evaluationPeriods</a></code> | <code>number</code> | The number of evaluation periods for latency and availabiltiy alarms. |
 | <code><a href="#multi-az-observability.OperationMetricDetailsProps.property.faultAlarmThreshold">faultAlarmThreshold</a></code> | <code>number</code> | The threshold for alarms associated with fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%. |
 | <code><a href="#multi-az-observability.OperationMetricDetailsProps.property.faultMetricNames">faultMetricNames</a></code> | <code>string[]</code> | The names of fault indicating metrics. |
-| <code><a href="#multi-az-observability.OperationMetricDetailsProps.property.metricDimensions">metricDimensions</a></code> | <code><a href="#multi-az-observability.MetricDimensions">MetricDimensions</a></code> | The user implemented functions for providing the metric's dimensions. |
+| <code><a href="#multi-az-observability.OperationMetricDetailsProps.property.graphedFaultStatistics">graphedFaultStatistics</a></code> | <code>string[]</code> | The statistics for faults you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99. |
+| <code><a href="#multi-az-observability.OperationMetricDetailsProps.property.graphedSuccessStatistics">graphedSuccessStatistics</a></code> | <code>string[]</code> | The statistics for successes you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99. |
 | <code><a href="#multi-az-observability.OperationMetricDetailsProps.property.metricNamespace">metricNamespace</a></code> | <code>string</code> | The CloudWatch metric namespace for these metrics. |
-| <code><a href="#multi-az-observability.OperationMetricDetailsProps.property.operationName">operationName</a></code> | <code>string</code> | The operation these metric details are for. |
 | <code><a href="#multi-az-observability.OperationMetricDetailsProps.property.period">period</a></code> | <code>aws-cdk-lib.Duration</code> | The period for the metrics. |
 | <code><a href="#multi-az-observability.OperationMetricDetailsProps.property.successAlarmThreshold">successAlarmThreshold</a></code> | <code>number</code> | The threshold for alarms associated with success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%. |
 | <code><a href="#multi-az-observability.OperationMetricDetailsProps.property.successMetricNames">successMetricNames</a></code> | <code>string[]</code> | The names of success indicating metrics. |
 | <code><a href="#multi-az-observability.OperationMetricDetailsProps.property.unit">unit</a></code> | <code>aws-cdk-lib.aws_cloudwatch.Unit</code> | The unit used for these metrics. |
-| <code><a href="#multi-az-observability.OperationMetricDetailsProps.property.graphedFaultStatistics">graphedFaultStatistics</a></code> | <code>string[]</code> | The statistics for faults you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99. |
-| <code><a href="#multi-az-observability.OperationMetricDetailsProps.property.graphedSuccessStatistics">graphedSuccessStatistics</a></code> | <code>string[]</code> | The statistics for successes you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99. |
-
----
-
-##### `alarmStatistic`<sup>Required</sup> <a name="alarmStatistic" id="multi-az-observability.OperationMetricDetailsProps.property.alarmStatistic"></a>
-
-```typescript
-public readonly alarmStatistic: string;
-```
-
-- *Type:* string
-
-The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9".
-
----
-
-##### `datapointsToAlarm`<sup>Required</sup> <a name="datapointsToAlarm" id="multi-az-observability.OperationMetricDetailsProps.property.datapointsToAlarm"></a>
-
-```typescript
-public readonly datapointsToAlarm: number;
-```
-
-- *Type:* number
-
-The number of datapoints to alarm on for latency and availability alarms.
-
----
-
-##### `evaluationPeriods`<sup>Required</sup> <a name="evaluationPeriods" id="multi-az-observability.OperationMetricDetailsProps.property.evaluationPeriods"></a>
-
-```typescript
-public readonly evaluationPeriods: number;
-```
-
-- *Type:* number
-
-The number of evaluation periods for latency and availabiltiy alarms.
-
----
-
-##### `faultAlarmThreshold`<sup>Required</sup> <a name="faultAlarmThreshold" id="multi-az-observability.OperationMetricDetailsProps.property.faultAlarmThreshold"></a>
-
-```typescript
-public readonly faultAlarmThreshold: number;
-```
-
-- *Type:* number
-
-The threshold for alarms associated with fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%.
-
----
-
-##### `faultMetricNames`<sup>Required</sup> <a name="faultMetricNames" id="multi-az-observability.OperationMetricDetailsProps.property.faultMetricNames"></a>
-
-```typescript
-public readonly faultMetricNames: string[];
-```
-
-- *Type:* string[]
-
-The names of fault indicating metrics.
 
 ---
 
@@ -1095,18 +1286,6 @@ The user implemented functions for providing the metric's dimensions.
 
 ---
 
-##### `metricNamespace`<sup>Required</sup> <a name="metricNamespace" id="multi-az-observability.OperationMetricDetailsProps.property.metricNamespace"></a>
-
-```typescript
-public readonly metricNamespace: string;
-```
-
-- *Type:* string
-
-The CloudWatch metric namespace for these metrics.
-
----
-
 ##### `operationName`<sup>Required</sup> <a name="operationName" id="multi-az-observability.OperationMetricDetailsProps.property.operationName"></a>
 
 ```typescript
@@ -1119,51 +1298,68 @@ The operation these metric details are for.
 
 ---
 
-##### `period`<sup>Required</sup> <a name="period" id="multi-az-observability.OperationMetricDetailsProps.property.period"></a>
+##### `alarmStatistic`<sup>Optional</sup> <a name="alarmStatistic" id="multi-az-observability.OperationMetricDetailsProps.property.alarmStatistic"></a>
 
 ```typescript
-public readonly period: Duration;
+public readonly alarmStatistic: string;
 ```
 
-- *Type:* aws-cdk-lib.Duration
+- *Type:* string
+- *Default:* The service default is used
 
-The period for the metrics.
+The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9".
 
 ---
 
-##### `successAlarmThreshold`<sup>Required</sup> <a name="successAlarmThreshold" id="multi-az-observability.OperationMetricDetailsProps.property.successAlarmThreshold"></a>
+##### `datapointsToAlarm`<sup>Optional</sup> <a name="datapointsToAlarm" id="multi-az-observability.OperationMetricDetailsProps.property.datapointsToAlarm"></a>
 
 ```typescript
-public readonly successAlarmThreshold: number;
+public readonly datapointsToAlarm: number;
 ```
 
 - *Type:* number
+- *Default:* The service default is used
 
-The threshold for alarms associated with success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%.
+The number of datapoints to alarm on for latency and availability alarms.
 
 ---
 
-##### `successMetricNames`<sup>Required</sup> <a name="successMetricNames" id="multi-az-observability.OperationMetricDetailsProps.property.successMetricNames"></a>
+##### `evaluationPeriods`<sup>Optional</sup> <a name="evaluationPeriods" id="multi-az-observability.OperationMetricDetailsProps.property.evaluationPeriods"></a>
 
 ```typescript
-public readonly successMetricNames: string[];
+public readonly evaluationPeriods: number;
+```
+
+- *Type:* number
+- *Default:* The service default is used
+
+The number of evaluation periods for latency and availabiltiy alarms.
+
+---
+
+##### `faultAlarmThreshold`<sup>Optional</sup> <a name="faultAlarmThreshold" id="multi-az-observability.OperationMetricDetailsProps.property.faultAlarmThreshold"></a>
+
+```typescript
+public readonly faultAlarmThreshold: number;
+```
+
+- *Type:* number
+- *Default:* The service default is used
+
+The threshold for alarms associated with fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%.
+
+---
+
+##### `faultMetricNames`<sup>Optional</sup> <a name="faultMetricNames" id="multi-az-observability.OperationMetricDetailsProps.property.faultMetricNames"></a>
+
+```typescript
+public readonly faultMetricNames: string[];
 ```
 
 - *Type:* string[]
+- *Default:* The service default is used
 
-The names of success indicating metrics.
-
----
-
-##### `unit`<sup>Required</sup> <a name="unit" id="multi-az-observability.OperationMetricDetailsProps.property.unit"></a>
-
-```typescript
-public readonly unit: Unit;
-```
-
-- *Type:* aws-cdk-lib.aws_cloudwatch.Unit
-
-The unit used for these metrics.
+The names of fault indicating metrics.
 
 ---
 
@@ -1174,7 +1370,7 @@ public readonly graphedFaultStatistics: string[];
 ```
 
 - *Type:* string[]
-- *Default:* For availability metrics, this will be "Sum", for latency metrics it will be just "p99"
+- *Default:* The service default is used
 
 The statistics for faults you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99.
 
@@ -1190,12 +1386,77 @@ public readonly graphedSuccessStatistics: string[];
 ```
 
 - *Type:* string[]
-- *Default:* For availability metrics, this will be "Sum", for latency metrics it will be just "p99"
+- *Default:* The service default is used
 
 The statistics for successes you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99.
 
 For availability
 metrics this will typically just be "Sum".
+
+---
+
+##### `metricNamespace`<sup>Optional</sup> <a name="metricNamespace" id="multi-az-observability.OperationMetricDetailsProps.property.metricNamespace"></a>
+
+```typescript
+public readonly metricNamespace: string;
+```
+
+- *Type:* string
+- *Default:* The service default is used
+
+The CloudWatch metric namespace for these metrics.
+
+---
+
+##### `period`<sup>Optional</sup> <a name="period" id="multi-az-observability.OperationMetricDetailsProps.property.period"></a>
+
+```typescript
+public readonly period: Duration;
+```
+
+- *Type:* aws-cdk-lib.Duration
+- *Default:* The service default is used
+
+The period for the metrics.
+
+---
+
+##### `successAlarmThreshold`<sup>Optional</sup> <a name="successAlarmThreshold" id="multi-az-observability.OperationMetricDetailsProps.property.successAlarmThreshold"></a>
+
+```typescript
+public readonly successAlarmThreshold: number;
+```
+
+- *Type:* number
+- *Default:* The service default is used
+
+The threshold for alarms associated with success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%.
+
+---
+
+##### `successMetricNames`<sup>Optional</sup> <a name="successMetricNames" id="multi-az-observability.OperationMetricDetailsProps.property.successMetricNames"></a>
+
+```typescript
+public readonly successMetricNames: string[];
+```
+
+- *Type:* string[]
+- *Default:* The service default is used
+
+The names of success indicating metrics.
+
+---
+
+##### `unit`<sup>Optional</sup> <a name="unit" id="multi-az-observability.OperationMetricDetailsProps.property.unit"></a>
+
+```typescript
+public readonly unit: Unit;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.Unit
+- *Default:* The service default is used
+
+The unit used for these metrics.
 
 ---
 
@@ -1224,6 +1485,7 @@ const operationProps: OperationProps = { ... }
 | <code><a href="#multi-az-observability.OperationProps.property.service">service</a></code> | <code><a href="#multi-az-observability.IService">IService</a></code> | The service the operation is associated with. |
 | <code><a href="#multi-az-observability.OperationProps.property.canaryMetricDetails">canaryMetricDetails</a></code> | <code><a href="#multi-az-observability.ICanaryMetrics">ICanaryMetrics</a></code> | Optional metric details if the service has a canary. |
 | <code><a href="#multi-az-observability.OperationProps.property.canaryTestProps">canaryTestProps</a></code> | <code><a href="#multi-az-observability.AddCanaryTestProps">AddCanaryTestProps</a></code> | If you define this property, a synthetic canary will be provisioned to test the operation. |
+| <code><a href="#multi-az-observability.OperationProps.property.optOutOfServiceCreatedCanary">optOutOfServiceCreatedCanary</a></code> | <code>boolean</code> | Set to true if you have defined CanaryTestProps for your service, which applies to all operations, but you want to opt out of creating the canary test for this operation. |
 | <code><a href="#multi-az-observability.OperationProps.property.serverSideContributorInsightRuleDetails">serverSideContributorInsightRuleDetails</a></code> | <code><a href="#multi-az-observability.IContributorInsightRuleDetails">IContributorInsightRuleDetails</a></code> | The server side details for contributor insights rules. |
 
 ---
@@ -1332,9 +1594,22 @@ public readonly canaryTestProps: AddCanaryTestProps;
 ```
 
 - *Type:* <a href="#multi-az-observability.AddCanaryTestProps">AddCanaryTestProps</a>
-- *Default:* No canary will be created for this operation
+- *Default:* The default for the service will be used, if that is undefined, then no canary will be provisioned for this operation.
 
 If you define this property, a synthetic canary will be provisioned to test the operation.
+
+---
+
+##### `optOutOfServiceCreatedCanary`<sup>Optional</sup> <a name="optOutOfServiceCreatedCanary" id="multi-az-observability.OperationProps.property.optOutOfServiceCreatedCanary"></a>
+
+```typescript
+public readonly optOutOfServiceCreatedCanary: boolean;
+```
+
+- *Type:* boolean
+- *Default:* The operation is not opted out
+
+Set to true if you have defined CanaryTestProps for your service, which applies to all operations, but you want to opt out of creating the canary test for this operation.
 
 ---
 
@@ -1345,9 +1620,192 @@ public readonly serverSideContributorInsightRuleDetails: IContributorInsightRule
 ```
 
 - *Type:* <a href="#multi-az-observability.IContributorInsightRuleDetails">IContributorInsightRuleDetails</a>
-- *Default:* No Contributor Insight rules will be created and the number of instances contributing to AZ faults or high latency will not be considered, so a single bad instance could make the AZ appear to look impaired.
+- *Default:* The default service contributor insight rule details will be used. If those are not defined no Contributor Insight rules will be created and the number of instances contributing to AZ faults or high latency will not be considered, so a single bad instance could make the AZ appear to look impaired.
 
 The server side details for contributor insights rules.
+
+---
+
+### ServiceMetricDetailsProps <a name="ServiceMetricDetailsProps" id="multi-az-observability.ServiceMetricDetailsProps"></a>
+
+The properties for default service metric details.
+
+#### Initializer <a name="Initializer" id="multi-az-observability.ServiceMetricDetailsProps.Initializer"></a>
+
+```typescript
+import { ServiceMetricDetailsProps } from 'multi-az-observability'
+
+const serviceMetricDetailsProps: ServiceMetricDetailsProps = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#multi-az-observability.ServiceMetricDetailsProps.property.alarmStatistic">alarmStatistic</a></code> | <code>string</code> | The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9". |
+| <code><a href="#multi-az-observability.ServiceMetricDetailsProps.property.datapointsToAlarm">datapointsToAlarm</a></code> | <code>number</code> | The number of datapoints to alarm on for latency and availability alarms. |
+| <code><a href="#multi-az-observability.ServiceMetricDetailsProps.property.evaluationPeriods">evaluationPeriods</a></code> | <code>number</code> | The number of evaluation periods for latency and availabiltiy alarms. |
+| <code><a href="#multi-az-observability.ServiceMetricDetailsProps.property.faultAlarmThreshold">faultAlarmThreshold</a></code> | <code>number</code> | The threshold for alarms associated with fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%. |
+| <code><a href="#multi-az-observability.ServiceMetricDetailsProps.property.faultMetricNames">faultMetricNames</a></code> | <code>string[]</code> | The names of fault indicating metrics. |
+| <code><a href="#multi-az-observability.ServiceMetricDetailsProps.property.metricNamespace">metricNamespace</a></code> | <code>string</code> | The CloudWatch metric namespace for these metrics. |
+| <code><a href="#multi-az-observability.ServiceMetricDetailsProps.property.period">period</a></code> | <code>aws-cdk-lib.Duration</code> | The period for the metrics. |
+| <code><a href="#multi-az-observability.ServiceMetricDetailsProps.property.successAlarmThreshold">successAlarmThreshold</a></code> | <code>number</code> | The threshold for alarms associated with success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%. |
+| <code><a href="#multi-az-observability.ServiceMetricDetailsProps.property.successMetricNames">successMetricNames</a></code> | <code>string[]</code> | The names of success indicating metrics. |
+| <code><a href="#multi-az-observability.ServiceMetricDetailsProps.property.unit">unit</a></code> | <code>aws-cdk-lib.aws_cloudwatch.Unit</code> | The unit used for these metrics. |
+| <code><a href="#multi-az-observability.ServiceMetricDetailsProps.property.graphedFaultStatistics">graphedFaultStatistics</a></code> | <code>string[]</code> | The statistics for faults you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99. |
+| <code><a href="#multi-az-observability.ServiceMetricDetailsProps.property.graphedSuccessStatistics">graphedSuccessStatistics</a></code> | <code>string[]</code> | The statistics for successes you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99. |
+
+---
+
+##### `alarmStatistic`<sup>Required</sup> <a name="alarmStatistic" id="multi-az-observability.ServiceMetricDetailsProps.property.alarmStatistic"></a>
+
+```typescript
+public readonly alarmStatistic: string;
+```
+
+- *Type:* string
+
+The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9".
+
+---
+
+##### `datapointsToAlarm`<sup>Required</sup> <a name="datapointsToAlarm" id="multi-az-observability.ServiceMetricDetailsProps.property.datapointsToAlarm"></a>
+
+```typescript
+public readonly datapointsToAlarm: number;
+```
+
+- *Type:* number
+
+The number of datapoints to alarm on for latency and availability alarms.
+
+---
+
+##### `evaluationPeriods`<sup>Required</sup> <a name="evaluationPeriods" id="multi-az-observability.ServiceMetricDetailsProps.property.evaluationPeriods"></a>
+
+```typescript
+public readonly evaluationPeriods: number;
+```
+
+- *Type:* number
+
+The number of evaluation periods for latency and availabiltiy alarms.
+
+---
+
+##### `faultAlarmThreshold`<sup>Required</sup> <a name="faultAlarmThreshold" id="multi-az-observability.ServiceMetricDetailsProps.property.faultAlarmThreshold"></a>
+
+```typescript
+public readonly faultAlarmThreshold: number;
+```
+
+- *Type:* number
+
+The threshold for alarms associated with fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%.
+
+---
+
+##### `faultMetricNames`<sup>Required</sup> <a name="faultMetricNames" id="multi-az-observability.ServiceMetricDetailsProps.property.faultMetricNames"></a>
+
+```typescript
+public readonly faultMetricNames: string[];
+```
+
+- *Type:* string[]
+
+The names of fault indicating metrics.
+
+---
+
+##### `metricNamespace`<sup>Required</sup> <a name="metricNamespace" id="multi-az-observability.ServiceMetricDetailsProps.property.metricNamespace"></a>
+
+```typescript
+public readonly metricNamespace: string;
+```
+
+- *Type:* string
+
+The CloudWatch metric namespace for these metrics.
+
+---
+
+##### `period`<sup>Required</sup> <a name="period" id="multi-az-observability.ServiceMetricDetailsProps.property.period"></a>
+
+```typescript
+public readonly period: Duration;
+```
+
+- *Type:* aws-cdk-lib.Duration
+
+The period for the metrics.
+
+---
+
+##### `successAlarmThreshold`<sup>Required</sup> <a name="successAlarmThreshold" id="multi-az-observability.ServiceMetricDetailsProps.property.successAlarmThreshold"></a>
+
+```typescript
+public readonly successAlarmThreshold: number;
+```
+
+- *Type:* number
+
+The threshold for alarms associated with success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%.
+
+---
+
+##### `successMetricNames`<sup>Required</sup> <a name="successMetricNames" id="multi-az-observability.ServiceMetricDetailsProps.property.successMetricNames"></a>
+
+```typescript
+public readonly successMetricNames: string[];
+```
+
+- *Type:* string[]
+
+The names of success indicating metrics.
+
+---
+
+##### `unit`<sup>Required</sup> <a name="unit" id="multi-az-observability.ServiceMetricDetailsProps.property.unit"></a>
+
+```typescript
+public readonly unit: Unit;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.Unit
+
+The unit used for these metrics.
+
+---
+
+##### `graphedFaultStatistics`<sup>Optional</sup> <a name="graphedFaultStatistics" id="multi-az-observability.ServiceMetricDetailsProps.property.graphedFaultStatistics"></a>
+
+```typescript
+public readonly graphedFaultStatistics: string[];
+```
+
+- *Type:* string[]
+- *Default:* For availability metrics, this will be "Sum", for latency metrics it will be just "p99"
+
+The statistics for faults you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99.
+
+For availability
+metrics this will typically just be "Sum".
+
+---
+
+##### `graphedSuccessStatistics`<sup>Optional</sup> <a name="graphedSuccessStatistics" id="multi-az-observability.ServiceMetricDetailsProps.property.graphedSuccessStatistics"></a>
+
+```typescript
+public readonly graphedSuccessStatistics: string[];
+```
+
+- *Type:* string[]
+- *Default:* For availability metrics, this will be "Sum", for latency metrics it will be just "p99"
+
+The statistics for successes you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99.
+
+For availability
+metrics this will typically just be "Sum".
 
 ---
 
@@ -1369,9 +1827,13 @@ const serviceProps: ServiceProps = { ... }
 | --- | --- | --- |
 | <code><a href="#multi-az-observability.ServiceProps.property.availabilityZoneNames">availabilityZoneNames</a></code> | <code>string[]</code> | A list of the Availability Zone names used by this application. |
 | <code><a href="#multi-az-observability.ServiceProps.property.baseUrl">baseUrl</a></code> | <code>string</code> | The base endpoint for this service, like "https://www.example.com". Operation paths will be appended to this endpoint for canary testing the service. |
+| <code><a href="#multi-az-observability.ServiceProps.property.defaultAvailabilityMetricDetails">defaultAvailabilityMetricDetails</a></code> | <code><a href="#multi-az-observability.IServiceMetricDetails">IServiceMetricDetails</a></code> | The default settings that are used for availability metrics for all operations unless specifically overridden in an operation definition. |
+| <code><a href="#multi-az-observability.ServiceProps.property.defaultLatencyMetricDetails">defaultLatencyMetricDetails</a></code> | <code><a href="#multi-az-observability.IServiceMetricDetails">IServiceMetricDetails</a></code> | The default settings that are used for availability metrics for all operations unless specifically overridden in an operation definition. |
 | <code><a href="#multi-az-observability.ServiceProps.property.faultCountThreshold">faultCountThreshold</a></code> | <code>number</code> | The fault count threshold that indicates the service is unhealthy. |
 | <code><a href="#multi-az-observability.ServiceProps.property.period">period</a></code> | <code>aws-cdk-lib.Duration</code> | The period for which metrics for the service should be aggregated. |
 | <code><a href="#multi-az-observability.ServiceProps.property.serviceName">serviceName</a></code> | <code>string</code> | The name of your service. |
+| <code><a href="#multi-az-observability.ServiceProps.property.canaryTestProps">canaryTestProps</a></code> | <code><a href="#multi-az-observability.AddCanaryTestProps">AddCanaryTestProps</a></code> | Define these settings if you want to automatically add canary tests to your operations. |
+| <code><a href="#multi-az-observability.ServiceProps.property.defaultContributorInsightRuleDetails">defaultContributorInsightRuleDetails</a></code> | <code><a href="#multi-az-observability.IContributorInsightRuleDetails">IContributorInsightRuleDetails</a></code> | The default settings that are used for contributor insight rules. |
 | <code><a href="#multi-az-observability.ServiceProps.property.loadBalancer">loadBalancer</a></code> | <code>aws-cdk-lib.aws_elasticloadbalancingv2.ILoadBalancerV2</code> | The load balancer this service sits behind. |
 
 ---
@@ -1397,6 +1859,30 @@ public readonly baseUrl: string;
 - *Type:* string
 
 The base endpoint for this service, like "https://www.example.com". Operation paths will be appended to this endpoint for canary testing the service.
+
+---
+
+##### `defaultAvailabilityMetricDetails`<sup>Required</sup> <a name="defaultAvailabilityMetricDetails" id="multi-az-observability.ServiceProps.property.defaultAvailabilityMetricDetails"></a>
+
+```typescript
+public readonly defaultAvailabilityMetricDetails: IServiceMetricDetails;
+```
+
+- *Type:* <a href="#multi-az-observability.IServiceMetricDetails">IServiceMetricDetails</a>
+
+The default settings that are used for availability metrics for all operations unless specifically overridden in an operation definition.
+
+---
+
+##### `defaultLatencyMetricDetails`<sup>Required</sup> <a name="defaultLatencyMetricDetails" id="multi-az-observability.ServiceProps.property.defaultLatencyMetricDetails"></a>
+
+```typescript
+public readonly defaultLatencyMetricDetails: IServiceMetricDetails;
+```
+
+- *Type:* <a href="#multi-az-observability.IServiceMetricDetails">IServiceMetricDetails</a>
+
+The default settings that are used for availability metrics for all operations unless specifically overridden in an operation definition.
 
 ---
 
@@ -1436,6 +1922,35 @@ public readonly serviceName: string;
 - *Type:* string
 
 The name of your service.
+
+---
+
+##### `canaryTestProps`<sup>Optional</sup> <a name="canaryTestProps" id="multi-az-observability.ServiceProps.property.canaryTestProps"></a>
+
+```typescript
+public readonly canaryTestProps: AddCanaryTestProps;
+```
+
+- *Type:* <a href="#multi-az-observability.AddCanaryTestProps">AddCanaryTestProps</a>
+- *Default:* Automatic canary tests will not be created for operations in this service.
+
+Define these settings if you want to automatically add canary tests to your operations.
+
+Operations can individually opt out
+of canary test creation if you define this setting.
+
+---
+
+##### `defaultContributorInsightRuleDetails`<sup>Optional</sup> <a name="defaultContributorInsightRuleDetails" id="multi-az-observability.ServiceProps.property.defaultContributorInsightRuleDetails"></a>
+
+```typescript
+public readonly defaultContributorInsightRuleDetails: IContributorInsightRuleDetails;
+```
+
+- *Type:* <a href="#multi-az-observability.IContributorInsightRuleDetails">IContributorInsightRuleDetails</a>
+- *Default:* No defaults are provided and must be specified per operation if the operation has logs that can be queried by contributor insights
+
+The default settings that are used for contributor insight rules.
 
 ---
 
@@ -1488,7 +2003,6 @@ new CanaryMetrics(props: CanaryMetricProps)
 | --- | --- | --- |
 | <code><a href="#multi-az-observability.CanaryMetrics.property.canaryAvailabilityMetricDetails">canaryAvailabilityMetricDetails</a></code> | <code><a href="#multi-az-observability.IOperationMetricDetails">IOperationMetricDetails</a></code> | The canary availability metric details. |
 | <code><a href="#multi-az-observability.CanaryMetrics.property.canaryLatencyMetricDetails">canaryLatencyMetricDetails</a></code> | <code><a href="#multi-az-observability.IOperationMetricDetails">IOperationMetricDetails</a></code> | The canary latency metric details. |
-| <code><a href="#multi-az-observability.CanaryMetrics.property.canaryContributorInsightRuleDetails">canaryContributorInsightRuleDetails</a></code> | <code><a href="#multi-az-observability.IContributorInsightRuleDetails">IContributorInsightRuleDetails</a></code> | The canary details for contributor insights rules. |
 
 ---
 
@@ -1513,19 +2027,6 @@ public readonly canaryLatencyMetricDetails: IOperationMetricDetails;
 - *Type:* <a href="#multi-az-observability.IOperationMetricDetails">IOperationMetricDetails</a>
 
 The canary latency metric details.
-
----
-
-##### `canaryContributorInsightRuleDetails`<sup>Optional</sup> <a name="canaryContributorInsightRuleDetails" id="multi-az-observability.CanaryMetrics.property.canaryContributorInsightRuleDetails"></a>
-
-```typescript
-public readonly canaryContributorInsightRuleDetails: IContributorInsightRuleDetails;
-```
-
-- *Type:* <a href="#multi-az-observability.IContributorInsightRuleDetails">IContributorInsightRuleDetails</a>
-- *Default:* No contributor insights rules will be created for the canary metrics
-
-The canary details for contributor insights rules.
 
 ---
 
@@ -1821,6 +2322,7 @@ new Operation(props: OperationProps)
 | <code><a href="#multi-az-observability.Operation.property.service">service</a></code> | <code><a href="#multi-az-observability.IService">IService</a></code> | The service the operation is associated with. |
 | <code><a href="#multi-az-observability.Operation.property.canaryMetricDetails">canaryMetricDetails</a></code> | <code><a href="#multi-az-observability.ICanaryMetrics">ICanaryMetrics</a></code> | Optional metric details if the service has a canary. |
 | <code><a href="#multi-az-observability.Operation.property.canaryTestProps">canaryTestProps</a></code> | <code><a href="#multi-az-observability.AddCanaryTestProps">AddCanaryTestProps</a></code> | If they have been added, the properties for creating new canary tests on this operation. |
+| <code><a href="#multi-az-observability.Operation.property.optOutOfServiceCreatedCanary">optOutOfServiceCreatedCanary</a></code> | <code>boolean</code> | Set to true if you have defined CanaryTestProps for your service, which applies to all operations, but you want to opt out of creating the canary test for this operation. |
 | <code><a href="#multi-az-observability.Operation.property.serverSideContributorInsightRuleDetails">serverSideContributorInsightRuleDetails</a></code> | <code><a href="#multi-az-observability.IContributorInsightRuleDetails">IContributorInsightRuleDetails</a></code> | The server side details for contributor insights rules. |
 
 ---
@@ -1933,6 +2435,19 @@ If they have been added, the properties for creating new canary tests on this op
 
 ---
 
+##### `optOutOfServiceCreatedCanary`<sup>Optional</sup> <a name="optOutOfServiceCreatedCanary" id="multi-az-observability.Operation.property.optOutOfServiceCreatedCanary"></a>
+
+```typescript
+public readonly optOutOfServiceCreatedCanary: boolean;
+```
+
+- *Type:* boolean
+- *Default:* The operation is not opted out
+
+Set to true if you have defined CanaryTestProps for your service, which applies to all operations, but you want to opt out of creating the canary test for this operation.
+
+---
+
 ##### `serverSideContributorInsightRuleDetails`<sup>Optional</sup> <a name="serverSideContributorInsightRuleDetails" id="multi-az-observability.Operation.property.serverSideContributorInsightRuleDetails"></a>
 
 ```typescript
@@ -1957,18 +2472,25 @@ Generic metric details for an operation.
 ```typescript
 import { OperationMetricDetails } from 'multi-az-observability'
 
-new OperationMetricDetails(props: OperationMetricDetailsProps)
+new OperationMetricDetails(props: OperationMetricDetailsProps, defaultProps: IServiceMetricDetails)
 ```
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#multi-az-observability.OperationMetricDetails.Initializer.parameter.props">props</a></code> | <code><a href="#multi-az-observability.OperationMetricDetailsProps">OperationMetricDetailsProps</a></code> | *No description.* |
+| <code><a href="#multi-az-observability.OperationMetricDetails.Initializer.parameter.defaultProps">defaultProps</a></code> | <code><a href="#multi-az-observability.IServiceMetricDetails">IServiceMetricDetails</a></code> | *No description.* |
 
 ---
 
 ##### `props`<sup>Required</sup> <a name="props" id="multi-az-observability.OperationMetricDetails.Initializer.parameter.props"></a>
 
 - *Type:* <a href="#multi-az-observability.OperationMetricDetailsProps">OperationMetricDetailsProps</a>
+
+---
+
+##### `defaultProps`<sup>Required</sup> <a name="defaultProps" id="multi-az-observability.OperationMetricDetails.Initializer.parameter.defaultProps"></a>
+
+- *Type:* <a href="#multi-az-observability.IServiceMetricDetails">IServiceMetricDetails</a>
 
 ---
 
@@ -2227,10 +2749,14 @@ Adds an operation to this service and sets the operation's service property.
 | --- | --- | --- |
 | <code><a href="#multi-az-observability.Service.property.availabilityZoneNames">availabilityZoneNames</a></code> | <code>string[]</code> | A list of the Availability Zone names used by this application. |
 | <code><a href="#multi-az-observability.Service.property.baseUrl">baseUrl</a></code> | <code>string</code> | The base endpoint for this service, like "https://www.example.com". Operation paths will be appended to this endpoint for canary testing the service. |
+| <code><a href="#multi-az-observability.Service.property.defaultAvailabilityMetricDetails">defaultAvailabilityMetricDetails</a></code> | <code><a href="#multi-az-observability.IServiceMetricDetails">IServiceMetricDetails</a></code> | The default settings that are used for availability metrics for all operations unless specifically overridden in an operation definition. |
+| <code><a href="#multi-az-observability.Service.property.defaultLatencyMetricDetails">defaultLatencyMetricDetails</a></code> | <code><a href="#multi-az-observability.IServiceMetricDetails">IServiceMetricDetails</a></code> | The default settings that are used for availability metrics for all operations unless specifically overridden in an operation definition. |
 | <code><a href="#multi-az-observability.Service.property.faultCountThreshold">faultCountThreshold</a></code> | <code>number</code> | The fault count threshold that indicates the service is unhealthy. |
 | <code><a href="#multi-az-observability.Service.property.operations">operations</a></code> | <code><a href="#multi-az-observability.IOperation">IOperation</a>[]</code> | The operations that are part of this service. |
 | <code><a href="#multi-az-observability.Service.property.period">period</a></code> | <code>aws-cdk-lib.Duration</code> | The period for which metrics for the service should be aggregated. |
 | <code><a href="#multi-az-observability.Service.property.serviceName">serviceName</a></code> | <code>string</code> | The name of your service. |
+| <code><a href="#multi-az-observability.Service.property.canaryTestProps">canaryTestProps</a></code> | <code><a href="#multi-az-observability.AddCanaryTestProps">AddCanaryTestProps</a></code> | Define these settings if you want to automatically add canary tests to your operations. |
+| <code><a href="#multi-az-observability.Service.property.defaultContributorInsightRuleDetails">defaultContributorInsightRuleDetails</a></code> | <code><a href="#multi-az-observability.IContributorInsightRuleDetails">IContributorInsightRuleDetails</a></code> | The default settings that are used for contributor insight rules. |
 | <code><a href="#multi-az-observability.Service.property.loadBalancer">loadBalancer</a></code> | <code>aws-cdk-lib.aws_elasticloadbalancingv2.ILoadBalancerV2</code> | The load balancer this service sits behind. |
 
 ---
@@ -2256,6 +2782,30 @@ public readonly baseUrl: string;
 - *Type:* string
 
 The base endpoint for this service, like "https://www.example.com". Operation paths will be appended to this endpoint for canary testing the service.
+
+---
+
+##### `defaultAvailabilityMetricDetails`<sup>Required</sup> <a name="defaultAvailabilityMetricDetails" id="multi-az-observability.Service.property.defaultAvailabilityMetricDetails"></a>
+
+```typescript
+public readonly defaultAvailabilityMetricDetails: IServiceMetricDetails;
+```
+
+- *Type:* <a href="#multi-az-observability.IServiceMetricDetails">IServiceMetricDetails</a>
+
+The default settings that are used for availability metrics for all operations unless specifically overridden in an operation definition.
+
+---
+
+##### `defaultLatencyMetricDetails`<sup>Required</sup> <a name="defaultLatencyMetricDetails" id="multi-az-observability.Service.property.defaultLatencyMetricDetails"></a>
+
+```typescript
+public readonly defaultLatencyMetricDetails: IServiceMetricDetails;
+```
+
+- *Type:* <a href="#multi-az-observability.IServiceMetricDetails">IServiceMetricDetails</a>
+
+The default settings that are used for availability metrics for all operations unless specifically overridden in an operation definition.
 
 ---
 
@@ -2310,6 +2860,35 @@ The name of your service.
 
 ---
 
+##### `canaryTestProps`<sup>Optional</sup> <a name="canaryTestProps" id="multi-az-observability.Service.property.canaryTestProps"></a>
+
+```typescript
+public readonly canaryTestProps: AddCanaryTestProps;
+```
+
+- *Type:* <a href="#multi-az-observability.AddCanaryTestProps">AddCanaryTestProps</a>
+- *Default:* Automatic canary tests will not be created for operations in this service.
+
+Define these settings if you want to automatically add canary tests to your operations.
+
+Operations can individually opt out
+of canary test creation if you define this setting.
+
+---
+
+##### `defaultContributorInsightRuleDetails`<sup>Optional</sup> <a name="defaultContributorInsightRuleDetails" id="multi-az-observability.Service.property.defaultContributorInsightRuleDetails"></a>
+
+```typescript
+public readonly defaultContributorInsightRuleDetails: IContributorInsightRuleDetails;
+```
+
+- *Type:* <a href="#multi-az-observability.IContributorInsightRuleDetails">IContributorInsightRuleDetails</a>
+- *Default:* No defaults are provided and must be specified per operation
+
+The default settings that are used for contributor insight rules.
+
+---
+
 ##### `loadBalancer`<sup>Optional</sup> <a name="loadBalancer" id="multi-az-observability.Service.property.loadBalancer"></a>
 
 ```typescript
@@ -2320,6 +2899,206 @@ public readonly loadBalancer: ILoadBalancerV2;
 - *Default:* No load balancer metrics will be included in dashboards and its ARN will not be added to top level AZ alarm descriptions.
 
 The load balancer this service sits behind.
+
+---
+
+
+### ServiceMetricDetails <a name="ServiceMetricDetails" id="multi-az-observability.ServiceMetricDetails"></a>
+
+- *Implements:* <a href="#multi-az-observability.IServiceMetricDetails">IServiceMetricDetails</a>
+
+Default metric details for a service.
+
+#### Initializers <a name="Initializers" id="multi-az-observability.ServiceMetricDetails.Initializer"></a>
+
+```typescript
+import { ServiceMetricDetails } from 'multi-az-observability'
+
+new ServiceMetricDetails(props: ServiceMetricDetailsProps)
+```
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#multi-az-observability.ServiceMetricDetails.Initializer.parameter.props">props</a></code> | <code><a href="#multi-az-observability.ServiceMetricDetailsProps">ServiceMetricDetailsProps</a></code> | *No description.* |
+
+---
+
+##### `props`<sup>Required</sup> <a name="props" id="multi-az-observability.ServiceMetricDetails.Initializer.parameter.props"></a>
+
+- *Type:* <a href="#multi-az-observability.ServiceMetricDetailsProps">ServiceMetricDetailsProps</a>
+
+---
+
+
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#multi-az-observability.ServiceMetricDetails.property.alarmStatistic">alarmStatistic</a></code> | <code>string</code> | The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9". |
+| <code><a href="#multi-az-observability.ServiceMetricDetails.property.datapointsToAlarm">datapointsToAlarm</a></code> | <code>number</code> | The number of datapoints to alarm on for latency and availability alarms. |
+| <code><a href="#multi-az-observability.ServiceMetricDetails.property.evaluationPeriods">evaluationPeriods</a></code> | <code>number</code> | The number of evaluation periods for latency and availabiltiy alarms. |
+| <code><a href="#multi-az-observability.ServiceMetricDetails.property.faultAlarmThreshold">faultAlarmThreshold</a></code> | <code>number</code> | The threshold for alarms associated with fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%. |
+| <code><a href="#multi-az-observability.ServiceMetricDetails.property.faultMetricNames">faultMetricNames</a></code> | <code>string[]</code> | The names of fault indicating metrics. |
+| <code><a href="#multi-az-observability.ServiceMetricDetails.property.metricNamespace">metricNamespace</a></code> | <code>string</code> | The CloudWatch metric namespace for these metrics. |
+| <code><a href="#multi-az-observability.ServiceMetricDetails.property.period">period</a></code> | <code>aws-cdk-lib.Duration</code> | The period for the metrics. |
+| <code><a href="#multi-az-observability.ServiceMetricDetails.property.successAlarmThreshold">successAlarmThreshold</a></code> | <code>number</code> | The threshold for alarms associated with success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%. |
+| <code><a href="#multi-az-observability.ServiceMetricDetails.property.successMetricNames">successMetricNames</a></code> | <code>string[]</code> | The names of success indicating metrics. |
+| <code><a href="#multi-az-observability.ServiceMetricDetails.property.unit">unit</a></code> | <code>aws-cdk-lib.aws_cloudwatch.Unit</code> | The unit used for these metrics. |
+| <code><a href="#multi-az-observability.ServiceMetricDetails.property.graphedFaultStatistics">graphedFaultStatistics</a></code> | <code>string[]</code> | The statistics for faults you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99. |
+| <code><a href="#multi-az-observability.ServiceMetricDetails.property.graphedSuccessStatistics">graphedSuccessStatistics</a></code> | <code>string[]</code> | The statistics for successes you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99. |
+
+---
+
+##### `alarmStatistic`<sup>Required</sup> <a name="alarmStatistic" id="multi-az-observability.ServiceMetricDetails.property.alarmStatistic"></a>
+
+```typescript
+public readonly alarmStatistic: string;
+```
+
+- *Type:* string
+
+The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9".
+
+---
+
+##### `datapointsToAlarm`<sup>Required</sup> <a name="datapointsToAlarm" id="multi-az-observability.ServiceMetricDetails.property.datapointsToAlarm"></a>
+
+```typescript
+public readonly datapointsToAlarm: number;
+```
+
+- *Type:* number
+
+The number of datapoints to alarm on for latency and availability alarms.
+
+---
+
+##### `evaluationPeriods`<sup>Required</sup> <a name="evaluationPeriods" id="multi-az-observability.ServiceMetricDetails.property.evaluationPeriods"></a>
+
+```typescript
+public readonly evaluationPeriods: number;
+```
+
+- *Type:* number
+
+The number of evaluation periods for latency and availabiltiy alarms.
+
+---
+
+##### `faultAlarmThreshold`<sup>Required</sup> <a name="faultAlarmThreshold" id="multi-az-observability.ServiceMetricDetails.property.faultAlarmThreshold"></a>
+
+```typescript
+public readonly faultAlarmThreshold: number;
+```
+
+- *Type:* number
+
+The threshold for alarms associated with fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%.
+
+---
+
+##### `faultMetricNames`<sup>Required</sup> <a name="faultMetricNames" id="multi-az-observability.ServiceMetricDetails.property.faultMetricNames"></a>
+
+```typescript
+public readonly faultMetricNames: string[];
+```
+
+- *Type:* string[]
+
+The names of fault indicating metrics.
+
+---
+
+##### `metricNamespace`<sup>Required</sup> <a name="metricNamespace" id="multi-az-observability.ServiceMetricDetails.property.metricNamespace"></a>
+
+```typescript
+public readonly metricNamespace: string;
+```
+
+- *Type:* string
+
+The CloudWatch metric namespace for these metrics.
+
+---
+
+##### `period`<sup>Required</sup> <a name="period" id="multi-az-observability.ServiceMetricDetails.property.period"></a>
+
+```typescript
+public readonly period: Duration;
+```
+
+- *Type:* aws-cdk-lib.Duration
+
+The period for the metrics.
+
+---
+
+##### `successAlarmThreshold`<sup>Required</sup> <a name="successAlarmThreshold" id="multi-az-observability.ServiceMetricDetails.property.successAlarmThreshold"></a>
+
+```typescript
+public readonly successAlarmThreshold: number;
+```
+
+- *Type:* number
+
+The threshold for alarms associated with success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%.
+
+---
+
+##### `successMetricNames`<sup>Required</sup> <a name="successMetricNames" id="multi-az-observability.ServiceMetricDetails.property.successMetricNames"></a>
+
+```typescript
+public readonly successMetricNames: string[];
+```
+
+- *Type:* string[]
+
+The names of success indicating metrics.
+
+---
+
+##### `unit`<sup>Required</sup> <a name="unit" id="multi-az-observability.ServiceMetricDetails.property.unit"></a>
+
+```typescript
+public readonly unit: Unit;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.Unit
+
+The unit used for these metrics.
+
+---
+
+##### `graphedFaultStatistics`<sup>Optional</sup> <a name="graphedFaultStatistics" id="multi-az-observability.ServiceMetricDetails.property.graphedFaultStatistics"></a>
+
+```typescript
+public readonly graphedFaultStatistics: string[];
+```
+
+- *Type:* string[]
+- *Default:* For availability metrics, this will be "Sum", for latency metrics it will be just "p99"
+
+The statistics for faults you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99.
+
+For availability
+metrics this will typically just be "Sum".
+
+---
+
+##### `graphedSuccessStatistics`<sup>Optional</sup> <a name="graphedSuccessStatistics" id="multi-az-observability.ServiceMetricDetails.property.graphedSuccessStatistics"></a>
+
+```typescript
+public readonly graphedSuccessStatistics: string[];
+```
+
+- *Type:* string[]
+- *Default:* For availability metrics, this will be "Sum", for latency metrics it will be just "p99"
+
+The statistics for successes you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99.
+
+For availability
+metrics this will typically just be "Sum".
 
 ---
 
@@ -2520,6 +3299,113 @@ The custom resource that can be referenced to use Fn::GetAtt functions on to ret
 
 ---
 
+### IBasicServiceMultiAZObservability <a name="IBasicServiceMultiAZObservability" id="multi-az-observability.IBasicServiceMultiAZObservability"></a>
+
+- *Extends:* constructs.IConstruct
+
+- *Implemented By:* <a href="#multi-az-observability.BasicServiceMultiAZObservability">BasicServiceMultiAZObservability</a>, <a href="#multi-az-observability.IBasicServiceMultiAZObservability">IBasicServiceMultiAZObservability</a>
+
+Properties of a basic service.
+
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#multi-az-observability.IBasicServiceMultiAZObservability.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
+| <code><a href="#multi-az-observability.IBasicServiceMultiAZObservability.property.aggregateZonalIsolatedImpactAlarms">aggregateZonalIsolatedImpactAlarms</a></code> | <code>{[ key: string ]: aws-cdk-lib.aws_cloudwatch.IAlarm}</code> | The alarms indicating if an AZ has isolated impact from either ALB or NAT GW metrics. |
+| <code><a href="#multi-az-observability.IBasicServiceMultiAZObservability.property.serviceName">serviceName</a></code> | <code>string</code> | The name of the service. |
+| <code><a href="#multi-az-observability.IBasicServiceMultiAZObservability.property.albZonalIsolatedImpactAlarms">albZonalIsolatedImpactAlarms</a></code> | <code>{[ key: string ]: aws-cdk-lib.aws_cloudwatch.IAlarm}</code> | The alarms indicating if an AZ is an outlier for ALB faults and has isolated impact. |
+| <code><a href="#multi-az-observability.IBasicServiceMultiAZObservability.property.applicationLoadBalancers">applicationLoadBalancers</a></code> | <code>aws-cdk-lib.aws_elasticloadbalancingv2.IApplicationLoadBalancer[]</code> | The application load balancers being used by the service. |
+| <code><a href="#multi-az-observability.IBasicServiceMultiAZObservability.property.natGateways">natGateways</a></code> | <code>{[ key: string ]: aws-cdk-lib.aws_ec2.CfnNatGateway[]}</code> | The NAT Gateways being used in the service, each set of NAT Gateways are keyed by their Availability Zone Id. |
+| <code><a href="#multi-az-observability.IBasicServiceMultiAZObservability.property.natGWZonalIsolatedImpactAlarms">natGWZonalIsolatedImpactAlarms</a></code> | <code>{[ key: string ]: aws-cdk-lib.aws_cloudwatch.IAlarm}</code> | The alarms indicating if an AZ is an outlier for NAT GW packet loss and has isolated impact. |
+
+---
+
+##### `node`<sup>Required</sup> <a name="node" id="multi-az-observability.IBasicServiceMultiAZObservability.property.node"></a>
+
+```typescript
+public readonly node: Node;
+```
+
+- *Type:* constructs.Node
+
+The tree node.
+
+---
+
+##### `aggregateZonalIsolatedImpactAlarms`<sup>Required</sup> <a name="aggregateZonalIsolatedImpactAlarms" id="multi-az-observability.IBasicServiceMultiAZObservability.property.aggregateZonalIsolatedImpactAlarms"></a>
+
+```typescript
+public readonly aggregateZonalIsolatedImpactAlarms: {[ key: string ]: IAlarm};
+```
+
+- *Type:* {[ key: string ]: aws-cdk-lib.aws_cloudwatch.IAlarm}
+
+The alarms indicating if an AZ has isolated impact from either ALB or NAT GW metrics.
+
+---
+
+##### `serviceName`<sup>Required</sup> <a name="serviceName" id="multi-az-observability.IBasicServiceMultiAZObservability.property.serviceName"></a>
+
+```typescript
+public readonly serviceName: string;
+```
+
+- *Type:* string
+
+The name of the service.
+
+---
+
+##### `albZonalIsolatedImpactAlarms`<sup>Optional</sup> <a name="albZonalIsolatedImpactAlarms" id="multi-az-observability.IBasicServiceMultiAZObservability.property.albZonalIsolatedImpactAlarms"></a>
+
+```typescript
+public readonly albZonalIsolatedImpactAlarms: {[ key: string ]: IAlarm};
+```
+
+- *Type:* {[ key: string ]: aws-cdk-lib.aws_cloudwatch.IAlarm}
+
+The alarms indicating if an AZ is an outlier for ALB faults and has isolated impact.
+
+---
+
+##### `applicationLoadBalancers`<sup>Optional</sup> <a name="applicationLoadBalancers" id="multi-az-observability.IBasicServiceMultiAZObservability.property.applicationLoadBalancers"></a>
+
+```typescript
+public readonly applicationLoadBalancers: IApplicationLoadBalancer[];
+```
+
+- *Type:* aws-cdk-lib.aws_elasticloadbalancingv2.IApplicationLoadBalancer[]
+
+The application load balancers being used by the service.
+
+---
+
+##### `natGateways`<sup>Optional</sup> <a name="natGateways" id="multi-az-observability.IBasicServiceMultiAZObservability.property.natGateways"></a>
+
+```typescript
+public readonly natGateways: {[ key: string ]: CfnNatGateway[]};
+```
+
+- *Type:* {[ key: string ]: aws-cdk-lib.aws_ec2.CfnNatGateway[]}
+
+The NAT Gateways being used in the service, each set of NAT Gateways are keyed by their Availability Zone Id.
+
+---
+
+##### `natGWZonalIsolatedImpactAlarms`<sup>Optional</sup> <a name="natGWZonalIsolatedImpactAlarms" id="multi-az-observability.IBasicServiceMultiAZObservability.property.natGWZonalIsolatedImpactAlarms"></a>
+
+```typescript
+public readonly natGWZonalIsolatedImpactAlarms: {[ key: string ]: IAlarm};
+```
+
+- *Type:* {[ key: string ]: aws-cdk-lib.aws_cloudwatch.IAlarm}
+
+The alarms indicating if an AZ is an outlier for NAT GW packet loss and has isolated impact.
+
+---
+
 ### ICanaryMetrics <a name="ICanaryMetrics" id="multi-az-observability.ICanaryMetrics"></a>
 
 - *Implemented By:* <a href="#multi-az-observability.CanaryMetrics">CanaryMetrics</a>, <a href="#multi-az-observability.ICanaryMetrics">ICanaryMetrics</a>
@@ -2533,7 +3419,6 @@ The metric definitions for metric produced by the canary.
 | --- | --- | --- |
 | <code><a href="#multi-az-observability.ICanaryMetrics.property.canaryAvailabilityMetricDetails">canaryAvailabilityMetricDetails</a></code> | <code><a href="#multi-az-observability.IOperationMetricDetails">IOperationMetricDetails</a></code> | The canary availability metric details. |
 | <code><a href="#multi-az-observability.ICanaryMetrics.property.canaryLatencyMetricDetails">canaryLatencyMetricDetails</a></code> | <code><a href="#multi-az-observability.IOperationMetricDetails">IOperationMetricDetails</a></code> | The canary latency metric details. |
-| <code><a href="#multi-az-observability.ICanaryMetrics.property.canaryContributorInsightRuleDetails">canaryContributorInsightRuleDetails</a></code> | <code><a href="#multi-az-observability.IContributorInsightRuleDetails">IContributorInsightRuleDetails</a></code> | The canary details for contributor insights rules. |
 
 ---
 
@@ -2558,18 +3443,6 @@ public readonly canaryLatencyMetricDetails: IOperationMetricDetails;
 - *Type:* <a href="#multi-az-observability.IOperationMetricDetails">IOperationMetricDetails</a>
 
 The canary latency metric details.
-
----
-
-##### `canaryContributorInsightRuleDetails`<sup>Optional</sup> <a name="canaryContributorInsightRuleDetails" id="multi-az-observability.ICanaryMetrics.property.canaryContributorInsightRuleDetails"></a>
-
-```typescript
-public readonly canaryContributorInsightRuleDetails: IContributorInsightRuleDetails;
-```
-
-- *Type:* <a href="#multi-az-observability.IContributorInsightRuleDetails">IContributorInsightRuleDetails</a>
-
-The canary details for contributor insights rules.
 
 ---
 
@@ -2671,24 +3544,29 @@ latency depending on the alarms and rules you are creating.
 
 ---
 
-### IMultiAvailabilityZoneObservability <a name="IMultiAvailabilityZoneObservability" id="multi-az-observability.IMultiAvailabilityZoneObservability"></a>
+### IInstrumentedServiceMultiAZObservability <a name="IInstrumentedServiceMultiAZObservability" id="multi-az-observability.IInstrumentedServiceMultiAZObservability"></a>
 
 - *Extends:* constructs.IConstruct
 
-- *Implemented By:* <a href="#multi-az-observability.MultiAvailabilityZoneObservability">MultiAvailabilityZoneObservability</a>, <a href="#multi-az-observability.IMultiAvailabilityZoneObservability">IMultiAvailabilityZoneObservability</a>
+- *Implemented By:* <a href="#multi-az-observability.InstrumentedServiceMultiAZObservability">InstrumentedServiceMultiAZObservability</a>, <a href="#multi-az-observability.IInstrumentedServiceMultiAZObservability">IInstrumentedServiceMultiAZObservability</a>
 
-Represents the components of the multi-AZ observability construct.
+Observability for an instrumented service.
 
 
 #### Properties <a name="Properties" id="Properties"></a>
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#multi-az-observability.IMultiAvailabilityZoneObservability.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
+| <code><a href="#multi-az-observability.IInstrumentedServiceMultiAZObservability.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
+| <code><a href="#multi-az-observability.IInstrumentedServiceMultiAZObservability.property.perOperationZonalImpactAlarms">perOperationZonalImpactAlarms</a></code> | <code>{[ key: string ]: {[ key: string ]: aws-cdk-lib.aws_cloudwatch.IAlarm}}</code> | Index into the dictionary by operation name, then by Availability Zone Id to get the alarms that indicate an AZ shows isolated impact from availability or latency as seen by either the server-side or canary. |
+| <code><a href="#multi-az-observability.IInstrumentedServiceMultiAZObservability.property.serviceAlarms">serviceAlarms</a></code> | <code><a href="#multi-az-observability.IServiceAlarmsAndRules">IServiceAlarmsAndRules</a></code> | The alarms and rules for the overall service. |
+| <code><a href="#multi-az-observability.IInstrumentedServiceMultiAZObservability.property.canaryLogGroup">canaryLogGroup</a></code> | <code>aws-cdk-lib.aws_logs.ILogGroup</code> | If the service is configured to have canary tests created, this will be the log group where the canary's logs are stored. |
+| <code><a href="#multi-az-observability.IInstrumentedServiceMultiAZObservability.property.operationDashboards">operationDashboards</a></code> | <code>aws-cdk-lib.aws_cloudwatch.Dashboard[]</code> | The dashboards for each operation. |
+| <code><a href="#multi-az-observability.IInstrumentedServiceMultiAZObservability.property.serviceDashboard">serviceDashboard</a></code> | <code>aws-cdk-lib.aws_cloudwatch.Dashboard</code> | The service level dashboard. |
 
 ---
 
-##### `node`<sup>Required</sup> <a name="node" id="multi-az-observability.IMultiAvailabilityZoneObservability.property.node"></a>
+##### `node`<sup>Required</sup> <a name="node" id="multi-az-observability.IInstrumentedServiceMultiAZObservability.property.node"></a>
 
 ```typescript
 public readonly node: Node;
@@ -2697,6 +3575,70 @@ public readonly node: Node;
 - *Type:* constructs.Node
 
 The tree node.
+
+---
+
+##### `perOperationZonalImpactAlarms`<sup>Required</sup> <a name="perOperationZonalImpactAlarms" id="multi-az-observability.IInstrumentedServiceMultiAZObservability.property.perOperationZonalImpactAlarms"></a>
+
+```typescript
+public readonly perOperationZonalImpactAlarms: {[ key: string ]: {[ key: string ]: IAlarm}};
+```
+
+- *Type:* {[ key: string ]: {[ key: string ]: aws-cdk-lib.aws_cloudwatch.IAlarm}}
+
+Index into the dictionary by operation name, then by Availability Zone Id to get the alarms that indicate an AZ shows isolated impact from availability or latency as seen by either the server-side or canary.
+
+These are the alarms
+you would want to use to trigger automation to evacuate an AZ.
+
+---
+
+##### `serviceAlarms`<sup>Required</sup> <a name="serviceAlarms" id="multi-az-observability.IInstrumentedServiceMultiAZObservability.property.serviceAlarms"></a>
+
+```typescript
+public readonly serviceAlarms: IServiceAlarmsAndRules;
+```
+
+- *Type:* <a href="#multi-az-observability.IServiceAlarmsAndRules">IServiceAlarmsAndRules</a>
+
+The alarms and rules for the overall service.
+
+---
+
+##### `canaryLogGroup`<sup>Optional</sup> <a name="canaryLogGroup" id="multi-az-observability.IInstrumentedServiceMultiAZObservability.property.canaryLogGroup"></a>
+
+```typescript
+public readonly canaryLogGroup: ILogGroup;
+```
+
+- *Type:* aws-cdk-lib.aws_logs.ILogGroup
+- *Default:* No log group is created if the canary is not requested.
+
+If the service is configured to have canary tests created, this will be the log group where the canary's logs are stored.
+
+---
+
+##### `operationDashboards`<sup>Optional</sup> <a name="operationDashboards" id="multi-az-observability.IInstrumentedServiceMultiAZObservability.property.operationDashboards"></a>
+
+```typescript
+public readonly operationDashboards: Dashboard[];
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.Dashboard[]
+
+The dashboards for each operation.
+
+---
+
+##### `serviceDashboard`<sup>Optional</sup> <a name="serviceDashboard" id="multi-az-observability.IInstrumentedServiceMultiAZObservability.property.serviceDashboard"></a>
+
+```typescript
+public readonly serviceDashboard: Dashboard;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.Dashboard
+
+The service level dashboard.
 
 ---
 
@@ -2720,6 +3662,7 @@ Represents an operation in a service.
 | <code><a href="#multi-az-observability.IOperation.property.service">service</a></code> | <code><a href="#multi-az-observability.IService">IService</a></code> | The service the operation is associated with. |
 | <code><a href="#multi-az-observability.IOperation.property.canaryMetricDetails">canaryMetricDetails</a></code> | <code><a href="#multi-az-observability.ICanaryMetrics">ICanaryMetrics</a></code> | Optional metric details if the service has a canary. |
 | <code><a href="#multi-az-observability.IOperation.property.canaryTestProps">canaryTestProps</a></code> | <code><a href="#multi-az-observability.AddCanaryTestProps">AddCanaryTestProps</a></code> | If they have been added, the properties for creating new canary tests on this operation. |
+| <code><a href="#multi-az-observability.IOperation.property.optOutOfServiceCreatedCanary">optOutOfServiceCreatedCanary</a></code> | <code>boolean</code> | Set to true if you have defined CanaryTestProps for your service, which applies to all operations, but you want to opt out of creating the canary test for this operation. |
 | <code><a href="#multi-az-observability.IOperation.property.serverSideContributorInsightRuleDetails">serverSideContributorInsightRuleDetails</a></code> | <code><a href="#multi-az-observability.IContributorInsightRuleDetails">IContributorInsightRuleDetails</a></code> | The server side details for contributor insights rules. |
 
 ---
@@ -2829,6 +3772,19 @@ public readonly canaryTestProps: AddCanaryTestProps;
 - *Type:* <a href="#multi-az-observability.AddCanaryTestProps">AddCanaryTestProps</a>
 
 If they have been added, the properties for creating new canary tests on this operation.
+
+---
+
+##### `optOutOfServiceCreatedCanary`<sup>Optional</sup> <a name="optOutOfServiceCreatedCanary" id="multi-az-observability.IOperation.property.optOutOfServiceCreatedCanary"></a>
+
+```typescript
+public readonly optOutOfServiceCreatedCanary: boolean;
+```
+
+- *Type:* boolean
+- *Default:* The operation is not opted out
+
+Set to true if you have defined CanaryTestProps for your service, which applies to all operations, but you want to opt out of creating the canary test for this operation.
 
 ---
 
@@ -3082,10 +4038,14 @@ Adds an operation to this service.
 | --- | --- | --- |
 | <code><a href="#multi-az-observability.IService.property.availabilityZoneNames">availabilityZoneNames</a></code> | <code>string[]</code> | A list of the Availability Zone names used by this application. |
 | <code><a href="#multi-az-observability.IService.property.baseUrl">baseUrl</a></code> | <code>string</code> | The base endpoint for this service, like "https://www.example.com". Operation paths will be appended to this endpoint for canary testing the service. |
+| <code><a href="#multi-az-observability.IService.property.defaultAvailabilityMetricDetails">defaultAvailabilityMetricDetails</a></code> | <code><a href="#multi-az-observability.IServiceMetricDetails">IServiceMetricDetails</a></code> | The default settings that are used for availability metrics for all operations unless specifically overridden in an operation definition. |
+| <code><a href="#multi-az-observability.IService.property.defaultLatencyMetricDetails">defaultLatencyMetricDetails</a></code> | <code><a href="#multi-az-observability.IServiceMetricDetails">IServiceMetricDetails</a></code> | The default settings that are used for availability metrics for all operations unless specifically overridden in an operation definition. |
 | <code><a href="#multi-az-observability.IService.property.faultCountThreshold">faultCountThreshold</a></code> | <code>number</code> | The fault count threshold that indicates the service is unhealthy. |
 | <code><a href="#multi-az-observability.IService.property.operations">operations</a></code> | <code><a href="#multi-az-observability.IOperation">IOperation</a>[]</code> | The operations that are part of this service. |
 | <code><a href="#multi-az-observability.IService.property.period">period</a></code> | <code>aws-cdk-lib.Duration</code> | The period for which metrics for the service should be aggregated. |
 | <code><a href="#multi-az-observability.IService.property.serviceName">serviceName</a></code> | <code>string</code> | The name of your service. |
+| <code><a href="#multi-az-observability.IService.property.canaryTestProps">canaryTestProps</a></code> | <code><a href="#multi-az-observability.AddCanaryTestProps">AddCanaryTestProps</a></code> | Define these settings if you want to automatically add canary tests to your operations. |
+| <code><a href="#multi-az-observability.IService.property.defaultContributorInsightRuleDetails">defaultContributorInsightRuleDetails</a></code> | <code><a href="#multi-az-observability.IContributorInsightRuleDetails">IContributorInsightRuleDetails</a></code> | The default settings that are used for contributor insight rules. |
 | <code><a href="#multi-az-observability.IService.property.loadBalancer">loadBalancer</a></code> | <code>aws-cdk-lib.aws_elasticloadbalancingv2.ILoadBalancerV2</code> | The load balancer this service sits behind. |
 
 ---
@@ -3111,6 +4071,30 @@ public readonly baseUrl: string;
 - *Type:* string
 
 The base endpoint for this service, like "https://www.example.com". Operation paths will be appended to this endpoint for canary testing the service.
+
+---
+
+##### `defaultAvailabilityMetricDetails`<sup>Required</sup> <a name="defaultAvailabilityMetricDetails" id="multi-az-observability.IService.property.defaultAvailabilityMetricDetails"></a>
+
+```typescript
+public readonly defaultAvailabilityMetricDetails: IServiceMetricDetails;
+```
+
+- *Type:* <a href="#multi-az-observability.IServiceMetricDetails">IServiceMetricDetails</a>
+
+The default settings that are used for availability metrics for all operations unless specifically overridden in an operation definition.
+
+---
+
+##### `defaultLatencyMetricDetails`<sup>Required</sup> <a name="defaultLatencyMetricDetails" id="multi-az-observability.IService.property.defaultLatencyMetricDetails"></a>
+
+```typescript
+public readonly defaultLatencyMetricDetails: IServiceMetricDetails;
+```
+
+- *Type:* <a href="#multi-az-observability.IServiceMetricDetails">IServiceMetricDetails</a>
+
+The default settings that are used for availability metrics for all operations unless specifically overridden in an operation definition.
 
 ---
 
@@ -3165,6 +4149,35 @@ The name of your service.
 
 ---
 
+##### `canaryTestProps`<sup>Optional</sup> <a name="canaryTestProps" id="multi-az-observability.IService.property.canaryTestProps"></a>
+
+```typescript
+public readonly canaryTestProps: AddCanaryTestProps;
+```
+
+- *Type:* <a href="#multi-az-observability.AddCanaryTestProps">AddCanaryTestProps</a>
+- *Default:* Automatic canary tests will not be created for operations in this service.
+
+Define these settings if you want to automatically add canary tests to your operations.
+
+Operations can individually opt out
+of canary test creation if you define this setting.
+
+---
+
+##### `defaultContributorInsightRuleDetails`<sup>Optional</sup> <a name="defaultContributorInsightRuleDetails" id="multi-az-observability.IService.property.defaultContributorInsightRuleDetails"></a>
+
+```typescript
+public readonly defaultContributorInsightRuleDetails: IContributorInsightRuleDetails;
+```
+
+- *Type:* <a href="#multi-az-observability.IContributorInsightRuleDetails">IContributorInsightRuleDetails</a>
+- *Default:* No defaults are provided and must be specified per operation
+
+The default settings that are used for contributor insight rules.
+
+---
+
 ##### `loadBalancer`<sup>Optional</sup> <a name="loadBalancer" id="multi-az-observability.IService.property.loadBalancer"></a>
 
 ```typescript
@@ -3175,6 +4188,267 @@ public readonly loadBalancer: ILoadBalancerV2;
 - *Default:* No load balancer metrics are included in dashboards and its ARN is not added to top level AZ alarm descriptions.
 
 The load balancer this service sits behind.
+
+---
+
+### IServiceAlarmsAndRules <a name="IServiceAlarmsAndRules" id="multi-az-observability.IServiceAlarmsAndRules"></a>
+
+- *Implemented By:* <a href="#multi-az-observability.IServiceAlarmsAndRules">IServiceAlarmsAndRules</a>
+
+Service level alarms and rules using critical operations.
+
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#multi-az-observability.IServiceAlarmsAndRules.property.regionalAvailabilityServerSideAlarm">regionalAvailabilityServerSideAlarm</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm</code> | An alarm for regional impact of any critical operation as measured by the server-side. |
+| <code><a href="#multi-az-observability.IServiceAlarmsAndRules.property.regionalFaultCountServerSideAlarm">regionalFaultCountServerSideAlarm</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm</code> | An alarm for fault count exceeding a regional threshold for all critical operations. |
+| <code><a href="#multi-az-observability.IServiceAlarmsAndRules.property.service">service</a></code> | <code><a href="#multi-az-observability.IService">IService</a></code> | The service these alarms and rules are for. |
+| <code><a href="#multi-az-observability.IServiceAlarmsAndRules.property.zonalAggregateIsolatedImpactAlarms">zonalAggregateIsolatedImpactAlarms</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm[]</code> | The zonal aggregate isolated impact alarms. |
+| <code><a href="#multi-az-observability.IServiceAlarmsAndRules.property.regionalAvailabilityCanaryAlarm">regionalAvailabilityCanaryAlarm</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm</code> | An alarm for regional impact of any critical operation as measured by the canary. |
+
+---
+
+##### `regionalAvailabilityServerSideAlarm`<sup>Required</sup> <a name="regionalAvailabilityServerSideAlarm" id="multi-az-observability.IServiceAlarmsAndRules.property.regionalAvailabilityServerSideAlarm"></a>
+
+```typescript
+public readonly regionalAvailabilityServerSideAlarm: IAlarm;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.IAlarm
+
+An alarm for regional impact of any critical operation as measured by the server-side.
+
+---
+
+##### `regionalFaultCountServerSideAlarm`<sup>Required</sup> <a name="regionalFaultCountServerSideAlarm" id="multi-az-observability.IServiceAlarmsAndRules.property.regionalFaultCountServerSideAlarm"></a>
+
+```typescript
+public readonly regionalFaultCountServerSideAlarm: IAlarm;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.IAlarm
+
+An alarm for fault count exceeding a regional threshold for all critical operations.
+
+---
+
+##### `service`<sup>Required</sup> <a name="service" id="multi-az-observability.IServiceAlarmsAndRules.property.service"></a>
+
+```typescript
+public readonly service: IService;
+```
+
+- *Type:* <a href="#multi-az-observability.IService">IService</a>
+
+The service these alarms and rules are for.
+
+---
+
+##### `zonalAggregateIsolatedImpactAlarms`<sup>Required</sup> <a name="zonalAggregateIsolatedImpactAlarms" id="multi-az-observability.IServiceAlarmsAndRules.property.zonalAggregateIsolatedImpactAlarms"></a>
+
+```typescript
+public readonly zonalAggregateIsolatedImpactAlarms: IAlarm[];
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.IAlarm[]
+
+The zonal aggregate isolated impact alarms.
+
+There is 1 alarm per AZ that
+triggers for availability or latency impact to any critical operation in that AZ
+that indicates it has isolated impact as measured by canaries or server-side.
+
+---
+
+##### `regionalAvailabilityCanaryAlarm`<sup>Optional</sup> <a name="regionalAvailabilityCanaryAlarm" id="multi-az-observability.IServiceAlarmsAndRules.property.regionalAvailabilityCanaryAlarm"></a>
+
+```typescript
+public readonly regionalAvailabilityCanaryAlarm: IAlarm;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.IAlarm
+
+An alarm for regional impact of any critical operation as measured by the canary.
+
+---
+
+### IServiceMetricDetails <a name="IServiceMetricDetails" id="multi-az-observability.IServiceMetricDetails"></a>
+
+- *Implemented By:* <a href="#multi-az-observability.ServiceMetricDetails">ServiceMetricDetails</a>, <a href="#multi-az-observability.IServiceMetricDetails">IServiceMetricDetails</a>
+
+Details for the defaults used in a service for metrics in one perspective, such as server side latency.
+
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#multi-az-observability.IServiceMetricDetails.property.alarmStatistic">alarmStatistic</a></code> | <code>string</code> | The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9". |
+| <code><a href="#multi-az-observability.IServiceMetricDetails.property.datapointsToAlarm">datapointsToAlarm</a></code> | <code>number</code> | The number of datapoints to alarm on for latency and availability alarms. |
+| <code><a href="#multi-az-observability.IServiceMetricDetails.property.evaluationPeriods">evaluationPeriods</a></code> | <code>number</code> | The number of evaluation periods for latency and availabiltiy alarms. |
+| <code><a href="#multi-az-observability.IServiceMetricDetails.property.faultAlarmThreshold">faultAlarmThreshold</a></code> | <code>number</code> | The threshold for alarms associated with fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%. |
+| <code><a href="#multi-az-observability.IServiceMetricDetails.property.faultMetricNames">faultMetricNames</a></code> | <code>string[]</code> | The names of fault indicating metrics. |
+| <code><a href="#multi-az-observability.IServiceMetricDetails.property.metricNamespace">metricNamespace</a></code> | <code>string</code> | The CloudWatch metric namespace for these metrics. |
+| <code><a href="#multi-az-observability.IServiceMetricDetails.property.period">period</a></code> | <code>aws-cdk-lib.Duration</code> | The period for the metrics. |
+| <code><a href="#multi-az-observability.IServiceMetricDetails.property.successAlarmThreshold">successAlarmThreshold</a></code> | <code>number</code> | The threshold for alarms associated with success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%. |
+| <code><a href="#multi-az-observability.IServiceMetricDetails.property.successMetricNames">successMetricNames</a></code> | <code>string[]</code> | The names of success indicating metrics. |
+| <code><a href="#multi-az-observability.IServiceMetricDetails.property.unit">unit</a></code> | <code>aws-cdk-lib.aws_cloudwatch.Unit</code> | The unit used for these metrics. |
+| <code><a href="#multi-az-observability.IServiceMetricDetails.property.graphedFaultStatistics">graphedFaultStatistics</a></code> | <code>string[]</code> | The statistics for faults you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99. |
+| <code><a href="#multi-az-observability.IServiceMetricDetails.property.graphedSuccessStatistics">graphedSuccessStatistics</a></code> | <code>string[]</code> | The statistics for successes you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99. |
+
+---
+
+##### `alarmStatistic`<sup>Required</sup> <a name="alarmStatistic" id="multi-az-observability.IServiceMetricDetails.property.alarmStatistic"></a>
+
+```typescript
+public readonly alarmStatistic: string;
+```
+
+- *Type:* string
+
+The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9".
+
+---
+
+##### `datapointsToAlarm`<sup>Required</sup> <a name="datapointsToAlarm" id="multi-az-observability.IServiceMetricDetails.property.datapointsToAlarm"></a>
+
+```typescript
+public readonly datapointsToAlarm: number;
+```
+
+- *Type:* number
+
+The number of datapoints to alarm on for latency and availability alarms.
+
+---
+
+##### `evaluationPeriods`<sup>Required</sup> <a name="evaluationPeriods" id="multi-az-observability.IServiceMetricDetails.property.evaluationPeriods"></a>
+
+```typescript
+public readonly evaluationPeriods: number;
+```
+
+- *Type:* number
+
+The number of evaluation periods for latency and availabiltiy alarms.
+
+---
+
+##### `faultAlarmThreshold`<sup>Required</sup> <a name="faultAlarmThreshold" id="multi-az-observability.IServiceMetricDetails.property.faultAlarmThreshold"></a>
+
+```typescript
+public readonly faultAlarmThreshold: number;
+```
+
+- *Type:* number
+
+The threshold for alarms associated with fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%.
+
+---
+
+##### `faultMetricNames`<sup>Required</sup> <a name="faultMetricNames" id="multi-az-observability.IServiceMetricDetails.property.faultMetricNames"></a>
+
+```typescript
+public readonly faultMetricNames: string[];
+```
+
+- *Type:* string[]
+
+The names of fault indicating metrics.
+
+---
+
+##### `metricNamespace`<sup>Required</sup> <a name="metricNamespace" id="multi-az-observability.IServiceMetricDetails.property.metricNamespace"></a>
+
+```typescript
+public readonly metricNamespace: string;
+```
+
+- *Type:* string
+
+The CloudWatch metric namespace for these metrics.
+
+---
+
+##### `period`<sup>Required</sup> <a name="period" id="multi-az-observability.IServiceMetricDetails.property.period"></a>
+
+```typescript
+public readonly period: Duration;
+```
+
+- *Type:* aws-cdk-lib.Duration
+
+The period for the metrics.
+
+---
+
+##### `successAlarmThreshold`<sup>Required</sup> <a name="successAlarmThreshold" id="multi-az-observability.IServiceMetricDetails.property.successAlarmThreshold"></a>
+
+```typescript
+public readonly successAlarmThreshold: number;
+```
+
+- *Type:* number
+
+The threshold for alarms associated with success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%.
+
+---
+
+##### `successMetricNames`<sup>Required</sup> <a name="successMetricNames" id="multi-az-observability.IServiceMetricDetails.property.successMetricNames"></a>
+
+```typescript
+public readonly successMetricNames: string[];
+```
+
+- *Type:* string[]
+
+The names of success indicating metrics.
+
+---
+
+##### `unit`<sup>Required</sup> <a name="unit" id="multi-az-observability.IServiceMetricDetails.property.unit"></a>
+
+```typescript
+public readonly unit: Unit;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.Unit
+
+The unit used for these metrics.
+
+---
+
+##### `graphedFaultStatistics`<sup>Optional</sup> <a name="graphedFaultStatistics" id="multi-az-observability.IServiceMetricDetails.property.graphedFaultStatistics"></a>
+
+```typescript
+public readonly graphedFaultStatistics: string[];
+```
+
+- *Type:* string[]
+- *Default:* For availability metrics, this will be "Sum", for latency metrics it will be just "p99"
+
+The statistics for faults you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99.
+
+For availability
+metrics this will typically just be "Sum".
+
+---
+
+##### `graphedSuccessStatistics`<sup>Optional</sup> <a name="graphedSuccessStatistics" id="multi-az-observability.IServiceMetricDetails.property.graphedSuccessStatistics"></a>
+
+```typescript
+public readonly graphedSuccessStatistics: string[];
+```
+
+- *Type:* string[]
+- *Default:* For availability metrics, this will be "Sum", for latency metrics it will be just "p99"
+
+The statistics for successes you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99.
+
+For availability
+metrics this will typically just be "Sum".
 
 ---
 

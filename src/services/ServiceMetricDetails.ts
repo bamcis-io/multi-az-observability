@@ -1,19 +1,12 @@
 import { Duration } from 'aws-cdk-lib';
 import { Unit } from 'aws-cdk-lib/aws-cloudwatch';
-import { IOperationMetricDetails } from './IOperationMetricDetails';
 import { IServiceMetricDetails } from './IServiceMetricDetails';
-import { MetricDimensions } from './props/MetricDimensions';
-import { OperationMetricDetailsProps } from './props/OperationMetricDetailsProps';
+import { ServiceMetricDetailsProps } from './props/ServiceMetricDetailsProps';
 
 /**
- * Generic metric details for an operation
+ * Default metric details for a service
  */
-export class OperationMetricDetails implements IOperationMetricDetails {
-  /**
-     * The operation these metric details are for
-     */
-  readonly operationName: string;
-
+export class ServiceMetricDetails implements IServiceMetricDetails {
   /**
      * The CloudWatch metric namespace for these metrics
      */
@@ -87,26 +80,18 @@ export class OperationMetricDetails implements IOperationMetricDetails {
      */
   readonly faultAlarmThreshold: number;
 
-  /**
-     * The metric dimensions for this operation, must be implemented
-     * as a concrete class by the user
-     */
-  readonly metricDimensions: MetricDimensions;
-
-  constructor(props: OperationMetricDetailsProps, defaultProps: IServiceMetricDetails) {
-    this.alarmStatistic = props.alarmStatistic ? props.alarmStatistic : defaultProps.alarmStatistic;
-    this.datapointsToAlarm = props.datapointsToAlarm ? props.datapointsToAlarm : defaultProps.datapointsToAlarm;
-    this.evaluationPeriods = props.evaluationPeriods ? props.evaluationPeriods : defaultProps.evaluationPeriods;
-    this.faultAlarmThreshold = props.faultAlarmThreshold ? props.faultAlarmThreshold : defaultProps.faultAlarmThreshold;
-    this.faultMetricNames = props.faultMetricNames ? props.faultMetricNames : defaultProps.faultMetricNames;
-    this.graphedFaultStatistics = props.graphedFaultStatistics ? props.graphedFaultStatistics : defaultProps.graphedFaultStatistics;
-    this.graphedSuccessStatistics = props.graphedSuccessStatistics ? props.graphedSuccessStatistics : defaultProps.graphedSuccessStatistics;
-    this.metricNamespace = props.metricNamespace ? props.metricNamespace : defaultProps.metricNamespace;
-    this.operationName = props.operationName;
-    this.period = props.period ? props.period : defaultProps.period;
-    this.successAlarmThreshold = props.successAlarmThreshold ? props.successAlarmThreshold : defaultProps.successAlarmThreshold;
-    this.successMetricNames = props.successMetricNames ? props.successMetricNames : defaultProps.successMetricNames;
-    this.unit = props.unit ? props.unit : defaultProps.unit;
-    this.metricDimensions = props.metricDimensions;
+  constructor(props: ServiceMetricDetailsProps) {
+    this.alarmStatistic = props.alarmStatistic;
+    this.datapointsToAlarm = props.datapointsToAlarm;
+    this.evaluationPeriods = props.evaluationPeriods;
+    this.faultAlarmThreshold = props.faultAlarmThreshold;
+    this.faultMetricNames = props.faultMetricNames;
+    this.graphedFaultStatistics = props.graphedFaultStatistics;
+    this.graphedSuccessStatistics = props.graphedSuccessStatistics;
+    this.metricNamespace = props.metricNamespace;
+    this.period = props.period;
+    this.successAlarmThreshold = props.successAlarmThreshold;
+    this.successMetricNames = props.successMetricNames;
+    this.unit = props.unit;
   }
 }

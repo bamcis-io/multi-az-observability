@@ -15,7 +15,7 @@ export interface CanaryFunctionProps
   /**
      * The subnets to use in the VPC
      */
-  readonly subnetSelect?: SubnetSelection;
+  readonly subnetSelection?: SubnetSelection;
 
   /**
      * Set to true to ignore TLS certificate errors, default is to
@@ -28,8 +28,4 @@ export interface CanaryFunctionProps
      * 2 seconds
      */
   readonly httpTimeout?: Duration;
-
-  readonly assetsBucketParameterName?: string;
-
-  readonly assetsBucketPrefixParameterName?: string;
 }

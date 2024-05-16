@@ -1,16 +1,24 @@
 import { Duration, NestedStack } from 'aws-cdk-lib';
-import { Dashboard, Unit } from 'aws-cdk-lib/aws-cloudwatch';
+import { Dashboard, IAlarm } from 'aws-cdk-lib/aws-cloudwatch';
+import { ILogGroup } from 'aws-cdk-lib/aws-logs';
 import { Construct } from 'constructs';
 import { CanaryMetrics } from './CanaryMetrics';
+import { IInstrumentedServiceMultiAZObservability } from './IInstrumentedServiceMultiAZObservability';
 import { IOperation } from './IOperation';
+import { IOperationMetricDetails } from './IOperationMetricDetails';
 import { Operation } from './Operation';
 import { OperationMetricDetails } from './OperationMetricDetails';
 import { InstrumentedServiceMultiAZObservabilityProps } from './props/InstrumentedServiceMultiAZObservabilityProps';
 import { MetricDimensions } from './props/MetricDimensions';
+import { IOperationAlarmsAndRules } from '../alarmsandrules/IOperationAlarmsAndRules';
+import { IServiceAlarmsAndRules } from '../alarmsandrules/IServiceAlarmsAndRules';
 import { OperationAlarmsAndRules } from '../alarmsandrules/OperationAlarmsAndRules';
 import { ServiceAlarmsAndRules } from '../alarmsandrules/ServiceAlarmsAndRules';
+import { AvailabilityZoneMapper } from '../azmapper/AvailabilityZoneMapper';
 import { CanaryFunction } from '../canaries/CanaryFunction';
 import { CanaryTest } from '../canaries/CanaryTest';
+import { AddCanaryTestProps } from '../canaries/props/AddCanaryTestProps';
+import { CanaryTestProps } from '../canaries/props/CanaryTestProps';
 import { OperationAvailabilityAndLatencyDashboard } from '../dashboards/OperationAvailabilityAndLatencyDashboard';
 import { ServiceAvailabilityAndLatencyDashboard } from '../dashboards/ServiceAvailabilityAndLatencyDashboard';
 import { OutlierDetectionAlgorithm } from '../utilities/OutlierDetectionAlgorithm';
@@ -21,57 +29,148 @@ import { StackWithDynamicSource } from '../utilities/StackWithDynamicSource';
  * availability and latency metrics that can be used to create
  * alarms, rules, and dashboards from
  */
-export class InstrumentedServiceMultiAZObservability extends Construct {
+export class InstrumentedServiceMultiAZObservability extends Construct implements IInstrumentedServiceMultiAZObservability {
   /**
-   * Key represents the operation name and the value is the set
-   * of zonal alarms and rules for that operation. The values themselves
-   * are dictionaries that have a key for each AZ ID.
-   */
-  readonly perOperationAlarmsAndRules: {[key: string]: OperationAlarmsAndRules};
+     * Key represents the operation name and the value is the set
+     * of zonal alarms and rules for that operation. The values themselves
+     * are dictionaries that have a key for each AZ ID.
+     */
+  private readonly perOperationAlarmsAndRules: { [key: string]: IOperationAlarmsAndRules };
 
   /**
-   * The alarms and rules for the overall service
-   */
-  readonly serviceAlarms: ServiceAlarmsAndRules;
+     * Index into the dictionary by operation name, then by Availability Zone Id
+     * to get the alarms that indicate an AZ shows isolated impact from availability
+     * or latency as seen by either the server-side or canary. These are the alarms
+     * you would want to use to trigger automation to evacuate an AZ.
+     */
+  readonly perOperationZonalImpactAlarms: { [key: string]: { [key: string]: IAlarm } };
 
   /**
-   * The dashboards for each operation
-   */
-  readonly operationDashboards: Dashboard[];
+     * The alarms and rules for the overall service
+     */
+  readonly serviceAlarms: IServiceAlarmsAndRules;
 
   /**
-   * The service level dashboard
-   */
+     * The dashboards for each operation
+     */
+  readonly operationDashboards?: Dashboard[];
+
+  /**
+     * The service level dashboard
+     */
   readonly serviceDashboard?: Dashboard;
+
+  /**
+     * The AZ mapper custom resource used to map AZ Ids to Names and vice a versa
+     */
+  private readonly azMapper: AvailabilityZoneMapper;
+
+  /**
+     * If the service is configured to have canary tests created, this will
+     * be the log group where the canary's logs are stored.
+     *
+     * @default - No log group is created if the canary is not requested.
+     */
+  readonly canaryLogGroup?: ILogGroup;
 
   constructor(scope: Construct, id: string, props: InstrumentedServiceMultiAZObservabilityProps) {
     super(scope, id);
-    this.operationDashboards = [];
 
-    if (props.service.operations.filter(x => x.canaryTestProps !== undefined).length > 0) {
+    this.azMapper = new AvailabilityZoneMapper(this, 'AZMapper', {
+      availabilityZoneNames: props.service.availabilityZoneNames,
+    });
 
-      let canaryStack: StackWithDynamicSource = new StackWithDynamicSource(this, 'CanaryStack', {
+    if (props.service.canaryTestProps !== undefined) {
+      let canaryStack: StackWithDynamicSource = new StackWithDynamicSource(this, 'Canary', {
         assetsBucketsParameterName: props.assetsBucketParameterName,
         assetsBucketPrefixParameterName: props.assetsBucketPrefixParameterName,
       });
 
-      let canary = new CanaryFunction(canaryStack, 'CanaryFunction', {});
+      let canary = new CanaryFunction(canaryStack, 'CanaryFunction', {
+        vpc: props.service.canaryTestProps.networkConfiguration?.vpc,
+        subnetSelection: props.service.canaryTestProps.networkConfiguration?.subnetSelection,
+      });
 
-      props.service.operations.forEach((operation, index) => {
+      this.canaryLogGroup = canary.logGroup;
 
-        if (operation.canaryTestProps !== undefined) {
-          let nestedStack: NestedStack = new NestedStack(this, operation.operationName + 'CanaryTestStack', {
+      for (let i = 0; i < props.service.operations.length; i++) {
+
+        let operation: IOperation = props.service.operations[i];
+
+        if (operation.optOutOfServiceCreatedCanary != true) {
+          let testProps: AddCanaryTestProps = operation.canaryTestProps ?
+            operation.canaryTestProps : props.service.canaryTestProps as CanaryTestProps;
+
+          let nestedStack: NestedStack = new NestedStack(this, operation.operationName + 'CanaryTest', {
           });
 
           let test = new CanaryTest(nestedStack, operation.operationName, {
             function: canary.function,
-            requestCount: operation.canaryTestProps.requestCount,
-            schedule: operation.canaryTestProps.schedule,
+            requestCount: testProps.requestCount,
+            schedule: testProps.schedule,
             operation: operation,
-            loadBalancer: operation.canaryTestProps.loadBalancer,
-            headers: operation.canaryTestProps.headers,
-            postData: operation.canaryTestProps.postData,
+            loadBalancer: testProps.loadBalancer,
+            headers: testProps.headers,
+            postData: testProps.postData,
+            azMapper: this.azMapper,
           });
+
+          let defaultAvailabilityMetricDetails: IOperationMetricDetails;
+          let defaultLatencyMetricDetails: IOperationMetricDetails;
+
+          if (operation.canaryMetricDetails?.canaryAvailabilityMetricDetails) {
+            defaultAvailabilityMetricDetails = new OperationMetricDetails({
+              operationName: operation.operationName,
+              metricDimensions: new MetricDimensions({ Operation: operation.operationName }, 'AZ-ID', 'Region'),
+              alarmStatistic: operation.canaryMetricDetails.canaryAvailabilityMetricDetails.alarmStatistic,
+              datapointsToAlarm: operation.canaryMetricDetails.canaryAvailabilityMetricDetails.datapointsToAlarm,
+              evaluationPeriods: operation.canaryMetricDetails.canaryAvailabilityMetricDetails.evaluationPeriods,
+              faultAlarmThreshold: operation.canaryMetricDetails.canaryAvailabilityMetricDetails.faultAlarmThreshold,
+              faultMetricNames: operation.canaryMetricDetails.canaryAvailabilityMetricDetails.faultMetricNames,
+              graphedFaultStatistics: operation.canaryMetricDetails.canaryAvailabilityMetricDetails.graphedFaultStatistics,
+              graphedSuccessStatistics: operation.canaryMetricDetails.canaryAvailabilityMetricDetails.graphedSuccessStatistics,
+              metricNamespace: operation.canaryMetricDetails.canaryAvailabilityMetricDetails.metricNamespace,
+              period: operation.canaryMetricDetails.canaryAvailabilityMetricDetails.period,
+              successAlarmThreshold: operation.canaryMetricDetails.canaryAvailabilityMetricDetails.successAlarmThreshold,
+              successMetricNames: operation.canaryMetricDetails.canaryAvailabilityMetricDetails.successMetricNames,
+              unit: operation.canaryMetricDetails.canaryAvailabilityMetricDetails.unit,
+            }, operation.service.defaultAvailabilityMetricDetails);
+          } else {
+            defaultAvailabilityMetricDetails = new OperationMetricDetails({
+              operationName: operation.operationName,
+              metricNamespace: test.metricNamespace,
+              successMetricNames: ['Success'],
+              faultMetricNames: ['Fault', 'Error'],
+              metricDimensions: new MetricDimensions({ Operation: operation.operationName }, 'AZ-ID', 'Region'),
+            }, props.service.defaultAvailabilityMetricDetails);
+          }
+
+          if (operation.canaryMetricDetails?.canaryLatencyMetricDetails) {
+            defaultLatencyMetricDetails = new OperationMetricDetails({
+              operationName: operation.operationName,
+              metricDimensions: new MetricDimensions({ Operation: operation.operationName }, 'AZ-ID', 'Region'),
+              alarmStatistic: operation.canaryMetricDetails.canaryLatencyMetricDetails.alarmStatistic,
+              datapointsToAlarm: operation.canaryMetricDetails.canaryLatencyMetricDetails.datapointsToAlarm,
+              evaluationPeriods: operation.canaryMetricDetails.canaryLatencyMetricDetails.evaluationPeriods,
+              faultAlarmThreshold: operation.canaryMetricDetails.canaryLatencyMetricDetails.faultAlarmThreshold,
+              faultMetricNames: operation.canaryMetricDetails.canaryLatencyMetricDetails.faultMetricNames,
+              graphedFaultStatistics: operation.canaryMetricDetails.canaryLatencyMetricDetails.graphedFaultStatistics,
+              graphedSuccessStatistics: operation.canaryMetricDetails.canaryLatencyMetricDetails.graphedSuccessStatistics,
+              metricNamespace: operation.canaryMetricDetails.canaryLatencyMetricDetails.metricNamespace,
+              period: operation.canaryMetricDetails.canaryLatencyMetricDetails.period,
+              successAlarmThreshold: operation.canaryMetricDetails.canaryLatencyMetricDetails.successAlarmThreshold,
+              successMetricNames: operation.canaryMetricDetails.canaryLatencyMetricDetails.successMetricNames,
+              unit: operation.canaryMetricDetails.canaryLatencyMetricDetails.unit,
+            }, operation.service.defaultLatencyMetricDetails);
+          } else {
+            defaultLatencyMetricDetails = new OperationMetricDetails({
+              operationName: operation.operationName,
+              metricNamespace: test.metricNamespace,
+              successMetricNames: ['SuccessLatency'],
+              faultMetricNames: ['FaultLatency'],
+              metricDimensions: new MetricDimensions({ Operation: operation.operationName }, 'AZ-ID', 'Region'),
+            }, props.service.defaultLatencyMetricDetails);
+          }
 
           let newOperation = new Operation({
             serverSideAvailabilityMetricDetails: operation.serverSideAvailabilityMetricDetails,
@@ -83,51 +182,14 @@ export class InstrumentedServiceMultiAZObservability extends Construct {
             critical: operation.critical,
             httpMethods: operation.httpMethods,
             canaryMetricDetails: new CanaryMetrics({
-              canaryAvailabilityMetricDetails: new OperationMetricDetails({
-                operationName: operation.operationName,
-                metricNamespace: test.metricNamespace,
-                successMetricNames: ['Success'],
-                faultMetricNames: ['Fault', 'Error'],
-                alarmStatistic: operation.serverSideAvailabilityMetricDetails.alarmStatistic,
-                unit: Unit.COUNT,
-                period: operation.serverSideAvailabilityMetricDetails.period,
-                evaluationPeriods: operation.serverSideAvailabilityMetricDetails.evaluationPeriods,
-                datapointsToAlarm: operation.serverSideAvailabilityMetricDetails.datapointsToAlarm,
-                successAlarmThreshold: operation.serverSideAvailabilityMetricDetails.successAlarmThreshold,
-                faultAlarmThreshold: operation.serverSideAvailabilityMetricDetails.faultAlarmThreshold,
-                graphedFaultStatistics: ['Sum'],
-                graphedSuccessStatistics: ['Sum'],
-                metricDimensions: new MetricDimensions({ Operation: operation.operationName }, 'AZ-ID', 'Region'),
-              }),
-              canaryLatencyMetricDetails: new OperationMetricDetails({
-                operationName: operation.operationName,
-                metricNamespace: test.metricNamespace,
-                successMetricNames: ['SuccessLatency'],
-                faultMetricNames: ['FaultLatency'],
-                alarmStatistic: operation.serverSideLatencyMetricDetails.alarmStatistic,
-                unit: Unit.MILLISECONDS,
-                period: operation.serverSideLatencyMetricDetails.period,
-                evaluationPeriods: operation.serverSideLatencyMetricDetails.evaluationPeriods,
-                datapointsToAlarm: operation.serverSideLatencyMetricDetails.datapointsToAlarm,
-                successAlarmThreshold: operation.serverSideLatencyMetricDetails.successAlarmThreshold,
-                faultAlarmThreshold: operation.serverSideLatencyMetricDetails.faultAlarmThreshold,
-                graphedFaultStatistics: operation.serverSideLatencyMetricDetails.graphedFaultStatistics,
-                graphedSuccessStatistics: operation.serverSideLatencyMetricDetails.graphedSuccessStatistics,
-                metricDimensions: new MetricDimensions({ Operation: operation.operationName }, 'AZ-ID', 'Region'),
-              }),
-              canaryContributorInsightRuleDetails: {
-                logGroups: [canary.logGroup],
-                successLatencyMetricJsonPath: '$.SuccessLatency',
-                faultMetricJsonPath: '$.Faults',
-                operationNameJsonPath: '$.Operation',
-                instanceIdJsonPath: '$.InstanceId',
-                availabilityZoneIdJsonPath: '$.AZ-ID',
-              },
+              canaryAvailabilityMetricDetails: defaultAvailabilityMetricDetails,
+              canaryLatencyMetricDetails: defaultLatencyMetricDetails,
             }),
           });
-          props.service.operations[index] = newOperation;
+
+          props.service.operations[i] = newOperation;
         }
-      });
+      }
     }
 
     this.perOperationAlarmsAndRules = Object.fromEntries(props.service.operations.map((operation: IOperation) => {
@@ -140,67 +202,102 @@ export class InstrumentedServiceMultiAZObservability extends Construct {
           outlierDetectionAlgorithm: OutlierDetectionAlgorithm.STATIC,
           outlierThreshold: props.outlierThreshold,
           loadBalancer: props.service.loadBalancer,
+          azMapper: this.azMapper,
         }),
       ];
     },
     ));
+
+    this.perOperationZonalImpactAlarms = Object.fromEntries(Object.entries(this.perOperationAlarmsAndRules).map(([key, value]) => {
+      return [
+        key,
+        value.aggregateZonalAlarmsMap,
+      ];
+    }));
 
     let serviceAlarmsStack: NestedStack = new NestedStack(this, 'ServiceAlarmsNestedStack');
 
     this.serviceAlarms = new ServiceAlarmsAndRules(serviceAlarmsStack, props.service.serviceName, {
       perOperationAlarmsAndRules: this.perOperationAlarmsAndRules,
       service: props.service,
+      azMapper: this.azMapper,
     });
 
     if (props.createDashboards) {
+      this.operationDashboards = [];
+
       props.service.operations.forEach(x => {
         let dashboardStack: NestedStack = new NestedStack(this, x.operationName + 'Dashboard', {});
 
-        this.operationDashboards.push(
-          new OperationAvailabilityAndLatencyDashboard(dashboardStack, x.operationName, {
-            operation: x,
-            interval: props.interval ? props.interval : Duration.minutes(60),
-            loadBalancer: props.service.loadBalancer,
+        if (this.operationDashboards) {
+          this.operationDashboards.push(
+            new OperationAvailabilityAndLatencyDashboard(dashboardStack, x.operationName, {
+              operation: x,
+              azMapper: this.azMapper,
+              interval: props.interval ? props.interval : Duration.minutes(60),
+              loadBalancer: props.service.loadBalancer,
 
-            regionalEndpointCanaryAvailabilityAlarm:
-              this.perOperationAlarmsAndRules[x.operationName].canaryRegionalAlarmsAndRules?.availabilityAlarm,
-            regionalEndpointCanaryLatencyAlarm:
-              this.perOperationAlarmsAndRules[x.operationName].canaryRegionalAlarmsAndRules?.latencyAlarm,
+              regionalEndpointCanaryAvailabilityAlarm:
+                                this.perOperationAlarmsAndRules[x.operationName].
+                                  canaryRegionalAlarmsAndRules?.availabilityAlarm,
 
-            regionalEndpointServerAvailabilityAlarm:
-              this.perOperationAlarmsAndRules[x.operationName].serverSideRegionalAlarmsAndRules.availabilityAlarm,
-            regionalEndpointServerLatencyAlarm: this.perOperationAlarmsAndRules[x.operationName].serverSideRegionalAlarmsAndRules.latencyAlarm,
+              regionalEndpointCanaryLatencyAlarm:
+                                this.perOperationAlarmsAndRules[x.operationName].
+                                  canaryRegionalAlarmsAndRules?.latencyAlarm,
 
-            zonalEndpointCanaryAvailabilityAlarms:
-              this.perOperationAlarmsAndRules[x.operationName].canaryZonalAlarmsAndRules.map(a => a.availabilityAlarm),
-            zonalEndpointCanaryLatencyAlarms:
-              this.perOperationAlarmsAndRules[x.operationName].canaryZonalAlarmsAndRules.map(a => a.latencyAlarm),
+              regionalEndpointServerAvailabilityAlarm:
+                                this.perOperationAlarmsAndRules[x.operationName].
+                                  serverSideRegionalAlarmsAndRules.availabilityAlarm,
 
-            zonalEndpointServerAvailabilityAlarms:
-              this.perOperationAlarmsAndRules[x.operationName].serverSideZonalAlarmsAndRules.map(a => a.availabilityAlarm),
-            zonalEndpointServerLatencyAlarms:
-              this.perOperationAlarmsAndRules[x.operationName].serverSideZonalAlarmsAndRules.map(a => a.latencyAlarm),
+              regionalEndpointServerLatencyAlarm:
+                                this.perOperationAlarmsAndRules[x.operationName].
+                                  serverSideRegionalAlarmsAndRules.latencyAlarm,
 
-            isolatedAZImpactAlarms:
-              this.perOperationAlarmsAndRules[x.operationName].aggregateZonalAlarms,
-            regionalImpactAlarm:
-              this.perOperationAlarmsAndRules[x.operationName].aggregateRegionalAlarm,
-            instanceContributorsToFaults:
-              this.perOperationAlarmsAndRules[x.operationName].serverSideRegionalAlarmsAndRules.instanceContributorsToRegionalFaults,
-            instanceContributorsToHighLatency:
-              this.perOperationAlarmsAndRules[x.operationName].serverSideRegionalAlarmsAndRules.instanceContributorsToRegionalHighLatency,
+              zonalEndpointCanaryAvailabilityAlarms:
+                                this.perOperationAlarmsAndRules[x.operationName].
+                                  canaryZonalAlarmsAndRules?.map(a => a.availabilityAlarm),
 
-          }).dashboard,
-        );
+              zonalEndpointCanaryLatencyAlarms:
+                                this.perOperationAlarmsAndRules[x.operationName].
+                                  canaryZonalAlarmsAndRules?.map(a => a.latencyAlarm),
+
+              zonalEndpointServerAvailabilityAlarms:
+                                this.perOperationAlarmsAndRules[x.operationName].
+                                  serverSideZonalAlarmsAndRules.map(a => a.availabilityAlarm),
+
+              zonalEndpointServerLatencyAlarms:
+                                this.perOperationAlarmsAndRules[x.operationName].
+                                  serverSideZonalAlarmsAndRules.map(a => a.latencyAlarm),
+
+              isolatedAZImpactAlarms:
+                                this.perOperationAlarmsAndRules[x.operationName].
+                                  aggregateZonalAlarms,
+
+              regionalImpactAlarm:
+                                this.perOperationAlarmsAndRules[x.operationName].
+                                  aggregateRegionalAlarm,
+
+              instanceContributorsToFaults:
+                                this.perOperationAlarmsAndRules[x.operationName].
+                                  serverSideRegionalAlarmsAndRules.instanceContributorsToRegionalFaults,
+
+              instanceContributorsToHighLatency:
+                                this.perOperationAlarmsAndRules[x.operationName].
+                                  serverSideRegionalAlarmsAndRules.instanceContributorsToRegionalHighLatency,
+
+            }).dashboard,
+          );
+        }
       });
 
-      let dashboardStack: NestedStack = new NestedStack(this, 'ServiceDashboardStack', {});
+      let dashboardStack: NestedStack = new NestedStack(this, 'ServiceDashboard', {});
 
       this.serviceDashboard = new ServiceAvailabilityAndLatencyDashboard(dashboardStack, props.service.serviceName, {
         interval: props.interval ? props.interval : Duration.minutes(60),
         service: props.service,
         aggregateRegionalAlarm: this.serviceAlarms.regionalFaultCountServerSideAlarm,
         zonalAggregateAlarms: this.serviceAlarms.zonalAggregateIsolatedImpactAlarms,
+        azMapper: this.azMapper,
       }).dashboard;
     }
   }

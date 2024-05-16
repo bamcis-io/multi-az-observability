@@ -1,6 +1,9 @@
 import { IAlarm } from 'aws-cdk-lib/aws-cloudwatch';
 import { IBaseOperationZonalAlarmsAndRules } from './IBaseOperationZonalAlarmsAndRules';
 
+/**
+ * Alarms and rules for canary metrics
+ */
 export interface ICanaryOperationZonalAlarmsAndRules extends IBaseOperationZonalAlarmsAndRules
 {
   /**

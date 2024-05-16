@@ -3,9 +3,6 @@
 ## TODO
 
 - Add algorithms for chi-squared and z-score outlier detection
-- Test using a single AZ mapper resource across stacks with new way
-  of reference AZ names using just the letter
-
 
 ## problems worth noting
 

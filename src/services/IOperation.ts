@@ -62,4 +62,13 @@ export interface IOperation
      * creating new canary tests on this operation
      */
   readonly canaryTestProps?: AddCanaryTestProps;
+
+  /**
+   * Set to true if you have defined CanaryTestProps for your
+   * service, which applies to all operations, but you want to
+   * opt out of creating the canary test for this operation.
+   *
+   * @default - The operation is not opted out
+   */
+  readonly optOutOfServiceCreatedCanary?: boolean;
 }
