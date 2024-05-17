@@ -2,6 +2,7 @@
 
 ## TODO
 
+- When overriding canary metric details to do something like define a non-default latency, and you've asked the construct to automatically create the canaries for you, you still have to define the OperationName and MetricDimensions, which are done for you. Think about how to override specific values that the defaults wouldn't cover. Also, defining one override, like latency, requires you to provide an availability metric details object as well as it is required.
 - Add algorithms for chi-squared and z-score outlier detection
 
 ## problems worth noting
@@ -26,3 +27,4 @@ name as the attribute to reference which worked
 - Understanding how props and constructs are intended to be built and reconciling required other non-construct classes that other languages would need to use to define things like a Service and Operation.
 - Focusing too much on how logic would be translated into other languages, not realizing the typescript implementation still
 runs in the background and the language specific results are just shims to calling the original code
+- Packaging Lambda functions with external dependencies, build the function/zip as part of the build and package the zip with the construct instead of defining bundling options
