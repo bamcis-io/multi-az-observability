@@ -650,7 +650,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
       keys: [ruleDetails.instanceIdJsonPath],
       filters: [
         {
-          Match: ruleDetails.successLatencyMetricJsonPath,
+          Match: ruleDetails.faultMetricJsonPath,
           GreaterThan: 0,
         },
         {
