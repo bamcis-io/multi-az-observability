@@ -72,7 +72,6 @@ export class StackWithDynamicSource extends NestedStack {
     let currentNode: IConstruct | undefined = this;
 
     while (currentNode !== undefined && !(currentNode instanceof Stack)) {
-      console.log(currentNode.node.id);
       currentNode = currentNode.node.scope;
     }
 

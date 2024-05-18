@@ -3750,13 +3750,6 @@
       "moduleName": "bamcis.io/constructs",
       "packageName": "multiazobservability"
     },
-    "java": {
-      "maven": {
-        "artifactId": "multiazobservability",
-        "groupId": "io.bamcis.constructs.multiazobservability"
-      },
-      "package": "io.bamcis.constructs.multiazobservability"
-    },
     "js": {
       "npm": "multi-az-observability"
     },
@@ -4785,6 +4778,271 @@
       ],
       "symbolId": "src/services/CanaryMetrics:CanaryMetrics"
     },
+    "multi-az-observability.CanaryTestMetricsOverride": {
+      "assembly": "multi-az-observability",
+      "docs": {
+        "stability": "stable",
+        "summary": "Provides overrides for the default metric settings used for the automatically created canary tests."
+      },
+      "fqn": "multi-az-observability.CanaryTestMetricsOverride",
+      "initializer": {
+        "docs": {
+          "stability": "stable"
+        },
+        "locationInModule": {
+          "filename": "src/services/CanaryTestMetricsOverride.ts",
+          "line": 45
+        },
+        "parameters": [
+          {
+            "name": "props",
+            "type": {
+              "fqn": "multi-az-observability.CanaryTestMetricsOverrideProps"
+            }
+          }
+        ]
+      },
+      "interfaces": [
+        "multi-az-observability.ICanaryTestMetricsOverride"
+      ],
+      "kind": "class",
+      "locationInModule": {
+        "filename": "src/services/CanaryTestMetricsOverride.ts",
+        "line": 9
+      },
+      "name": "CanaryTestMetricsOverride",
+      "properties": [
+        {
+          "docs": {
+            "stability": "stable",
+            "summary": "The statistic used for alarms, for availability metrics this should be \"Sum\", for latency metrics it could something like \"p99\" or \"p99.9\"."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/CanaryTestMetricsOverride.ts",
+            "line": 14
+          },
+          "name": "alarmStatistic",
+          "optional": true,
+          "overrides": "multi-az-observability.ICanaryTestMetricsOverride",
+          "type": {
+            "primitive": "string"
+          }
+        },
+        {
+          "docs": {
+            "stability": "stable",
+            "summary": "The number of datapoints to alarm on for latency and availability alarms."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/CanaryTestMetricsOverride.ts",
+            "line": 29
+          },
+          "name": "datapointsToAlarm",
+          "optional": true,
+          "overrides": "multi-az-observability.ICanaryTestMetricsOverride",
+          "type": {
+            "primitive": "number"
+          }
+        },
+        {
+          "docs": {
+            "stability": "stable",
+            "summary": "The number of evaluation periods for latency and availabiltiy alarms."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/CanaryTestMetricsOverride.ts",
+            "line": 24
+          },
+          "name": "evaluationPeriods",
+          "optional": true,
+          "overrides": "multi-az-observability.ICanaryTestMetricsOverride",
+          "type": {
+            "primitive": "number"
+          }
+        },
+        {
+          "docs": {
+            "stability": "stable",
+            "summary": "The threshold for alarms associated with fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/CanaryTestMetricsOverride.ts",
+            "line": 43
+          },
+          "name": "faultAlarmThreshold",
+          "optional": true,
+          "overrides": "multi-az-observability.ICanaryTestMetricsOverride",
+          "type": {
+            "primitive": "number"
+          }
+        },
+        {
+          "docs": {
+            "stability": "stable",
+            "summary": "The period for the metrics."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/CanaryTestMetricsOverride.ts",
+            "line": 19
+          },
+          "name": "period",
+          "optional": true,
+          "overrides": "multi-az-observability.ICanaryTestMetricsOverride",
+          "type": {
+            "fqn": "aws-cdk-lib.Duration"
+          }
+        },
+        {
+          "docs": {
+            "stability": "stable",
+            "summary": "The threshold for alarms associated with success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/CanaryTestMetricsOverride.ts",
+            "line": 36
+          },
+          "name": "successAlarmThreshold",
+          "optional": true,
+          "overrides": "multi-az-observability.ICanaryTestMetricsOverride",
+          "type": {
+            "primitive": "number"
+          }
+        }
+      ],
+      "symbolId": "src/services/CanaryTestMetricsOverride:CanaryTestMetricsOverride"
+    },
+    "multi-az-observability.CanaryTestMetricsOverrideProps": {
+      "assembly": "multi-az-observability",
+      "datatype": true,
+      "docs": {
+        "stability": "stable",
+        "summary": "The properties for creating an override."
+      },
+      "fqn": "multi-az-observability.CanaryTestMetricsOverrideProps",
+      "kind": "interface",
+      "locationInModule": {
+        "filename": "src/services/props/CanaryTestMetricsOverrideProps.ts",
+        "line": 6
+      },
+      "name": "CanaryTestMetricsOverrideProps",
+      "properties": [
+        {
+          "abstract": true,
+          "docs": {
+            "default": "- This property will use the default defined for the service",
+            "stability": "stable",
+            "summary": "The statistic used for alarms, for availability metrics this should be \"Sum\", for latency metrics it could something like \"p99\" or \"p99.9\"."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/CanaryTestMetricsOverrideProps.ts",
+            "line": 14
+          },
+          "name": "alarmStatistic",
+          "optional": true,
+          "type": {
+            "primitive": "string"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "default": "- This property will use the default defined for the service",
+            "stability": "stable",
+            "summary": "The number of datapoints to alarm on for latency and availability alarms."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/CanaryTestMetricsOverrideProps.ts",
+            "line": 35
+          },
+          "name": "datapointsToAlarm",
+          "optional": true,
+          "type": {
+            "primitive": "number"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "default": "- This property will use the default defined for the service",
+            "stability": "stable",
+            "summary": "The number of evaluation periods for latency and availabiltiy alarms."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/CanaryTestMetricsOverrideProps.ts",
+            "line": 28
+          },
+          "name": "evaluationPeriods",
+          "optional": true,
+          "type": {
+            "primitive": "number"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "default": "- This property will use the default defined for the service",
+            "stability": "stable",
+            "summary": "The threshold for alarms associated with fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/CanaryTestMetricsOverrideProps.ts",
+            "line": 53
+          },
+          "name": "faultAlarmThreshold",
+          "optional": true,
+          "type": {
+            "primitive": "number"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "default": "- This property will use the default defined for the service",
+            "stability": "stable",
+            "summary": "The period for the metrics."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/CanaryTestMetricsOverrideProps.ts",
+            "line": 21
+          },
+          "name": "period",
+          "optional": true,
+          "type": {
+            "fqn": "aws-cdk-lib.Duration"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "default": "- This property will use the default defined for the service",
+            "stability": "stable",
+            "summary": "The threshold for alarms associated with success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/CanaryTestMetricsOverrideProps.ts",
+            "line": 44
+          },
+          "name": "successAlarmThreshold",
+          "optional": true,
+          "type": {
+            "primitive": "number"
+          }
+        }
+      ],
+      "symbolId": "src/services/props/CanaryTestMetricsOverrideProps:CanaryTestMetricsOverrideProps"
+    },
     "multi-az-observability.ContributorInsightRuleDetails": {
       "assembly": "multi-az-observability",
       "docs": {
@@ -5526,6 +5784,125 @@
       ],
       "symbolId": "src/services/ICanaryMetrics:ICanaryMetrics"
     },
+    "multi-az-observability.ICanaryTestMetricsOverride": {
+      "assembly": "multi-az-observability",
+      "docs": {
+        "stability": "stable",
+        "summary": "Provides overrides for the default metric settings used for the automatically created canary tests."
+      },
+      "fqn": "multi-az-observability.ICanaryTestMetricsOverride",
+      "kind": "interface",
+      "locationInModule": {
+        "filename": "src/services/ICanaryTestMetricsOverride.ts",
+        "line": 7
+      },
+      "name": "ICanaryTestMetricsOverride",
+      "properties": [
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The statistic used for alarms, for availability metrics this should be \"Sum\", for latency metrics it could something like \"p99\" or \"p99.9\"."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/ICanaryTestMetricsOverride.ts",
+            "line": 13
+          },
+          "name": "alarmStatistic",
+          "optional": true,
+          "type": {
+            "primitive": "string"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The number of datapoints to alarm on for latency and availability alarms."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/ICanaryTestMetricsOverride.ts",
+            "line": 28
+          },
+          "name": "datapointsToAlarm",
+          "optional": true,
+          "type": {
+            "primitive": "number"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The number of evaluation periods for latency and availabiltiy alarms."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/ICanaryTestMetricsOverride.ts",
+            "line": 23
+          },
+          "name": "evaluationPeriods",
+          "optional": true,
+          "type": {
+            "primitive": "number"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The threshold for alarms associated with fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/ICanaryTestMetricsOverride.ts",
+            "line": 42
+          },
+          "name": "faultAlarmThreshold",
+          "optional": true,
+          "type": {
+            "primitive": "number"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The period for the metrics."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/ICanaryTestMetricsOverride.ts",
+            "line": 18
+          },
+          "name": "period",
+          "optional": true,
+          "type": {
+            "fqn": "aws-cdk-lib.Duration"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The threshold for alarms associated with success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/ICanaryTestMetricsOverride.ts",
+            "line": 35
+          },
+          "name": "successAlarmThreshold",
+          "optional": true,
+          "type": {
+            "primitive": "number"
+          }
+        }
+      ],
+      "symbolId": "src/services/ICanaryTestMetricsOverride:ICanaryTestMetricsOverride"
+    },
     "multi-az-observability.IContributorInsightRuleDetails": {
       "assembly": "multi-az-observability",
       "docs": {
@@ -5776,7 +6153,7 @@
       "kind": "interface",
       "locationInModule": {
         "filename": "src/services/IOperation.ts",
-        "line": 10
+        "line": 11
       },
       "name": "IOperation",
       "properties": [
@@ -5789,7 +6166,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IOperation.ts",
-            "line": 53
+            "line": 68
           },
           "name": "critical",
           "type": {
@@ -5805,7 +6182,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IOperation.ts",
-            "line": 58
+            "line": 73
           },
           "name": "httpMethods",
           "type": {
@@ -5826,7 +6203,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IOperation.ts",
-            "line": 20
+            "line": 21
           },
           "name": "operationName",
           "type": {
@@ -5842,7 +6219,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IOperation.ts",
-            "line": 26
+            "line": 27
           },
           "name": "path",
           "type": {
@@ -5858,7 +6235,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IOperation.ts",
-            "line": 31
+            "line": 32
           },
           "name": "serverSideAvailabilityMetricDetails",
           "type": {
@@ -5874,7 +6251,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IOperation.ts",
-            "line": 36
+            "line": 37
           },
           "name": "serverSideLatencyMetricDetails",
           "type": {
@@ -5890,7 +6267,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IOperation.ts",
-            "line": 15
+            "line": 16
           },
           "name": "service",
           "type": {
@@ -5901,12 +6278,12 @@
           "abstract": true,
           "docs": {
             "stability": "stable",
-            "summary": "Optional metric details if the service has a canary."
+            "summary": "Optional metric details if the service has an existing canary."
           },
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IOperation.ts",
-            "line": 41
+            "line": 42
           },
           "name": "canaryMetricDetails",
           "optional": true,
@@ -5918,12 +6295,46 @@
           "abstract": true,
           "docs": {
             "stability": "stable",
+            "summary": "The override values for automatically created canary tests so you can use values other than the service defaults to define the thresholds for availability."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/IOperation.ts",
+            "line": 49
+          },
+          "name": "canaryTestAvailabilityMetricsOverride",
+          "optional": true,
+          "type": {
+            "fqn": "multi-az-observability.ICanaryTestMetricsOverride"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "The override values for automatically created canary tests so you can use values other than the service defaults to define the thresholds for latency."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/IOperation.ts",
+            "line": 56
+          },
+          "name": "canaryTestLatencyMetricsOverride",
+          "optional": true,
+          "type": {
+            "fqn": "multi-az-observability.ICanaryTestMetricsOverride"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
             "summary": "If they have been added, the properties for creating new canary tests on this operation."
           },
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IOperation.ts",
-            "line": 64
+            "line": 79
           },
           "name": "canaryTestProps",
           "optional": true,
@@ -5941,7 +6352,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IOperation.ts",
-            "line": 73
+            "line": 88
           },
           "name": "optOutOfServiceCreatedCanary",
           "optional": true,
@@ -5958,7 +6369,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/IOperation.ts",
-            "line": 46
+            "line": 61
           },
           "name": "serverSideContributorInsightRuleDetails",
           "optional": true,
@@ -6817,7 +7228,7 @@
         },
         "locationInModule": {
           "filename": "src/services/InstrumentedServiceMultiAZObservability.ts",
-          "line": 76
+          "line": 75
         },
         "parameters": [
           {
@@ -6846,7 +7257,7 @@
       "kind": "class",
       "locationInModule": {
         "filename": "src/services/InstrumentedServiceMultiAZObservability.ts",
-        "line": 32
+        "line": 31
       },
       "name": "InstrumentedServiceMultiAZObservability",
       "properties": [
@@ -6859,7 +7270,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/InstrumentedServiceMultiAZObservability.ts",
-            "line": 46
+            "line": 45
           },
           "name": "perOperationZonalImpactAlarms",
           "overrides": "multi-az-observability.IInstrumentedServiceMultiAZObservability",
@@ -6885,7 +7296,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/InstrumentedServiceMultiAZObservability.ts",
-            "line": 51
+            "line": 50
           },
           "name": "serviceAlarms",
           "overrides": "multi-az-observability.IInstrumentedServiceMultiAZObservability",
@@ -6902,7 +7313,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/InstrumentedServiceMultiAZObservability.ts",
-            "line": 74
+            "line": 73
           },
           "name": "canaryLogGroup",
           "optional": true,
@@ -6919,7 +7330,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/InstrumentedServiceMultiAZObservability.ts",
-            "line": 56
+            "line": 55
           },
           "name": "operationDashboards",
           "optional": true,
@@ -6941,7 +7352,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/InstrumentedServiceMultiAZObservability.ts",
-            "line": 61
+            "line": 60
           },
           "name": "serviceDashboard",
           "optional": true,
@@ -7022,7 +7433,7 @@
         {
           "abstract": true,
           "docs": {
-            "default": "- No object prefix will be added to your custom assets location.\nHowever, if you have overridden something like the 'BucketPrefix' property\nin your stack synthesizer with a variable like \"${AssetsBucketPrefix\", \nyou will need to define this property so it doesn't cause a reference error\neven if the prefix value is blank.",
+            "default": "- No object prefix will be added to your custom assets location.\nHowever, if you have overridden something like the 'BucketPrefix' property\nin your stack synthesizer with a variable like \"${AssetsBucketPrefix\",\nyou will need to define this property so it doesn't cause a reference error\neven if the prefix value is blank.",
             "remarks": "It will override the bucket prefix CDK provides by\ndefault for bundled assets. This property only takes effect if you\ndefined the assetsBucketParameterName. The stack containing this contruct needs\nto have a parameter defined that uses this name. The underlying\nstacks in this construct that deploy assets will copy the parent stack's\nvalue for this property.",
             "stability": "stable",
             "summary": "If you are not using a static bucket to deploy assets, for example you are synthing this and it gets uploaded to a bucket that uses a prefix that is unknown to you (maybe used as part of a central CI/CD system) and is provided as a parameter to your stack, specify that parameter name here."
@@ -7308,7 +7719,7 @@
         },
         "locationInModule": {
           "filename": "src/services/Operation.ts",
-          "line": 77
+          "line": 92
         },
         "parameters": [
           {
@@ -7325,7 +7736,7 @@
       "kind": "class",
       "locationInModule": {
         "filename": "src/services/Operation.ts",
-        "line": 13
+        "line": 14
       },
       "name": "Operation",
       "properties": [
@@ -7337,7 +7748,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/Operation.ts",
-            "line": 55
+            "line": 70
           },
           "name": "critical",
           "overrides": "multi-az-observability.IOperation",
@@ -7353,7 +7764,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/Operation.ts",
-            "line": 60
+            "line": 75
           },
           "name": "httpMethods",
           "overrides": "multi-az-observability.IOperation",
@@ -7374,7 +7785,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/Operation.ts",
-            "line": 22
+            "line": 23
           },
           "name": "operationName",
           "overrides": "multi-az-observability.IOperation",
@@ -7390,7 +7801,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/Operation.ts",
-            "line": 28
+            "line": 29
           },
           "name": "path",
           "overrides": "multi-az-observability.IOperation",
@@ -7406,7 +7817,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/Operation.ts",
-            "line": 33
+            "line": 34
           },
           "name": "serverSideAvailabilityMetricDetails",
           "overrides": "multi-az-observability.IOperation",
@@ -7422,7 +7833,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/Operation.ts",
-            "line": 38
+            "line": 39
           },
           "name": "serverSideLatencyMetricDetails",
           "overrides": "multi-az-observability.IOperation",
@@ -7438,7 +7849,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/Operation.ts",
-            "line": 17
+            "line": 18
           },
           "name": "service",
           "overrides": "multi-az-observability.IOperation",
@@ -7454,7 +7865,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/Operation.ts",
-            "line": 43
+            "line": 44
           },
           "name": "canaryMetricDetails",
           "optional": true,
@@ -7466,12 +7877,46 @@
         {
           "docs": {
             "stability": "stable",
+            "summary": "The override values for automatically created canary tests so you can use values other than the service defaults to define the thresholds for availability."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/Operation.ts",
+            "line": 51
+          },
+          "name": "canaryTestAvailabilityMetricsOverride",
+          "optional": true,
+          "overrides": "multi-az-observability.IOperation",
+          "type": {
+            "fqn": "multi-az-observability.ICanaryTestMetricsOverride"
+          }
+        },
+        {
+          "docs": {
+            "stability": "stable",
+            "summary": "The override values for automatically created canary tests so you can use values other than the service defaults to define the thresholds for latency."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/Operation.ts",
+            "line": 58
+          },
+          "name": "canaryTestLatencyMetricsOverride",
+          "optional": true,
+          "overrides": "multi-az-observability.IOperation",
+          "type": {
+            "fqn": "multi-az-observability.ICanaryTestMetricsOverride"
+          }
+        },
+        {
+          "docs": {
+            "stability": "stable",
             "summary": "If they have been added, the properties for creating new canary tests on this operation."
           },
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/Operation.ts",
-            "line": 66
+            "line": 81
           },
           "name": "canaryTestProps",
           "optional": true,
@@ -7489,7 +7934,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/Operation.ts",
-            "line": 75
+            "line": 90
           },
           "name": "optOutOfServiceCreatedCanary",
           "optional": true,
@@ -7506,7 +7951,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/Operation.ts",
-            "line": 48
+            "line": 63
           },
           "name": "serverSideContributorInsightRuleDetails",
           "optional": true,
@@ -8110,7 +8555,7 @@
       "kind": "interface",
       "locationInModule": {
         "filename": "src/services/props/OperationProps.ts",
-        "line": 10
+        "line": 11
       },
       "name": "OperationProps",
       "properties": [
@@ -8123,7 +8568,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/OperationProps.ts",
-            "line": 62
+            "line": 84
           },
           "name": "critical",
           "type": {
@@ -8139,7 +8584,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/OperationProps.ts",
-            "line": 86
+            "line": 108
           },
           "name": "httpMethods",
           "type": {
@@ -8160,7 +8605,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/OperationProps.ts",
-            "line": 20
+            "line": 21
           },
           "name": "operationName",
           "type": {
@@ -8176,7 +8621,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/OperationProps.ts",
-            "line": 26
+            "line": 27
           },
           "name": "path",
           "type": {
@@ -8192,7 +8637,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/OperationProps.ts",
-            "line": 31
+            "line": 32
           },
           "name": "serverSideAvailabilityMetricDetails",
           "type": {
@@ -8208,7 +8653,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/OperationProps.ts",
-            "line": 36
+            "line": 37
           },
           "name": "serverSideLatencyMetricDetails",
           "type": {
@@ -8224,7 +8669,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/OperationProps.ts",
-            "line": 15
+            "line": 16
           },
           "name": "service",
           "type": {
@@ -8241,12 +8686,48 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/OperationProps.ts",
-            "line": 44
+            "line": 45
           },
           "name": "canaryMetricDetails",
           "optional": true,
           "type": {
             "fqn": "multi-az-observability.ICanaryMetrics"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "default": "- No availability metric details will be overridden and the\nservice defaults will be used for the automatically created canaries",
+            "stability": "stable",
+            "summary": "The override values for automatically created canary tests so you can use values other than the service defaults to define the thresholds for availability."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/OperationProps.ts",
+            "line": 55
+          },
+          "name": "canaryTestAvailabilityMetricsOverride",
+          "optional": true,
+          "type": {
+            "fqn": "multi-az-observability.ICanaryTestMetricsOverride"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "default": "- No latency metric details will be overridden and the\nservice defaults will be used for the automatically created canaries",
+            "stability": "stable",
+            "summary": "The override values for automatically created canary tests so you can use values other than the service defaults to define the thresholds for latency."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/OperationProps.ts",
+            "line": 65
+          },
+          "name": "canaryTestLatencyMetricsOverride",
+          "optional": true,
+          "type": {
+            "fqn": "multi-az-observability.ICanaryTestMetricsOverride"
           }
         },
         {
@@ -8259,7 +8740,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/OperationProps.ts",
-            "line": 71
+            "line": 93
           },
           "name": "canaryTestProps",
           "optional": true,
@@ -8277,7 +8758,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/OperationProps.ts",
-            "line": 81
+            "line": 103
           },
           "name": "optOutOfServiceCreatedCanary",
           "optional": true,
@@ -8295,7 +8776,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/OperationProps.ts",
-            "line": 55
+            "line": 77
           },
           "name": "serverSideContributorInsightRuleDetails",
           "optional": true,
@@ -9281,5 +9762,5 @@
     }
   },
   "version": "0.0.1-alpha.1",
-  "fingerprint": "l/h5CGv9K9PBoIfn4bpufiZIhcPbkWCT1dgO4ZVUKTk="
+  "fingerprint": "J1YO4H/5FWFBcPEumSUZbUTJ/xXx8DdeXKggr+ODuqk="
 }

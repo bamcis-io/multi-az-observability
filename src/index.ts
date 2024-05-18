@@ -30,3 +30,6 @@ export { BasicServiceMultiAZObservability } from './services/BasicServiceMultiAZ
 export { IBasicServiceMultiAZObservability } from './services/IBasicServiceMultiAZObservability';
 export { IInstrumentedServiceMultiAZObservability } from './services/IInstrumentedServiceMultiAZObservability';
 export { IServiceAlarmsAndRules } from './alarmsandrules/IServiceAlarmsAndRules';
+export { ICanaryTestMetricsOverride } from './services/ICanaryTestMetricsOverride';
+export { CanaryTestMetricsOverride } from './services/CanaryTestMetricsOverride';
+export { CanaryTestMetricsOverrideProps } from './services/props/CanaryTestMetricsOverrideProps';

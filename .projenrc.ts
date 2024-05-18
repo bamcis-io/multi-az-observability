@@ -52,11 +52,13 @@ const project = new awscdk.AwsCdkConstructLibrary({
     distName: 'bamcis.io.constructs.multi_az_observability',
     module: 'bamcis.io.constructs.multi_az_observability',
   },
+  /*
   publishToMaven: {
     javaPackage: 'io.bamcis.constructs.multiazobservability',
     mavenGroupId: 'io.bamcis.constructs.multiazobservability',
     mavenArtifactId: 'multiazobservability',
   },
+  */
   jest: true,
   jestOptions: {
     jestConfig: {

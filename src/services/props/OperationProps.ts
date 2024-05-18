@@ -1,5 +1,6 @@
 import { AddCanaryTestProps } from '../../canaries/props/AddCanaryTestProps';
 import { ICanaryMetrics } from '../ICanaryMetrics';
+import { ICanaryTestMetricsOverride } from '../ICanaryTestMetricsOverride';
 import { IContributorInsightRuleDetails } from '../IContributorInsightRuleDetails';
 import { IOperationMetricDetails } from '../IOperationMetricDetails';
 import { IService } from '../IService';
@@ -42,6 +43,27 @@ export interface OperationProps
      * from canary metrics
      */
   readonly canaryMetricDetails?: ICanaryMetrics;
+
+  /**
+   * The override values for automatically created canary tests so you can
+   * use values other than the service defaults to define the thresholds for
+   * availability.
+   *
+   * @default - No availability metric details will be overridden and the
+   * service defaults will be used for the automatically created canaries
+   */
+  readonly canaryTestAvailabilityMetricsOverride?: ICanaryTestMetricsOverride;
+
+  /**
+   * The override values for automatically created canary tests so you can
+   * use values other than the service defaults to define the thresholds for
+   * latency.
+   *
+   * @default - No latency metric details will be overridden and the
+   * service defaults will be used for the automatically created canaries
+   */
+  readonly canaryTestLatencyMetricsOverride?: ICanaryTestMetricsOverride;
+
 
   /**
      * The server side details for contributor insights rules

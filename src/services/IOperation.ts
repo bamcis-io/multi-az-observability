@@ -1,4 +1,5 @@
 import { ICanaryMetrics } from './ICanaryMetrics';
+import { ICanaryTestMetricsOverride } from './ICanaryTestMetricsOverride';
 import { IContributorInsightRuleDetails } from './IContributorInsightRuleDetails';
 import { IOperationMetricDetails } from './IOperationMetricDetails';
 import { IService } from './IService';
@@ -36,9 +37,23 @@ export interface IOperation
   readonly serverSideLatencyMetricDetails: IOperationMetricDetails;
 
   /**
-     * Optional metric details if the service has a canary
+     * Optional metric details if the service has an existing canary.
      */
   readonly canaryMetricDetails?: ICanaryMetrics;
+
+  /**
+   * The override values for automatically created canary tests so you can
+   * use values other than the service defaults to define the thresholds for
+   * availability.
+   */
+  readonly canaryTestAvailabilityMetricsOverride?: ICanaryTestMetricsOverride;
+
+  /**
+   * The override values for automatically created canary tests so you can
+   * use values other than the service defaults to define the thresholds for
+   * latency.
+   */
+  readonly canaryTestLatencyMetricsOverride?: ICanaryTestMetricsOverride;
 
   /**
     * The server side details for contributor insights rules

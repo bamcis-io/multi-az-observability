@@ -61,40 +61,32 @@ export class AvailabilityAndLatencyMetrics {
 
     let expression: string = '';
 
-    if (props.availabilityMetricProps.length > 0) {
-      if (props.availabilityMetricProps[0].metricType == undefined || props.availabilityMetricProps[0] == null) {
-        console.log(props.availabilityMetricProps[0].metricDetails.operationName);
-        console.log(props.availabilityMetricProps[0].metricDetails.alarmStatistic);
-      }
-
-      switch (props.availabilityMetricProps[0].metricType) {
-        case AvailabilityMetricType.SUCCESS_RATE:
-          expression = `(${Object.keys(usingMetrics).join('+')}) / ${props.availabilityMetricProps.length}`;
-          break;
-        case AvailabilityMetricType.REQUEST_COUNT:
-          expression = `${Object.keys(usingMetrics).join('+')}`;
-          break;
-        case AvailabilityMetricType.FAULT_COUNT:
-          expression = `${Object.keys(usingMetrics).join('+')}`;
-          break;
-        case AvailabilityMetricType.FAULT_RATE:
-          expression = `(${Object.keys(usingMetrics).join('+')}) / ${props.availabilityMetricProps.length}`;
-          break;
-        case AvailabilityMetricType.SUCCESS_COUNT:
-          expression = `${Object.keys(usingMetrics).join('+')}`;
-          break;
-      }
-      let math: IMetric = new MathExpression({
-        usingMetrics: usingMetrics,
-        period: props.period,
-        label: props.label,
-        expression: expression,
-      });
-
-      operationMetrics.splice(0, 0, math);
-    } else {
-      console.log('Got 0 metrics');
+    switch (props.availabilityMetricProps[0].metricType) {
+      case AvailabilityMetricType.SUCCESS_RATE:
+        expression = `(${Object.keys(usingMetrics).join('+')}) / ${props.availabilityMetricProps.length}`;
+        break;
+      case AvailabilityMetricType.REQUEST_COUNT:
+        expression = `${Object.keys(usingMetrics).join('+')}`;
+        break;
+      case AvailabilityMetricType.FAULT_COUNT:
+        expression = `${Object.keys(usingMetrics).join('+')}`;
+        break;
+      case AvailabilityMetricType.FAULT_RATE:
+        expression = `(${Object.keys(usingMetrics).join('+')}) / ${props.availabilityMetricProps.length}`;
+        break;
+      case AvailabilityMetricType.SUCCESS_COUNT:
+        expression = `${Object.keys(usingMetrics).join('+')}`;
+        break;
     }
+
+    let math: IMetric = new MathExpression({
+      usingMetrics: usingMetrics,
+      period: props.period,
+      label: props.label,
+      expression: expression,
+    });
+
+    operationMetrics.splice(0, 0, math);
 
     return operationMetrics;
   }

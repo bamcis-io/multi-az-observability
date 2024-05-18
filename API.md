@@ -981,6 +981,109 @@ The canary latency metric details.
 
 ---
 
+### CanaryTestMetricsOverrideProps <a name="CanaryTestMetricsOverrideProps" id="multi-az-observability.CanaryTestMetricsOverrideProps"></a>
+
+The properties for creating an override.
+
+#### Initializer <a name="Initializer" id="multi-az-observability.CanaryTestMetricsOverrideProps.Initializer"></a>
+
+```typescript
+import { CanaryTestMetricsOverrideProps } from 'multi-az-observability'
+
+const canaryTestMetricsOverrideProps: CanaryTestMetricsOverrideProps = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#multi-az-observability.CanaryTestMetricsOverrideProps.property.alarmStatistic">alarmStatistic</a></code> | <code>string</code> | The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9". |
+| <code><a href="#multi-az-observability.CanaryTestMetricsOverrideProps.property.datapointsToAlarm">datapointsToAlarm</a></code> | <code>number</code> | The number of datapoints to alarm on for latency and availability alarms. |
+| <code><a href="#multi-az-observability.CanaryTestMetricsOverrideProps.property.evaluationPeriods">evaluationPeriods</a></code> | <code>number</code> | The number of evaluation periods for latency and availabiltiy alarms. |
+| <code><a href="#multi-az-observability.CanaryTestMetricsOverrideProps.property.faultAlarmThreshold">faultAlarmThreshold</a></code> | <code>number</code> | The threshold for alarms associated with fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%. |
+| <code><a href="#multi-az-observability.CanaryTestMetricsOverrideProps.property.period">period</a></code> | <code>aws-cdk-lib.Duration</code> | The period for the metrics. |
+| <code><a href="#multi-az-observability.CanaryTestMetricsOverrideProps.property.successAlarmThreshold">successAlarmThreshold</a></code> | <code>number</code> | The threshold for alarms associated with success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%. |
+
+---
+
+##### `alarmStatistic`<sup>Optional</sup> <a name="alarmStatistic" id="multi-az-observability.CanaryTestMetricsOverrideProps.property.alarmStatistic"></a>
+
+```typescript
+public readonly alarmStatistic: string;
+```
+
+- *Type:* string
+- *Default:* This property will use the default defined for the service
+
+The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9".
+
+---
+
+##### `datapointsToAlarm`<sup>Optional</sup> <a name="datapointsToAlarm" id="multi-az-observability.CanaryTestMetricsOverrideProps.property.datapointsToAlarm"></a>
+
+```typescript
+public readonly datapointsToAlarm: number;
+```
+
+- *Type:* number
+- *Default:* This property will use the default defined for the service
+
+The number of datapoints to alarm on for latency and availability alarms.
+
+---
+
+##### `evaluationPeriods`<sup>Optional</sup> <a name="evaluationPeriods" id="multi-az-observability.CanaryTestMetricsOverrideProps.property.evaluationPeriods"></a>
+
+```typescript
+public readonly evaluationPeriods: number;
+```
+
+- *Type:* number
+- *Default:* This property will use the default defined for the service
+
+The number of evaluation periods for latency and availabiltiy alarms.
+
+---
+
+##### `faultAlarmThreshold`<sup>Optional</sup> <a name="faultAlarmThreshold" id="multi-az-observability.CanaryTestMetricsOverrideProps.property.faultAlarmThreshold"></a>
+
+```typescript
+public readonly faultAlarmThreshold: number;
+```
+
+- *Type:* number
+- *Default:* This property will use the default defined for the service
+
+The threshold for alarms associated with fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%.
+
+---
+
+##### `period`<sup>Optional</sup> <a name="period" id="multi-az-observability.CanaryTestMetricsOverrideProps.property.period"></a>
+
+```typescript
+public readonly period: Duration;
+```
+
+- *Type:* aws-cdk-lib.Duration
+- *Default:* This property will use the default defined for the service
+
+The period for the metrics.
+
+---
+
+##### `successAlarmThreshold`<sup>Optional</sup> <a name="successAlarmThreshold" id="multi-az-observability.CanaryTestMetricsOverrideProps.property.successAlarmThreshold"></a>
+
+```typescript
+public readonly successAlarmThreshold: number;
+```
+
+- *Type:* number
+- *Default:* This property will use the default defined for the service
+
+The threshold for alarms associated with success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%.
+
+---
+
 ### ContributorInsightRuleDetailsProps <a name="ContributorInsightRuleDetailsProps" id="multi-az-observability.ContributorInsightRuleDetailsProps"></a>
 
 The contributor insight rule details properties.
@@ -1145,7 +1248,10 @@ public readonly assetsBucketParameterName: string;
 If you are not using a static bucket to deploy assets, for example you are synthing this and it gets uploaded to a bucket whose name is unknown to you (maybe used as part of a central CI/CD system) and is provided as a parameter to your stack, specify that parameter name here.
 
 It will override the bucket location CDK provides by
-default for bundled assets.
+default for bundled assets. The stack containing this contruct needs
+to have a parameter defined that uses this name. The underlying
+stacks in this construct that deploy assets will copy the parent stack's
+value for this property.
 
 ---
 
@@ -1156,13 +1262,16 @@ public readonly assetsBucketPrefixParameterName: string;
 ```
 
 - *Type:* string
-- *Default:* No object prefix will be added to your custom assets location.
+- *Default:* No object prefix will be added to your custom assets location. However, if you have overridden something like the 'BucketPrefix' property in your stack synthesizer with a variable like "${AssetsBucketPrefix", you will need to define this property so it doesn't cause a reference error even if the prefix value is blank.
 
 If you are not using a static bucket to deploy assets, for example you are synthing this and it gets uploaded to a bucket that uses a prefix that is unknown to you (maybe used as part of a central CI/CD system) and is provided as a parameter to your stack, specify that parameter name here.
 
 It will override the bucket prefix CDK provides by
 default for bundled assets. This property only takes effect if you
-defined the assetsBucketParameterName.
+defined the assetsBucketParameterName. The stack containing this contruct needs
+to have a parameter defined that uses this name. The underlying
+stacks in this construct that deploy assets will copy the parent stack's
+value for this property.
 
 ---
 
@@ -1484,6 +1593,8 @@ const operationProps: OperationProps = { ... }
 | <code><a href="#multi-az-observability.OperationProps.property.serverSideLatencyMetricDetails">serverSideLatencyMetricDetails</a></code> | <code><a href="#multi-az-observability.IOperationMetricDetails">IOperationMetricDetails</a></code> | The server side latency metric details. |
 | <code><a href="#multi-az-observability.OperationProps.property.service">service</a></code> | <code><a href="#multi-az-observability.IService">IService</a></code> | The service the operation is associated with. |
 | <code><a href="#multi-az-observability.OperationProps.property.canaryMetricDetails">canaryMetricDetails</a></code> | <code><a href="#multi-az-observability.ICanaryMetrics">ICanaryMetrics</a></code> | Optional metric details if the service has a canary. |
+| <code><a href="#multi-az-observability.OperationProps.property.canaryTestAvailabilityMetricsOverride">canaryTestAvailabilityMetricsOverride</a></code> | <code><a href="#multi-az-observability.ICanaryTestMetricsOverride">ICanaryTestMetricsOverride</a></code> | The override values for automatically created canary tests so you can use values other than the service defaults to define the thresholds for availability. |
+| <code><a href="#multi-az-observability.OperationProps.property.canaryTestLatencyMetricsOverride">canaryTestLatencyMetricsOverride</a></code> | <code><a href="#multi-az-observability.ICanaryTestMetricsOverride">ICanaryTestMetricsOverride</a></code> | The override values for automatically created canary tests so you can use values other than the service defaults to define the thresholds for latency. |
 | <code><a href="#multi-az-observability.OperationProps.property.canaryTestProps">canaryTestProps</a></code> | <code><a href="#multi-az-observability.AddCanaryTestProps">AddCanaryTestProps</a></code> | If you define this property, a synthetic canary will be provisioned to test the operation. |
 | <code><a href="#multi-az-observability.OperationProps.property.optOutOfServiceCreatedCanary">optOutOfServiceCreatedCanary</a></code> | <code>boolean</code> | Set to true if you have defined CanaryTestProps for your service, which applies to all operations, but you want to opt out of creating the canary test for this operation. |
 | <code><a href="#multi-az-observability.OperationProps.property.serverSideContributorInsightRuleDetails">serverSideContributorInsightRuleDetails</a></code> | <code><a href="#multi-az-observability.IContributorInsightRuleDetails">IContributorInsightRuleDetails</a></code> | The server side details for contributor insights rules. |
@@ -1584,6 +1695,32 @@ public readonly canaryMetricDetails: ICanaryMetrics;
 - *Default:* No alarms, rules, or dashboards will be created from canary metrics
 
 Optional metric details if the service has a canary.
+
+---
+
+##### `canaryTestAvailabilityMetricsOverride`<sup>Optional</sup> <a name="canaryTestAvailabilityMetricsOverride" id="multi-az-observability.OperationProps.property.canaryTestAvailabilityMetricsOverride"></a>
+
+```typescript
+public readonly canaryTestAvailabilityMetricsOverride: ICanaryTestMetricsOverride;
+```
+
+- *Type:* <a href="#multi-az-observability.ICanaryTestMetricsOverride">ICanaryTestMetricsOverride</a>
+- *Default:* No availability metric details will be overridden and the service defaults will be used for the automatically created canaries
+
+The override values for automatically created canary tests so you can use values other than the service defaults to define the thresholds for availability.
+
+---
+
+##### `canaryTestLatencyMetricsOverride`<sup>Optional</sup> <a name="canaryTestLatencyMetricsOverride" id="multi-az-observability.OperationProps.property.canaryTestLatencyMetricsOverride"></a>
+
+```typescript
+public readonly canaryTestLatencyMetricsOverride: ICanaryTestMetricsOverride;
+```
+
+- *Type:* <a href="#multi-az-observability.ICanaryTestMetricsOverride">ICanaryTestMetricsOverride</a>
+- *Default:* No latency metric details will be overridden and the service defaults will be used for the automatically created canaries
+
+The override values for automatically created canary tests so you can use values other than the service defaults to define the thresholds for latency.
 
 ---
 
@@ -2031,6 +2168,120 @@ The canary latency metric details.
 ---
 
 
+### CanaryTestMetricsOverride <a name="CanaryTestMetricsOverride" id="multi-az-observability.CanaryTestMetricsOverride"></a>
+
+- *Implements:* <a href="#multi-az-observability.ICanaryTestMetricsOverride">ICanaryTestMetricsOverride</a>
+
+Provides overrides for the default metric settings used for the automatically created canary tests.
+
+#### Initializers <a name="Initializers" id="multi-az-observability.CanaryTestMetricsOverride.Initializer"></a>
+
+```typescript
+import { CanaryTestMetricsOverride } from 'multi-az-observability'
+
+new CanaryTestMetricsOverride(props: CanaryTestMetricsOverrideProps)
+```
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#multi-az-observability.CanaryTestMetricsOverride.Initializer.parameter.props">props</a></code> | <code><a href="#multi-az-observability.CanaryTestMetricsOverrideProps">CanaryTestMetricsOverrideProps</a></code> | *No description.* |
+
+---
+
+##### `props`<sup>Required</sup> <a name="props" id="multi-az-observability.CanaryTestMetricsOverride.Initializer.parameter.props"></a>
+
+- *Type:* <a href="#multi-az-observability.CanaryTestMetricsOverrideProps">CanaryTestMetricsOverrideProps</a>
+
+---
+
+
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#multi-az-observability.CanaryTestMetricsOverride.property.alarmStatistic">alarmStatistic</a></code> | <code>string</code> | The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9". |
+| <code><a href="#multi-az-observability.CanaryTestMetricsOverride.property.datapointsToAlarm">datapointsToAlarm</a></code> | <code>number</code> | The number of datapoints to alarm on for latency and availability alarms. |
+| <code><a href="#multi-az-observability.CanaryTestMetricsOverride.property.evaluationPeriods">evaluationPeriods</a></code> | <code>number</code> | The number of evaluation periods for latency and availabiltiy alarms. |
+| <code><a href="#multi-az-observability.CanaryTestMetricsOverride.property.faultAlarmThreshold">faultAlarmThreshold</a></code> | <code>number</code> | The threshold for alarms associated with fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%. |
+| <code><a href="#multi-az-observability.CanaryTestMetricsOverride.property.period">period</a></code> | <code>aws-cdk-lib.Duration</code> | The period for the metrics. |
+| <code><a href="#multi-az-observability.CanaryTestMetricsOverride.property.successAlarmThreshold">successAlarmThreshold</a></code> | <code>number</code> | The threshold for alarms associated with success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%. |
+
+---
+
+##### `alarmStatistic`<sup>Optional</sup> <a name="alarmStatistic" id="multi-az-observability.CanaryTestMetricsOverride.property.alarmStatistic"></a>
+
+```typescript
+public readonly alarmStatistic: string;
+```
+
+- *Type:* string
+
+The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9".
+
+---
+
+##### `datapointsToAlarm`<sup>Optional</sup> <a name="datapointsToAlarm" id="multi-az-observability.CanaryTestMetricsOverride.property.datapointsToAlarm"></a>
+
+```typescript
+public readonly datapointsToAlarm: number;
+```
+
+- *Type:* number
+
+The number of datapoints to alarm on for latency and availability alarms.
+
+---
+
+##### `evaluationPeriods`<sup>Optional</sup> <a name="evaluationPeriods" id="multi-az-observability.CanaryTestMetricsOverride.property.evaluationPeriods"></a>
+
+```typescript
+public readonly evaluationPeriods: number;
+```
+
+- *Type:* number
+
+The number of evaluation periods for latency and availabiltiy alarms.
+
+---
+
+##### `faultAlarmThreshold`<sup>Optional</sup> <a name="faultAlarmThreshold" id="multi-az-observability.CanaryTestMetricsOverride.property.faultAlarmThreshold"></a>
+
+```typescript
+public readonly faultAlarmThreshold: number;
+```
+
+- *Type:* number
+
+The threshold for alarms associated with fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%.
+
+---
+
+##### `period`<sup>Optional</sup> <a name="period" id="multi-az-observability.CanaryTestMetricsOverride.property.period"></a>
+
+```typescript
+public readonly period: Duration;
+```
+
+- *Type:* aws-cdk-lib.Duration
+
+The period for the metrics.
+
+---
+
+##### `successAlarmThreshold`<sup>Optional</sup> <a name="successAlarmThreshold" id="multi-az-observability.CanaryTestMetricsOverride.property.successAlarmThreshold"></a>
+
+```typescript
+public readonly successAlarmThreshold: number;
+```
+
+- *Type:* number
+
+The threshold for alarms associated with success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%.
+
+---
+
+
 ### ContributorInsightRuleDetails <a name="ContributorInsightRuleDetails" id="multi-az-observability.ContributorInsightRuleDetails"></a>
 
 - *Implements:* <a href="#multi-az-observability.IContributorInsightRuleDetails">IContributorInsightRuleDetails</a>
@@ -2321,6 +2572,8 @@ new Operation(props: OperationProps)
 | <code><a href="#multi-az-observability.Operation.property.serverSideLatencyMetricDetails">serverSideLatencyMetricDetails</a></code> | <code><a href="#multi-az-observability.IOperationMetricDetails">IOperationMetricDetails</a></code> | The server side latency metric details. |
 | <code><a href="#multi-az-observability.Operation.property.service">service</a></code> | <code><a href="#multi-az-observability.IService">IService</a></code> | The service the operation is associated with. |
 | <code><a href="#multi-az-observability.Operation.property.canaryMetricDetails">canaryMetricDetails</a></code> | <code><a href="#multi-az-observability.ICanaryMetrics">ICanaryMetrics</a></code> | Optional metric details if the service has a canary. |
+| <code><a href="#multi-az-observability.Operation.property.canaryTestAvailabilityMetricsOverride">canaryTestAvailabilityMetricsOverride</a></code> | <code><a href="#multi-az-observability.ICanaryTestMetricsOverride">ICanaryTestMetricsOverride</a></code> | The override values for automatically created canary tests so you can use values other than the service defaults to define the thresholds for availability. |
+| <code><a href="#multi-az-observability.Operation.property.canaryTestLatencyMetricsOverride">canaryTestLatencyMetricsOverride</a></code> | <code><a href="#multi-az-observability.ICanaryTestMetricsOverride">ICanaryTestMetricsOverride</a></code> | The override values for automatically created canary tests so you can use values other than the service defaults to define the thresholds for latency. |
 | <code><a href="#multi-az-observability.Operation.property.canaryTestProps">canaryTestProps</a></code> | <code><a href="#multi-az-observability.AddCanaryTestProps">AddCanaryTestProps</a></code> | If they have been added, the properties for creating new canary tests on this operation. |
 | <code><a href="#multi-az-observability.Operation.property.optOutOfServiceCreatedCanary">optOutOfServiceCreatedCanary</a></code> | <code>boolean</code> | Set to true if you have defined CanaryTestProps for your service, which applies to all operations, but you want to opt out of creating the canary test for this operation. |
 | <code><a href="#multi-az-observability.Operation.property.serverSideContributorInsightRuleDetails">serverSideContributorInsightRuleDetails</a></code> | <code><a href="#multi-az-observability.IContributorInsightRuleDetails">IContributorInsightRuleDetails</a></code> | The server side details for contributor insights rules. |
@@ -2420,6 +2673,30 @@ public readonly canaryMetricDetails: ICanaryMetrics;
 - *Type:* <a href="#multi-az-observability.ICanaryMetrics">ICanaryMetrics</a>
 
 Optional metric details if the service has a canary.
+
+---
+
+##### `canaryTestAvailabilityMetricsOverride`<sup>Optional</sup> <a name="canaryTestAvailabilityMetricsOverride" id="multi-az-observability.Operation.property.canaryTestAvailabilityMetricsOverride"></a>
+
+```typescript
+public readonly canaryTestAvailabilityMetricsOverride: ICanaryTestMetricsOverride;
+```
+
+- *Type:* <a href="#multi-az-observability.ICanaryTestMetricsOverride">ICanaryTestMetricsOverride</a>
+
+The override values for automatically created canary tests so you can use values other than the service defaults to define the thresholds for availability.
+
+---
+
+##### `canaryTestLatencyMetricsOverride`<sup>Optional</sup> <a name="canaryTestLatencyMetricsOverride" id="multi-az-observability.Operation.property.canaryTestLatencyMetricsOverride"></a>
+
+```typescript
+public readonly canaryTestLatencyMetricsOverride: ICanaryTestMetricsOverride;
+```
+
+- *Type:* <a href="#multi-az-observability.ICanaryTestMetricsOverride">ICanaryTestMetricsOverride</a>
+
+The override values for automatically created canary tests so you can use values other than the service defaults to define the thresholds for latency.
 
 ---
 
@@ -3446,6 +3723,98 @@ The canary latency metric details.
 
 ---
 
+### ICanaryTestMetricsOverride <a name="ICanaryTestMetricsOverride" id="multi-az-observability.ICanaryTestMetricsOverride"></a>
+
+- *Implemented By:* <a href="#multi-az-observability.CanaryTestMetricsOverride">CanaryTestMetricsOverride</a>, <a href="#multi-az-observability.ICanaryTestMetricsOverride">ICanaryTestMetricsOverride</a>
+
+Provides overrides for the default metric settings used for the automatically created canary tests.
+
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#multi-az-observability.ICanaryTestMetricsOverride.property.alarmStatistic">alarmStatistic</a></code> | <code>string</code> | The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9". |
+| <code><a href="#multi-az-observability.ICanaryTestMetricsOverride.property.datapointsToAlarm">datapointsToAlarm</a></code> | <code>number</code> | The number of datapoints to alarm on for latency and availability alarms. |
+| <code><a href="#multi-az-observability.ICanaryTestMetricsOverride.property.evaluationPeriods">evaluationPeriods</a></code> | <code>number</code> | The number of evaluation periods for latency and availabiltiy alarms. |
+| <code><a href="#multi-az-observability.ICanaryTestMetricsOverride.property.faultAlarmThreshold">faultAlarmThreshold</a></code> | <code>number</code> | The threshold for alarms associated with fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%. |
+| <code><a href="#multi-az-observability.ICanaryTestMetricsOverride.property.period">period</a></code> | <code>aws-cdk-lib.Duration</code> | The period for the metrics. |
+| <code><a href="#multi-az-observability.ICanaryTestMetricsOverride.property.successAlarmThreshold">successAlarmThreshold</a></code> | <code>number</code> | The threshold for alarms associated with success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%. |
+
+---
+
+##### `alarmStatistic`<sup>Optional</sup> <a name="alarmStatistic" id="multi-az-observability.ICanaryTestMetricsOverride.property.alarmStatistic"></a>
+
+```typescript
+public readonly alarmStatistic: string;
+```
+
+- *Type:* string
+
+The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9".
+
+---
+
+##### `datapointsToAlarm`<sup>Optional</sup> <a name="datapointsToAlarm" id="multi-az-observability.ICanaryTestMetricsOverride.property.datapointsToAlarm"></a>
+
+```typescript
+public readonly datapointsToAlarm: number;
+```
+
+- *Type:* number
+
+The number of datapoints to alarm on for latency and availability alarms.
+
+---
+
+##### `evaluationPeriods`<sup>Optional</sup> <a name="evaluationPeriods" id="multi-az-observability.ICanaryTestMetricsOverride.property.evaluationPeriods"></a>
+
+```typescript
+public readonly evaluationPeriods: number;
+```
+
+- *Type:* number
+
+The number of evaluation periods for latency and availabiltiy alarms.
+
+---
+
+##### `faultAlarmThreshold`<sup>Optional</sup> <a name="faultAlarmThreshold" id="multi-az-observability.ICanaryTestMetricsOverride.property.faultAlarmThreshold"></a>
+
+```typescript
+public readonly faultAlarmThreshold: number;
+```
+
+- *Type:* number
+
+The threshold for alarms associated with fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%.
+
+---
+
+##### `period`<sup>Optional</sup> <a name="period" id="multi-az-observability.ICanaryTestMetricsOverride.property.period"></a>
+
+```typescript
+public readonly period: Duration;
+```
+
+- *Type:* aws-cdk-lib.Duration
+
+The period for the metrics.
+
+---
+
+##### `successAlarmThreshold`<sup>Optional</sup> <a name="successAlarmThreshold" id="multi-az-observability.ICanaryTestMetricsOverride.property.successAlarmThreshold"></a>
+
+```typescript
+public readonly successAlarmThreshold: number;
+```
+
+- *Type:* number
+
+The threshold for alarms associated with success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%.
+
+---
+
 ### IContributorInsightRuleDetails <a name="IContributorInsightRuleDetails" id="multi-az-observability.IContributorInsightRuleDetails"></a>
 
 - *Implemented By:* <a href="#multi-az-observability.ContributorInsightRuleDetails">ContributorInsightRuleDetails</a>, <a href="#multi-az-observability.IContributorInsightRuleDetails">IContributorInsightRuleDetails</a>
@@ -3660,7 +4029,9 @@ Represents an operation in a service.
 | <code><a href="#multi-az-observability.IOperation.property.serverSideAvailabilityMetricDetails">serverSideAvailabilityMetricDetails</a></code> | <code><a href="#multi-az-observability.IOperationMetricDetails">IOperationMetricDetails</a></code> | The server side availability metric details. |
 | <code><a href="#multi-az-observability.IOperation.property.serverSideLatencyMetricDetails">serverSideLatencyMetricDetails</a></code> | <code><a href="#multi-az-observability.IOperationMetricDetails">IOperationMetricDetails</a></code> | The server side latency metric details. |
 | <code><a href="#multi-az-observability.IOperation.property.service">service</a></code> | <code><a href="#multi-az-observability.IService">IService</a></code> | The service the operation is associated with. |
-| <code><a href="#multi-az-observability.IOperation.property.canaryMetricDetails">canaryMetricDetails</a></code> | <code><a href="#multi-az-observability.ICanaryMetrics">ICanaryMetrics</a></code> | Optional metric details if the service has a canary. |
+| <code><a href="#multi-az-observability.IOperation.property.canaryMetricDetails">canaryMetricDetails</a></code> | <code><a href="#multi-az-observability.ICanaryMetrics">ICanaryMetrics</a></code> | Optional metric details if the service has an existing canary. |
+| <code><a href="#multi-az-observability.IOperation.property.canaryTestAvailabilityMetricsOverride">canaryTestAvailabilityMetricsOverride</a></code> | <code><a href="#multi-az-observability.ICanaryTestMetricsOverride">ICanaryTestMetricsOverride</a></code> | The override values for automatically created canary tests so you can use values other than the service defaults to define the thresholds for availability. |
+| <code><a href="#multi-az-observability.IOperation.property.canaryTestLatencyMetricsOverride">canaryTestLatencyMetricsOverride</a></code> | <code><a href="#multi-az-observability.ICanaryTestMetricsOverride">ICanaryTestMetricsOverride</a></code> | The override values for automatically created canary tests so you can use values other than the service defaults to define the thresholds for latency. |
 | <code><a href="#multi-az-observability.IOperation.property.canaryTestProps">canaryTestProps</a></code> | <code><a href="#multi-az-observability.AddCanaryTestProps">AddCanaryTestProps</a></code> | If they have been added, the properties for creating new canary tests on this operation. |
 | <code><a href="#multi-az-observability.IOperation.property.optOutOfServiceCreatedCanary">optOutOfServiceCreatedCanary</a></code> | <code>boolean</code> | Set to true if you have defined CanaryTestProps for your service, which applies to all operations, but you want to opt out of creating the canary test for this operation. |
 | <code><a href="#multi-az-observability.IOperation.property.serverSideContributorInsightRuleDetails">serverSideContributorInsightRuleDetails</a></code> | <code><a href="#multi-az-observability.IContributorInsightRuleDetails">IContributorInsightRuleDetails</a></code> | The server side details for contributor insights rules. |
@@ -3759,7 +4130,31 @@ public readonly canaryMetricDetails: ICanaryMetrics;
 
 - *Type:* <a href="#multi-az-observability.ICanaryMetrics">ICanaryMetrics</a>
 
-Optional metric details if the service has a canary.
+Optional metric details if the service has an existing canary.
+
+---
+
+##### `canaryTestAvailabilityMetricsOverride`<sup>Optional</sup> <a name="canaryTestAvailabilityMetricsOverride" id="multi-az-observability.IOperation.property.canaryTestAvailabilityMetricsOverride"></a>
+
+```typescript
+public readonly canaryTestAvailabilityMetricsOverride: ICanaryTestMetricsOverride;
+```
+
+- *Type:* <a href="#multi-az-observability.ICanaryTestMetricsOverride">ICanaryTestMetricsOverride</a>
+
+The override values for automatically created canary tests so you can use values other than the service defaults to define the thresholds for availability.
+
+---
+
+##### `canaryTestLatencyMetricsOverride`<sup>Optional</sup> <a name="canaryTestLatencyMetricsOverride" id="multi-az-observability.IOperation.property.canaryTestLatencyMetricsOverride"></a>
+
+```typescript
+public readonly canaryTestLatencyMetricsOverride: ICanaryTestMetricsOverride;
+```
+
+- *Type:* <a href="#multi-az-observability.ICanaryTestMetricsOverride">ICanaryTestMetricsOverride</a>
+
+The override values for automatically created canary tests so you can use values other than the service defaults to define the thresholds for latency.
 
 ---
 

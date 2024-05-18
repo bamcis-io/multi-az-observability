@@ -1,5 +1,6 @@
 
 import { ICanaryMetrics } from './ICanaryMetrics';
+import { ICanaryTestMetricsOverride } from './ICanaryTestMetricsOverride';
 import { IContributorInsightRuleDetails } from './IContributorInsightRuleDetails';
 import { IOperation } from './IOperation';
 import { IOperationMetricDetails } from './IOperationMetricDetails';
@@ -41,6 +42,20 @@ export class Operation implements IOperation {
      * Optional metric details if the service has a canary
      */
   readonly canaryMetricDetails?: ICanaryMetrics;
+
+  /**
+   * The override values for automatically created canary tests so you can
+   * use values other than the service defaults to define the thresholds for
+   * availability.
+   */
+  readonly canaryTestAvailabilityMetricsOverride?: ICanaryTestMetricsOverride;
+
+  /**
+    * The override values for automatically created canary tests so you can
+    * use values other than the service defaults to define the thresholds for
+    * latency.
+    */
+  readonly canaryTestLatencyMetricsOverride?: ICanaryTestMetricsOverride;
 
   /**
     * The server side details for contributor insights rules
@@ -85,6 +100,9 @@ export class Operation implements IOperation {
     this.serverSideContributorInsightRuleDetails = props.serverSideContributorInsightRuleDetails;
     this.service = props.service;
     this.canaryTestProps = props.canaryTestProps;
+    this.optOutOfServiceCreatedCanary = props.optOutOfServiceCreatedCanary;
+    this.canaryTestAvailabilityMetricsOverride = props.canaryTestAvailabilityMetricsOverride;
+    this.canaryTestLatencyMetricsOverride = props.canaryTestLatencyMetricsOverride;
     this.optOutOfServiceCreatedCanary = props.optOutOfServiceCreatedCanary;
   }
 }

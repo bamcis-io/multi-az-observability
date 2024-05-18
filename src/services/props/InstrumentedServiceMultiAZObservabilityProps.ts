@@ -65,7 +65,7 @@ export interface InstrumentedServiceMultiAZObservabilityProps
    *
    * @default - No object prefix will be added to your custom assets location.
    * However, if you have overridden something like the 'BucketPrefix' property
-   * in your stack synthesizer with a variable like "${AssetsBucketPrefix", 
+   * in your stack synthesizer with a variable like "${AssetsBucketPrefix",
    * you will need to define this property so it doesn't cause a reference error
    * even if the prefix value is blank.
    */

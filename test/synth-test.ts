@@ -138,6 +138,9 @@ let rideOperation: Operation = {
     operationName: 'ride',
     metricDimensions: new MetricDimensions({ Operation: 'ride' }, 'AZ-ID', 'Region'),
   }, service.defaultLatencyMetricDetails),
+  canaryTestLatencyMetricsOverride: {
+    successAlarmThreshold: 251,
+  },
 };
 let payOperation: Operation = {
   operationName: 'pay',
@@ -153,6 +156,9 @@ let payOperation: Operation = {
     operationName: 'pay',
     metricDimensions: new MetricDimensions({ Operation: 'ride' }, 'AZ-ID', 'Region'),
   }, service.defaultLatencyMetricDetails),
+  canaryTestLatencyMetricsOverride: {
+    successAlarmThreshold: 301,
+  },
 };
 
 service.addOperation(rideOperation);

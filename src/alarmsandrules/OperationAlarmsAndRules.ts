@@ -19,48 +19,48 @@ import { IOperation } from '../services/IOperation';
  */
 export class OperationAlarmsAndRules extends Construct implements IOperationAlarmsAndRules {
   /**
-     * The operation the alarms and rules are created for
-     */
+       * The operation the alarms and rules are created for
+       */
   operation: IOperation;
 
   /**
-     * The server side regional alarms and rules
-     */
+       * The server side regional alarms and rules
+       */
   serverSideRegionalAlarmsAndRules: IServerSideOperationRegionalAlarmsAndRules;
 
   /**
-     * The canary regional alarms and rules
-     */
+       * The canary regional alarms and rules
+       */
   canaryRegionalAlarmsAndRules?: ICanaryOperationRegionalAlarmsAndRules;
 
   /**
-     * The aggregate regional alarm that looks at both canary and server
-     * side impact alarms for latency and availability
-     */
+       * The aggregate regional alarm that looks at both canary and server
+       * side impact alarms for latency and availability
+       */
   aggregateRegionalAlarm: IAlarm;
 
   /**
-     * The server side zonal alarms and rules
-     */
+       * The server side zonal alarms and rules
+       */
   serverSideZonalAlarmsAndRules: IServerSideOperationZonalAlarmsAndRules[];
 
   /**
-     * The canary zonal alarms and rules
-     */
+       * The canary zonal alarms and rules
+       */
   canaryZonalAlarmsAndRules?: ICanaryOperationZonalAlarmsAndRules[];
 
   /**
-     * The aggregate zonal alarms, one per AZ. Each alarm indicates there is either
-     * latency or availability impact in that AZ, and the AZ is an outlier for
-     * availability or latency impact. Both server side and canary metrics are
-     * evaluated
-     */
+       * The aggregate zonal alarms, one per AZ. Each alarm indicates there is either
+       * latency or availability impact in that AZ, and the AZ is an outlier for
+       * availability or latency impact. Both server side and canary metrics are
+       * evaluated
+       */
   aggregateZonalAlarms: IAlarm[];
 
   /**
-   * The aggregate zonal alarm indexed by Availability Zone Id.
-   */
-  aggregateZonalAlarmsMap: {[key: string]: IAlarm};
+     * The aggregate zonal alarm indexed by Availability Zone Id.
+     */
+  aggregateZonalAlarmsMap: { [key: string]: IAlarm };
 
   constructor(scope: Construct, id: string, props: OperationAlarmsAndRulesProps) {
     super(scope, id);
@@ -102,9 +102,7 @@ export class OperationAlarmsAndRules extends Construct implements IOperationAlar
           nameSuffix: '-canary',
         },
       );
-    }
 
-    if (this.canaryRegionalAlarmsAndRules !== undefined) {
       this.aggregateRegionalAlarm = new CompositeAlarm(this, props.operation.operationName + 'AggregateRegionalAlarm', {
         actionsEnabled: false,
         compositeAlarmName: Fn.ref('AWS::Region') + '-' + props.operation.operationName.toLowerCase() + '-' + 'aggregate-alarm',
