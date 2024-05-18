@@ -3750,6 +3750,13 @@
       "moduleName": "bamcis.io/constructs",
       "packageName": "multiazobservability"
     },
+    "java": {
+      "maven": {
+        "artifactId": "multiazobservability",
+        "groupId": "io.bamcis.constructs.multiazobservability"
+      },
+      "package": "io.bamcis.constructs.multiazobservability"
+    },
     "js": {
       "npm": "multi-az-observability"
     },
@@ -9762,5 +9769,5 @@
     }
   },
   "version": "0.0.1-alpha.1",
-  "fingerprint": "kMif6GGCabHNuyqmk0SXd8HhUtWAZ5qXzdfQmhGAsDo="
+  "fingerprint": "4TbD72EgBrJeZUNzXi9KOttQ2HZTqq61EIqcKJ02cW4="
 }

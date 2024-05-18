@@ -208,7 +208,7 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
     metricType: AvailabilityMetricType,
   ) : AvailabilityMetricProps[] {
     return criticalOperations.reduce((filtered, value) => {
-      if (isCanary && value.canaryMetricDetails !== undefined && value.canaryMetricDetails != null) {
+      if (isCanary && value.canaryMetricDetails) {
         filtered.push(value.canaryMetricDetails.canaryAvailabilityMetricDetails);
       } else if (!isCanary) {
         filtered.push(value.serverSideAvailabilityMetricDetails);
@@ -217,7 +217,7 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
     }, [] as IOperationMetricDetails[])
       .map(x => {
         return {
-          label: x.operationName + ' ' + metricType.toString().toLowerCase().replace('_', ' '),
+          label: x.operationName + ' ' + metricType.toString().replace('_', ' '),
           metricDetails: x,
           metricType: metricType,
         };
@@ -239,8 +239,9 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
       return filtered;
     }, [] as IOperationMetricDetails[])
       .map(x => {
+        console.log(metricType.toString());
         return {
-          label: x.operationName + ' ' + metricType.toString().toLowerCase().replace('_', ' '),
+          label: x.operationName + ' ' + metricType.toString().replace('_', ' '),
           metricDetails: x,
           metricType: metricType,
           availabilityZoneId: availabilityZoneId,

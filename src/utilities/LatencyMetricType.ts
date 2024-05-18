@@ -6,10 +6,10 @@ export enum LatencyMetricType
   /**
      * Successful response latency
      */
-  SUCCESS_LATENCY,
+  SUCCESS_LATENCY = 'Success_Latency',
 
   /**
      * Fault response latency
      */
-  FAULT_LATENCY
+  FAULT_LATENCY = 'Fault_Latency'
 }

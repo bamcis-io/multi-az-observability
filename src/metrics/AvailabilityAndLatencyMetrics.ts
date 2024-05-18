@@ -106,7 +106,6 @@ export class AvailabilityAndLatencyMetrics {
     props.availabilityMetricProps.forEach(prop => {
 
       let keyPrefix: string = ((prop.keyPrefix === undefined || prop.keyPrefix == '') ? '' : prop.keyPrefix.toLowerCase() + '_') +
-                //prop.metricDetails.operation.service.serviceName.toLowerCase() + "_" +
                 prop.metricDetails.operationName.toLowerCase() + '_' +
                 prop.metricType.toString().toLowerCase();
 
@@ -154,7 +153,6 @@ export class AvailabilityAndLatencyMetrics {
      */
   static createZonalAvailabilityMetric(props: ZonalAvailabilityMetricProps): IMetric {
     return this.createAvailabilityMetric(props, props.metricDetails.metricDimensions.zonalDimensions(props.availabilityZoneId, Fn.ref('AWS::Region')));
-    //return this.createAvailabilityMetric(props, props.metricDetails.zonalDimensions(Fn.ref("AWS::Region")));
   }
 
   /**
