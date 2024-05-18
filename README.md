@@ -2,7 +2,6 @@
 
 ## TODO
 
-- Canary latency metrics on the dashboard
 - Add algorithms for chi-squared and z-score outlier detection
 
 ## problems worth noting
