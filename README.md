@@ -2,7 +2,7 @@
 
 ## TODO
 
-- When overriding canary metric details to do something like define a non-default latency, and you've asked the construct to automatically create the canaries for you, you still have to define the OperationName and MetricDimensions, which are done for you. Think about how to override specific values that the defaults wouldn't cover. Also, defining one override, like latency, requires you to provide an availability metric details object as well as it is required.
+- Canary latency metrics on the dashboard
 - Add algorithms for chi-squared and z-score outlier detection
 
 ## problems worth noting

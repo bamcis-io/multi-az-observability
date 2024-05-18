@@ -181,8 +181,8 @@ export class InstrumentedServiceMultiAZObservability extends Construct implement
             defaultLatencyMetricDetails = new OperationMetricDetails({
               operationName: operation.operationName,
               metricNamespace: test.metricNamespace,
-              successMetricNames: ['Success'],
-              faultMetricNames: ['Fault', 'Error'],
+              successMetricNames: ['SuccessLatency'],
+              faultMetricNames: ['FaultLatency'],
               metricDimensions: new MetricDimensions({ Operation: operation.operationName }, 'AZ-ID', 'Region'),
 
               alarmStatistic: operation.canaryTestLatencyMetricsOverride.alarmStatistic,
