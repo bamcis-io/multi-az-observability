@@ -239,7 +239,6 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
       return filtered;
     }, [] as IOperationMetricDetails[])
       .map(x => {
-        console.log(metricType.toString());
         return {
           label: x.operationName + ' ' + metricType.toString().replace('_', ' '),
           metricDetails: x,
