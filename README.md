@@ -2,6 +2,10 @@
 
 ## TODO
 
+- Do metric queries need to "ReturnData"? 
+- Track the total count query key and sum for AZ query key (only ones chi-squared needs to evaluate for output)
+- Need to set the period for the queries to 60
+- Convert chi-squared function to container or lambda layers
 - Add algorithms for chi-squared and z-score outlier detection
 
 ## problems worth noting

@@ -38,6 +38,10 @@ const project = new awscdk.AwsCdkConstructLibrary({
     '**/.DS_Store',
     'src/canaries/src/package',
     'src/canaries/src/canary.zip',
+    'src/chi-squared/src/package',
+    'src/chi-squared/src/scipy',
+    'src/chi-squared/src/chi-squared.zip',
+    'src/chi-squared/src/scipy-layer.zip',
   ],
   packageName: 'multi-az-observability',
   publishToNuget: {
@@ -74,13 +78,16 @@ project.addTask('awslint', {
   exec: 'awslint',
 });
 
-project.tasks.addTask('build-function', {
+project.tasks.addTask('build-canary-function', {
   steps: [
     {
       exec: 'rm -rf src/canaries/src/package',
     },
     {
       exec: 'mkdir src/canaries/src/package',
+    },
+    {
+      exec: 'mkdir -p lib/canaries/src',
     },
     {
       exec: 'docker run --rm --platform "linux/arm64" --user "0:0" --volume "$PWD/src/canaries/src:/asset-input:delegated" --volume "$PWD/src/canaries/src/package:/asset-output:delegated" --workdir "/asset-input" "public.ecr.aws/sam/build-python3.12" bash -c "pip install --no-cache --requirement requirements.txt --target /asset-output && cp --archive --update index.py /asset-output"',
@@ -90,6 +97,52 @@ project.tasks.addTask('build-function', {
     },
     {
       exec: 'cp src/canaries/src/canary.zip lib/canaries/src/canary.zip',
+    },
+  ],
+});
+
+project.tasks.addTask('build-scipy-layer', {
+  steps: [
+    {
+      exec: 'rm -rf src/chi-squared/src/scipy',
+    },
+    {
+      exec: 'mkdir src/chi-squared/src/scipy',
+    },
+    {
+      exec: 'mkdir -p lib/chi-squared/src',
+    },
+    {
+      exec: 'pip3 install scipy --only-binary=:all: --target src/chi-squared/src/scipy/python/lib/python3.12/site-packages --platform manylinux2014_aarch64',
+    },
+    {
+      exec: 'cd src/chi-squared/src/scipy && zip -r ../scipy-layer.zip .',
+    },
+    {
+      exec: 'cp src/chi-squared/src/scipy-layer.zip lib/chi-squared/src/scipy-layer.zip',
+    },
+  ],
+});
+
+project.tasks.addTask('build-chi-squared-function', {
+  steps: [
+    {
+      exec: 'rm -rf src/chi-squared/src/package',
+    },
+    {
+      exec: 'mkdir src/chi-squared/src/package',
+    },
+    {
+      exec: 'mkdir -p lib/chi-squared/src',
+    },
+    {
+      exec: 'docker run --rm --platform "linux/arm64" --user "0:0" --volume "$PWD/src/chi-squared/src:/asset-input:delegated" --volume "$PWD/src/chi-squared/src/package:/asset-output:delegated" --workdir "/asset-input" "public.ecr.aws/sam/build-python3.12" bash -c "pip install --no-cache --requirement requirements.txt --target /asset-output && cp --archive --update index.py /asset-output"',
+    },
+    {
+      exec: 'cd src/chi-squared/src/package && zip -r ../chi-squared.zip .',
+    },
+    {
+      exec: 'cp src/chi-squared/src/chi-squared.zip lib/chi-squared/src/chi-squared.zip',
     },
   ],
 });
@@ -109,7 +162,13 @@ project.tasks.addTask('build2', {
       spawn: 'compile',
     },
     {
-      spawn: 'build-function',
+      spawn: 'build-canary-function',
+    },
+    {
+      spawn: 'build-scipy-layer',
+    },
+    {
+      spawn: 'build-chi-squared-function',
     },
     {
       exec: 'rm -rf lib/azmapper/src',
