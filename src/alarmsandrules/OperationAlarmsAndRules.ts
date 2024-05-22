@@ -21,33 +21,33 @@ export class OperationAlarmsAndRules extends Construct implements IOperationAlar
   /**
        * The operation the alarms and rules are created for
        */
-  operation: IOperation;
+  readonly operation: IOperation;
 
   /**
        * The server side regional alarms and rules
        */
-  serverSideRegionalAlarmsAndRules: IServerSideOperationRegionalAlarmsAndRules;
+  readonly serverSideRegionalAlarmsAndRules: IServerSideOperationRegionalAlarmsAndRules;
 
   /**
        * The canary regional alarms and rules
        */
-  canaryRegionalAlarmsAndRules?: ICanaryOperationRegionalAlarmsAndRules;
+  readonly canaryRegionalAlarmsAndRules?: ICanaryOperationRegionalAlarmsAndRules;
 
   /**
        * The aggregate regional alarm that looks at both canary and server
        * side impact alarms for latency and availability
        */
-  aggregateRegionalAlarm: IAlarm;
+  readonly aggregateRegionalAlarm: IAlarm;
 
   /**
        * The server side zonal alarms and rules
        */
-  serverSideZonalAlarmsAndRules: IServerSideOperationZonalAlarmsAndRules[];
+  readonly serverSideZonalAlarmsAndRules: IServerSideOperationZonalAlarmsAndRules[];
 
   /**
        * The canary zonal alarms and rules
        */
-  canaryZonalAlarmsAndRules?: ICanaryOperationZonalAlarmsAndRules[];
+  readonly canaryZonalAlarmsAndRules?: ICanaryOperationZonalAlarmsAndRules[];
 
   /**
        * The aggregate zonal alarms, one per AZ. Each alarm indicates there is either
@@ -55,12 +55,12 @@ export class OperationAlarmsAndRules extends Construct implements IOperationAlar
        * availability or latency impact. Both server side and canary metrics are
        * evaluated
        */
-  aggregateZonalAlarms: IAlarm[];
+  readonly aggregateZonalAlarms: IAlarm[];
 
   /**
      * The aggregate zonal alarm indexed by Availability Zone Id.
      */
-  aggregateZonalAlarmsMap: { [key: string]: IAlarm };
+  readonly aggregateZonalAlarmsMap: { [key: string]: IAlarm };
 
   constructor(scope: Construct, id: string, props: OperationAlarmsAndRulesProps) {
     super(scope, id);
@@ -134,6 +134,8 @@ export class OperationAlarmsAndRules extends Construct implements IOperationAlar
           outlierDetectionAlgorithm: props.outlierDetectionAlgorithm,
           nameSuffix: '-server',
           operation: props.operation,
+          azMapper: props.azMapper,
+          outlierDetectionFunction: props.outlierDetectionFunction,
         },
       ));
 
@@ -150,6 +152,8 @@ export class OperationAlarmsAndRules extends Construct implements IOperationAlar
             outlierDetectionAlgorithm: props.outlierDetectionAlgorithm,
             nameSuffix: '-canary',
             operation: props.operation,
+            azMapper: props.azMapper,
+            outlierDetectionFunction: props.outlierDetectionFunction,
           },
         ));
 

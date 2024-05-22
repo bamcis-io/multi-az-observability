@@ -806,7 +806,8 @@ export class BasicServiceMultiAZObservability extends Construct
           let outlierMetrics: IMetric = new MathExpression({
             expression:
                         `LAMBDA(${this.chiSquaredFunction?.function.functionName},` +
-                        `${props.outlierThreshold},${availabilityZoneId},` +
+                        `${props.outlierThreshold},` +
+                        `${availabilityZoneId},` +
                         `${JSON.stringify(perAZPacketDropsMetricQueries)},` +
                         `${totalPacketDropCountPerAZIds[azLetter]},` +
                         `${Object.values(totalPacketDropCountPerAZIds).join(',')})`,

@@ -125,7 +125,7 @@ export class ChiSquaredFunction extends Construct implements IChiSquaredFunction
     this.function.addPermission('invokePermission', {
       action: 'lambda:InvokeFunction',
       principal: new ServicePrincipal('lambda.datasource.cloudwatch.amazonaws.com'),
-      sourceArn: Fn.sub('arn:${AWS::Partition}:events:${AWS::Region}:${AWS::AccountId}:rule/*'),
+      sourceAccount: Fn.ref('AWS::AccountId'),
     });
 
     this.logGroup = new LogGroup(this, 'logGroup', {

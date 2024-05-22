@@ -28,7 +28,7 @@ def handler(event, context, metrics):
     event_type = event["EventType"]
 
     if event_type == "GetMetricData":
-        return get_metric_data(event["GetMetricDataRequest"])
+        return get_metric_data(event["GetMetricDataRequest"], metrics)
     else:
         return None
     
@@ -50,12 +50,60 @@ def get_metric_data(event, metrics):
     args = event["Arguments"]
     threshold = args[0]
     az_id = args[1]
-    metric_query: dict = json.loads(args[2])
-    az_metric_key: str = args[3]
-    az_keys = args[4].split(",")
+    dimensions_per_az = json.loads(args[2])
+    metric_namespace = args[3]
+    metric_names = args[4].split(":")
+    metric_stat = args[5]
+    unit = args[6]
+    az_metric_key = az_id.replace("-", "_")
 
-    metric_query["StartTime"] = start
-    metric_query["EndTime"] = end
+    #metric_query: dict = json.loads(args[2])
+    #az_metric_key: str = args[3]
+    #az_keys = args[4].split(",")
+
+    metric_query = {
+        "StartTime": start,
+        "EndTime": end,
+        "MetricDataQueries": [],
+    }
+
+    az_agg_keys = []
+
+    for key in dimensions_per_az:
+
+        index = 0
+        az_query_keys = []
+
+        for metric in metric_names:
+            query = {
+              "Id": key.replace("-", "_") + index,
+              "Label": key + ' ' + metric,
+              "ReturnData:": False,
+              "MetricStat": {
+                "Metric": {
+                  "Namespace": metric_namespace,
+                  "MetricName": metric,
+                  "Dimensions": dimensions_per_az[key]
+                },
+                "Period": period,
+                "Stat": metric_stat,
+                "Unit": unit,
+              }
+            }
+
+            az_query_keys.append(key.replace("-", "_")  + index)
+            index += 1
+
+            metric_query["MetricDataQueries"].append(query)
+
+        metric_query["MetricDataQueries"].append({
+              "Id": key.replace("-", "_") + index,
+              "Label": key + ' ' + metric,
+              "ReturnData:": True,
+              "Expression": az_query_keys.join("+")
+        })
+
+        az_agg_keys.append(key.replace("-", "_")) 
 
     print(json.dumps(metric_query))
 
@@ -78,7 +126,7 @@ def get_metric_data(event, metrics):
         # timestamp
         for item in data["MetricDataResults"]:          
             key = item["Id"]
-            if key in az_keys:
+            if key in az_agg_keys:
               for index, timestamp in enumerate(item["Timestamps"]):
                   if timestamp not in az_counts:
                       az_counts[timestamp] = {}

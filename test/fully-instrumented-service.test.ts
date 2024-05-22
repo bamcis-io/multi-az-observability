@@ -14,6 +14,7 @@ import { OperationMetricDetails } from '../src/services/OperationMetricDetails';
 import { MetricDimensions } from '../src/services/props/MetricDimensions';
 import { Service } from '../src/services/Service';
 import { ServiceMetricDetails } from '../src/services/ServiceMetricDetails';
+import { OutlierDetectionAlgorithm } from '../src/utilities/OutlierDetectionAlgorithm';
 
 
 test('Fully instrumented service', () => {
@@ -129,6 +130,126 @@ test('Fully instrumented service', () => {
     service: service,
     outlierThreshold: 0.7,
     interval: Duration.minutes(30),
+    outlierDetectionAlgorithm: OutlierDetectionAlgorithm.STATIC,
+  });
+
+  Template.fromStack(stack);
+});
+
+test('Fully instrumented service with chi-squared', () => {
+  const app = new cdk.App();
+  const stack = new cdk.Stack(app, 'TestStack');
+
+  let azs: string[] = [
+    cdk.Fn.ref('AWS::Region') + 'a',
+    cdk.Fn.ref('AWS::Region') + 'b',
+    cdk.Fn.ref('AWS::Region') + 'c',
+  ];
+
+  let vpc = new Vpc(stack, 'vpc', {
+    availabilityZones: azs,
+    subnetConfiguration: [
+      {
+        subnetType: SubnetType.PRIVATE_ISOLATED,
+        name: 'private_isolated_subnets',
+        cidrMask: 24,
+      },
+    ],
+    createInternetGateway: false,
+    natGateways: 0,
+  });
+
+  let subnets: SelectedSubnets = vpc.selectSubnets({
+    subnetType: SubnetType.PRIVATE_ISOLATED,
+  });
+
+  let loadBalancer: ILoadBalancerV2 = new ApplicationLoadBalancer(stack, 'alb', {
+    vpc: vpc,
+    crossZoneEnabled: false,
+    vpcSubnets: subnets,
+  });
+
+  let logGroup: ILogGroup = new LogGroup(stack, 'Logs', {
+  });
+
+  let service: IService = new Service({
+    serviceName: 'test',
+    availabilityZoneNames: vpc.availabilityZones,
+    baseUrl: 'http://www.example.com',
+    faultCountThreshold: 25,
+    period: Duration.seconds(60),
+    loadBalancer: loadBalancer,
+    defaultAvailabilityMetricDetails: new ServiceMetricDetails({
+      metricNamespace: 'front-end/metrics',
+      successMetricNames: ['Success'],
+      faultMetricNames: ['Fault', 'Error'],
+      alarmStatistic: 'Sum',
+      unit: Unit.COUNT,
+      period: Duration.seconds(60),
+      evaluationPeriods: 5,
+      datapointsToAlarm: 3,
+      successAlarmThreshold: 99.9,
+      faultAlarmThreshold: 0.1,
+      graphedFaultStatistics: ['Sum'],
+      graphedSuccessStatistics: ['Sum'],
+    }),
+    defaultLatencyMetricDetails: new ServiceMetricDetails({
+      metricNamespace: 'front-end/metrics',
+      successMetricNames: ['SuccessLatency'],
+      faultMetricNames: ['FaultLatency'],
+      alarmStatistic: 'p99',
+      unit: Unit.MILLISECONDS,
+      period: Duration.seconds(60),
+      evaluationPeriods: 5,
+      datapointsToAlarm: 3,
+      successAlarmThreshold: 100,
+      faultAlarmThreshold: 1,
+      graphedFaultStatistics: ['p99'],
+      graphedSuccessStatistics: ['p50', 'p99', 'tm99'],
+    }),
+    defaultContributorInsightRuleDetails: {
+      successLatencyMetricJsonPath: '$.SuccessLatency',
+      faultMetricJsonPath: '$.Faults',
+      operationNameJsonPath: '$.Operation',
+      instanceIdJsonPath: '$.InstanceId',
+      availabilityZoneIdJsonPath: '$.AZ-ID',
+      logGroups: [logGroup],
+    },
+  });
+
+
+  let rideOperation: IOperation = new Operation({
+    operationName: 'ride',
+    service: service,
+    path: '/ride',
+    critical: true,
+    httpMethods: ['GET'],
+    serverSideContributorInsightRuleDetails: {
+      logGroups: [logGroup],
+      successLatencyMetricJsonPath: '$.SuccessLatency',
+      faultMetricJsonPath: '$.Faults',
+      operationNameJsonPath: '$.Operation',
+      instanceIdJsonPath: '$.InstanceId',
+      availabilityZoneIdJsonPath: '$.AZ-ID',
+    },
+    serverSideAvailabilityMetricDetails: new OperationMetricDetails({
+      operationName: 'ride',
+      metricDimensions: new MetricDimensions({ Operation: 'ride' }, 'AZ-ID', 'Region'),
+    }, service.defaultAvailabilityMetricDetails),
+    serverSideLatencyMetricDetails: new OperationMetricDetails({
+      operationName: 'ride',
+      metricDimensions: new MetricDimensions({ Operation: 'ride' }, 'AZ-ID', 'Region'),
+    }, service.defaultLatencyMetricDetails),
+  });
+
+  service.addOperation(rideOperation);
+
+  new InstrumentedServiceMultiAZObservability(stack, 'MAZObservability', {
+    createDashboards: true,
+    service: service,
+    outlierThreshold: 0.7,
+    interval: Duration.minutes(30),
+    outlierDetectionAlgorithm: OutlierDetectionAlgorithm.CHI_SQUARED,
   });
 
   Template.fromStack(stack);
@@ -453,6 +574,7 @@ test('Fully instrumented service adding canaries with dynamic source', () => {
     interval: Duration.minutes(30),
     assetsBucketParameterName: 'AssetsBucket',
     assetsBucketPrefixParameterName: 'AssetsBucketPrefix',
+    outlierDetectionAlgorithm: OutlierDetectionAlgorithm.STATIC,
   });
 
   //Template.fromStack(stack);

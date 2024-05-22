@@ -1,6 +1,7 @@
 import { Fn } from 'aws-cdk-lib';
 import { IAlarm, Alarm, IMetric, CompositeAlarm, AlarmRule, MathExpression, CfnInsightRule, ComparisonOperator, TreatMissingData } from 'aws-cdk-lib/aws-cloudwatch';
-import { Construct } from 'constructs';
+import { IFunction } from 'aws-cdk-lib/aws-lambda';
+import { Construct, IConstruct } from 'constructs';
 import { IContributionDefinition, InsightRuleBody } from './InsightRuleBody';
 import { AvailabilityAndLatencyMetrics } from '../metrics/AvailabilityAndLatencyMetrics';
 import { IContributorInsightRuleDetails } from '../services/IContributorInsightRuleDetails';
@@ -118,7 +119,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
      * @param outlierThreshold
      * @returns
      */
-  static createZonalFaultRateOutlierAlarm(
+  static createZonalFaultRateStaticOutlierAlarm(
     scope: Construct,
     metricDetails: IOperationMetricDetails,
     availabilityZoneId: string,
@@ -140,8 +141,8 @@ export class AvailabilityAndLatencyAlarmsAndRules {
       keyPrefix: 'b',
     });
 
-    return new Alarm(scope, 'AZ' + counter + 'IsolatedImpactAlarm', {
-      alarmName: availabilityZoneId + `-${metricDetails.operationName.toLowerCase()}-majority-errors-impact` + nameSuffix,
+    return new Alarm(scope, 'AZ' + counter + 'IsolatedImpactAlarmStatic', {
+      alarmName: availabilityZoneId + `-${metricDetails.operationName.toLowerCase()}-static-majority-errors-impact` + nameSuffix,
       metric: new MathExpression({
         expression: '(m1 / m2)',
         usingMetrics: {
@@ -159,7 +160,223 @@ export class AvailabilityAndLatencyAlarmsAndRules {
     });
   }
 
-  static createZonalHighLatencyOutlierAlarm(
+  static createZonalFaultRateChiSquaredOutlierAlarm(
+    scope: IConstruct,
+    metricDetails: IOperationMetricDetails,
+    availabilityZoneId: string,
+    allAvailabilityZoneIds: string[],
+    outlierThreshold: number,
+    chiSquaredFunction: IFunction,
+    counter: number,
+    nameSuffix?: string,
+  ): IAlarm {
+    let key: string = AvailabilityAndLatencyMetrics.nextChar('');
+
+    let perAZFaultCountMetricQuery: { [key: string]: any } = {
+      MetricDataQueries: [],
+      StartTime: 0,
+      EndTime: 0,
+    };
+
+    let azAggregateKeyIds: {[key: string]: string} = {};
+
+    let metricDimensions: {[key: string]: {[key: string]: string}} = {};
+
+    allAvailabilityZoneIds.forEach((azId: string) => {
+
+      metricDimensions[azId] =
+        metricDetails.metricDimensions.zonalDimensions(azId, Fn.ref('AWS::Region'));
+
+      let azKeys: string[] = [];
+
+      metricDetails.faultMetricNames.forEach((metric: string, index: number) => {
+        let query: { [key: string]: any } = {
+          Id: key + index,
+          Label: azId + ' ' + metric,
+          ReturnData: true,
+          MetricStat: {
+            Metric: {
+              Namespace: metricDetails.metricNamespace,
+              MetricName: metric,
+              Dimensions: metricDetails.metricDimensions.zonalDimensions(availabilityZoneId, Fn.ref('AWS::Region')),
+            },
+            Period: 60,
+            Stat: 'Sum',
+            Unit: 'Count',
+          },
+        };
+
+        perAZFaultCountMetricQuery.MetricDataQueries.push(query);
+        azKeys.push(query.Id);
+      });
+
+      perAZFaultCountMetricQuery.MetricDataQueries.push({
+        Id: key + allAvailabilityZoneIds.length,
+        Label: azId + ' fault count',
+        ReturnData: true,
+        Expression: azKeys.join('+'),
+      });
+
+      azAggregateKeyIds[azId] = key + allAvailabilityZoneIds.length;
+
+      key = AvailabilityAndLatencyMetrics.nextChar(key);
+    });
+
+    /*
+    let outlierMetrics: IMetric = new MathExpression({
+      expression:
+                  `LAMBDA(${chiSquaredFunction.functionName},` +
+                  `${outlierThreshold},` +
+                  `${availabilityZoneId},` +
+                  `${JSON.stringify(perAZFaultCountMetricQuery)},` +
+                  `${azAggregateKeyIds[availabilityZoneId]},` +
+                  `${Object.values(azAggregateKeyIds).join(',')})`,
+    });
+    */
+
+    let str: string = JSON.stringify(metricDimensions)
+      .replace(/[\\]/g, '\\\\')
+      .replace(/[\"]/g, '\\\"')
+      .replace(/[\/]/g, '\\/')
+      .replace(/[\b]/g, '\\b')
+      .replace(/[\f]/g, '\\f')
+      .replace(/[\n]/g, '\\n')
+      .replace(/[\r]/g, '\\r')
+      .replace(/[\t]/g, '\\t');
+
+    let outlierMetrics2: IMetric = new MathExpression({
+      expression:
+                  `LAMBDA("${chiSquaredFunction.functionName}",` +
+                  `"${outlierThreshold}",` +
+                  `"${availabilityZoneId}",` +
+                  `"${str}",` +
+                  `"${metricDetails.metricNamespace}",` +
+                  `"${metricDetails.faultMetricNames.join(':')}",` +
+                  '"Sum",' +
+                  '"Count"' +
+                  ')',
+    });
+
+    return new Alarm(scope, 'AZ' + counter + 'IsolatedImpactAlarmChiSquared', {
+      alarmName: availabilityZoneId + `-${metricDetails.operationName.toLowerCase()}-chi-squared-majority-errors-impact` + nameSuffix,
+      metric: outlierMetrics2,
+      threshold: 1,
+      comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+      treatMissingData: TreatMissingData.IGNORE,
+      evaluationPeriods: metricDetails.evaluationPeriods,
+      datapointsToAlarm: metricDetails.datapointsToAlarm,
+    });
+  }
+
+  static createZonalHighLatencyChiSquaredOutlierAlarm(
+    scope: IConstruct,
+    metricDetails: IOperationMetricDetails,
+    availabilityZoneId: string,
+    allAvailabilityZoneIds: string[],
+    outlierThreshold: number,
+    chiSquaredFunction: IFunction,
+    counter: number,
+    nameSuffix?: string,
+  ): IAlarm {
+    let key: string = AvailabilityAndLatencyMetrics.nextChar('');
+
+    let perAZHighLatencyCountMetricQuery: { [key: string]: any } = {
+      MetricDataQueries: [],
+      StartTime: 0,
+      EndTime: 0,
+    };
+
+    let azAggregateKeyIds: {[key: string]: string} = {};
+
+    let metricDimensions: {[key: string]: {[key: string]: string}} = {};
+
+    allAvailabilityZoneIds.forEach((azId: string) => {
+
+      let azKeys: string[] = [];
+
+      metricDimensions[azId] =
+        metricDetails.metricDimensions.zonalDimensions(azId, Fn.ref('AWS::Region'));
+
+      metricDetails.successMetricNames.forEach((metric: string, index: number) => {
+        let query: { [key: string]: any } = {
+          Id: key + index,
+          Label: azId + ' ' + metric,
+          ReturnData: true,
+          MetricStat: {
+            Metric: {
+              Namespace: metricDetails.metricNamespace,
+              MetricName: metric,
+              Dimensions: metricDetails.metricDimensions.zonalDimensions(azId, Fn.ref('AWS::Region')),
+            },
+            Period: 60,
+            Stat: `TC(${metricDetails.successAlarmThreshold}:)`,
+            Unit: 'Milliseconds',
+          },
+        };
+
+        perAZHighLatencyCountMetricQuery.MetricDataQueries.push(query);
+        azKeys.push(query.Id);
+      });
+
+      perAZHighLatencyCountMetricQuery.MetricDataQueries.push({
+        Id: key + allAvailabilityZoneIds.length,
+        Label: azId + ' high latency',
+        ReturnData: true,
+        Expression: azKeys.join('+'),
+      });
+
+      azAggregateKeyIds[azId] = key + allAvailabilityZoneIds.length;
+
+      key = AvailabilityAndLatencyMetrics.nextChar(key);
+    });
+
+    /*
+    let outlierMetrics: IMetric = new MathExpression({
+      expression:
+                  `LAMBDA(${chiSquaredFunction.functionName},` +
+                  `${outlierThreshold},` +
+                  `${availabilityZoneId},` +
+                  `${JSON.stringify(perAZHighLatencyCountMetricQuery)},` +
+                  `${azAggregateKeyIds[availabilityZoneId]},` +
+                  `${Object.values(azAggregateKeyIds).join(',')})`,
+    });
+    */
+
+    let str: string = JSON.stringify(metricDimensions)
+      .replace(/[\\]/g, '\\\\')
+      .replace(/[\"]/g, '\\\"')
+      .replace(/[\/]/g, '\\/')
+      .replace(/[\b]/g, '\\b')
+      .replace(/[\f]/g, '\\f')
+      .replace(/[\n]/g, '\\n')
+      .replace(/[\r]/g, '\\r')
+      .replace(/[\t]/g, '\\t');
+
+    let outlierMetrics2: IMetric = new MathExpression({
+      expression:
+                  `LAMBDA("${chiSquaredFunction.functionName}",` +
+                  `"${outlierThreshold}",` +
+                  `"${availabilityZoneId}",` +
+                  `"${str}",` +
+                  `"${metricDetails.metricNamespace}",` +
+                  `"${metricDetails.successMetricNames.join(':')}",` +
+                  `"TC(${metricDetails.successAlarmThreshold}:)",` +
+                  '"Milliseconds"' +
+                  ')',
+    });
+
+    return new Alarm(scope, metricDetails.operationName + 'AZ' + counter + 'IsolatedImpactAlarmChiSquared', {
+      alarmName: availabilityZoneId + `-${metricDetails.operationName.toLowerCase()}-chi-squared-majority-high-latency-impact` + nameSuffix,
+      metric: outlierMetrics2,
+      threshold: 1,
+      comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+      treatMissingData: TreatMissingData.IGNORE,
+      evaluationPeriods: metricDetails.evaluationPeriods,
+      datapointsToAlarm: metricDetails.datapointsToAlarm,
+    });
+  }
+
+  static createZonalHighLatencyStaticOutlierAlarm(
     scope: Construct,
     metricDetails: IOperationMetricDetails,
     availabilityZoneId: string,
@@ -184,8 +401,8 @@ export class AvailabilityAndLatencyAlarmsAndRules {
       keyPrefix: 'b',
     })[0];
 
-    return new Alarm(scope, metricDetails.operationName + 'AZ' + counter + 'IsolatedImpactAlarm', {
-      alarmName: availabilityZoneId + `-${metricDetails.operationName.toLowerCase()}-majority-high-latency-impact` + nameSuffix,
+    return new Alarm(scope, metricDetails.operationName + 'AZ' + counter + 'IsolatedImpactAlarmStatic', {
+      alarmName: availabilityZoneId + `-${metricDetails.operationName.toLowerCase()}-static-majority-high-latency-impact` + nameSuffix,
       metric: new MathExpression({
         expression: '(m1 / m2)',
         usingMetrics: {

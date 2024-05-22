@@ -1,5 +1,6 @@
 import { Duration, NestedStack } from 'aws-cdk-lib';
 import { Dashboard, IAlarm } from 'aws-cdk-lib/aws-cloudwatch';
+import { IFunction } from 'aws-cdk-lib/aws-lambda';
 import { ILogGroup } from 'aws-cdk-lib/aws-logs';
 import { Construct } from 'constructs';
 import { CanaryMetrics } from './CanaryMetrics';
@@ -18,6 +19,7 @@ import { AvailabilityZoneMapper } from '../azmapper/AvailabilityZoneMapper';
 import { CanaryFunction } from '../canaries/CanaryFunction';
 import { CanaryTest } from '../canaries/CanaryTest';
 import { AddCanaryTestProps } from '../canaries/props/AddCanaryTestProps';
+import { ChiSquaredFunction } from '../chi-squared/ChiSquaredFunction';
 import { OperationAvailabilityAndLatencyDashboard } from '../dashboards/OperationAvailabilityAndLatencyDashboard';
 import { ServiceAvailabilityAndLatencyDashboard } from '../dashboards/ServiceAvailabilityAndLatencyDashboard';
 import { OutlierDetectionAlgorithm } from '../utilities/OutlierDetectionAlgorithm';
@@ -71,6 +73,8 @@ export class InstrumentedServiceMultiAZObservability extends Construct implement
      * @default - No log group is created if the canary is not requested.
      */
   readonly canaryLogGroup?: ILogGroup;
+
+  private readonly outlierDetectionFunction?: IFunction;
 
   constructor(scope: Construct, id: string, props: InstrumentedServiceMultiAZObservabilityProps) {
     super(scope, id);
@@ -223,6 +227,16 @@ export class InstrumentedServiceMultiAZObservability extends Construct implement
       }
     }
 
+    if (props.outlierDetectionAlgorithm == OutlierDetectionAlgorithm.CHI_SQUARED) {
+      let chiSquaredStack: StackWithDynamicSource = new StackWithDynamicSource(this, 'ChiSquaredStack', {
+        assetsBucketsParameterName: props.assetsBucketParameterName,
+        assetsBucketPrefixParameterName: props.assetsBucketPrefixParameterName,
+      });
+
+      this.outlierDetectionFunction = new ChiSquaredFunction(chiSquaredStack, 'Function', {
+      }).function;
+    }
+
     this.perOperationAlarmsAndRules = Object.fromEntries(props.service.operations.map((operation: IOperation) => {
       let nestedStack: NestedStack = new NestedStack(this, operation.operationName + 'OperationAlarmsAndRulesNestedStack');
 
@@ -230,10 +244,11 @@ export class InstrumentedServiceMultiAZObservability extends Construct implement
         operation.operationName,
         new OperationAlarmsAndRules(nestedStack, operation.operationName, {
           operation: operation,
-          outlierDetectionAlgorithm: OutlierDetectionAlgorithm.STATIC,
+          outlierDetectionAlgorithm: props.outlierDetectionAlgorithm,
           outlierThreshold: props.outlierThreshold,
           loadBalancer: props.service.loadBalancer,
           azMapper: this.azMapper,
+          outlierDetectionFunction: this.outlierDetectionFunction,
         }),
       ];
     },

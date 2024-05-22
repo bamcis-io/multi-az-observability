@@ -29,9 +29,17 @@ export interface BasicServiceMultiAZObservabilityProps
   readonly serviceName: string;
 
   /**
-     * The threshold for percentage of errors or packet loss to
-     * determine if an AZ is an outlier, should be a number between
-     * 0 and 1
+     * The outlier threshold for determining if an AZ is an
+     * outlier for latency or faults. This number is interpreted
+     * differently for different outlier algorithms. When used with
+     * STATIC, the number should be between 0 and 1 to represent the
+     * percentage of errors (like .7) that an AZ must be responsible
+     * for to be considered an outlier. When used with CHI_SQUARED, it
+     * represents the p value that indicates statistical significance, like
+     * 0.05 which means the skew has less than or equal to a 5% chance of
+     * occuring. When used with Z_SCORE it indicates how many standard
+     * deviations to evaluate for an AZ being an outlier, typically 3 is
+     * standard for Z_SCORE.
      */
   readonly outlierThreshold: number;
 

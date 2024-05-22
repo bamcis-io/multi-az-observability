@@ -84,6 +84,12 @@ project.tasks.addTask('build-canary-function', {
       exec: 'rm -rf src/canaries/src/package',
     },
     {
+      exec: 'rm -rf lib/canaries/src',
+    },
+    {
+      exec: 'rm -f src/canaries/src/canaries.zip',
+    },
+    {
       exec: 'mkdir src/canaries/src/package',
     },
     {
@@ -105,6 +111,9 @@ project.tasks.addTask('build-scipy-layer', {
   steps: [
     {
       exec: 'rm -rf src/chi-squared/src/scipy',
+    },
+    {
+      exec: 'rm -f src/chi-squared/src/scipy-layer.zip',
     },
     {
       exec: 'mkdir src/chi-squared/src/scipy',
@@ -130,6 +139,9 @@ project.tasks.addTask('build-chi-squared-function', {
       exec: 'rm -rf src/chi-squared/src/package',
     },
     {
+      exec: 'rm -f src/chi-squared/src/chi-squared.zip',
+    },
+    {
       exec: 'mkdir src/chi-squared/src/package',
     },
     {
@@ -147,11 +159,31 @@ project.tasks.addTask('build-chi-squared-function', {
   ],
 });
 
-project.tasks.addTask('build2', {
+project.tasks.addTask('build-assets', {
   steps: [
     {
       exec: 'export DOCKER_DEFAULT_PLATFORM="linux/arm64"',
     },
+    {
+      spawn: 'build-canary-function',
+    },
+    {
+      spawn: 'build-chi-squared-function',
+    },
+    {
+      spawn: 'build-scipy-layer',
+    },
+    {
+      exec: 'rm -rf lib/azmapper/src',
+    },
+    {
+      exec: 'cp -R src/azmapper/src lib/azmapper',
+    },
+  ],
+});
+
+project.tasks.addTask('build2', {
+  steps: [
     {
       spawn: 'default',
     },
@@ -162,19 +194,7 @@ project.tasks.addTask('build2', {
       spawn: 'compile',
     },
     {
-      spawn: 'build-canary-function',
-    },
-    {
-      spawn: 'build-scipy-layer',
-    },
-    {
-      spawn: 'build-chi-squared-function',
-    },
-    {
-      exec: 'rm -rf lib/azmapper/src',
-    },
-    {
-      exec: 'cp -R src/azmapper/src lib/azmapper',
+      spawn: 'build-assets',
     },
     {
       spawn: 'post-compile',

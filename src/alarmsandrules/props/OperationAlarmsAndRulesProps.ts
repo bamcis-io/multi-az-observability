@@ -1,4 +1,5 @@
 import { ILoadBalancerV2 } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
+import { IFunction } from 'aws-cdk-lib/aws-lambda';
 import { IAvailabilityZoneMapper } from '../../azmapper/IAvailabilityZoneMapper';
 import { ContributorInsightRuleDetails } from '../../services/ContributorInsightRuleDetails';
 import { Operation } from '../../services/Operation';
@@ -35,7 +36,7 @@ export interface OperationAlarmsAndRulesProps
   readonly outlierThreshold: number;
 
   /**
-     * The outlier detection algorithm, currently only STATIC is supported
+     * The outlier detection algorithm
      */
   readonly outlierDetectionAlgorithm: OutlierDetectionAlgorithm;
 
@@ -43,4 +44,10 @@ export interface OperationAlarmsAndRulesProps
    * The AZ Mapper
    */
   readonly azMapper: IAvailabilityZoneMapper;
+
+  /**
+   * An optional Lambda function used to perform outlier detection
+   * for chi-squared or z-score algorithms
+   */
+  readonly outlierDetectionFunction?: IFunction;
 }

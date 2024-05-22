@@ -32,11 +32,40 @@
         }
       ]
     },
+    "build-assets": {
+      "name": "build-assets",
+      "steps": [
+        {
+          "exec": "export DOCKER_DEFAULT_PLATFORM=\"linux/arm64\""
+        },
+        {
+          "spawn": "build-canary-function"
+        },
+        {
+          "spawn": "build-chi-squared-function"
+        },
+        {
+          "spawn": "build-scipy-layer"
+        },
+        {
+          "exec": "rm -rf lib/azmapper/src"
+        },
+        {
+          "exec": "cp -R src/azmapper/src lib/azmapper"
+        }
+      ]
+    },
     "build-canary-function": {
       "name": "build-canary-function",
       "steps": [
         {
           "exec": "rm -rf src/canaries/src/package"
+        },
+        {
+          "exec": "rm -rf lib/canaries/src"
+        },
+        {
+          "exec": "rm -f src/canaries/src/canaries.zip"
         },
         {
           "exec": "mkdir src/canaries/src/package"
@@ -62,6 +91,9 @@
           "exec": "rm -rf src/chi-squared/src/package"
         },
         {
+          "exec": "rm -f src/chi-squared/src/chi-squared.zip"
+        },
+        {
           "exec": "mkdir src/chi-squared/src/package"
         },
         {
@@ -85,6 +117,9 @@
           "exec": "rm -rf src/chi-squared/src/scipy"
         },
         {
+          "exec": "rm -f src/chi-squared/src/scipy-layer.zip"
+        },
+        {
           "exec": "mkdir src/chi-squared/src/scipy"
         },
         {
@@ -105,9 +140,6 @@
       "name": "build2",
       "steps": [
         {
-          "exec": "export DOCKER_DEFAULT_PLATFORM=\"linux/arm64\""
-        },
-        {
           "spawn": "default"
         },
         {
@@ -117,19 +149,7 @@
           "spawn": "compile"
         },
         {
-          "spawn": "build-canary-function"
-        },
-        {
-          "spawn": "build-scipy-layer"
-        },
-        {
-          "spawn": "build-chi-squared-function"
-        },
-        {
-          "exec": "rm -rf lib/azmapper/src"
-        },
-        {
-          "exec": "cp -R src/azmapper/src lib/azmapper"
+          "spawn": "build-assets"
         },
         {
           "spawn": "post-compile"
@@ -270,6 +290,9 @@
           "spawn": "package:js"
         },
         {
+          "spawn": "package:java"
+        },
+        {
           "spawn": "package:python"
         },
         {
@@ -295,6 +318,15 @@
       "steps": [
         {
           "exec": "jsii-pacmak -v --target go"
+        }
+      ]
+    },
+    "package:java": {
+      "name": "package:java",
+      "description": "Create java language bindings",
+      "steps": [
+        {
+          "exec": "jsii-pacmak -v --target java"
         }
       ]
     },

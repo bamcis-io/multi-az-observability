@@ -1,3 +1,5 @@
+import { IFunction } from 'aws-cdk-lib/aws-lambda';
+import { IAvailabilityZoneMapper } from '../../azmapper/IAvailabilityZoneMapper';
 import { IContributorInsightRuleDetails } from '../../services/IContributorInsightRuleDetails';
 import { IOperationMetricDetails } from '../../services/IOperationMetricDetails';
 import { Operation } from '../../services/Operation';
@@ -59,4 +61,14 @@ export interface BaseOperationZonalAlarmsAndRulesProps
      * side metrics and alarms
      */
   readonly nameSuffix?: string;
+
+  /**
+   * The AZ mapper
+   */
+  readonly azMapper: IAvailabilityZoneMapper;
+
+  /**
+   * A function that is used to perform outlier detection
+   */
+  readonly outlierDetectionFunction?: IFunction;
 }

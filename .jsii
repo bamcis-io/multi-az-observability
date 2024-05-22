@@ -3750,6 +3750,13 @@
       "moduleName": "bamcis.io/constructs",
       "packageName": "multiazobservability"
     },
+    "java": {
+      "maven": {
+        "artifactId": "multiazobservability",
+        "groupId": "io.bamcis.constructs.multiazobservability"
+      },
+      "package": "io.bamcis.constructs.multiazobservability"
+    },
     "js": {
       "npm": "multi-az-observability"
     },
@@ -4479,7 +4486,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/BasicServiceMultiAZObservabilityProps.ts",
-            "line": 68
+            "line": 76
           },
           "name": "createDashboard",
           "type": {
@@ -4495,7 +4502,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/BasicServiceMultiAZObservabilityProps.ts",
-            "line": 58
+            "line": 66
           },
           "name": "outlierDetectionAlgorithm",
           "type": {
@@ -4505,13 +4512,14 @@
         {
           "abstract": true,
           "docs": {
+            "remarks": "This number is interpreted\ndifferently for different outlier algorithms. When used with\nSTATIC, the number should be between 0 and 1 to represent the\npercentage of errors (like .7) that an AZ must be responsible\nfor to be considered an outlier. When used with CHI_SQUARED, it\nrepresents the p value that indicates statistical significance, like\n0.05 which means the skew has less than or equal to a 5% chance of\noccuring. When used with Z_SCORE it indicates how many standard\ndeviations to evaluate for an AZ being an outlier, typically 3 is\nstandard for Z_SCORE.",
             "stability": "stable",
-            "summary": "The threshold for percentage of errors or packet loss to determine if an AZ is an outlier, should be a number between 0 and 1."
+            "summary": "The outlier threshold for determining if an AZ is an outlier for latency or faults."
           },
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/BasicServiceMultiAZObservabilityProps.ts",
-            "line": 36
+            "line": 44
           },
           "name": "outlierThreshold",
           "type": {
@@ -4527,7 +4535,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/BasicServiceMultiAZObservabilityProps.ts",
-            "line": 63
+            "line": 71
           },
           "name": "period",
           "type": {
@@ -4584,7 +4592,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/BasicServiceMultiAZObservabilityProps.ts",
-            "line": 53
+            "line": 61
           },
           "name": "faultCountPercentageThreshold",
           "optional": true,
@@ -4602,7 +4610,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/BasicServiceMultiAZObservabilityProps.ts",
-            "line": 75
+            "line": 83
           },
           "name": "interval",
           "optional": true,
@@ -4648,7 +4656,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/BasicServiceMultiAZObservabilityProps.ts",
-            "line": 44
+            "line": 52
           },
           "name": "packetLossImpactPercentageThreshold",
           "optional": true,
@@ -7228,7 +7236,7 @@
         },
         "locationInModule": {
           "filename": "src/services/InstrumentedServiceMultiAZObservability.ts",
-          "line": 75
+          "line": 79
         },
         "parameters": [
           {
@@ -7257,7 +7265,7 @@
       "kind": "class",
       "locationInModule": {
         "filename": "src/services/InstrumentedServiceMultiAZObservability.ts",
-        "line": 31
+        "line": 33
       },
       "name": "InstrumentedServiceMultiAZObservability",
       "properties": [
@@ -7270,7 +7278,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/InstrumentedServiceMultiAZObservability.ts",
-            "line": 45
+            "line": 47
           },
           "name": "perOperationZonalImpactAlarms",
           "overrides": "multi-az-observability.IInstrumentedServiceMultiAZObservability",
@@ -7296,7 +7304,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/InstrumentedServiceMultiAZObservability.ts",
-            "line": 50
+            "line": 52
           },
           "name": "serviceAlarms",
           "overrides": "multi-az-observability.IInstrumentedServiceMultiAZObservability",
@@ -7313,7 +7321,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/InstrumentedServiceMultiAZObservability.ts",
-            "line": 73
+            "line": 75
           },
           "name": "canaryLogGroup",
           "optional": true,
@@ -7330,7 +7338,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/InstrumentedServiceMultiAZObservability.ts",
-            "line": 55
+            "line": 57
           },
           "name": "operationDashboards",
           "optional": true,
@@ -7352,7 +7360,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/InstrumentedServiceMultiAZObservability.ts",
-            "line": 60
+            "line": 62
           },
           "name": "serviceDashboard",
           "optional": true,
@@ -7375,7 +7383,7 @@
       "kind": "interface",
       "locationInModule": {
         "filename": "src/services/props/InstrumentedServiceMultiAZObservabilityProps.ts",
-        "line": 8
+        "line": 9
       },
       "name": "InstrumentedServiceMultiAZObservabilityProps",
       "properties": [
@@ -7383,12 +7391,29 @@
           "abstract": true,
           "docs": {
             "stability": "stable",
-            "summary": "The threshold as a percentage between 0 and 1 on when to consider an AZ as an outlier for faults or high latency responses."
+            "summary": "The algorithm to use for performing outlier detection."
           },
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/InstrumentedServiceMultiAZObservabilityProps.ts",
-            "line": 28
+            "line": 42
+          },
+          "name": "outlierDetectionAlgorithm",
+          "type": {
+            "fqn": "multi-az-observability.OutlierDetectionAlgorithm"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "remarks": "This number is interpreted\ndifferently for different outlier algorithms. When used with\nSTATIC, the number should be between 0 and 1 to represent the\npercentage of errors (like .7) that an AZ must be responsible\nfor to be considered an outlier. When used with CHI_SQUARED, it\nrepresents the p value that indicates statistical significance, like\n0.05 which means the skew has less than or equal to a 5% chance of\noccuring. When used with Z_SCORE it indicates how many standard\ndeviations to evaluate for an AZ being an outlier, typically 3 is\nstandard for Z_SCORE.",
+            "stability": "stable",
+            "summary": "The outlier threshold for determining if an AZ is an outlier for latency or faults."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/InstrumentedServiceMultiAZObservabilityProps.ts",
+            "line": 37
           },
           "name": "outlierThreshold",
           "type": {
@@ -7404,7 +7429,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/InstrumentedServiceMultiAZObservabilityProps.ts",
-            "line": 13
+            "line": 14
           },
           "name": "service",
           "type": {
@@ -7422,7 +7447,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/InstrumentedServiceMultiAZObservabilityProps.ts",
-            "line": 52
+            "line": 66
           },
           "name": "assetsBucketParameterName",
           "optional": true,
@@ -7441,7 +7466,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/InstrumentedServiceMultiAZObservabilityProps.ts",
-            "line": 72
+            "line": 86
           },
           "name": "assetsBucketPrefixParameterName",
           "optional": true,
@@ -7459,7 +7484,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/InstrumentedServiceMultiAZObservabilityProps.ts",
-            "line": 21
+            "line": 22
           },
           "name": "createDashboards",
           "optional": true,
@@ -7477,7 +7502,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/InstrumentedServiceMultiAZObservabilityProps.ts",
-            "line": 36
+            "line": 50
           },
           "name": "interval",
           "optional": true,
@@ -9762,5 +9787,5 @@
     }
   },
   "version": "0.0.1-alpha.1",
-  "fingerprint": "+f/bYcOKZYvxWJftTbEvKdU72CITvYW9nUC+5aDEp64="
+  "fingerprint": "fdnw1VnRhfvYlcCLpgFttnfr1HMwzF386dAecjbg+cA="
 }
