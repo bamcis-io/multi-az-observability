@@ -28,9 +28,21 @@ def handler(event, context, metrics):
     event_type = event["EventType"]
 
     if event_type == "GetMetricData":
-        return get_metric_data(event["GetMetricDataRequest"], metrics)
+        try:
+            return get_metric_data(event["GetMetricDataRequest"], metrics)
+        except Exception as e:
+            return {
+                "Error": {
+                    "Code": "Exception",
+                    "Value": str(e)
+                }
+            }
+    elif event_type == "DescribeGetMetricData":
+        return {
+            "Description": "Chi squared metric calculator"
+        }
     else:
-        return None
+        return {}
     
 #
 #{
@@ -76,7 +88,7 @@ def get_metric_data(event, metrics):
 
         for metric in metric_names:
             query = {
-              "Id": key.replace("-", "_") + index,
+              "Id": key.replace("-", "_") + str(index),
               "Label": key + ' ' + metric,
               "ReturnData:": False,
               "MetricStat": {
@@ -91,16 +103,16 @@ def get_metric_data(event, metrics):
               }
             }
 
-            az_query_keys.append(key.replace("-", "_")  + index)
+            az_query_keys.append(key.replace("-", "_")  + str(index))
             index += 1
 
             metric_query["MetricDataQueries"].append(query)
 
         metric_query["MetricDataQueries"].append({
-              "Id": key.replace("-", "_") + index,
+              "Id": key.replace("-", "_") + str(index),
               "Label": key + ' ' + metric,
               "ReturnData:": True,
-              "Expression": az_query_keys.join("+")
+              "Expression": "+".join(az_query_keys)
         })
 
         az_agg_keys.append(key.replace("-", "_")) 
