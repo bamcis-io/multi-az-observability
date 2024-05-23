@@ -3,6 +3,7 @@ import boto3
 import datetime
 import copy
 import json
+import time
 from datetime import timedelta
 from scipy.stats import chisquare
 from aws_embedded_metrics import metric_scope
@@ -23,14 +24,31 @@ cw_client = boto3.client("cloudwatch", os.environ.get("AWS_REGION", "us-east-1")
 
 @metric_scope
 def handler(event, context, metrics):
+    start = time.perf_counter()
+    metrics.set_dimensions(
+        {
+            "Operation": "ChiSquared",
+            "EventType": event["EventType"],
+            "Region": os.environ.get("AWS_REGION", "us-east-1")
+        }
+    )
+    metrics.set_namespace("ChiSquared")
     metrics.set_property("Event", json.loads(json.dumps(event, default = str)))
     
     event_type = event["EventType"]
 
     if event_type == "GetMetricData":
         try:
-            return get_metric_data(event["GetMetricDataRequest"], metrics)
+            result = get_metric_data(event["GetMetricDataRequest"], metrics)
+            metrics.put_metric("Success", 1, "Count")
+
+            end = time.perf_counter()
+            metrics.put_metric("SuccessLatency", (end - start) * 1000, "Milliseconds")
+            return result
         except Exception as e:
+
+            end = time.perf_counter()
+            metrics.put_metric("FaultLatency", (end - start) * 1000, "Milliseconds")
             return {
                 "Error": {
                     "Code": "Exception",
@@ -38,6 +56,8 @@ def handler(event, context, metrics):
                 }
             }
     elif event_type == "DescribeGetMetricData":
+        end = time.perf_counter()
+        metrics.put_metric("SuccessLatency", (end - start) * 1000, "Milliseconds")
         return {
             "Description": "Chi squared metric calculator"
         }
@@ -68,10 +88,6 @@ def get_metric_data(event, metrics):
     metric_stat = args[5]
     unit = args[6]
     az_metric_key = az_id.replace("-", "_")
-
-    #metric_query: dict = json.loads(args[2])
-    #az_metric_key: str = args[3]
-    #az_keys = args[4].split(",")
 
     metric_query = {
         "StartTime": start,
@@ -109,15 +125,15 @@ def get_metric_data(event, metrics):
             metric_query["MetricDataQueries"].append(query)
 
         metric_query["MetricDataQueries"].append({
-              "Id": key.replace("-", "_") + str(index),
-              "Label": key + ' ' + metric,
-              "ReturnData:": True,
-              "Expression": "+".join(az_query_keys)
+            "Id": key.replace("-", "_") + str(index),
+            "Label": key + ' ' + metric,
+            "ReturnData:": True,
+            "Expression": "+".join(az_query_keys)
         })
 
         az_agg_keys.append(key.replace("-", "_")) 
 
-    print(json.dumps(metric_query))
+    metrics.set_property("Query", json.loads(json.dumps(metric_query, default = str)))
 
     next_token: str = None
 
@@ -130,9 +146,9 @@ def get_metric_data(event, metrics):
         data = cw_client.get_metric_data(**metric_query)
 
         if next_token is not None:
-            metrics.set_property("AZCountGetMetricResult::" + next_token, json.loads(json.dumps(data, default = str)))
+            metrics.set_property("GetMetricResult::" + next_token, json.loads(json.dumps(data, default = str)))
         else:
-            metrics.set_property("AZCountGetMetricResult", json.loads(json.dumps(data, default = str)))
+            metrics.set_property("GetMetricResult", json.loads(json.dumps(data, default = str)))
 
         # Get the top level AZ aggregate fault counts at each 
         # timestamp
@@ -189,7 +205,7 @@ def get_metric_data(event, metrics):
         else:
             results.append(0)
 
-    return {
+    data_results = {
         "MetricDataResults": [
           {
              "StatusCode": "Complete",
@@ -199,3 +215,7 @@ def get_metric_data(event, metrics):
           }
         ]
     }
+
+    metrics.set_property("Results", json.loads(json.dumps(data_results, default = str)))
+
+    return data_results
