@@ -4,6 +4,8 @@ import datetime
 import copy
 import json
 import time
+import traceback
+import sys
 from datetime import timedelta
 from scipy.stats import chisquare
 from aws_embedded_metrics import metric_scope
@@ -49,6 +51,20 @@ def handler(event, context, metrics):
 
             end = time.perf_counter()
             metrics.put_metric("FaultLatency", (end - start) * 1000, "Milliseconds")
+            metrics.put_metric("Fault", 1, "Count")
+
+            info = sys.exc_info()
+
+            exc_info = sys.exc_info()
+            details = ''.join(traceback.format_exception(*exc_info))
+            exc_type, exc_value, exc_context = sys.exc_info()
+
+            metrics.set_property("Exception", {
+                "type": exc_type.__name__,
+                "description": str(exc_value),
+                "details": details
+            })
+
             return {
                 "Error": {
                     "Code": "Exception",
@@ -58,10 +74,12 @@ def handler(event, context, metrics):
     elif event_type == "DescribeGetMetricData":
         end = time.perf_counter()
         metrics.put_metric("SuccessLatency", (end - start) * 1000, "Milliseconds")
+        metrics.put_metric("Success", 1, "Count")
         return {
             "Description": "Chi squared metric calculator"
         }
     else:
+        metrics.set_property("Error", "Unknown event type")
         return {}
     
 #
@@ -79,15 +97,28 @@ def get_metric_data(event, metrics):
     start = event["StartTime"]
     end = event["EndTime"]
     period = event["Period"]
-    args = event["Arguments"]
-    threshold = args[0]
-    az_id = args[1]
-    dimensions_per_az = json.loads(args[2])
-    metric_namespace = args[3]
-    metric_names = args[4].split(":")
-    metric_stat = args[5]
-    unit = args[6]
-    az_metric_key = az_id.replace("-", "_")
+    args: list = event["Arguments"]
+    threshold: str = args[0]
+    az_id: str= args[1]
+    #
+    # {
+    #    "use1-az1": [
+    #        {
+    #          "Operation": "Ride",
+    #          "AZ-ID": "use-az1",
+    #          "Region": "us-east-1"
+    #        }
+    #    ],
+    #    "use1-az2": [
+    #    ]
+    # }
+    #
+    dimensions_per_az: dict = json.loads(args[2])
+    metric_namespace: str = args[3]
+    metric_names: list = args[4].split(":")
+    metric_stat: str = args[5]
+    unit: str = args[6]
+    az_metric_key: str = az_id.replace("-", "_")
 
     metric_query = {
         "StartTime": start,
@@ -95,43 +126,49 @@ def get_metric_data(event, metrics):
         "MetricDataQueries": [],
     }
 
-    az_agg_keys = []
+    for az in dimensions_per_az:
 
-    for key in dimensions_per_az:
+        for dimension_set in dimensions_per_az[az]:
 
-        index = 0
-        az_query_keys = []
+            index = 0
+            az_query_keys = []
 
-        for metric in metric_names:
-            query = {
-              "Id": key.replace("-", "_") + str(index),
-              "Label": key + ' ' + metric,
-              "ReturnData:": False,
-              "MetricStat": {
-                "Metric": {
-                  "Namespace": metric_namespace,
-                  "MetricName": metric,
-                  "Dimensions": dimensions_per_az[key]
-                },
-                "Period": period,
-                "Stat": metric_stat,
-                "Unit": unit,
-              }
-            }
+            dimensions = []
 
-            az_query_keys.append(key.replace("-", "_")  + str(index))
-            index += 1
+            for dim in dimension_set:
+                dimensions.append({
+                    "Name": dim,
+                    "Value": dimension_set[dim]
+                })
 
-            metric_query["MetricDataQueries"].append(query)
+            for metric in metric_names:
+                query = {
+                  "Id": az.replace("-", "_") + str(index),
+                  "Label": az + ' ' + metric,
+                  "ReturnData": False,
+                  "MetricStat": {
+                    "Metric": {
+                      "Namespace": metric_namespace,
+                      "MetricName": metric,
+                      "Dimensions": dimensions
+                    },
+                    "Period": 60,
+                    "Stat": metric_stat,
+                    "Unit": unit,
+                  }
+                }
+
+                az_query_keys.append(az.replace("-", "_")  + str(index))
+                index += 1
+
+                metric_query["MetricDataQueries"].append(query)
 
         metric_query["MetricDataQueries"].append({
-            "Id": key.replace("-", "_") + str(index),
-            "Label": key + ' ' + metric,
-            "ReturnData:": True,
+            "Id": az.replace("-", "_"),
+            "Label": az,
+            "ReturnData": True,
             "Expression": "+".join(az_query_keys)
         })
-
-        az_agg_keys.append(key.replace("-", "_")) 
 
     metrics.set_property("Query", json.loads(json.dumps(metric_query, default = str)))
 
@@ -150,17 +187,16 @@ def get_metric_data(event, metrics):
         else:
             metrics.set_property("GetMetricResult", json.loads(json.dumps(data, default = str)))
 
-        # Get the top level AZ aggregate fault counts at each 
-        # timestamp
         for item in data["MetricDataResults"]:          
-            key = item["Id"]
-            if key in az_agg_keys:
-              for index, timestamp in enumerate(item["Timestamps"]):
-                  if timestamp not in az_counts:
-                      az_counts[timestamp] = {}
+            az_id = item["Id"].replace("_", "-")
+            
+            for index, timestamp in enumerate(item["Timestamps"]):
+                epoch_timestamp = int(timestamp.timestamp())
+                if epoch_timestamp not in az_counts:
+                    az_counts[epoch_timestamp] = {az:0 for az in dimensions_per_az}
 
-                  # Set the value for this AZ (as identified by key) for the timestamp
-                  az_counts[timestamp][key] = item["Values"][index]
+                # Set the value for this AZ (as identified by key) for the timestamp
+                az_counts[epoch_timestamp][az_id] = item["Values"][index]
 
         if "NextToken" in data:
             next_token = data["NextToken"]
@@ -172,12 +208,14 @@ def get_metric_data(event, metrics):
     # each AZ at each timestamp to calculate the chi squared result
 
     # {
-    #   "1234567890122344" : {
-    #     "a": 0,
-    #     "b": 10,
-    #     "c": 5
+    #   "1716494472" : {
+    #     "use1-az1": 0,
+    #     "use1-az2": 10,
+    #     "use1-az6": 5
     #   }
     # }
+
+    metrics.set_property("InterimCalculation", json.loads(json.dumps(az_counts, default = str)))
 
     results = []
 
@@ -188,12 +226,12 @@ def get_metric_data(event, metrics):
         p_value = chi_sq_result[1]
 
         # set the farthest from the average to initially be the first AZ
-        farthest_from_expected = az_counts[timestamp][0]
+        farthest_from_expected = az_counts[timestamp_key][0]
 
         # compare the other AZs for this timestamp and find the one
         # farthest from the average
         for az in az_counts[timestamp_key]:
-            if abs(az_counts[timestamp][az] - expected) > abs(az_counts[timestamp][farthest_from_expected] - expected):
+            if abs(az_counts[timestamp_key][az] - expected) > abs(az_counts[timestamp_key][farthest_from_expected] - expected):
                 farthest_from_expected = az        
 
         # if the p-value result is less than the threshold
@@ -210,7 +248,7 @@ def get_metric_data(event, metrics):
           {
              "StatusCode": "Complete",
              "Label": az_id,
-             "Timestamps": az_counts.keys(),
+             "Timestamps": list(az_counts.keys()),
              "Values": results
           }
         ]

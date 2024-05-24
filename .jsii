@@ -3750,13 +3750,6 @@
       "moduleName": "bamcis.io/constructs",
       "packageName": "multiazobservability"
     },
-    "java": {
-      "maven": {
-        "artifactId": "multiazobservability",
-        "groupId": "io.bamcis.constructs.multiazobservability"
-      },
-      "package": "io.bamcis.constructs.multiazobservability"
-    },
     "js": {
       "npm": "multi-az-observability"
     },
@@ -4287,7 +4280,7 @@
         },
         "locationInModule": {
           "filename": "src/services/BasicServiceMultiAZObservability.ts",
-          "line": 77
+          "line": 78
         },
         "parameters": [
           {
@@ -4316,7 +4309,7 @@
       "kind": "class",
       "locationInModule": {
         "filename": "src/services/BasicServiceMultiAZObservability.ts",
-        "line": 20
+        "line": 21
       },
       "name": "BasicServiceMultiAZObservability",
       "properties": [
@@ -4327,7 +4320,7 @@
           },
           "locationInModule": {
             "filename": "src/services/BasicServiceMultiAZObservability.ts",
-            "line": 55
+            "line": 56
           },
           "name": "aggregateZonalIsolatedImpactAlarms",
           "overrides": "multi-az-observability.IBasicServiceMultiAZObservability",
@@ -4347,7 +4340,7 @@
           },
           "locationInModule": {
             "filename": "src/services/BasicServiceMultiAZObservability.ts",
-            "line": 37
+            "line": 38
           },
           "name": "serviceName",
           "overrides": "multi-az-observability.IBasicServiceMultiAZObservability",
@@ -4362,7 +4355,7 @@
           },
           "locationInModule": {
             "filename": "src/services/BasicServiceMultiAZObservability.ts",
-            "line": 49
+            "line": 50
           },
           "name": "albZonalIsolatedImpactAlarms",
           "optional": true,
@@ -4383,7 +4376,7 @@
           },
           "locationInModule": {
             "filename": "src/services/BasicServiceMultiAZObservability.ts",
-            "line": 32
+            "line": 33
           },
           "name": "applicationLoadBalancers",
           "optional": true,
@@ -4404,7 +4397,7 @@
           },
           "locationInModule": {
             "filename": "src/services/BasicServiceMultiAZObservability.ts",
-            "line": 60
+            "line": 61
           },
           "name": "dashboard",
           "optional": true,
@@ -4419,7 +4412,7 @@
           },
           "locationInModule": {
             "filename": "src/services/BasicServiceMultiAZObservability.ts",
-            "line": 27
+            "line": 28
           },
           "name": "natGateways",
           "optional": true,
@@ -4445,7 +4438,7 @@
           },
           "locationInModule": {
             "filename": "src/services/BasicServiceMultiAZObservability.ts",
-            "line": 43
+            "line": 44
           },
           "name": "natGWZonalIsolatedImpactAlarms",
           "optional": true,
@@ -4579,6 +4572,44 @@
               },
               "kind": "array"
             }
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "default": "- The assets will be uploaded to the default defined\nasset location.",
+            "remarks": "It will override the bucket location CDK provides by\ndefault for bundled assets. The stack containing this contruct needs\nto have a parameter defined that uses this name. The underlying\nstacks in this construct that deploy assets will copy the parent stack's\nvalue for this property.",
+            "stability": "stable",
+            "summary": "If you are not using a static bucket to deploy assets, for example you are synthing this and it gets uploaded to a bucket whose name is unknown to you (maybe used as part of a central CI/CD system) and is provided as a parameter to your stack, specify that parameter name here."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/BasicServiceMultiAZObservabilityProps.ts",
+            "line": 99
+          },
+          "name": "assetsBucketParameterName",
+          "optional": true,
+          "type": {
+            "primitive": "string"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "default": "- No object prefix will be added to your custom assets location.\nHowever, if you have overridden something like the 'BucketPrefix' property\nin your stack synthesizer with a variable like \"${AssetsBucketPrefix\",\nyou will need to define this property so it doesn't cause a reference error\neven if the prefix value is blank.",
+            "remarks": "It will override the bucket prefix CDK provides by\ndefault for bundled assets. This property only takes effect if you\ndefined the assetsBucketParameterName. The stack containing this contruct needs\nto have a parameter defined that uses this name. The underlying\nstacks in this construct that deploy assets will copy the parent stack's\nvalue for this property.",
+            "stability": "stable",
+            "summary": "If you are not using a static bucket to deploy assets, for example you are synthing this and it gets uploaded to a bucket that uses a prefix that is unknown to you (maybe used as part of a central CI/CD system) and is provided as a parameter to your stack, specify that parameter name here."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/BasicServiceMultiAZObservabilityProps.ts",
+            "line": 119
+          },
+          "name": "assetsBucketPrefixParameterName",
+          "optional": true,
+          "type": {
+            "primitive": "string"
           }
         },
         {
@@ -9787,5 +9818,5 @@
     }
   },
   "version": "0.0.1-alpha.1",
-  "fingerprint": "fdnw1VnRhfvYlcCLpgFttnfr1HMwzF386dAecjbg+cA="
+  "fingerprint": "LgK6rgLzlcJUl9+2bPh0j5a8GtfSyBPS3fkIUr76qsc="
 }

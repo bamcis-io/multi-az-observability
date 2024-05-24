@@ -801,6 +801,8 @@ const basicServiceMultiAZObservabilityProps: BasicServiceMultiAZObservabilityPro
 | <code><a href="#multi-az-observability.BasicServiceMultiAZObservabilityProps.property.period">period</a></code> | <code>aws-cdk-lib.Duration</code> | The period to evaluate metrics. |
 | <code><a href="#multi-az-observability.BasicServiceMultiAZObservabilityProps.property.serviceName">serviceName</a></code> | <code>string</code> | The service's name. |
 | <code><a href="#multi-az-observability.BasicServiceMultiAZObservabilityProps.property.applicationLoadBalancers">applicationLoadBalancers</a></code> | <code>aws-cdk-lib.aws_elasticloadbalancingv2.IApplicationLoadBalancer[]</code> | The application load balancers being used by the service. |
+| <code><a href="#multi-az-observability.BasicServiceMultiAZObservabilityProps.property.assetsBucketParameterName">assetsBucketParameterName</a></code> | <code>string</code> | If you are not using a static bucket to deploy assets, for example you are synthing this and it gets uploaded to a bucket whose name is unknown to you (maybe used as part of a central CI/CD system) and is provided as a parameter to your stack, specify that parameter name here. |
+| <code><a href="#multi-az-observability.BasicServiceMultiAZObservabilityProps.property.assetsBucketPrefixParameterName">assetsBucketPrefixParameterName</a></code> | <code>string</code> | If you are not using a static bucket to deploy assets, for example you are synthing this and it gets uploaded to a bucket that uses a prefix that is unknown to you (maybe used as part of a central CI/CD system) and is provided as a parameter to your stack, specify that parameter name here. |
 | <code><a href="#multi-az-observability.BasicServiceMultiAZObservabilityProps.property.faultCountPercentageThreshold">faultCountPercentageThreshold</a></code> | <code>number</code> | The percentage of faults for a single ALB to consider an AZ to be unhealthy, this should align with your availability goal. |
 | <code><a href="#multi-az-observability.BasicServiceMultiAZObservabilityProps.property.interval">interval</a></code> | <code>aws-cdk-lib.Duration</code> | Dashboard interval. |
 | <code><a href="#multi-az-observability.BasicServiceMultiAZObservabilityProps.property.natGateways">natGateways</a></code> | <code>{[ key: string ]: aws-cdk-lib.aws_ec2.CfnNatGateway[]}</code> | (Optional) A map of Availability Zone name to the NAT Gateways in that AZ. |
@@ -889,6 +891,45 @@ public readonly applicationLoadBalancers: IApplicationLoadBalancer[];
 - *Default:* No alarms for ALBs will be created
 
 The application load balancers being used by the service.
+
+---
+
+##### `assetsBucketParameterName`<sup>Optional</sup> <a name="assetsBucketParameterName" id="multi-az-observability.BasicServiceMultiAZObservabilityProps.property.assetsBucketParameterName"></a>
+
+```typescript
+public readonly assetsBucketParameterName: string;
+```
+
+- *Type:* string
+- *Default:* The assets will be uploaded to the default defined asset location.
+
+If you are not using a static bucket to deploy assets, for example you are synthing this and it gets uploaded to a bucket whose name is unknown to you (maybe used as part of a central CI/CD system) and is provided as a parameter to your stack, specify that parameter name here.
+
+It will override the bucket location CDK provides by
+default for bundled assets. The stack containing this contruct needs
+to have a parameter defined that uses this name. The underlying
+stacks in this construct that deploy assets will copy the parent stack's
+value for this property.
+
+---
+
+##### `assetsBucketPrefixParameterName`<sup>Optional</sup> <a name="assetsBucketPrefixParameterName" id="multi-az-observability.BasicServiceMultiAZObservabilityProps.property.assetsBucketPrefixParameterName"></a>
+
+```typescript
+public readonly assetsBucketPrefixParameterName: string;
+```
+
+- *Type:* string
+- *Default:* No object prefix will be added to your custom assets location. However, if you have overridden something like the 'BucketPrefix' property in your stack synthesizer with a variable like "${AssetsBucketPrefix", you will need to define this property so it doesn't cause a reference error even if the prefix value is blank.
+
+If you are not using a static bucket to deploy assets, for example you are synthing this and it gets uploaded to a bucket that uses a prefix that is unknown to you (maybe used as part of a central CI/CD system) and is provided as a parameter to your stack, specify that parameter name here.
+
+It will override the bucket prefix CDK provides by
+default for bundled assets. This property only takes effect if you
+defined the assetsBucketParameterName. The stack containing this contruct needs
+to have a parameter defined that uses this name. The underlying
+stacks in this construct that deploy assets will copy the parent stack's
+value for this property.
 
 ---
 

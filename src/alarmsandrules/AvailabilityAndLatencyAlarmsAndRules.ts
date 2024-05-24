@@ -1,8 +1,11 @@
-import { Fn } from 'aws-cdk-lib';
+import { Duration, Fn } from 'aws-cdk-lib';
 import { IAlarm, Alarm, IMetric, CompositeAlarm, AlarmRule, MathExpression, CfnInsightRule, ComparisonOperator, TreatMissingData } from 'aws-cdk-lib/aws-cloudwatch';
+import { CfnNatGateway } from 'aws-cdk-lib/aws-ec2';
+import { BaseLoadBalancer, IApplicationLoadBalancer, ILoadBalancerV2 } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import { IFunction } from 'aws-cdk-lib/aws-lambda';
 import { Construct, IConstruct } from 'constructs';
 import { IContributionDefinition, InsightRuleBody } from './InsightRuleBody';
+import { IAvailabilityZoneMapper } from '../azmapper/IAvailabilityZoneMapper';
 import { AvailabilityAndLatencyMetrics } from '../metrics/AvailabilityAndLatencyMetrics';
 import { IContributorInsightRuleDetails } from '../services/IContributorInsightRuleDetails';
 import { IOperation } from '../services/IOperation';
@@ -15,21 +18,21 @@ import { LatencyMetricType } from '../utilities/LatencyMetricType';
  */
 export class AvailabilityAndLatencyAlarmsAndRules {
   /**
-     * Creates a zonal availability alarm
-     * @param scope
-     * @param metricDetails
-     * @param availabilityZoneId
-     * @param nameSuffix
-     * @param counter
-     * @returns
-     */
+       * Creates a zonal availability alarm
+       * @param scope
+       * @param metricDetails
+       * @param availabilityZoneId
+       * @param nameSuffix
+       * @param counter
+       * @returns
+       */
   static createZonalAvailabilityAlarm(
     scope: Construct,
     metricDetails: IOperationMetricDetails,
     availabilityZoneId: string,
     counter: number,
     nameSuffix?: string,
-  ) : IAlarm {
+  ): IAlarm {
     return new Alarm(scope, metricDetails.operationName + 'AZ' + counter + 'AvailabilityAlarm', {
       alarmName: availabilityZoneId + '-' + metricDetails.operationName.toLowerCase() + '-success-rate' + nameSuffix,
       evaluationPeriods: metricDetails.evaluationPeriods,
@@ -48,21 +51,21 @@ export class AvailabilityAndLatencyAlarmsAndRules {
   }
 
   /**
-     * Creates a zonal latency alarm
-     * @param scope
-     * @param metricDetails
-     * @param availabilityZoneId
-     * @param nameSuffix
-     * @param counter
-     * @returns
-     */
+       * Creates a zonal latency alarm
+       * @param scope
+       * @param metricDetails
+       * @param availabilityZoneId
+       * @param nameSuffix
+       * @param counter
+       * @returns
+       */
   static createZonalLatencyAlarm(
     scope: Construct,
     metricDetails: IOperationMetricDetails,
     availabilityZoneId: string,
     counter: number,
     nameSuffix?: string,
-  ) : IAlarm {
+  ): IAlarm {
     return new Alarm(scope, metricDetails.operationName + 'AZ' + counter + 'LatencyAlarm', {
       alarmName: availabilityZoneId + '-' + metricDetails.operationName.toLowerCase() + '-success-latency' + nameSuffix,
       evaluationPeriods: metricDetails.evaluationPeriods,
@@ -82,16 +85,16 @@ export class AvailabilityAndLatencyAlarmsAndRules {
   }
 
   /**
-     * Creates a composite alarm when either latency or availability is breached in the Availabiltiy Zone
-     * @param scope
-     * @param operation
-     * @param availabilityZoneId
-     * @param nameSuffix
-     * @param counter
-     * @param zonalAvailabilityAlarm
-     * @param zonalLatencyAlarm
-     * @returns
-     */
+       * Creates a composite alarm when either latency or availability is breached in the Availabiltiy Zone
+       * @param scope
+       * @param operation
+       * @param availabilityZoneId
+       * @param nameSuffix
+       * @param counter
+       * @param zonalAvailabilityAlarm
+       * @param zonalLatencyAlarm
+       * @returns
+       */
   static createZonalAvailabilityOrLatencyCompositeAlarm(
     scope: Construct,
     operationName: string,
@@ -110,15 +113,15 @@ export class AvailabilityAndLatencyAlarmsAndRules {
   }
 
   /**
-     * An alarm that compares error rate in this AZ to the overall region error based only on metric data
-     * @param scope
-     * @param metricDetails
-     * @param availabilityZoneId
-     * @param nameSuffix
-     * @param counter
-     * @param outlierThreshold
-     * @returns
-     */
+       * An alarm that compares error rate in this AZ to the overall region error based only on metric data
+       * @param scope
+       * @param metricDetails
+       * @param availabilityZoneId
+       * @param nameSuffix
+       * @param counter
+       * @param outlierThreshold
+       * @returns
+       */
   static createZonalFaultRateStaticOutlierAlarm(
     scope: Construct,
     metricDetails: IOperationMetricDetails,
@@ -170,69 +173,13 @@ export class AvailabilityAndLatencyAlarmsAndRules {
     counter: number,
     nameSuffix?: string,
   ): IAlarm {
-    let key: string = AvailabilityAndLatencyMetrics.nextChar('');
-
-    let perAZFaultCountMetricQuery: { [key: string]: any } = {
-      MetricDataQueries: [],
-      StartTime: 0,
-      EndTime: 0,
-    };
-
-    let azAggregateKeyIds: {[key: string]: string} = {};
-
-    let metricDimensions: {[key: string]: {[key: string]: string}} = {};
+    let metricDimensions: { [key: string]: { [key: string]: string }[] } = {};
 
     allAvailabilityZoneIds.forEach((azId: string) => {
-
-      metricDimensions[azId] =
-        metricDetails.metricDimensions.zonalDimensions(azId, Fn.ref('AWS::Region'));
-
-      let azKeys: string[] = [];
-
-      metricDetails.faultMetricNames.forEach((metric: string, index: number) => {
-        let query: { [key: string]: any } = {
-          Id: key + index,
-          Label: azId + ' ' + metric,
-          ReturnData: true,
-          MetricStat: {
-            Metric: {
-              Namespace: metricDetails.metricNamespace,
-              MetricName: metric,
-              Dimensions: metricDetails.metricDimensions.zonalDimensions(availabilityZoneId, Fn.ref('AWS::Region')),
-            },
-            Period: 60,
-            Stat: 'Sum',
-            Unit: 'Count',
-          },
-        };
-
-        perAZFaultCountMetricQuery.MetricDataQueries.push(query);
-        azKeys.push(query.Id);
-      });
-
-      perAZFaultCountMetricQuery.MetricDataQueries.push({
-        Id: key + allAvailabilityZoneIds.length,
-        Label: azId + ' fault count',
-        ReturnData: true,
-        Expression: azKeys.join('+'),
-      });
-
-      azAggregateKeyIds[azId] = key + allAvailabilityZoneIds.length;
-
-      key = AvailabilityAndLatencyMetrics.nextChar(key);
+      metricDimensions[azId] = [
+        metricDetails.metricDimensions.zonalDimensions(azId, Fn.ref('AWS::Region')),
+      ];
     });
-
-    /*
-    let outlierMetrics: IMetric = new MathExpression({
-      expression:
-                  `LAMBDA(${chiSquaredFunction.functionName},` +
-                  `${outlierThreshold},` +
-                  `${availabilityZoneId},` +
-                  `${JSON.stringify(perAZFaultCountMetricQuery)},` +
-                  `${azAggregateKeyIds[availabilityZoneId]},` +
-                  `${Object.values(azAggregateKeyIds).join(',')})`,
-    });
-    */
 
     let str: string = JSON.stringify(metricDimensions)
       .replace(/[\\]/g, '\\\\')
@@ -244,27 +191,154 @@ export class AvailabilityAndLatencyAlarmsAndRules {
       .replace(/[\r]/g, '\\r')
       .replace(/[\t]/g, '\\t');
 
-    let outlierMetrics2: IMetric = new MathExpression({
+    let outlierMetrics: IMetric = new MathExpression({
       expression:
-                  `LAMBDA("${chiSquaredFunction.functionName}",` +
-                  `"${outlierThreshold}",` +
-                  `"${availabilityZoneId}",` +
-                  `"${str}",` +
-                  `"${metricDetails.metricNamespace}",` +
-                  `"${metricDetails.faultMetricNames.join(':')}",` +
-                  '"Sum",' +
-                  '"Count"' +
-                  ')',
+                `MAX(LAMBDA("${chiSquaredFunction.functionName}",` +
+                `"${outlierThreshold}",` +
+                `"${availabilityZoneId}",` +
+                `"${str}",` +
+                `"${metricDetails.metricNamespace}",` +
+                `"${metricDetails.faultMetricNames.join(':')}",` +
+                '"Sum",' +
+                '"Count"' +
+                '))',
+      period: Duration.seconds(60),
     });
 
-    return new Alarm(scope, 'AZ' + counter + 'IsolatedImpactAlarmChiSquared', {
+    return new Alarm(scope, 'AZ' + counter + 'FaultIsolatedImpactAlarmChiSquared', {
       alarmName: availabilityZoneId + `-${metricDetails.operationName.toLowerCase()}-chi-squared-majority-errors-impact` + nameSuffix,
-      metric: outlierMetrics2,
+      metric: outlierMetrics,
       threshold: 1,
       comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
       treatMissingData: TreatMissingData.IGNORE,
       evaluationPeriods: metricDetails.evaluationPeriods,
       datapointsToAlarm: metricDetails.datapointsToAlarm,
+    });
+  }
+
+  static createZonalFaultRateChiSquaredOutlierAlarmForAlb(
+    scope: IConstruct,
+    loadBalancers: IApplicationLoadBalancer[],
+    availabilityZoneId: string,
+    outlierThreshold: number,
+    chiSquaredFunction: IFunction,
+    azMapper: IAvailabilityZoneMapper,
+    counter: number,
+    evaluationPeriods: number,
+    datapointsToAlarm: number,
+    nameSuffix?: string,
+  ): IAlarm {
+    let metricDimensions: { [key: string]: { [key: string]: string }[] } = {};
+
+    loadBalancers.forEach(x => {
+      x.vpc?.availabilityZones.forEach(az => {
+        let azId = azMapper.availabilityZoneIdFromAvailabilityZoneLetter(az.substring(az.length - 1));
+        if (!(azId in metricDimensions)) {
+          metricDimensions[azId] = [];
+        }
+
+        metricDimensions[azId].push({
+          AvailabilityZone: az,
+          LoadBalancer: (x as ILoadBalancerV2 as BaseLoadBalancer).loadBalancerFullName,
+        });
+      });
+    });
+
+    let str: string = JSON.stringify(metricDimensions)
+      .replace(/[\\]/g, '\\\\')
+      .replace(/[\"]/g, '\\\"')
+      .replace(/[\/]/g, '\\/')
+      .replace(/[\b]/g, '\\b')
+      .replace(/[\f]/g, '\\f')
+      .replace(/[\n]/g, '\\n')
+      .replace(/[\r]/g, '\\r')
+      .replace(/[\t]/g, '\\t');
+
+    let outlierMetrics: IMetric = new MathExpression({
+      expression:
+                `MAX(LAMBDA("${chiSquaredFunction.functionName}",` +
+                `"${outlierThreshold}",` +
+                `"${availabilityZoneId}",` +
+                `"${str}",` +
+                '"AWS/ApplicationELB",' +
+                '"HTTPCode_ELB_5XX_Count:HTTPCode_Target_5XX_Count",' +
+                '"Sum",' +
+                '"Count"' +
+                '))',
+      period: Duration.seconds(60),
+    });
+
+    return new Alarm(scope, 'AZ' + counter + 'AlbIsolatedImpactAlarmChiSquared', {
+      alarmName: availabilityZoneId + '-alb-chi-squared-majority-errors-impact' + nameSuffix,
+      metric: outlierMetrics,
+      threshold: 1,
+      comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+      treatMissingData: TreatMissingData.IGNORE,
+      evaluationPeriods: evaluationPeriods,
+      datapointsToAlarm: datapointsToAlarm,
+    });
+  }
+
+  static createZonalFaultRateChiSquaredOutlierAlarmForNatGW(
+    scope: IConstruct,
+    natGateways: {[key: string]: CfnNatGateway[]},
+    availabilityZoneId: string,
+    outlierThreshold: number,
+    chiSquaredFunction: IFunction,
+    azMapper: IAvailabilityZoneMapper,
+    counter: number,
+    evaluationPeriods: number,
+    datapointsToAlarm: number,
+    nameSuffix?: string,
+  ): IAlarm {
+    let metricDimensions: { [key: string]: { [key: string]: string }[] } = {};
+
+    Object.keys(natGateways).forEach(az => {
+      let azId = azMapper.availabilityZoneIdFromAvailabilityZoneLetter(az.substring(az.length - 1));
+
+      if (!(azId in metricDimensions)) {
+        metricDimensions[azId] = [];
+      }
+
+      natGateways[az].forEach(natgw => {
+        metricDimensions[azId].push({
+          NatGatewayId: natgw.attrNatGatewayId,
+        });
+      });
+    });
+
+    let str: string = JSON.stringify(metricDimensions)
+      .replace(/[\\]/g, '\\\\')
+      .replace(/[\"]/g, '\\\"')
+      .replace(/[\/]/g, '\\/')
+      .replace(/[\b]/g, '\\b')
+      .replace(/[\f]/g, '\\f')
+      .replace(/[\n]/g, '\\n')
+      .replace(/[\r]/g, '\\r')
+      .replace(/[\t]/g, '\\t');
+
+    let outlierMetrics: IMetric = new MathExpression({
+      expression:
+                `MAX(LAMBDA("${chiSquaredFunction.functionName}",` +
+                `"${outlierThreshold}",` +
+                `"${availabilityZoneId}",` +
+                `"${str}",` +
+                '"AWS/NATGateway",' +
+                '"PacketsDropCount",' +
+                '"Sum",' +
+                '"Count"' +
+                '))',
+      period: Duration.seconds(60),
+    });
+
+    return new Alarm(scope, 'AZ' + counter + 'NatGWIsolatedImpactAlarmChiSquared', {
+      alarmName: availabilityZoneId + '-nat-gw-chi-squared-majority-errors-impact' + nameSuffix,
+      metric: outlierMetrics,
+      threshold: 1,
+      comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+      treatMissingData: TreatMissingData.IGNORE,
+      evaluationPeriods: evaluationPeriods,
+      datapointsToAlarm: datapointsToAlarm,
     });
   }
 
@@ -276,71 +350,15 @@ export class AvailabilityAndLatencyAlarmsAndRules {
     outlierThreshold: number,
     chiSquaredFunction: IFunction,
     counter: number,
-    nameSuffix?: string,
+    nameSuffix ?: string,
   ): IAlarm {
-    let key: string = AvailabilityAndLatencyMetrics.nextChar('');
-
-    let perAZHighLatencyCountMetricQuery: { [key: string]: any } = {
-      MetricDataQueries: [],
-      StartTime: 0,
-      EndTime: 0,
-    };
-
-    let azAggregateKeyIds: {[key: string]: string} = {};
-
-    let metricDimensions: {[key: string]: {[key: string]: string}} = {};
+    let metricDimensions: { [key: string]: { [key: string]: string }[] } = {};
 
     allAvailabilityZoneIds.forEach((azId: string) => {
-
-      let azKeys: string[] = [];
-
-      metricDimensions[azId] =
-        metricDetails.metricDimensions.zonalDimensions(azId, Fn.ref('AWS::Region'));
-
-      metricDetails.successMetricNames.forEach((metric: string, index: number) => {
-        let query: { [key: string]: any } = {
-          Id: key + index,
-          Label: azId + ' ' + metric,
-          ReturnData: true,
-          MetricStat: {
-            Metric: {
-              Namespace: metricDetails.metricNamespace,
-              MetricName: metric,
-              Dimensions: metricDetails.metricDimensions.zonalDimensions(azId, Fn.ref('AWS::Region')),
-            },
-            Period: 60,
-            Stat: `TC(${metricDetails.successAlarmThreshold}:)`,
-            Unit: 'Milliseconds',
-          },
-        };
-
-        perAZHighLatencyCountMetricQuery.MetricDataQueries.push(query);
-        azKeys.push(query.Id);
-      });
-
-      perAZHighLatencyCountMetricQuery.MetricDataQueries.push({
-        Id: key + allAvailabilityZoneIds.length,
-        Label: azId + ' high latency',
-        ReturnData: true,
-        Expression: azKeys.join('+'),
-      });
-
-      azAggregateKeyIds[azId] = key + allAvailabilityZoneIds.length;
-
-      key = AvailabilityAndLatencyMetrics.nextChar(key);
+      metricDimensions[azId] = [
+        metricDetails.metricDimensions.zonalDimensions(azId, Fn.ref('AWS::Region')),
+      ];
     });
-
-    /*
-    let outlierMetrics: IMetric = new MathExpression({
-      expression:
-                  `LAMBDA(${chiSquaredFunction.functionName},` +
-                  `${outlierThreshold},` +
-                  `${availabilityZoneId},` +
-                  `${JSON.stringify(perAZHighLatencyCountMetricQuery)},` +
-                  `${azAggregateKeyIds[availabilityZoneId]},` +
-                  `${Object.values(azAggregateKeyIds).join(',')})`,
-    });
-    */
 
     let str: string = JSON.stringify(metricDimensions)
       .replace(/[\\]/g, '\\\\')
@@ -352,22 +370,23 @@ export class AvailabilityAndLatencyAlarmsAndRules {
       .replace(/[\r]/g, '\\r')
       .replace(/[\t]/g, '\\t');
 
-    let outlierMetrics2: IMetric = new MathExpression({
+    let outlierMetrics: IMetric = new MathExpression({
       expression:
-                  `LAMBDA("${chiSquaredFunction.functionName}",` +
-                  `"${outlierThreshold}",` +
-                  `"${availabilityZoneId}",` +
-                  `"${str}",` +
-                  `"${metricDetails.metricNamespace}",` +
-                  `"${metricDetails.successMetricNames.join(':')}",` +
-                  `"TC(${metricDetails.successAlarmThreshold}:)",` +
-                  '"Milliseconds"' +
-                  ')',
+            `MAX(LAMBDA("${chiSquaredFunction.functionName}",` +
+            `"${outlierThreshold}",` +
+            `"${availabilityZoneId}",` +
+            `"${str}",` +
+            `"${metricDetails.metricNamespace}",` +
+            `"${metricDetails.successMetricNames.join(':')}",` +
+            `"TC(${metricDetails.successAlarmThreshold}:)",` +
+            '"Milliseconds"' +
+            '))',
+      period: Duration.seconds(60),
     });
 
-    return new Alarm(scope, metricDetails.operationName + 'AZ' + counter + 'IsolatedImpactAlarmChiSquared', {
+    return new Alarm(scope, metricDetails.operationName + 'AZ' + counter + 'LatencyIsolatedImpactAlarmChiSquared', {
       alarmName: availabilityZoneId + `-${metricDetails.operationName.toLowerCase()}-chi-squared-majority-high-latency-impact` + nameSuffix,
-      metric: outlierMetrics2,
+      metric: outlierMetrics,
       threshold: 1,
       comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
       treatMissingData: TreatMissingData.IGNORE,
@@ -382,7 +401,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
     availabilityZoneId: string,
     counter: number,
     outlierThreshold: number,
-    nameSuffix?: string,
+    nameSuffix ?: string,
   ): IAlarm {
     let zonalLatency: IMetric = AvailabilityAndLatencyMetrics.createZonalLatencyMetrics({
       availabilityZoneId: availabilityZoneId,
@@ -440,7 +459,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
     availabilityZoneId: string,
     ruleDetails: IContributorInsightRuleDetails,
     counter: number,
-    nameSuffix?: string) : CfnInsightRule {
+    nameSuffix ?: string) : CfnInsightRule {
     let ruleBody = new InsightRuleBody();
     ruleBody.logGroupNames = ruleDetails.logGroups.map(x => x.logGroupName);
     ruleBody.aggregateOn = 'Count';
@@ -488,7 +507,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
     availabilityZoneId: string,
     ruleDetails: IContributorInsightRuleDetails,
     counter: number,
-    nameSuffix?: string,
+    nameSuffix ?: string,
   ): CfnInsightRule {
     let ruleBody = new InsightRuleBody();
     ruleBody.logGroupNames = ruleDetails.logGroups.map(x => x.logGroupName);
@@ -536,7 +555,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
     availabilityZoneId: string,
     ruleDetails: IContributorInsightRuleDetails,
     counter: number,
-    nameSuffix?: string,
+    nameSuffix ?: string,
   ): CfnInsightRule {
     let ruleBody = new InsightRuleBody();
     ruleBody.logGroupNames = ruleDetails.logGroups.map(x => x.logGroupName);
@@ -588,7 +607,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
     outlierThreshold: number,
     instanceFaultRateContributorsInThisAZ: CfnInsightRule,
     instancesHandlingRequestsInThisAZ: CfnInsightRule,
-    nameSuffix?: string,
+    nameSuffix ?: string,
   ) : IAlarm {
     return new Alarm(scope, 'AZ' + counter + 'MoreThanOneAlarmForErrors', {
       alarmName: availabilityZoneId + `-${metricDetails.operationName.toLowerCase()}-multiple-instances-faults` + nameSuffix,
@@ -627,7 +646,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
     outlierThreshold: number,
     instanceHighLatencyContributorsInThisAZ: CfnInsightRule,
     instancesHandlingRequestsInThisAZ: CfnInsightRule,
-    nameSuffix?: string,
+    nameSuffix ?: string,
   ) : IAlarm {
     return new Alarm(scope, 'AZ' + counter + 'MoreThanOneAlarmForHighLatency', {
       alarmName: availabilityZoneId + `-${metricDetails.operationName.toLowerCase()}-multiple-instances-high-latency` + nameSuffix,
@@ -669,7 +688,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
     availabilityImpactAlarm: IAlarm,
     azIsOutlierForLatencyAlarm: IAlarm,
     latencyImpactAlarm: IAlarm,
-    nameSuffix?: string,
+    nameSuffix ?: string,
   ) : IAlarm {
     return new CompositeAlarm(scope, operationName + 'AZ' + counter + 'IsolatedImpactAlarm' + nameSuffix, {
       compositeAlarmName: availabilityZoneId + `-${operationName.toLowerCase()}-isolated-impact-alarm` + nameSuffix,
@@ -708,7 +727,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
     azIsOutlierForLatencyAlarm: IAlarm,
     latencyImpactAlarm: IAlarm,
     moreThanOneInstanceContributingToLatency: IAlarm,
-    nameSuffix?: string,
+    nameSuffix ?: string,
   ) : IAlarm {
     return new CompositeAlarm(scope, operationName + 'AZ' + counter + 'IsolatedImpactAlarm' + nameSuffix, {
       compositeAlarmName: availabilityZoneId + `-${operationName.toLowerCase()}-isolated-impact-alarm` + nameSuffix,

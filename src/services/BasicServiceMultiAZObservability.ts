@@ -5,6 +5,7 @@ import { BaseLoadBalancer, HttpCodeElb, HttpCodeTarget, IApplicationLoadBalancer
 import { Construct } from 'constructs';
 import { IBasicServiceMultiAZObservability } from './IBasicServiceMultiAZObservability';
 import { BasicServiceMultiAZObservabilityProps } from './props/BasicServiceMultiAZObservabilityProps';
+import { AvailabilityAndLatencyAlarmsAndRules } from '../alarmsandrules/AvailabilityAndLatencyAlarmsAndRules';
 import { AvailabilityZoneMapper } from '../azmapper/AvailabilityZoneMapper';
 import { IAvailabilityZoneMapper } from '../azmapper/IAvailabilityZoneMapper';
 import { ChiSquaredFunction } from '../chi-squared/ChiSquaredFunction';
@@ -21,47 +22,47 @@ export class BasicServiceMultiAZObservability extends Construct
   implements IBasicServiceMultiAZObservability {
 
   /**
-       * The NAT Gateways being used in the service, each set of NAT Gateways
-       * are keyed by their Availability Zone Id
-       */
+         * The NAT Gateways being used in the service, each set of NAT Gateways
+         * are keyed by their Availability Zone Id
+         */
   natGateways?: { [key: string]: CfnNatGateway[] };
 
   /**
-       * The application load balancers being used by the service
-       */
+         * The application load balancers being used by the service
+         */
   applicationLoadBalancers?: IApplicationLoadBalancer[];
 
   /**
-       * The name of the service
-       */
+         * The name of the service
+         */
   serviceName: string;
 
   /**
-       * The alarms indicating if an AZ is an outlier for NAT GW
-       * packet loss and has isolated impact
-       */
+         * The alarms indicating if an AZ is an outlier for NAT GW
+         * packet loss and has isolated impact
+         */
   natGWZonalIsolatedImpactAlarms?: { [key: string]: IAlarm };
 
   /**
-       * The alarms indicating if an AZ is an outlier for ALB
-       * faults and has isolated impact
-       */
+         * The alarms indicating if an AZ is an outlier for ALB
+         * faults and has isolated impact
+         */
   albZonalIsolatedImpactAlarms?: { [key: string]: IAlarm };
 
   /**
-       * The alarms indicating if an AZ has isolated impact
-       * from either ALB or NAT GW metrics
-       */
+         * The alarms indicating if an AZ has isolated impact
+         * from either ALB or NAT GW metrics
+         */
   aggregateZonalIsolatedImpactAlarms: { [key: string]: IAlarm };
 
   /**
-       * The dashboard that is optionally created
-       */
+         * The dashboard that is optionally created
+         */
   dashboard?: Dashboard;
 
   /**
-     * The chi-squared function
-     */
+       * The chi-squared function
+       */
   private chiSquaredFunction?: IChiSquaredFunction;
 
   private azMapper: IAvailabilityZoneMapper;
@@ -384,150 +385,28 @@ export class BasicServiceMultiAZObservability extends Construct
         break;
       case OutlierDetectionAlgorithm.CHI_SQUARED:
 
-        let perAZAlbFaultCountMetricQueries: { [key: string]: any } = {
-          MetricDataQueries: [],
-          StartTime: 0,
-          EndTime: 0,
-        };
+        let allAZs: string[] = Array.from(new Set(this.applicationLoadBalancers!.flatMap(x => {
+          return x.vpc!.availabilityZones;
+        })));
 
-        let key: string = AvailabilityAndLatencyMetrics.nextChar('');
-
-        // Indexed by the AZ name letter, contains a list of metric Ids
-        // for the AZ, one for each ALB in the same AZ
-        let azSumIds: { [key: string]: string[] } = {};
-
-        props.applicationLoadBalancers!.forEach((alb: IApplicationLoadBalancer) => {
-
-          // Create fault count metrics per load balancer
-          // in each AZ
-          alb.vpc?.availabilityZones.forEach((az: string) => {
-
-            let azLetter: string = az.substring(az.length - 1);
-            let availabilityZoneId: string = this.azMapper
-              .availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
-
-            if (azSumIds[azLetter] === undefined) {
-              azSumIds[azLetter] = [];
-            }
-
-            let counter: number = 0;
-            let azMetricIds: string[] = [];
-
-            azMetricIds.push(key + counter);
-
-            let query1 = {
-              Id: key + counter++,
-              Label: az + '.' + alb.loadBalancerDnsName + '-elb',
-              ReturnData: true,
-              MetricStat: {
-                Metric: {
-                  Namespace: 'AWS/ApplicationELB',
-                  MetricName: HttpCodeElb.ELB_5XX_COUNT,
-                  Dimensions: {
-                    AvailabilityZone: az,
-                    LoadBalancer: ((alb as ILoadBalancerV2) as BaseLoadBalancer).loadBalancerFullName,
-                  },
-                },
-                Period: 60,
-                Stat: 'Sum',
-                Unit: 'Count',
-              },
-            };
-
-            azMetricIds.push(key + counter);
-
-            let query2 = {
-              Id: key + counter++,
-              Label: az + '.' + alb.loadBalancerDnsName + '-target',
-              ReturnData: true,
-              MetricStat: {
-                Metric: {
-                  Namespace: 'AWS/ApplicationELB',
-                  MetricName: HttpCodeTarget.TARGET_5XX_COUNT,
-                  Dimensions: {
-                    AvailabilityZone: az,
-                    LoadBalancer: ((alb as ILoadBalancerV2) as BaseLoadBalancer).loadBalancerFullName,
-                  },
-                },
-                Period: 60,
-                Stat: 'Sum',
-                Unit: 'Count',
-              },
-            };
-
-            let query3: { [key: string]: any } = {
-              Id: key + counter,
-              Label: availabilityZoneId,
-              ReturnData: true,
-              Expression: azMetricIds.join('+'),
-            };
-
-            // The metric sum for a single ALB
-            azSumIds[azLetter].push(key + counter);
-
-            // The metric queries for this ALB in this AZ
-            perAZAlbFaultCountMetricQueries.MetricDataQueries.push(query1);
-            perAZAlbFaultCountMetricQueries.MetricDataQueries.push(query2);
-            perAZAlbFaultCountMetricQueries.MetricDataQueries.push(query3);
-
-            key = AvailabilityAndLatencyMetrics.nextChar(key);
-          });
-        });
-
-        // Once metrics are created for each load balancer in each AZ,
-        // add the load balancer metrics per AZ together to get a total
-        // fault count in each AZ
-        let totalFaultCountPerAZIds: {[key: string]: string} = {};
-
-        // Iterate the per ALB metrics in each AZ and add them all together
-        // to get a total fault count for the whole AZ across all load balancers
-        Object.keys(azSumIds).forEach((azLetter: string, index: number) => {
-          key = AvailabilityAndLatencyMetrics.nextChar(key);
+        allAZs.forEach((az: string, index: number) => {
+          let azLetter: string = az.substring(az.length - 1);
           let availabilityZoneId: string = this.azMapper
             .availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
 
-          let query: { [key: string]: any } = {
-            Id: key + (index + 1),
-            Label: availabilityZoneId,
-            ReturnData: true,
-            Expression: azSumIds[azLetter].join('+'),
-          };
-
-          // Add the aggregate az fault count query
-          perAZAlbFaultCountMetricQueries.MetricDataQueries.push(query);
-
-          // Record the metric id so we can find it later in the function
-          // to evaluate its values
-          totalFaultCountPerAZIds[azLetter] = query.Id;
-        });
-
-        // Now that total fault count query has been created, create a new
-        // metric to calculate chi-squared value
-        Object.keys(totalFaultCountPerAZIds).forEach((azLetter: string, index: number) => {
-
-          let availabilityZoneId: string = this.azMapper
-            .availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
-
-          let outlierMetrics: IMetric = new MathExpression({
-            expression:
-                        `LAMBDA(${this.chiSquaredFunction?.function.functionName},` +
-                        `${props.outlierThreshold},` +
-                        `${availabilityZoneId},` +
-                        `${JSON.stringify(perAZAlbFaultCountMetricQueries)},` +
-                        `${totalFaultCountPerAZIds[azLetter]},` +
-                        `${Object.values(totalFaultCountPerAZIds).join(',')})`,
-          });
-
-          let azIsOutlierForFaultCount: IAlarm = new Alarm(this, 'AZ' + (index + 1) + 'ALBFaultCountOutlier', {
-            metric: outlierMetrics,
-            alarmName: availabilityZoneId + '-fault-count-outlier',
-            evaluationPeriods: 5,
-            datapointsToAlarm: 3,
-            threshold: 1,
-            actionsEnabled: false,
-            treatMissingData: TreatMissingData.IGNORE,
-            comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
-          });
+          let azIsOutlierForFaults: IAlarm = AvailabilityAndLatencyAlarmsAndRules
+            .createZonalFaultRateChiSquaredOutlierAlarmForAlb(
+              this,
+              props.applicationLoadBalancers!,
+              availabilityZoneId,
+              props.outlierThreshold,
+              this.chiSquaredFunction!.function,
+              this.azMapper,
+              index,
+              5,
+              3,
+              '',
+            );
 
           // In addition to being an outlier for fault count, make sure
           // the fault count is substantial enough to trigger the alarm
@@ -535,7 +414,7 @@ export class BasicServiceMultiAZObservability extends Construct
           let azIsOutlierAndSeesImpact: IAlarm = new CompositeAlarm(this, 'AZ' + index + 'ALBIsolatedImpact', {
             compositeAlarmName: availabilityZoneId + '-isolated-fault-count-impact',
             alarmRule: AlarmRule.allOf(
-              azIsOutlierForFaultCount,
+              azIsOutlierForFaults,
               AlarmRule.anyOf(...faultRatePercentageAlarms[azLetter]),
             ),
           });
@@ -543,7 +422,6 @@ export class BasicServiceMultiAZObservability extends Construct
           // Record these so they can be used in dashboard or for combination
           // with AZ
           this._albZonalIsolatedImpactAlarms[azLetter] = azIsOutlierAndSeesImpact;
-
         });
 
         break;
@@ -733,96 +611,26 @@ export class BasicServiceMultiAZObservability extends Construct
         break;
       case OutlierDetectionAlgorithm.CHI_SQUARED:
 
-        // Once metrics are created for each load balancer in each AZ,
-        // add the load balancer metrics per AZ together to get a total
-        // fault count in each AZ
-        let totalPacketDropCountPerAZIds: {[key: string]: string} = {};
-
-        let perAZPacketDropsMetricQueries: { [key: string]: any } = {
-          MetricDataQueries: [],
-          StartTime: 0,
-          EndTime: 0,
-        };
-
-        let key: string = AvailabilityAndLatencyMetrics.nextChar('');
-
-        Object.keys(props.natGateways!).forEach((az: string) => {
+        Object.keys(props.natGateways!).forEach((az: string, index: number) => {
           let azLetter: string = az.substring(az.length - 1);
           let availabilityZoneId: string = this.azMapper.
             availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
-
-          let perAZIds: string[] = [];
 
           // Iterate all NAT GWs in this AZ
-          props.natGateways![az].forEach((natGW: CfnNatGateway, index: number) => {
 
-            perAZIds.push(key + index);
-
-            let query: { [key: string]: any } = {
-              Id: key + index,
-              Label: availabilityZoneId + '_' + natGW.attrNatGatewayId,
-              ReturnData: true,
-              MetricStat: {
-                Metric: {
-                  Namespace: 'AWS/NATGateway',
-                  MetricName: 'PacketsDropCount',
-                  Dimensions: {
-                    NatGatewayId: natGW.attrNatGatewayId,
-                  },
-                },
-                Period: 60,
-                Stat: 'Sum',
-                Unit: 'Count',
-              },
-            };
-
-            // Create a metric query for their packet drops
-            perAZPacketDropsMetricQueries.MetricDataQueries.push(query);
-          });
-
-          let query: { [key: string]: any } = {
-            Id: key + props.natGateways![az].length,
-            Label: availabilityZoneId,
-            ReturnData: true,
-            Expression: perAZIds.join('+'),
-          };
-
-          totalPacketDropCountPerAZIds[azLetter] = query.Id;
-
-          // After collecting all of the packet drops from
-          // each NATGW in this AZ, add them all up
-          perAZPacketDropsMetricQueries.MetricDataQueries.push(query);
-
-          // Update key for next AZ
-          key = AvailabilityAndLatencyMetrics.nextChar(key);
-        });
-
-        Object.keys(totalPacketDropCountPerAZIds).forEach((az: string, index: number) => {
-          let azLetter: string = az.substring(az.length - 1);
-
-          let availabilityZoneId: string = this.azMapper.
-            availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
-
-          let outlierMetrics: IMetric = new MathExpression({
-            expression:
-                        `LAMBDA(${this.chiSquaredFunction?.function.functionName},` +
-                        `${props.outlierThreshold},` +
-                        `${availabilityZoneId},` +
-                        `${JSON.stringify(perAZPacketDropsMetricQueries)},` +
-                        `${totalPacketDropCountPerAZIds[azLetter]},` +
-                        `${Object.values(totalPacketDropCountPerAZIds).join(',')})`,
-          });
-
-          let azIsOutlierForPacketDrops: IAlarm = new Alarm(this, 'AZ' + index + 'NATGWDroppedPacketsOutlierAlarm', {
-            metric: outlierMetrics,
-            alarmName: availabilityZoneId + '-dropped-packets-outlier',
-            evaluationPeriods: 5,
-            datapointsToAlarm: 3,
-            threshold: 1,
-            actionsEnabled: false,
-            treatMissingData: TreatMissingData.IGNORE,
-            comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
-          });
+          let azIsOutlierForPacketDrops: IAlarm = AvailabilityAndLatencyAlarmsAndRules
+            .createZonalFaultRateChiSquaredOutlierAlarmForNatGW(
+              this,
+              this.natGateways!,
+              availabilityZoneId,
+              props.outlierThreshold,
+              this.chiSquaredFunction!.function,
+              this.azMapper,
+              index,
+              5,
+              3,
+              '',
+            );
 
           // In addition to being an outlier for packet drops, make sure
           // the packet loss is substantial enough to trigger the alarm
