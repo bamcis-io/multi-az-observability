@@ -98,7 +98,7 @@ def get_metric_data(event, metrics):
     end = event["EndTime"]
     period = event["Period"]
     args: list = event["Arguments"]
-    threshold: str = args[0]
+    threshold: float = float(args[0])
     az_id: str= args[1]
     #
     # {
@@ -219,14 +219,21 @@ def get_metric_data(event, metrics):
 
     results = []
 
-    for timestamp_key in az_counts:
+    # dict isn't guaranteed to be ordered because
+    # 1 get metric result might have timestamps that are
+    # not present in the other results
+    # use sorted to get a sorted list of timestamp
+    # keys and then access the original dict
+    for timestamp_key in sorted(az_counts.keys(), reverse = True):
         vals = list(az_counts[timestamp_key].values())
         chi_sq_result = chisquare(vals)
         expected = sum(vals) / len(vals)
         p_value = chi_sq_result[1]
 
-        # set the farthest from the average to initially be the first AZ
-        farthest_from_expected = az_counts[timestamp_key][0]
+        for az in az_counts[timestamp_key]:
+            # set the farthest from the average to initially be the first AZ
+            farthest_from_expected = az
+            break
 
         # compare the other AZs for this timestamp and find the one
         # farthest from the average

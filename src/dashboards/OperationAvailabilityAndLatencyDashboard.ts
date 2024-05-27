@@ -640,6 +640,7 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
           max: 20,
           min: 0,
           label: 'Fault Rate',
+          showUnits: false
         },
         leftAnnotations: [
           {
