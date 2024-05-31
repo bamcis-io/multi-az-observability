@@ -5,9 +5,11 @@ import { IServiceAvailabilityAndLatencyDashboard } from './IServiceAvailabilityA
 import { ServiceAvailabilityAndLatencyDashboardProps } from './props/ServiceAvailabilityAndLatencyDashboardProps';
 import { AvailabilityAndLatencyMetrics } from '../metrics/AvailabilityAndLatencyMetrics';
 import { AvailabilityMetricProps } from '../metrics/props/AvailabilityMetricProps';
+import { LatencyMetricProps } from '../metrics/props/LatencyMetricProps';
 import { IOperation } from '../services/IOperation';
 import { IOperationMetricDetails } from '../services/IOperationMetricDetails';
 import { AvailabilityMetricType } from '../utilities/AvailabilityMetricType';
+import { LatencyMetricType } from '../utilities/LatencyMetricType';
 
 /**
  * Creates a service level availability and latency dashboard
@@ -97,6 +99,33 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
       );
 
       widgets = widgets.concat(ServiceAvailabilityAndLatencyDashboard.generateAvailabilityWidgets(props, true, availabilityZoneIds));
+    }
+
+    return widgets;
+  }
+
+  private static generateServerSideAndCanaryLatencyWidgets(
+    props: ServiceAvailabilityAndLatencyDashboardProps,
+    availabilityZoneIds: string[],
+  ): IWidget[] {
+    let widgets: IWidget[] = [];
+
+    widgets.push(
+      new TextWidget({ height: 2, width: 24, markdown: '**Server-side Latency**\n(Each critical operation is equally weighted regardless of request volume)' }),
+    );
+
+    widgets = widgets.concat(
+      ServiceAvailabilityAndLatencyDashboard.generateLatencyMetricWidgets(props, false, availabilityZoneIds),
+    );
+
+    if (props.service.operations.filter(x => x.critical && x.canaryMetricDetails !== undefined).length > 0) {
+      widgets.push(
+        new TextWidget(
+          { height: 2, width: 24, markdown: '**Canary Measured Latency**\n(Each operation is equally weighted regardless of request volume)' },
+        ),
+      );
+
+      widgets = widgets.concat(ServiceAvailabilityAndLatencyDashboard.generateLatencyMetricWidgets(props, true, availabilityZoneIds));
     }
 
     return widgets;
@@ -202,6 +231,72 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
     return widgets;
   }
 
+  private static generateLatencyMetricWidgets(
+    props: ServiceAvailabilityAndLatencyDashboardProps,
+    isCanary: boolean,
+    availabilityZoneIds: string[],
+  ) : IWidget[] {
+
+    let widgets: IWidget[] = [];
+
+    widgets.push(new GraphWidget({
+      height: 6,
+      width: 24,
+      title: Fn.ref('AWS::Region') + ' Latency',
+      region: Fn.ref('AWS::Region'),
+      left: AvailabilityAndLatencyMetrics.createRegionalServiceLatencyMetrics({
+        label: Fn.ref('AWS::Region') + ' latency',
+        period: props.service.period,
+        latencyMetricProps: this.createRegionalLatencyMetricProps(
+          props.service.operations.filter(x => x.critical), isCanary, LatencyMetricType.SUCCESS_LATENCY,
+        ),
+      }),
+      statistic: 'Sum',
+      leftYAxis: {
+        max: props.service.faultCountThreshold * 1.5,
+        min: 0,
+        label: 'High latency count',
+        showUnits: false,
+      },
+      leftAnnotations: [
+        {
+          color: Color.RED,
+          label: 'High severity',
+          value: props.service.faultCountThreshold,
+        },
+      ],
+    }));
+
+    for (let i = 0; i < availabilityZoneIds.length; i++) {
+      let availabilityZoneId = availabilityZoneIds[i];
+
+      widgets.push(new GraphWidget({
+        height: 6,
+        width: 8,
+        title: availabilityZoneId + ' Latency',
+        region: Fn.ref('AWS::Region'),
+        left: AvailabilityAndLatencyMetrics.createZonalServiceLatencyMetrics({
+          label: availabilityZoneId + ' latency',
+          period: props.service.period,
+          latencyMetricProps: this.createZonalLatencyMetricProps(
+            props.service.operations.filter(x => x.critical),
+            availabilityZoneId,
+            isCanary,
+            LatencyMetricType.SUCCESS_LATENCY),
+        }),
+        statistic: 'Sum',
+        leftYAxis: {
+          max: props.service.faultCountThreshold * 1.5,
+          min: 0,
+          label: 'High latency count',
+          showUnits: false,
+        },
+      }));
+    }
+
+    return widgets;
+  }
+
   private static createRegionalAvailabilityMetricProps(
     criticalOperations: IOperation[],
     isCanary: boolean,
@@ -220,6 +315,29 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
           label: x.operationName + ' ' + metricType.toString().replace('_', ' '),
           metricDetails: x,
           metricType: metricType,
+        };
+      });
+  }
+
+  private static createRegionalLatencyMetricProps(
+    criticalOperations: IOperation[],
+    isCanary: boolean,
+    metricType: LatencyMetricType,
+  ) : LatencyMetricProps[] {
+    return criticalOperations.reduce((filtered, value) => {
+      if (isCanary && value.canaryMetricDetails) {
+        filtered.push(value.canaryMetricDetails.canaryLatencyMetricDetails);
+      } else if (!isCanary) {
+        filtered.push(value.serverSideLatencyMetricDetails);
+      }
+      return filtered;
+    }, [] as IOperationMetricDetails[])
+      .map(x => {
+        return {
+          label: x.operationName + ' ' + metricType.toString().replace('_', ' '),
+          metricDetails: x,
+          metricType: metricType,
+          statistic: 'TC(' + x.successAlarmThreshold + ':)',
         };
       });
   }
@@ -244,6 +362,31 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
           metricDetails: x,
           metricType: metricType,
           availabilityZoneId: availabilityZoneId,
+        };
+      });
+  }
+
+  private static createZonalLatencyMetricProps(
+    criticalOperations: IOperation[],
+    availabilityZoneId: string,
+    isCanary: boolean,
+    metricType: LatencyMetricType,
+  ) : LatencyMetricProps[] {
+    return criticalOperations.reduce((filtered, value) => {
+      if (isCanary && value.canaryMetricDetails !== undefined && value.canaryMetricDetails != null) {
+        filtered.push(value.canaryMetricDetails.canaryAvailabilityMetricDetails);
+      } else if (!isCanary) {
+        filtered.push(value.serverSideAvailabilityMetricDetails);
+      }
+      return filtered;
+    }, [] as IOperationMetricDetails[])
+      .map(x => {
+        return {
+          label: x.operationName + ' ' + metricType.toString().replace('_', ' '),
+          metricDetails: x,
+          metricType: metricType,
+          availabilityZoneId: availabilityZoneId,
+          statistic: 'TC(' + x.successAlarmThreshold + ':)',
         };
       });
   }
@@ -336,6 +479,7 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
         topLevelAggregateAlarmWidgets,
         azContributorWidgets,
         ServiceAvailabilityAndLatencyDashboard.generateServerSideAndCanaryAvailabilityWidgets(props, availabilityZoneIds),
+        ServiceAvailabilityAndLatencyDashboard.generateServerSideAndCanaryLatencyWidgets(props, availabilityZoneIds),
       ],
     });
   }

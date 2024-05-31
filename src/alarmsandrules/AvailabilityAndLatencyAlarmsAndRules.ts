@@ -74,13 +74,13 @@ export class AvailabilityAndLatencyAlarmsAndRules {
       threshold: metricDetails.successAlarmThreshold,
       actionsEnabled: false,
       treatMissingData: TreatMissingData.IGNORE,
-      metric: AvailabilityAndLatencyMetrics.createZonalLatencyMetrics({
+      metric: AvailabilityAndLatencyMetrics.createZonalAverageLatencyMetric({
         availabilityZoneId: availabilityZoneId,
         label: availabilityZoneId + ' ' + metricDetails.alarmStatistic + ' latency',
         metricDetails: metricDetails,
         metricType: LatencyMetricType.SUCCESS_LATENCY,
         statistic: metricDetails.alarmStatistic,
-      })[0],
+      }),
     });
   }
 
@@ -403,22 +403,22 @@ export class AvailabilityAndLatencyAlarmsAndRules {
     outlierThreshold: number,
     nameSuffix ?: string,
   ): IAlarm {
-    let zonalLatency: IMetric = AvailabilityAndLatencyMetrics.createZonalLatencyMetrics({
+    let zonalLatency: IMetric = AvailabilityAndLatencyMetrics.createZonalCountLatencyMetric({
       availabilityZoneId: availabilityZoneId,
       label: availabilityZoneId + '-' + metricDetails.operationName + '-high-latency-requests',
       metricDetails: metricDetails,
       metricType: LatencyMetricType.SUCCESS_LATENCY,
       statistic: `TC(${metricDetails.successAlarmThreshold}:)`,
       keyPrefix: 'a',
-    })[0];
+    });
 
-    let regionalLatency: IMetric = AvailabilityAndLatencyMetrics.createRegionalLatencyMetrics({
+    let regionalLatency: IMetric = AvailabilityAndLatencyMetrics.createRegionalCountLatencyMetric({
       label: Fn.ref('AWS::Region') + '-' + metricDetails.operationName + '-high-latency-requests',
       metricDetails: metricDetails,
       metricType: LatencyMetricType.SUCCESS_LATENCY,
       statistic: `TC(${metricDetails.successAlarmThreshold}:)`,
       keyPrefix: 'b',
-    })[0];
+    });
 
     return new Alarm(scope, metricDetails.operationName + 'AZ' + counter + 'IsolatedImpactAlarmStatic', {
       alarmName: availabilityZoneId + `-${metricDetails.operationName.toLowerCase()}-static-majority-high-latency-impact` + nameSuffix,
@@ -811,12 +811,12 @@ export class AvailabilityAndLatencyAlarmsAndRules {
       threshold: metricDetails.successAlarmThreshold,
       actionsEnabled: false,
       treatMissingData: TreatMissingData.IGNORE,
-      metric: AvailabilityAndLatencyMetrics.createRegionalLatencyMetrics({
+      metric: AvailabilityAndLatencyMetrics.createRegionalAverageLatencyMetric({
         label: Fn.ref('AWS::Region') + ' ' + metricDetails.alarmStatistic + ' latency',
         metricDetails: metricDetails,
         metricType: LatencyMetricType.SUCCESS_LATENCY,
         statistic: metricDetails.alarmStatistic,
-      })[0],
+      }),
     });
   }
 

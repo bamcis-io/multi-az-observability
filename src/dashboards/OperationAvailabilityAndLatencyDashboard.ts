@@ -62,14 +62,14 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
     for (let i = 0; i < availabilityZoneIds.length; i++) {
       let availabilityZoneId: string = availabilityZoneIds[i];
 
-      zonalServerSideHighLatencyMetrics.push(AvailabilityAndLatencyMetrics.createZonalLatencyMetrics({
+      zonalServerSideHighLatencyMetrics.push(AvailabilityAndLatencyMetrics.createZonalCountLatencyMetric({
         availabilityZoneId: availabilityZoneId,
         metricDetails: props.operation.serverSideLatencyMetricDetails,
         label: availabilityZoneId + ' high latency responses',
         metricType: LatencyMetricType.SUCCESS_LATENCY,
         statistic: `TC(${props.operation.serverSideLatencyMetricDetails.successAlarmThreshold}:)`,
         keyPrefix: keyPrefix,
-      })[0]);
+      }));
 
       zonalServerSideFaultCountMetrics.push(AvailabilityAndLatencyMetrics.createZonalAvailabilityMetric({
         availabilityZoneId: availabilityZoneId,
@@ -80,14 +80,14 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
       }));
 
       if (props.operation.canaryMetricDetails !== undefined && props.operation.canaryMetricDetails != null) {
-        zonalCanaryHighLatencyMetrics.push(AvailabilityAndLatencyMetrics.createZonalLatencyMetrics({
+        zonalCanaryHighLatencyMetrics.push(AvailabilityAndLatencyMetrics.createZonalCountLatencyMetric({
           availabilityZoneId: availabilityZoneId,
           metricDetails: props.operation.canaryMetricDetails.canaryLatencyMetricDetails,
           label: availabilityZoneId + ' high latency responses',
           metricType: LatencyMetricType.SUCCESS_LATENCY,
           statistic: `TC(${props.operation.canaryMetricDetails.canaryLatencyMetricDetails.successAlarmThreshold}:)`,
           keyPrefix: keyPrefix,
-        })[0]);
+        }));
 
         zonalCanaryFaultCountMetrics.push(AvailabilityAndLatencyMetrics.createZonalAvailabilityMetric({
           availabilityZoneId: availabilityZoneId,
@@ -237,6 +237,7 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
       width: 24,
       region: Fn.sub('${AWS::Region}'),
       alarm: props.regionalEndpointAvailabilityAlarm,
+      title: 'Success Rate',
     },
     ));
 
@@ -300,6 +301,7 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
             width: 8,
             region: Fn.sub('${AWS::Region}'),
             alarm: props.zonalEndpointAvailabilityAlarms[k],
+            title: 'Success Rate',
           },
           ));
         }
@@ -338,26 +340,26 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
 
     let latencySuccessMetrics: IMetric[] = stats.map(x => {
       keyPrefix = AvailabilityAndLatencyMetrics.nextChar(keyPrefix);
-      return AvailabilityAndLatencyMetrics.createRegionalLatencyMetrics({
+      return AvailabilityAndLatencyMetrics.createRegionalAverageLatencyMetric({
         label: x + ' Success Latency',
         metricDetails: props.latencyMetricDetails,
         metricType: LatencyMetricType.SUCCESS_LATENCY,
         statistic: x,
         keyPrefix: keyPrefix,
-      })[0];
+      });
     });
 
     stats = props.latencyMetricDetails.graphedFaultStatistics !== undefined ? props.latencyMetricDetails.graphedFaultStatistics : ['p99'];
 
     let latencyFaultMetrics: IMetric[] = stats.map(x => {
       keyPrefix = AvailabilityAndLatencyMetrics.nextChar(keyPrefix);
-      return AvailabilityAndLatencyMetrics.createRegionalLatencyMetrics({
+      return AvailabilityAndLatencyMetrics.createRegionalAverageLatencyMetric({
         label: x + ' Fault Latency',
         metricDetails: props.latencyMetricDetails,
         metricType: LatencyMetricType.FAULT_LATENCY,
         statistic: x,
         keyPrefix: keyPrefix,
-      })[0];
+      });
     });
 
     latencyMetrics = latencySuccessMetrics.concat(latencyFaultMetrics);
@@ -407,28 +409,28 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
       let zonalSuccessLatencyMetrics: IMetric[] = stats2.map(x => {
 
         keyPrefix = AvailabilityAndLatencyMetrics.nextChar(keyPrefix);
-        return AvailabilityAndLatencyMetrics.createZonalLatencyMetrics({
+        return AvailabilityAndLatencyMetrics.createZonalAverageLatencyMetric({
           label: x + ' Success Latency',
           metricDetails: props.latencyMetricDetails,
           metricType: LatencyMetricType.SUCCESS_LATENCY,
           statistic: x,
           availabilityZoneId: availabilityZoneId,
           keyPrefix: keyPrefix,
-        })[0];
+        });
       });
 
       stats2 = props.latencyMetricDetails.graphedFaultStatistics ? props.latencyMetricDetails.graphedFaultStatistics : ['p99'];
 
       let zonalFaultLatencyMetrics: IMetric[] = stats2.map(x => {
         keyPrefix = AvailabilityAndLatencyMetrics.nextChar(keyPrefix);
-        return AvailabilityAndLatencyMetrics.createZonalLatencyMetrics({
+        return AvailabilityAndLatencyMetrics.createZonalAverageLatencyMetric({
           label: x + ' Fault Latency',
           metricDetails: props.latencyMetricDetails,
           metricType: LatencyMetricType.FAULT_LATENCY,
           statistic: x,
           availabilityZoneId: availabilityZoneId,
           keyPrefix: keyPrefix,
-        })[0];
+        });
       });
 
       latencyMetrics2 = zonalSuccessLatencyMetrics.concat(zonalFaultLatencyMetrics);
@@ -640,7 +642,7 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
           max: 20,
           min: 0,
           label: 'Fault Rate',
-          showUnits: false
+          showUnits: false,
         },
         leftAnnotations: [
           {
