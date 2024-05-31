@@ -6,6 +6,10 @@ import { ServiceAvailabilityAndLatencyDashboardProps } from './props/ServiceAvai
 import { AvailabilityAndLatencyMetrics } from '../metrics/AvailabilityAndLatencyMetrics';
 import { AvailabilityMetricProps } from '../metrics/props/AvailabilityMetricProps';
 import { LatencyMetricProps } from '../metrics/props/LatencyMetricProps';
+import { RegionalAvailabilityMetrics } from '../metrics/RegionalAvailabilityMetrics';
+import { RegionalLatencyMetrics } from '../metrics/RegionalLatencyMetrics';
+import { ZonalAvailabilityMetrics } from '../metrics/ZonalAvailabilityMetrics';
+import { ZonalLatencyMetrics } from '../metrics/ZonalLatencyMetrics';
 import { IOperation } from '../services/IOperation';
 import { IOperationMetricDetails } from '../services/IOperationMetricDetails';
 import { AvailabilityMetricType } from '../utilities/AvailabilityMetricType';
@@ -26,7 +30,7 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
       width: 24,
       title: Fn.ref('AWS::Region') + ' TPS',
       region: Fn.ref('AWS::Region'),
-      left: AvailabilityAndLatencyMetrics.createRegionalServiceAvailabilityMetrics({
+      left: RegionalAvailabilityMetrics.createRegionalServiceAvailabilityMetrics({
         label: Fn.ref('AWS::Region') + ' tps',
         period: props.service.period,
         availabilityMetricProps: props.service.operations.filter(x => x.critical).map(x => {
@@ -65,7 +69,7 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
         width: 8,
         title: availabilityZoneId + ' TPS',
         region: Fn.ref('AWS::Region'),
-        left: AvailabilityAndLatencyMetrics.createZonalServiceAvailabilityMetrics(zonalMetricProps),
+        left: ZonalAvailabilityMetrics.createZonalServiceAvailabilityMetrics(zonalMetricProps),
         statistic: 'Sum',
         leftYAxis: {
           label: 'TPS',
@@ -143,7 +147,7 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
       width: 24,
       title: Fn.ref('AWS::Region') + ' Availability',
       region: Fn.ref('AWS::Region'),
-      left: AvailabilityAndLatencyMetrics.createRegionalServiceAvailabilityMetrics({
+      left: RegionalAvailabilityMetrics.createRegionalServiceAvailabilityMetrics({
         label: Fn.ref('AWS::Region') + ' availability',
         period: props.service.period,
         availabilityMetricProps: this.createRegionalAvailabilityMetricProps(
@@ -157,7 +161,7 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
         label: 'Availability',
         showUnits: false,
       },
-      right: AvailabilityAndLatencyMetrics.createRegionalServiceAvailabilityMetrics({
+      right: RegionalAvailabilityMetrics.createRegionalServiceAvailabilityMetrics({
         label: Fn.ref('AWS::Region') + ' faults',
         period: props.service.period,
         availabilityMetricProps: this.createRegionalAvailabilityMetricProps(
@@ -187,7 +191,7 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
         width: 8,
         title: availabilityZoneId + ' Availability',
         region: Fn.ref('AWS::Region'),
-        left: AvailabilityAndLatencyMetrics.createZonalServiceAvailabilityMetrics({
+        left: ZonalAvailabilityMetrics.createZonalServiceAvailabilityMetrics({
           label: availabilityZoneId + ' availability',
           period: props.service.period,
           availabilityMetricProps: this.createZonalAvailabilityMetricProps(
@@ -203,7 +207,7 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
           label: 'Availability',
           showUnits: false,
         },
-        right: AvailabilityAndLatencyMetrics.createZonalServiceAvailabilityMetrics({
+        right: ZonalAvailabilityMetrics.createZonalServiceAvailabilityMetrics({
           label: availabilityZoneId + ' faults',
           period: props.service.period,
           availabilityMetricProps: this.createZonalAvailabilityMetricProps(
@@ -244,7 +248,7 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
       width: 24,
       title: Fn.ref('AWS::Region') + ' Latency',
       region: Fn.ref('AWS::Region'),
-      left: AvailabilityAndLatencyMetrics.createRegionalServiceLatencyMetrics({
+      left: RegionalLatencyMetrics.createRegionalServiceLatencyCountMetrics({
         label: Fn.ref('AWS::Region') + ' latency',
         period: props.service.period,
         latencyMetricProps: this.createRegionalLatencyMetricProps(
@@ -275,7 +279,7 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
         width: 8,
         title: availabilityZoneId + ' Latency',
         region: Fn.ref('AWS::Region'),
-        left: AvailabilityAndLatencyMetrics.createZonalServiceLatencyMetrics({
+        left: ZonalLatencyMetrics.createZonalServiceLatencyMetrics({
           label: availabilityZoneId + ' latency',
           period: props.service.period,
           latencyMetricProps: this.createZonalLatencyMetricProps(
@@ -291,6 +295,13 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
           label: 'High latency count',
           showUnits: false,
         },
+        leftAnnotations: [
+          {
+            color: Color.RED,
+            label: 'High severity',
+            value: props.service.faultCountThreshold,
+          }
+        ]
       }));
     }
 
@@ -374,9 +385,9 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
   ) : LatencyMetricProps[] {
     return criticalOperations.reduce((filtered, value) => {
       if (isCanary && value.canaryMetricDetails !== undefined && value.canaryMetricDetails != null) {
-        filtered.push(value.canaryMetricDetails.canaryAvailabilityMetricDetails);
+        filtered.push(value.canaryMetricDetails.canaryLatencyMetricDetails);
       } else if (!isCanary) {
-        filtered.push(value.serverSideAvailabilityMetricDetails);
+        filtered.push(value.serverSideLatencyMetricDetails);
       }
       return filtered;
     }, [] as IOperationMetricDetails[])
@@ -439,7 +450,7 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
       let usingMetrics: {[key: string]: IMetric} = {};
 
       props.service.operations.filter(x => x.critical == true).forEach(x => {
-        usingMetrics[`${keyPrefix}${counter++}`] = AvailabilityAndLatencyMetrics.createZonalAvailabilityMetric({
+        usingMetrics[`${keyPrefix}${counter++}`] = ZonalAvailabilityMetrics.createZonalAvailabilityMetric({
           availabilityZoneId: availabilityZoneId,
           metricDetails: x.serverSideAvailabilityMetricDetails,
           label: availabilityZoneId + ' ' + x.operationName + ' fault count',

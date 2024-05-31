@@ -6,7 +6,10 @@ import { IFunction } from 'aws-cdk-lib/aws-lambda';
 import { Construct, IConstruct } from 'constructs';
 import { IContributionDefinition, InsightRuleBody } from './InsightRuleBody';
 import { IAvailabilityZoneMapper } from '../azmapper/IAvailabilityZoneMapper';
-import { AvailabilityAndLatencyMetrics } from '../metrics/AvailabilityAndLatencyMetrics';
+import { RegionalAvailabilityMetrics } from '../metrics/RegionalAvailabilityMetrics';
+import { RegionalLatencyMetrics } from '../metrics/RegionalLatencyMetrics';
+import { ZonalAvailabilityMetrics } from '../metrics/ZonalAvailabilityMetrics';
+import { ZonalLatencyMetrics } from '../metrics/ZonalLatencyMetrics';
 import { IContributorInsightRuleDetails } from '../services/IContributorInsightRuleDetails';
 import { IOperation } from '../services/IOperation';
 import { IOperationMetricDetails } from '../services/IOperationMetricDetails';
@@ -41,7 +44,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
       threshold: metricDetails.successAlarmThreshold,
       actionsEnabled: false,
       treatMissingData: TreatMissingData.IGNORE,
-      metric: AvailabilityAndLatencyMetrics.createZonalAvailabilityMetric({
+      metric: ZonalAvailabilityMetrics.createZonalAvailabilityMetric({
         availabilityZoneId: availabilityZoneId,
         label: availabilityZoneId + ' availability',
         metricDetails: metricDetails,
@@ -74,7 +77,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
       threshold: metricDetails.successAlarmThreshold,
       actionsEnabled: false,
       treatMissingData: TreatMissingData.IGNORE,
-      metric: AvailabilityAndLatencyMetrics.createZonalAverageLatencyMetric({
+      metric: ZonalLatencyMetrics.createZonalAverageLatencyMetric({
         availabilityZoneId: availabilityZoneId,
         label: availabilityZoneId + ' ' + metricDetails.alarmStatistic + ' latency',
         metricDetails: metricDetails,
@@ -131,14 +134,14 @@ export class AvailabilityAndLatencyAlarmsAndRules {
     nameSuffix?: string,
   ): IAlarm {
 
-    let zonalFaults: IMetric = AvailabilityAndLatencyMetrics.createZonalAvailabilityMetric({
+    let zonalFaults: IMetric = ZonalAvailabilityMetrics.createZonalAvailabilityMetric({
       availabilityZoneId: availabilityZoneId,
       metricDetails: metricDetails,
       metricType: AvailabilityMetricType.FAULT_COUNT,
       keyPrefix: 'a',
     });
 
-    let regionalFaults: IMetric = AvailabilityAndLatencyMetrics.createRegionalAvailabilityMetric({
+    let regionalFaults: IMetric = RegionalAvailabilityMetrics.createRegionalAvailabilityMetric({
       metricDetails: metricDetails,
       metricType: AvailabilityMetricType.FAULT_COUNT,
       keyPrefix: 'b',
@@ -403,7 +406,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
     outlierThreshold: number,
     nameSuffix ?: string,
   ): IAlarm {
-    let zonalLatency: IMetric = AvailabilityAndLatencyMetrics.createZonalCountLatencyMetric({
+    let zonalLatency: IMetric = ZonalLatencyMetrics.createZonalCountLatencyMetric({
       availabilityZoneId: availabilityZoneId,
       label: availabilityZoneId + '-' + metricDetails.operationName + '-high-latency-requests',
       metricDetails: metricDetails,
@@ -412,7 +415,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
       keyPrefix: 'a',
     });
 
-    let regionalLatency: IMetric = AvailabilityAndLatencyMetrics.createRegionalCountLatencyMetric({
+    let regionalLatency: IMetric = RegionalLatencyMetrics.createRegionalLatencyCountMetric({
       label: Fn.ref('AWS::Region') + '-' + metricDetails.operationName + '-high-latency-requests',
       metricDetails: metricDetails,
       metricType: LatencyMetricType.SUCCESS_LATENCY,
@@ -786,7 +789,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
       threshold: metricDetails.successAlarmThreshold,
       actionsEnabled: false,
       treatMissingData: TreatMissingData.IGNORE,
-      metric: AvailabilityAndLatencyMetrics.createRegionalAvailabilityMetric({
+      metric: RegionalAvailabilityMetrics.createRegionalAvailabilityMetric({
         label: Fn.ref('AWS::Region') + ' availability',
         metricDetails: metricDetails,
         metricType: AvailabilityMetricType.SUCCESS_RATE,
@@ -811,7 +814,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
       threshold: metricDetails.successAlarmThreshold,
       actionsEnabled: false,
       treatMissingData: TreatMissingData.IGNORE,
-      metric: AvailabilityAndLatencyMetrics.createRegionalAverageLatencyMetric({
+      metric: RegionalLatencyMetrics.createRegionalAverageLatencyMetric({
         label: Fn.ref('AWS::Region') + ' ' + metricDetails.alarmStatistic + ' latency',
         metricDetails: metricDetails,
         metricType: LatencyMetricType.SUCCESS_LATENCY,

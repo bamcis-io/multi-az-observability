@@ -8,7 +8,12 @@ import { OperationAvailabilityAndLatencyDashboardProps } from './props/Operation
 import { OperationAvailabilityWidgetProps } from './props/OperationAvailabilityWidgetProps';
 import { OperationLatencyWidgetProps } from './props/OperationLatencyWidgetProps';
 import { IAvailabilityZoneMapper } from '../azmapper/IAvailabilityZoneMapper';
+import { ApplicationLoadBalancerMetrics } from '../metrics/ApplicationLoadBalancerMetrics';
 import { AvailabilityAndLatencyMetrics } from '../metrics/AvailabilityAndLatencyMetrics';
+import { RegionalAvailabilityMetrics } from '../metrics/RegionalAvailabilityMetrics';
+import { RegionalLatencyMetrics } from '../metrics/RegionalLatencyMetrics';
+import { ZonalAvailabilityMetrics } from '../metrics/ZonalAvailabilityMetrics';
+import { ZonalLatencyMetrics } from '../metrics/ZonalLatencyMetrics';
 import { AvailabilityMetricType } from '../utilities/AvailabilityMetricType';
 import { LatencyMetricType } from '../utilities/LatencyMetricType';
 
@@ -62,7 +67,7 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
     for (let i = 0; i < availabilityZoneIds.length; i++) {
       let availabilityZoneId: string = availabilityZoneIds[i];
 
-      zonalServerSideHighLatencyMetrics.push(AvailabilityAndLatencyMetrics.createZonalCountLatencyMetric({
+      zonalServerSideHighLatencyMetrics.push(ZonalLatencyMetrics.createZonalCountLatencyMetric({
         availabilityZoneId: availabilityZoneId,
         metricDetails: props.operation.serverSideLatencyMetricDetails,
         label: availabilityZoneId + ' high latency responses',
@@ -71,7 +76,7 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
         keyPrefix: keyPrefix,
       }));
 
-      zonalServerSideFaultCountMetrics.push(AvailabilityAndLatencyMetrics.createZonalAvailabilityMetric({
+      zonalServerSideFaultCountMetrics.push(ZonalAvailabilityMetrics.createZonalAvailabilityMetric({
         availabilityZoneId: availabilityZoneId,
         metricDetails: props.operation.serverSideAvailabilityMetricDetails,
         label: availabilityZoneId + ' fault count',
@@ -80,7 +85,7 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
       }));
 
       if (props.operation.canaryMetricDetails !== undefined && props.operation.canaryMetricDetails != null) {
-        zonalCanaryHighLatencyMetrics.push(AvailabilityAndLatencyMetrics.createZonalCountLatencyMetric({
+        zonalCanaryHighLatencyMetrics.push(ZonalLatencyMetrics.createZonalCountLatencyMetric({
           availabilityZoneId: availabilityZoneId,
           metricDetails: props.operation.canaryMetricDetails.canaryLatencyMetricDetails,
           label: availabilityZoneId + ' high latency responses',
@@ -89,7 +94,7 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
           keyPrefix: keyPrefix,
         }));
 
-        zonalCanaryFaultCountMetrics.push(AvailabilityAndLatencyMetrics.createZonalAvailabilityMetric({
+        zonalCanaryFaultCountMetrics.push(ZonalAvailabilityMetrics.createZonalAvailabilityMetric({
           availabilityZoneId: availabilityZoneId,
           metricDetails: props.operation.canaryMetricDetails.canaryAvailabilityMetricDetails,
           label: availabilityZoneId + ' fault count',
@@ -141,7 +146,7 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
       title: Fn.sub('${AWS::Region} TPS'),
       region: Fn.sub('${AWS::Region}'),
       left: [
-        AvailabilityAndLatencyMetrics.createRegionalAvailabilityMetric({
+        RegionalAvailabilityMetrics.createRegionalAvailabilityMetric({
           label: Fn.ref('AWS::Region') + ' tps',
           metricDetails: props.operation.serverSideAvailabilityMetricDetails,
           metricType: AvailabilityMetricType.REQUEST_COUNT,
@@ -163,7 +168,7 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
         title: availabilityZoneId + ' TPS',
         region: Fn.sub('${AWS::Region}'),
         left: [
-          AvailabilityAndLatencyMetrics.createZonalAvailabilityMetric({
+          ZonalAvailabilityMetrics.createZonalAvailabilityMetric({
             availabilityZoneId: availabilityZoneId,
             label: availabilityZoneId + ' tps',
             metricDetails: props.operation.serverSideAvailabilityMetricDetails,
@@ -196,7 +201,7 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
       title: Fn.sub('${AWS::Region} Availability'),
       region: Fn.sub('${AWS::Region}'),
       left: [
-        AvailabilityAndLatencyMetrics.createRegionalAvailabilityMetric({
+        RegionalAvailabilityMetrics.createRegionalAvailabilityMetric({
           label: Fn.ref('AWS::Region') + ' availability',
           metricDetails: props.availabilityMetricDetails,
           metricType: AvailabilityMetricType.SUCCESS_RATE,
@@ -219,7 +224,7 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
         },
       ],
       right: [
-        AvailabilityAndLatencyMetrics.createRegionalAvailabilityMetric({
+        RegionalAvailabilityMetrics.createRegionalAvailabilityMetric({
           label: Fn.ref('AWS::Region') + ' fault count',
           metricDetails: props.availabilityMetricDetails,
           metricType: AvailabilityMetricType.FAULT_COUNT,
@@ -253,7 +258,7 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
         title: availabilityZoneId + ' Availability',
         region: Fn.sub('${AWS::Region}'),
         left: [
-          AvailabilityAndLatencyMetrics.createZonalAvailabilityMetric({
+          ZonalAvailabilityMetrics.createZonalAvailabilityMetric({
             availabilityZoneId: availabilityZoneId,
             label: availabilityZoneId + ' availability',
             metricDetails: props.availabilityMetricDetails,
@@ -277,7 +282,7 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
           },
         ],
         right: [
-          AvailabilityAndLatencyMetrics.createZonalAvailabilityMetric({
+          ZonalAvailabilityMetrics.createZonalAvailabilityMetric({
             availabilityZoneId: availabilityZoneId,
             label: availabilityZoneId + ' fault count',
             metricDetails: props.availabilityMetricDetails,
@@ -340,7 +345,7 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
 
     let latencySuccessMetrics: IMetric[] = stats.map(x => {
       keyPrefix = AvailabilityAndLatencyMetrics.nextChar(keyPrefix);
-      return AvailabilityAndLatencyMetrics.createRegionalAverageLatencyMetric({
+      return RegionalLatencyMetrics.createRegionalAverageLatencyMetric({
         label: x + ' Success Latency',
         metricDetails: props.latencyMetricDetails,
         metricType: LatencyMetricType.SUCCESS_LATENCY,
@@ -353,7 +358,7 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
 
     let latencyFaultMetrics: IMetric[] = stats.map(x => {
       keyPrefix = AvailabilityAndLatencyMetrics.nextChar(keyPrefix);
-      return AvailabilityAndLatencyMetrics.createRegionalAverageLatencyMetric({
+      return RegionalLatencyMetrics.createRegionalAverageLatencyMetric({
         label: x + ' Fault Latency',
         metricDetails: props.latencyMetricDetails,
         metricType: LatencyMetricType.FAULT_LATENCY,
@@ -409,7 +414,7 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
       let zonalSuccessLatencyMetrics: IMetric[] = stats2.map(x => {
 
         keyPrefix = AvailabilityAndLatencyMetrics.nextChar(keyPrefix);
-        return AvailabilityAndLatencyMetrics.createZonalAverageLatencyMetric({
+        return ZonalLatencyMetrics.createZonalAverageLatencyMetric({
           label: x + ' Success Latency',
           metricDetails: props.latencyMetricDetails,
           metricType: LatencyMetricType.SUCCESS_LATENCY,
@@ -423,7 +428,7 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
 
       let zonalFaultLatencyMetrics: IMetric[] = stats2.map(x => {
         keyPrefix = AvailabilityAndLatencyMetrics.nextChar(keyPrefix);
-        return AvailabilityAndLatencyMetrics.createZonalAverageLatencyMetric({
+        return ZonalLatencyMetrics.createZonalAverageLatencyMetric({
           label: x + ' Fault Latency',
           metricDetails: props.latencyMetricDetails,
           metricType: LatencyMetricType.FAULT_LATENCY,
@@ -600,7 +605,7 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
       title: Fn.sub('${AWS::Region} Fault Rate'),
       region: Fn.sub('${AWS::Region}'),
       left: [
-        AvailabilityAndLatencyMetrics.createRegionalApplicationLoadBalancerFaultRateMetric(
+        ApplicationLoadBalancerMetrics.createRegionalApplicationLoadBalancerFaultRateMetric(
           loadBalancerFullName,
           props.operation.serverSideAvailabilityMetricDetails.period,
         ),
@@ -632,7 +637,7 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
         title: availabilityZoneId + ' Fault Rate',
         region: Fn.sub('${AWS::Region}'),
         left: [
-          AvailabilityAndLatencyMetrics.createZonalApplicationLoadBalancerFaultRateMetric(
+          ApplicationLoadBalancerMetrics.createZonalApplicationLoadBalancerFaultRateMetric(
             loadBalancerFullName,
             availabilityZoneName,
             props.operation.serverSideAvailabilityMetricDetails.period,
@@ -661,7 +666,7 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
       title: Fn.sub('${AWS::Region} Processed Bytes'),
       region: Fn.sub('${AWS::Region}'),
       left: [
-        AvailabilityAndLatencyMetrics.createRegionalApplicationLoadBalancerProcessedBytesMetric(
+        ApplicationLoadBalancerMetrics.createRegionalApplicationLoadBalancerProcessedBytesMetric(
           loadBalancerFullName,
           props.operation.serverSideAvailabilityMetricDetails.period,
         ),
@@ -683,7 +688,7 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
         title: availabilityZoneId + ' Processed Bytes',
         region: Fn.sub('${AWS::Region}'),
         left: [
-          AvailabilityAndLatencyMetrics.createZonalApplicationLoadBalancerProcessedBytesMetric(
+          ApplicationLoadBalancerMetrics.createZonalApplicationLoadBalancerProcessedBytesMetric(
             loadBalancerFullName,
             availabilityZoneName,
             props.operation.serverSideAvailabilityMetricDetails.period,

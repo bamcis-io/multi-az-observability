@@ -3,6 +3,7 @@
 ## TODO
 
 - Add algorithms for z-score outlier detection
+- Investigate why TC is producing fractional numbers occasionally
 
 ## problems worth noting
 

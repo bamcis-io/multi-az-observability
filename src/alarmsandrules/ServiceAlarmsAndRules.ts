@@ -6,6 +6,7 @@ import { IOperationAlarmsAndRules } from './IOperationAlarmsAndRules';
 import { IServiceAlarmsAndRules } from './IServiceAlarmsAndRules';
 import { ServiceAlarmsAndRulesProps } from './props/ServiceAlarmsAndRulesProps';
 import { AvailabilityAndLatencyMetrics } from '../metrics/AvailabilityAndLatencyMetrics';
+import { RegionalAvailabilityMetrics } from '../metrics/RegionalAvailabilityMetrics';
 import { IService } from '../services/IService';
 import { AvailabilityMetricType } from '../utilities/AvailabilityMetricType';
 
@@ -79,7 +80,7 @@ export class ServiceAlarmsAndRules extends Construct implements IServiceAlarmsAn
     props.service.operations.filter(x => x.critical == true).forEach(x => {
       keyPrefix = AvailabilityAndLatencyMetrics.nextChar(keyPrefix);
 
-      regionalOperationFaultCountMetrics[keyPrefix] = AvailabilityAndLatencyMetrics.createRegionalAvailabilityMetric({
+      regionalOperationFaultCountMetrics[keyPrefix] = RegionalAvailabilityMetrics.createRegionalAvailabilityMetric({
         label: x.operationName + ' fault count',
         metricDetails: x.serverSideAvailabilityMetricDetails,
         metricType: AvailabilityMetricType.FAULT_COUNT,

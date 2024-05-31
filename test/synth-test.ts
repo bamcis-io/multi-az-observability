@@ -11,6 +11,7 @@ import { OperationMetricDetails } from '../src/services/OperationMetricDetails';
 import { MetricDimensions } from '../src/services/props/MetricDimensions';
 import { Service } from '../src/services/Service';
 import { ServiceMetricDetails } from '../src/services/ServiceMetricDetails';
+import { OutlierDetectionAlgorithm } from '../src/utilities/OutlierDetectionAlgorithm';
 
 
 const app = new cdk.App();
@@ -171,5 +172,7 @@ new InstrumentedServiceMultiAZObservability(stack, 'MAZObservability', {
   interval: Duration.minutes(30),
   assetsBucketParameterName: 'AssetsBucket',
   assetsBucketPrefixParameterName: 'AssetsBucketPrefix',
+  outlierDetectionAlgorithm: OutlierDetectionAlgorithm.STATIC,
 });
+
 app.synth();
