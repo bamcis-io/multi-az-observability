@@ -300,8 +300,8 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
             color: Color.RED,
             label: 'High severity',
             value: props.service.faultCountThreshold,
-          }
-        ]
+          },
+        ],
       }));
     }
 
