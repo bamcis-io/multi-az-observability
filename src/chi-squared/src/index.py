@@ -236,31 +236,40 @@ def get_metric_data(event, metrics):
     # keys and then access the original dict
     for timestamp_key in sorted(az_counts.keys(), reverse = True):
         vals = list(az_counts[timestamp_key].values())
-        chi_sq_result = chisquare(vals)
+        
+        if not all(v == 0 for v in vals):
+            chi_sq_result = chisquare(vals)
 
-        if len(vals) > 0:
-            expected = sum(vals) / len(vals)
-            p_value: float64 = chi_sq_result.pvalue
-            metrics.set_property("PValue_" + str(timestamp_key), str(p_value))
+            if len(vals) > 0:
+                expected = sum(vals) / len(vals)
+                p_value: float64 = chi_sq_result.pvalue
+                metrics.set_property("PValue_" + str(timestamp_key), str(p_value))
 
-        for az in az_counts[timestamp_key]:
-            # set the farthest from the average to initially be the first AZ
-            farthest_from_expected = az
-            break
+                for az in az_counts[timestamp_key]:
+                    # set the farthest from the average to initially be the first AZ
+                    farthest_from_expected = az
+                    break
 
-        # compare the other AZs for this timestamp and find the one
-        # farthest from the average
-        for az in az_counts[timestamp_key]:
-            if abs(az_counts[timestamp_key][az] - expected) > abs(az_counts[timestamp_key][farthest_from_expected] - expected):
-                farthest_from_expected = az        
+                # compare the other AZs for this timestamp and find the one
+                # farthest from the average
+                for az in az_counts[timestamp_key]:
+                    if abs(az_counts[timestamp_key][az] - expected) > abs(az_counts[timestamp_key][farthest_from_expected] - expected):
+                        farthest_from_expected = az        
 
-        # if the p-value result is less than the threshold
-        # and the one that is farthest from is the AZ we are
-        # concerned with, then there is a statistically significant
-        # difference and emit a 1 value
-        if not numpy.isnan(p_value) and p_value <= threshold and az_metric_key == farthest_from_expected:
-            results.append(1)
+                # if the p-value result is less than the threshold
+                # and the one that is farthest from is the AZ we are
+                # concerned with, then there is a statistically significant
+                # difference and emit a 1 value
+                if not numpy.isnan(p_value) and p_value <= threshold and az_metric_key == farthest_from_expected:
+                    results.append(1)
+                else:
+                    results.append(0)
+            else:
+                metrics.set_property("PValue_" + str(timestamp_key), "No values for timestamp.")
+                results.append(0)
+            
         else:
+            metrics.set_property("PValue_" + str(timestamp_key), "All values are zero.")
             results.append(0)
 
     data_results = {
