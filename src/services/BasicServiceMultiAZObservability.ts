@@ -2,6 +2,7 @@ import { Fn } from 'aws-cdk-lib';
 import { Alarm, AlarmRule, ComparisonOperator, CompositeAlarm, Dashboard, IAlarm, IMetric, MathExpression, Metric, TreatMissingData, Unit } from 'aws-cdk-lib/aws-cloudwatch';
 import { CfnNatGateway } from 'aws-cdk-lib/aws-ec2';
 import { BaseLoadBalancer, HttpCodeElb, HttpCodeTarget, IApplicationLoadBalancer, ILoadBalancerV2 } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
+import { IFunction } from 'aws-cdk-lib/aws-lambda';
 import { Construct } from 'constructs';
 import { IBasicServiceMultiAZObservability } from './IBasicServiceMultiAZObservability';
 import { BasicServiceMultiAZObservabilityProps } from './props/BasicServiceMultiAZObservabilityProps';
@@ -13,7 +14,6 @@ import { BasicServiceDashboard } from '../dashboards/BasicServiceDashboard';
 import { AvailabilityAndLatencyMetrics } from '../metrics/AvailabilityAndLatencyMetrics';
 import { OutlierDetectionAlgorithm } from '../utilities/OutlierDetectionAlgorithm';
 import { ZScoreFunction } from '../z-score/ZScoreFunction';
-import { IFunction } from 'aws-cdk-lib/aws-lambda';
 
 /**
  * Basic observability for a service using metrics from
@@ -94,9 +94,8 @@ export class BasicServiceMultiAZObservability extends Construct
 
     if (props.outlierDetectionAlgorithm == OutlierDetectionAlgorithm.CHI_SQUARED) {
       this.outlierDetectionFunction = new ChiSquaredFunction(this, 'ChiSquaredFunction', {}).function;
-    }
-    else if (props.outlierDetectionAlgorithm == OutlierDetectionAlgorithm.Z_SCORE) {
-      this.outlierDetectionFunction = new ZScoreFunction(this, "ZScoreFunction", {}).function;
+    } else if (props.outlierDetectionAlgorithm == OutlierDetectionAlgorithm.Z_SCORE) {
+      this.outlierDetectionFunction = new ZScoreFunction(this, 'ZScoreFunction', {}).function;
     }
 
     // Create metrics and alarms for just load balancers if they were provided

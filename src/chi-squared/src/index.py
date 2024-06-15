@@ -226,7 +226,7 @@ def get_metric_data(event, metrics):
         vals = list(az_counts[timestamp_key].values())
         chi_sq_result = chisquare(vals)
         expected = sum(vals) / len(vals)
-        p_value: float64 = chi_sq_result.palue
+        p_value: float64 = chi_sq_result.pvalue
 
         for az in az_counts[timestamp_key]:
             # set the farthest from the average to initially be the first AZ

@@ -236,8 +236,7 @@ export class InstrumentedServiceMultiAZObservability extends Construct implement
 
       this.outlierDetectionFunction = new ChiSquaredFunction(chiSquaredStack, 'Function', {
       }).function;
-    }
-    else if (props.outlierDetectionAlgorithm == OutlierDetectionAlgorithm.Z_SCORE) {
+    } else if (props.outlierDetectionAlgorithm == OutlierDetectionAlgorithm.Z_SCORE) {
       let zscoreStack: StackWithDynamicSource = new StackWithDynamicSource(this, 'ZScoreStack', {
         assetsBucketsParameterName: props.assetsBucketParameterName,
         assetsBucketPrefixParameterName: props.assetsBucketPrefixParameterName,
