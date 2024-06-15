@@ -3,7 +3,6 @@
 ## TODO
 
 - Add algorithms for z-score outlier detection
-- Investigate why TC is producing fractional numbers occasionally
 
 ## problems worth noting
 
@@ -12,8 +11,7 @@
 from the main file, which caused an error that something couldn't be imported from outside a module
 when trying to use the construct from .NET
 - Building CDK constructs that produce reusable CFN templates, for example, for use in workshop studio,
-need to specific assets bucket and prefix in the default sythensizer as a variable and then pass parameters from parent
-to nested stack with the variable name
+need to specific assets bucket and prefix in the default sythensizer as a variable and then pass parameters from parent to nested stack with the variable name
 - Packaging content synth'd by CDK for use in a CI/CD pipeline
 - Using typescript property naming for interfaces/classes that need to be converted to a json string (like an insight rule body)
 - Testing new local builds of nuget packages for .net without having to increment the version each test by deleting 

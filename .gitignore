@@ -48,6 +48,10 @@ src/chi-squared/src/package
 src/chi-squared/src/scipy
 src/chi-squared/src/chi-squared.zip
 src/chi-squared/src/scipy-layer.zip
+src/z-score/src/package
+src/z-score/src/numpy
+src/z-score/src/z-score.zip
+src/z-score/src/numpy-layer.zip
 /test-reports/
 junit.xml
 /coverage/

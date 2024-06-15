@@ -3734,7 +3734,7 @@
   },
   "name": "multi-az-observability",
   "readme": {
-    "markdown": "# multi-az-observability\n\n## TODO\n\n- Add algorithms for z-score outlier detection\n\n## problems worth noting\n\n- Named Java package with hyphens, which broke java file syntax and spewed tons of errors\n- Typescript class and interfaces that were being exported were importing other classes/interfaces\nfrom the main file, which caused an error that something couldn't be imported from outside a module\nwhen trying to use the construct from .NET\n- Building CDK constructs that produce reusable CFN templates, for example, for use in workshop studio,\nneed to specific assets bucket and prefix in the default sythensizer as a variable and then pass parameters from parent\nto nested stack with the variable name\n- Packaging content synth'd by CDK for use in a CI/CD pipeline\n- Using typescript property naming for interfaces/classes that need to be converted to a json string (like an insight rule body)\n- Testing new local builds of nuget packages for .net without having to increment the version each test by deleting\nexisting content from the nuget package cache\n- Trouble using AWS::LanguageExtensions to use intrinsic functions with Fn::GetAtt, instead used the last letter of the az\nname as the attribute to reference which worked\n- Starting with projen and understanding how it manages a project and how to build your own test\n- Copying files over for bundled lambda functions in the projen definition\n- Building arm64 Lambda functions locally for packaging and setting default platform via environment variable\n- Finding first parent stack of a construct to be able to add CfnParameters to it or tranforms\n- Understanding how props and constructs are intended to be built and reconciling required other non-construct classes that other languages would need to use to define things like a Service and Operation.\n- Focusing too much on how logic would be translated into other languages, not realizing the typescript implementation still\nruns in the background and the language specific results are just shims to calling the original code\n- Packaging Lambda functions with external dependencies, build the function/zip as part of the build and package the zip with the construct instead of defining bundling options"
+    "markdown": "# multi-az-observability\n\n## TODO\n\n- Add algorithms for z-score outlier detection\n\n## problems worth noting\n\n- Named Java package with hyphens, which broke java file syntax and spewed tons of errors\n- Typescript class and interfaces that were being exported were importing other classes/interfaces\nfrom the main file, which caused an error that something couldn't be imported from outside a module\nwhen trying to use the construct from .NET\n- Building CDK constructs that produce reusable CFN templates, for example, for use in workshop studio,\nneed to specific assets bucket and prefix in the default sythensizer as a variable and then pass parameters from parent to nested stack with the variable name\n- Packaging content synth'd by CDK for use in a CI/CD pipeline\n- Using typescript property naming for interfaces/classes that need to be converted to a json string (like an insight rule body)\n- Testing new local builds of nuget packages for .net without having to increment the version each test by deleting\nexisting content from the nuget package cache\n- Trouble using AWS::LanguageExtensions to use intrinsic functions with Fn::GetAtt, instead used the last letter of the az\nname as the attribute to reference which worked\n- Starting with projen and understanding how it manages a project and how to build your own test\n- Copying files over for bundled lambda functions in the projen definition\n- Building arm64 Lambda functions locally for packaging and setting default platform via environment variable\n- Finding first parent stack of a construct to be able to add CfnParameters to it or tranforms\n- Understanding how props and constructs are intended to be built and reconciling required other non-construct classes that other languages would need to use to define things like a Service and Operation.\n- Focusing too much on how logic would be translated into other languages, not realizing the typescript implementation still\nruns in the background and the language specific results are just shims to calling the original code\n- Packaging Lambda functions with external dependencies, build the function/zip as part of the build and package the zip with the construct instead of defining bundling options"
   },
   "repository": {
     "type": "git",
@@ -4280,7 +4280,7 @@
         },
         "locationInModule": {
           "filename": "src/services/BasicServiceMultiAZObservability.ts",
-          "line": 78
+          "line": 79
         },
         "parameters": [
           {
@@ -4309,7 +4309,7 @@
       "kind": "class",
       "locationInModule": {
         "filename": "src/services/BasicServiceMultiAZObservability.ts",
-        "line": 21
+        "line": 22
       },
       "name": "BasicServiceMultiAZObservability",
       "properties": [
@@ -4320,7 +4320,7 @@
           },
           "locationInModule": {
             "filename": "src/services/BasicServiceMultiAZObservability.ts",
-            "line": 56
+            "line": 57
           },
           "name": "aggregateZonalIsolatedImpactAlarms",
           "overrides": "multi-az-observability.IBasicServiceMultiAZObservability",
@@ -4340,7 +4340,7 @@
           },
           "locationInModule": {
             "filename": "src/services/BasicServiceMultiAZObservability.ts",
-            "line": 38
+            "line": 39
           },
           "name": "serviceName",
           "overrides": "multi-az-observability.IBasicServiceMultiAZObservability",
@@ -4355,7 +4355,7 @@
           },
           "locationInModule": {
             "filename": "src/services/BasicServiceMultiAZObservability.ts",
-            "line": 50
+            "line": 51
           },
           "name": "albZonalIsolatedImpactAlarms",
           "optional": true,
@@ -4376,7 +4376,7 @@
           },
           "locationInModule": {
             "filename": "src/services/BasicServiceMultiAZObservability.ts",
-            "line": 33
+            "line": 34
           },
           "name": "applicationLoadBalancers",
           "optional": true,
@@ -4397,7 +4397,7 @@
           },
           "locationInModule": {
             "filename": "src/services/BasicServiceMultiAZObservability.ts",
-            "line": 61
+            "line": 62
           },
           "name": "dashboard",
           "optional": true,
@@ -4412,7 +4412,7 @@
           },
           "locationInModule": {
             "filename": "src/services/BasicServiceMultiAZObservability.ts",
-            "line": 28
+            "line": 29
           },
           "name": "natGateways",
           "optional": true,
@@ -4438,7 +4438,7 @@
           },
           "locationInModule": {
             "filename": "src/services/BasicServiceMultiAZObservability.ts",
-            "line": 44
+            "line": 45
           },
           "name": "natGWZonalIsolatedImpactAlarms",
           "optional": true,
@@ -7267,7 +7267,7 @@
         },
         "locationInModule": {
           "filename": "src/services/InstrumentedServiceMultiAZObservability.ts",
-          "line": 79
+          "line": 80
         },
         "parameters": [
           {
@@ -7296,7 +7296,7 @@
       "kind": "class",
       "locationInModule": {
         "filename": "src/services/InstrumentedServiceMultiAZObservability.ts",
-        "line": 33
+        "line": 34
       },
       "name": "InstrumentedServiceMultiAZObservability",
       "properties": [
@@ -7309,7 +7309,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/InstrumentedServiceMultiAZObservability.ts",
-            "line": 47
+            "line": 48
           },
           "name": "perOperationZonalImpactAlarms",
           "overrides": "multi-az-observability.IInstrumentedServiceMultiAZObservability",
@@ -7335,7 +7335,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/InstrumentedServiceMultiAZObservability.ts",
-            "line": 52
+            "line": 53
           },
           "name": "serviceAlarms",
           "overrides": "multi-az-observability.IInstrumentedServiceMultiAZObservability",
@@ -7352,7 +7352,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/InstrumentedServiceMultiAZObservability.ts",
-            "line": 75
+            "line": 76
           },
           "name": "canaryLogGroup",
           "optional": true,
@@ -7369,7 +7369,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/InstrumentedServiceMultiAZObservability.ts",
-            "line": 57
+            "line": 58
           },
           "name": "operationDashboards",
           "optional": true,
@@ -7391,7 +7391,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/InstrumentedServiceMultiAZObservability.ts",
-            "line": 62
+            "line": 63
           },
           "name": "serviceDashboard",
           "optional": true,
@@ -9818,5 +9818,5 @@
     }
   },
   "version": "0.0.1-alpha.1",
-  "fingerprint": "ynZdHvmOW7+7raHJ0sxkdaiaaHK5IdJpywLjDqLJ5Pw="
+  "fingerprint": "y+9Ay4oy4i2yOVb4IKNqLa7ozhiPr+bH6lhS6sbnr7Q="
 }

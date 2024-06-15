@@ -166,13 +166,13 @@ export class AvailabilityAndLatencyAlarmsAndRules {
     });
   }
 
-  static createZonalFaultRateChiSquaredOutlierAlarm(
+  static createZonalFaultRateOutlierAlarm(
     scope: IConstruct,
     metricDetails: IOperationMetricDetails,
     availabilityZoneId: string,
     allAvailabilityZoneIds: string[],
     outlierThreshold: number,
-    chiSquaredFunction: IFunction,
+    outlierDetectionFunction: IFunction,
     counter: number,
     nameSuffix?: string,
   ): IAlarm {
@@ -196,7 +196,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
 
     let outlierMetrics: IMetric = new MathExpression({
       expression:
-                `MAX(LAMBDA("${chiSquaredFunction.functionName}",` +
+                `MAX(LAMBDA("${outlierDetectionFunction.functionName}",` +
                 `"${outlierThreshold}",` +
                 `"${availabilityZoneId}",` +
                 `"${str}",` +
@@ -208,8 +208,8 @@ export class AvailabilityAndLatencyAlarmsAndRules {
       period: Duration.seconds(60),
     });
 
-    return new Alarm(scope, 'AZ' + counter + 'FaultIsolatedImpactAlarmChiSquared', {
-      alarmName: availabilityZoneId + `-${metricDetails.operationName.toLowerCase()}-chi-squared-majority-errors-impact` + nameSuffix,
+    return new Alarm(scope, 'AZ' + counter + 'FaultIsolatedImpactAlarmOutlier', {
+      alarmName: availabilityZoneId + `-${metricDetails.operationName.toLowerCase()}-majority-errors-impact` + nameSuffix,
       metric: outlierMetrics,
       threshold: 1,
       comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
@@ -219,12 +219,12 @@ export class AvailabilityAndLatencyAlarmsAndRules {
     });
   }
 
-  static createZonalFaultRateChiSquaredOutlierAlarmForAlb(
+  static createZonalFaultRateOutlierAlarmForAlb(
     scope: IConstruct,
     loadBalancers: IApplicationLoadBalancer[],
     availabilityZoneId: string,
     outlierThreshold: number,
-    chiSquaredFunction: IFunction,
+    outlierDetectionFunction: IFunction,
     azMapper: IAvailabilityZoneMapper,
     counter: number,
     evaluationPeriods: number,
@@ -259,7 +259,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
 
     let outlierMetrics: IMetric = new MathExpression({
       expression:
-                `MAX(LAMBDA("${chiSquaredFunction.functionName}",` +
+                `MAX(LAMBDA("${outlierDetectionFunction.functionName}",` +
                 `"${outlierThreshold}",` +
                 `"${availabilityZoneId}",` +
                 `"${str}",` +
@@ -271,8 +271,8 @@ export class AvailabilityAndLatencyAlarmsAndRules {
       period: Duration.seconds(60),
     });
 
-    return new Alarm(scope, 'AZ' + counter + 'AlbIsolatedImpactAlarmChiSquared', {
-      alarmName: availabilityZoneId + '-alb-chi-squared-majority-errors-impact' + nameSuffix,
+    return new Alarm(scope, 'AZ' + counter + 'AlbIsolatedImpactAlarmOutlier', {
+      alarmName: availabilityZoneId + '-alb-majority-errors-impact' + nameSuffix,
       metric: outlierMetrics,
       threshold: 1,
       comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
@@ -282,12 +282,12 @@ export class AvailabilityAndLatencyAlarmsAndRules {
     });
   }
 
-  static createZonalFaultRateChiSquaredOutlierAlarmForNatGW(
+  static createZonalFaultRateOutlierAlarmForNatGW(
     scope: IConstruct,
     natGateways: {[key: string]: CfnNatGateway[]},
     availabilityZoneId: string,
     outlierThreshold: number,
-    chiSquaredFunction: IFunction,
+    outlierDetectionFunction: IFunction,
     azMapper: IAvailabilityZoneMapper,
     counter: number,
     evaluationPeriods: number,
@@ -322,7 +322,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
 
     let outlierMetrics: IMetric = new MathExpression({
       expression:
-                `MAX(LAMBDA("${chiSquaredFunction.functionName}",` +
+                `MAX(LAMBDA("${outlierDetectionFunction.functionName}",` +
                 `"${outlierThreshold}",` +
                 `"${availabilityZoneId}",` +
                 `"${str}",` +
@@ -334,8 +334,8 @@ export class AvailabilityAndLatencyAlarmsAndRules {
       period: Duration.seconds(60),
     });
 
-    return new Alarm(scope, 'AZ' + counter + 'NatGWIsolatedImpactAlarmChiSquared', {
-      alarmName: availabilityZoneId + '-nat-gw-chi-squared-majority-errors-impact' + nameSuffix,
+    return new Alarm(scope, 'AZ' + counter + 'NatGWIsolatedImpactAlarmOutlier', {
+      alarmName: availabilityZoneId + '-nat-gw-majority-errors-impact' + nameSuffix,
       metric: outlierMetrics,
       threshold: 1,
       comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
@@ -345,13 +345,13 @@ export class AvailabilityAndLatencyAlarmsAndRules {
     });
   }
 
-  static createZonalHighLatencyChiSquaredOutlierAlarm(
+  static createZonalHighLatencyOutlierAlarm(
     scope: IConstruct,
     metricDetails: IOperationMetricDetails,
     availabilityZoneId: string,
     allAvailabilityZoneIds: string[],
     outlierThreshold: number,
-    chiSquaredFunction: IFunction,
+    outlierDetectionFunction: IFunction,
     counter: number,
     nameSuffix ?: string,
   ): IAlarm {
@@ -375,7 +375,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
 
     let outlierMetrics: IMetric = new MathExpression({
       expression:
-            `MAX(LAMBDA("${chiSquaredFunction.functionName}",` +
+            `MAX(LAMBDA("${outlierDetectionFunction.functionName}",` +
             `"${outlierThreshold}",` +
             `"${availabilityZoneId}",` +
             `"${str}",` +
@@ -387,8 +387,8 @@ export class AvailabilityAndLatencyAlarmsAndRules {
       period: Duration.seconds(60),
     });
 
-    return new Alarm(scope, metricDetails.operationName + 'AZ' + counter + 'LatencyIsolatedImpactAlarmChiSquared', {
-      alarmName: availabilityZoneId + `-${metricDetails.operationName.toLowerCase()}-chi-squared-majority-high-latency-impact` + nameSuffix,
+    return new Alarm(scope, metricDetails.operationName + 'AZ' + counter + 'LatencyIsolatedImpactAlarmOutlier', {
+      alarmName: availabilityZoneId + `-${metricDetails.operationName.toLowerCase()}-majority-high-latency-impact` + nameSuffix,
       metric: outlierMetrics,
       threshold: 1,
       comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,

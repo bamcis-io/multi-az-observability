@@ -42,6 +42,10 @@ const project = new awscdk.AwsCdkConstructLibrary({
     'src/chi-squared/src/scipy',
     'src/chi-squared/src/chi-squared.zip',
     'src/chi-squared/src/scipy-layer.zip',
+    'src/z-score/src/package',
+    'src/z-score/src/numpy',
+    'src/z-score/src/z-score.zip',
+    'src/z-score/src/numpy-layer.zip',
   ],
   packageName: 'multi-az-observability',
   publishToNuget: {
@@ -135,6 +139,32 @@ project.tasks.addTask('build-scipy-layer', {
   ],
 });
 
+project.tasks.addTask('build-numpy-layer', {
+  steps: [
+    {
+      exec: 'rm -rf src/z-score/src/numpy',
+    },
+    {
+      exec: 'rm -f src/z-score/src/numpy-layer.zip',
+    },
+    {
+      exec: 'mkdir src/z-score/src/numpy',
+    },
+    {
+      exec: 'mkdir -p lib/z-score/src',
+    },
+    {
+      exec: 'pip3 install numpy --only-binary=:all: --target src/z-score/src/numpy/python/lib/python3.12/site-packages --platform manylinux2014_aarch64',
+    },
+    {
+      exec: 'cd src/z-score/src/numpy && zip -r ../numpy-layer.zip .',
+    },
+    {
+      exec: 'cp src/z-score/src/numpy-layer.zip lib/z-score/src/numpy-layer.zip',
+    },
+  ],
+});
+
 project.tasks.addTask('build-chi-squared-function', {
   steps: [
     {
@@ -161,6 +191,32 @@ project.tasks.addTask('build-chi-squared-function', {
   ],
 });
 
+project.tasks.addTask('build-z-score-function', {
+  steps: [
+    {
+      exec: 'rm -rf src/z-score/src/package',
+    },
+    {
+      exec: 'rm -f src/z-score/src/z-score.zip',
+    },
+    {
+      exec: 'mkdir src/z-score/src/package',
+    },
+    {
+      exec: 'mkdir -p lib/z-score/src',
+    },
+    {
+      exec: 'docker run --rm --platform "linux/arm64" --user "0:0" --volume "$PWD/src/z-score/src:/asset-input:delegated" --volume "$PWD/src/z-score/src/package:/asset-output:delegated" --workdir "/asset-input" "public.ecr.aws/sam/build-python3.12" bash -c "pip install --no-cache --requirement requirements.txt --target /asset-output && cp --archive --update index.py /asset-output"',
+    },
+    {
+      exec: 'cd src/z-score/src/package && zip -r ../z-score.zip .',
+    },
+    {
+      exec: 'cp src/z-score/src/z-score.zip lib/z-score/src/z-score.zip',
+    },
+  ],
+});
+
 project.tasks.addTask('build-assets', {
   steps: [
     {
@@ -173,7 +229,13 @@ project.tasks.addTask('build-assets', {
       spawn: 'build-chi-squared-function',
     },
     {
+      spawn: 'build-z-score-function',
+    },
+    {
       spawn: 'build-scipy-layer',
+    },
+    {
+      spawn: 'build-numpy-layer',
     },
     {
       exec: 'rm -rf lib/azmapper/src',

@@ -24,6 +24,7 @@ import { OperationAvailabilityAndLatencyDashboard } from '../dashboards/Operatio
 import { ServiceAvailabilityAndLatencyDashboard } from '../dashboards/ServiceAvailabilityAndLatencyDashboard';
 import { OutlierDetectionAlgorithm } from '../utilities/OutlierDetectionAlgorithm';
 import { StackWithDynamicSource } from '../utilities/StackWithDynamicSource';
+import { ZScoreFunction } from '../z-score/ZScoreFunction';
 
 /**
  * An service that implements its own instrumentation to record
@@ -234,6 +235,15 @@ export class InstrumentedServiceMultiAZObservability extends Construct implement
       });
 
       this.outlierDetectionFunction = new ChiSquaredFunction(chiSquaredStack, 'Function', {
+      }).function;
+    }
+    else if (props.outlierDetectionAlgorithm == OutlierDetectionAlgorithm.Z_SCORE) {
+      let zscoreStack: StackWithDynamicSource = new StackWithDynamicSource(this, 'ZScoreStack', {
+        assetsBucketsParameterName: props.assetsBucketParameterName,
+        assetsBucketPrefixParameterName: props.assetsBucketPrefixParameterName,
+      });
+
+      this.outlierDetectionFunction = new ZScoreFunction(zscoreStack, 'Function', {
       }).function;
     }
 

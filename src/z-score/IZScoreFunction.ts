@@ -1,10 +1,10 @@
 import { IFunction } from 'aws-cdk-lib/aws-lambda';
 import { ILogGroup } from 'aws-cdk-lib/aws-logs';
 
-export interface IChiSquaredFunction
+export interface IZScoreFunction
 {
   /**
-     * The chi-squared function
+     * The z-score function
      */
   function: IFunction;
 

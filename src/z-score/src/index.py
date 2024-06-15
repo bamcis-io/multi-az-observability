@@ -4,8 +4,7 @@ import json
 import time
 import traceback
 import sys
-from scipy.stats import chisquare
-from numpy import float64
+import numpy
 from aws_embedded_metrics import metric_scope
 
 cw_client = boto3.client("cloudwatch", os.environ.get("AWS_REGION", "us-east-1"))
@@ -27,12 +26,12 @@ def handler(event, context, metrics):
     start = time.perf_counter()
     metrics.set_dimensions(
         {
-            "Operation": "ChiSquared",
+            "Operation": "ZScore",
             "EventType": event["EventType"],
             "Region": os.environ.get("AWS_REGION", "us-east-1")
         }
     )
-    metrics.set_namespace("ChiSquared")
+    metrics.set_namespace("ZScore")
     metrics.set_property("Event", json.loads(json.dumps(event, default = str)))
     
     event_type = event["EventType"]
@@ -74,7 +73,7 @@ def handler(event, context, metrics):
         metrics.put_metric("SuccessLatency", (end - start) * 1000, "Milliseconds")
         metrics.put_metric("Success", 1, "Count")
         return {
-            "Description": "Chi squared metric calculator"
+            "Description": "Z-score metric calculator"
         }
     else:
         metrics.set_property("Error", "Unknown event type")
@@ -224,26 +223,13 @@ def get_metric_data(event, metrics):
     # keys and then access the original dict
     for timestamp_key in sorted(az_counts.keys(), reverse = True):
         vals = list(az_counts[timestamp_key].values())
-        chi_sq_result = chisquare(vals)
-        expected = sum(vals) / len(vals)
-        p_value: float64 = chi_sq_result.palue
-
-        for az in az_counts[timestamp_key]:
-            # set the farthest from the average to initially be the first AZ
-            farthest_from_expected = az
-            break
-
-        # compare the other AZs for this timestamp and find the one
-        # farthest from the average
-        for az in az_counts[timestamp_key]:
-            if abs(az_counts[timestamp_key][az] - expected) > abs(az_counts[timestamp_key][farthest_from_expected] - expected):
-                farthest_from_expected = az        
-
-        # if the p-value result is less than the threshold
-        # and the one that is farthest from is the AZ we are
-        # concerned with, then there is a statistically significant
-        # difference and emit a 1 value
-        if p_value <= threshold and az_metric_key == farthest_from_expected:
+        mean = numpy.mean(vals)
+        std = numpy.std(vals)
+        
+        val = az_counts[timestamp_key][az_metric_key]
+        z_score = (val - mean) / std
+            
+        if z_score > threshold:
             results.append(1)
         else:
             results.append(0)

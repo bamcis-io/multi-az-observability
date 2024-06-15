@@ -9,10 +9,11 @@ import { AvailabilityAndLatencyAlarmsAndRules } from '../alarmsandrules/Availabi
 import { AvailabilityZoneMapper } from '../azmapper/AvailabilityZoneMapper';
 import { IAvailabilityZoneMapper } from '../azmapper/IAvailabilityZoneMapper';
 import { ChiSquaredFunction } from '../chi-squared/ChiSquaredFunction';
-import { IChiSquaredFunction } from '../chi-squared/IChiSquaredFunction';
 import { BasicServiceDashboard } from '../dashboards/BasicServiceDashboard';
 import { AvailabilityAndLatencyMetrics } from '../metrics/AvailabilityAndLatencyMetrics';
 import { OutlierDetectionAlgorithm } from '../utilities/OutlierDetectionAlgorithm';
+import { ZScoreFunction } from '../z-score/ZScoreFunction';
+import { IFunction } from 'aws-cdk-lib/aws-lambda';
 
 /**
  * Basic observability for a service using metrics from
@@ -63,7 +64,7 @@ export class BasicServiceMultiAZObservability extends Construct
   /**
        * The chi-squared function
        */
-  private chiSquaredFunction?: IChiSquaredFunction;
+  private outlierDetectionFunction?: IFunction;
 
   private azMapper: IAvailabilityZoneMapper;
 
@@ -92,7 +93,10 @@ export class BasicServiceMultiAZObservability extends Construct
     this.azMapper = new AvailabilityZoneMapper(this, 'AvailabilityZoneMapper');
 
     if (props.outlierDetectionAlgorithm == OutlierDetectionAlgorithm.CHI_SQUARED) {
-      this.chiSquaredFunction = new ChiSquaredFunction(this, 'ChiSquaredFunction', {});
+      this.outlierDetectionFunction = new ChiSquaredFunction(this, 'ChiSquaredFunction', {}).function;
+    }
+    else if (props.outlierDetectionAlgorithm == OutlierDetectionAlgorithm.Z_SCORE) {
+      this.outlierDetectionFunction = new ZScoreFunction(this, "ZScoreFunction", {}).function;
     }
 
     // Create metrics and alarms for just load balancers if they were provided
@@ -384,6 +388,7 @@ export class BasicServiceMultiAZObservability extends Construct
 
         break;
       case OutlierDetectionAlgorithm.CHI_SQUARED:
+      case OutlierDetectionAlgorithm.Z_SCORE:
 
         let allAZs: string[] = Array.from(new Set(this.applicationLoadBalancers!.flatMap(x => {
           return x.vpc!.availabilityZones;
@@ -395,12 +400,12 @@ export class BasicServiceMultiAZObservability extends Construct
             .availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
 
           let azIsOutlierForFaults: IAlarm = AvailabilityAndLatencyAlarmsAndRules
-            .createZonalFaultRateChiSquaredOutlierAlarmForAlb(
+            .createZonalFaultRateOutlierAlarmForAlb(
               this,
               props.applicationLoadBalancers!,
               availabilityZoneId,
               props.outlierThreshold,
-              this.chiSquaredFunction!.function,
+              this.outlierDetectionFunction!,
               this.azMapper,
               index,
               5,
@@ -610,6 +615,7 @@ export class BasicServiceMultiAZObservability extends Construct
 
         break;
       case OutlierDetectionAlgorithm.CHI_SQUARED:
+      case OutlierDetectionAlgorithm.Z_SCORE:
 
         Object.keys(props.natGateways!).forEach((az: string, index: number) => {
           let azLetter: string = az.substring(az.length - 1);
@@ -619,12 +625,12 @@ export class BasicServiceMultiAZObservability extends Construct
           // Iterate all NAT GWs in this AZ
 
           let azIsOutlierForPacketDrops: IAlarm = AvailabilityAndLatencyAlarmsAndRules
-            .createZonalFaultRateChiSquaredOutlierAlarmForNatGW(
+            .createZonalFaultRateOutlierAlarmForNatGW(
               this,
               this.natGateways!,
               availabilityZoneId,
               props.outlierThreshold,
-              this.chiSquaredFunction!.function,
+              this.outlierDetectionFunction!,
               this.azMapper,
               index,
               5,

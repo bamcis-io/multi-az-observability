@@ -83,7 +83,7 @@ export abstract class BaseOperationZonalAlarmsAndRules extends Construct impleme
       case OutlierDetectionAlgorithm.CHI_SQUARED:
 
         this.availabilityZoneIsOutlierForFaults = AvailabilityAndLatencyAlarmsAndRules
-          .createZonalFaultRateChiSquaredOutlierAlarm(
+          .createZonalFaultRateOutlierAlarm(
             this,
             props.availabilityMetricDetails,
             props.availabilityZoneId,
@@ -95,7 +95,7 @@ export abstract class BaseOperationZonalAlarmsAndRules extends Construct impleme
             props.nameSuffix,
           );
         this.availabilityZoneIsOutlierForLatency = AvailabilityAndLatencyAlarmsAndRules
-          .createZonalHighLatencyChiSquaredOutlierAlarm(
+          .createZonalHighLatencyOutlierAlarm(
             this,
             props.latencyMetricDetails,
             props.availabilityZoneId,
