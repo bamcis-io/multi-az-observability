@@ -96,7 +96,9 @@ def get_metric_data(event, metrics):
     period = event["Period"]
     args: list = event["Arguments"]
     threshold: float = float(args[0])
+    metrics.set_property("Threshold", threshold)
     az_id: str= args[1]
+    metrics.set_property("AZ-ID", az_id)
     #
     # {
     #    "use1-az1": [
@@ -112,6 +114,7 @@ def get_metric_data(event, metrics):
     #
     dimensions_per_az: dict = json.loads(args[2])
     metric_namespace: str = args[3]
+    metrics.set_property("Namespace", metric_namespace)
     metric_names: list = args[4].split(":")
     metric_stat: str = args[5]
     unit: str = args[6]
@@ -122,6 +125,8 @@ def get_metric_data(event, metrics):
         "EndTime": end,
         "MetricDataQueries": [],
     }
+
+    operation = ""
 
     for az in dimensions_per_az:
 
@@ -137,6 +142,9 @@ def get_metric_data(event, metrics):
                     "Name": dim,
                     "Value": dimension_set[dim]
                 })
+
+                if dim == "Operation":
+                    operation = dimension_set[dim]
 
             for metric in metric_names:
                 query = {
@@ -168,6 +176,9 @@ def get_metric_data(event, metrics):
         })
 
     metrics.set_property("Query", json.loads(json.dumps(metric_query, default = str)))
+
+    if operation != "":
+        metrics.set_property("ServiceOperation", operation)
 
     next_token: str = None
 
@@ -224,12 +235,15 @@ def get_metric_data(event, metrics):
     for timestamp_key in sorted(az_counts.keys(), reverse = True):
         vals = list(az_counts[timestamp_key].values())
         mean = numpy.mean(vals)
+        metrics.set_property("Mean_" + str(timestamp_key), mean)
         std = numpy.std(vals)
+        metrics.set_property("StdDev_" + str(timestamp_key), std)
         
         val = az_counts[timestamp_key][az_metric_key]
         z_score = (val - mean) / std
+        metrics.set_property("ZScore_" + str(timestamp_key), z_score)
             
-        if z_score > threshold:
+        if z_score >= threshold:
             results.append(1)
         else:
             results.append(0)
@@ -239,7 +253,7 @@ def get_metric_data(event, metrics):
           {
              "StatusCode": "Complete",
              "Label": az_id,
-             "Timestamps": list(az_counts.keys()),
+             "Timestamps": sorted(az_counts.keys(), reverse = True),
              "Values": results
           }
         ]

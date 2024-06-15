@@ -172,7 +172,7 @@ new InstrumentedServiceMultiAZObservability(stack, 'MAZObservability', {
   interval: Duration.minutes(30),
   assetsBucketParameterName: 'AssetsBucket',
   assetsBucketPrefixParameterName: 'AssetsBucketPrefix',
-  outlierDetectionAlgorithm: OutlierDetectionAlgorithm.STATIC,
+  outlierDetectionAlgorithm: OutlierDetectionAlgorithm.CHI_SQUARED,
 });
 
 app.synth();
