@@ -120,7 +120,6 @@ def get_metric_data(event, metrics):
     metric_names: list = args[4].split(":")
     metric_stat: str = args[5]
     unit: str = args[6]
-    az_metric_key: str = az_id.replace("-", "_")
 
     metric_query = {
         "StartTime": start,
@@ -198,7 +197,7 @@ def get_metric_data(event, metrics):
             metrics.set_property("GetMetricResult", json.loads(json.dumps(data, default = str)))
 
         for item in data["MetricDataResults"]:          
-            az_id = item["Id"].replace("_", "-")
+            az_id_of_query = item["Id"].replace("_", "-")
             
             for index, timestamp in enumerate(item["Timestamps"]):
                 epoch_timestamp = int(timestamp.timestamp())
@@ -206,7 +205,7 @@ def get_metric_data(event, metrics):
                     az_counts[epoch_timestamp] = {az:0 for az in dimensions_per_az}
 
                 # Set the value for this AZ (as identified by key) for the timestamp
-                az_counts[epoch_timestamp][az_id] = item["Values"][index]
+                az_counts[epoch_timestamp][az_id_of_query] = item["Values"][index]
 
         if "NextToken" in data:
             next_token = data["NextToken"]
@@ -260,7 +259,7 @@ def get_metric_data(event, metrics):
                 # and the one that is farthest from is the AZ we are
                 # concerned with, then there is a statistically significant
                 # difference and emit a 1 value
-                if not numpy.isnan(p_value) and p_value <= threshold and az_metric_key == farthest_from_expected:
+                if not numpy.isnan(p_value) and p_value <= threshold and az_id == farthest_from_expected:
                     results.append(1)
                 else:
                     results.append(0)
