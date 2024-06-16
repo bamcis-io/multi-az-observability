@@ -144,7 +144,7 @@ export class InstrumentedServiceMultiAZObservability extends Construct implement
               operationName: operation.operationName,
               metricNamespace: test.metricNamespace,
               successMetricNames: ['Success'],
-              faultMetricNames: ['Fault', 'Error'],
+              faultMetricNames: ['Fault', 'Failure'],
               metricDimensions: new MetricDimensions({ Operation: operation.operationName }, 'AZ-ID', 'Region'),
 
               alarmStatistic: operation.canaryTestAvailabilityMetricsOverride.alarmStatistic,
@@ -160,7 +160,7 @@ export class InstrumentedServiceMultiAZObservability extends Construct implement
               operationName: operation.operationName,
               metricNamespace: test.metricNamespace,
               successMetricNames: ['Success'],
-              faultMetricNames: ['Fault', 'Error'],
+              faultMetricNames: ['Fault', 'Failure'],
               metricDimensions: new MetricDimensions({ Operation: operation.operationName }, 'AZ-ID', 'Region'),
             }, props.service.defaultAvailabilityMetricDetails);
           }
