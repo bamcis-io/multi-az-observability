@@ -8,38 +8,38 @@ import { CanaryTestMetricsOverrideProps } from './props/CanaryTestMetricsOverrid
  */
 export class CanaryTestMetricsOverride implements ICanaryTestMetricsOverride {
   /**
-     * The statistic used for alarms, for availability metrics this should
-     * be "Sum", for latency metrics it could something like "p99" or "p99.9"
-     */
+       * The statistic used for alarms, for availability metrics this should
+       * be "Sum", for latency metrics it could something like "p99" or "p99.9"
+       */
   readonly alarmStatistic?: string;
 
   /**
-     * The period for the metrics
-     */
+       * The period for the metrics
+       */
   readonly period?: Duration;
 
   /**
-     * The number of evaluation periods for latency and availabiltiy alarms
-     */
+       * The number of evaluation periods for latency and availabiltiy alarms
+       */
   readonly evaluationPeriods?: number;
 
   /**
-     * The number of datapoints to alarm on for latency and availability alarms
-     */
+       * The number of datapoints to alarm on for latency and availability alarms
+       */
   readonly datapointsToAlarm?: number;
 
   /**
-     * The threshold for alarms associated with success metrics, for example if measuring
-     * success rate, the threshold may be 99, meaning you would want an alarm that triggers
-     * if success drops below 99%.
-     */
+       * The threshold for alarms associated with success metrics, for example if measuring
+       * success rate, the threshold may be 99, meaning you would want an alarm that triggers
+       * if success drops below 99%.
+       */
   readonly successAlarmThreshold?: number;
 
   /**
-     * The threshold for alarms associated with fault metrics, for example if measuring
-     * fault rate, the threshold may be 1, meaning you would want an alarm that triggers
-     * if the fault rate goes above 1%.
-     */
+       * The threshold for alarms associated with fault metrics, for example if measuring
+       * fault rate, the threshold may be 1, meaning you would want an alarm that triggers
+       * if the fault rate goes above 1%.
+       */
   readonly faultAlarmThreshold?: number;
 
   constructor(props: CanaryTestMetricsOverrideProps) {

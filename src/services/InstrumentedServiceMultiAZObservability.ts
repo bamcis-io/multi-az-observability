@@ -111,6 +111,7 @@ export class InstrumentedServiceMultiAZObservability extends Construct implement
           let test = new CanaryTest(nestedStack, operation.operationName, {
             function: canary.function,
             requestCount: testProps.requestCount,
+            regionalRequestCount: testProps.regionalRequestCount ? testProps.regionalRequestCount : testProps.requestCount,
             schedule: testProps.schedule,
             operation: operation,
             loadBalancer: testProps.loadBalancer,
@@ -196,6 +197,7 @@ export class InstrumentedServiceMultiAZObservability extends Construct implement
               faultAlarmThreshold: operation.canaryTestLatencyMetricsOverride.faultAlarmThreshold,
               period: operation.canaryTestLatencyMetricsOverride.period,
               successAlarmThreshold: operation.canaryTestLatencyMetricsOverride.successAlarmThreshold,
+
 
             }, props.service.defaultLatencyMetricDetails);
           } else {

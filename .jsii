@@ -3783,7 +3783,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/canaries/props/AddCanaryTestProps.ts",
-            "line": 36
+            "line": 43
           },
           "name": "loadBalancer",
           "type": {
@@ -3815,7 +3815,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/canaries/props/AddCanaryTestProps.ts",
-            "line": 17
+            "line": 24
           },
           "name": "schedule",
           "type": {
@@ -3832,7 +3832,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/canaries/props/AddCanaryTestProps.ts",
-            "line": 31
+            "line": 38
           },
           "name": "headers",
           "optional": true,
@@ -3855,7 +3855,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/canaries/props/AddCanaryTestProps.ts",
-            "line": 45
+            "line": 52
           },
           "name": "httpMethods",
           "optional": true,
@@ -3878,7 +3878,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/canaries/props/AddCanaryTestProps.ts",
-            "line": 52
+            "line": 59
           },
           "name": "networkConfiguration",
           "optional": true,
@@ -3896,12 +3896,30 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/canaries/props/AddCanaryTestProps.ts",
-            "line": 24
+            "line": 31
           },
           "name": "postData",
           "optional": true,
           "type": {
             "primitive": "string"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "default": "- The same number of requests specified by the requestCount property is used.",
+            "stability": "stable",
+            "summary": "Specifies a separate number of request to send to the regional endpoint."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/canaries/props/AddCanaryTestProps.ts",
+            "line": 19
+          },
+          "name": "regionalRequestCount",
+          "optional": true,
+          "type": {
+            "primitive": "number"
           }
         }
       ],
@@ -9818,5 +9836,5 @@
     }
   },
   "version": "0.0.1-alpha.1",
-  "fingerprint": "y+9Ay4oy4i2yOVb4IKNqLa7ozhiPr+bH6lhS6sbnr7Q="
+  "fingerprint": "0oO9YctzbkZ0wPj/28DsnwbsfOMVhwqgWSLEstG3vbo="
 }

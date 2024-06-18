@@ -61,7 +61,7 @@ export class CanaryTest extends Construct {
         faultBoundaryId: Fn.ref('AWS::Region'),
         faultBoundary: 'region',
         metricNamespace: this.metricNamespace,
-        requestCount: props.requestCount,
+        requestCount: props.regionalRequestCount,
       },
     };
 

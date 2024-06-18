@@ -12,6 +12,13 @@ export interface AddCanaryTestProps
   readonly requestCount: number;
 
   /**
+   * Specifies a separate number of request to send to the regional endpoint.
+   *
+   * @default - The same number of requests specified by the requestCount property is used.
+   */
+  readonly regionalRequestCount?: number;
+
+  /**
      * A schedule expression
      */
   readonly schedule: string;

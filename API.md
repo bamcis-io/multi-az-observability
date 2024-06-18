@@ -655,6 +655,7 @@ const addCanaryTestProps: AddCanaryTestProps = { ... }
 | <code><a href="#multi-az-observability.AddCanaryTestProps.property.httpMethods">httpMethods</a></code> | <code>string[]</code> | Defining this will override the methods defined in the operation and will use these instead. |
 | <code><a href="#multi-az-observability.AddCanaryTestProps.property.networkConfiguration">networkConfiguration</a></code> | <code><a href="#multi-az-observability.NetworkConfigurationProps">NetworkConfigurationProps</a></code> | The VPC network configuration. |
 | <code><a href="#multi-az-observability.AddCanaryTestProps.property.postData">postData</a></code> | <code>string</code> | Data to supply in a POST, PUT, or PATCH operation. |
+| <code><a href="#multi-az-observability.AddCanaryTestProps.property.regionalRequestCount">regionalRequestCount</a></code> | <code>number</code> | Specifies a separate number of request to send to the regional endpoint. |
 
 ---
 
@@ -743,6 +744,19 @@ public readonly postData: string;
 - *Default:* No data is sent in a POST, PUT, or PATCH request
 
 Data to supply in a POST, PUT, or PATCH operation.
+
+---
+
+##### `regionalRequestCount`<sup>Optional</sup> <a name="regionalRequestCount" id="multi-az-observability.AddCanaryTestProps.property.regionalRequestCount"></a>
+
+```typescript
+public readonly regionalRequestCount: number;
+```
+
+- *Type:* number
+- *Default:* The same number of requests specified by the requestCount property is used.
+
+Specifies a separate number of request to send to the regional endpoint.
 
 ---
 
