@@ -2,7 +2,7 @@
 
 ## TODO
 
-- Add algorithms for z-score outlier detection
+- Add testing
 
 ## problems worth noting
 
