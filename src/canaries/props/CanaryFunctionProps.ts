@@ -8,7 +8,9 @@ export interface CanaryFunctionProps
 {
   /**
      * If you want the function to run in your VPC, provide
-     * the VPC object
+     * the VPC object.
+     *
+     * @default - The function is not run in a customer VPC
      */
   readonly vpc?: IVpc;
 
@@ -24,8 +26,9 @@ export interface CanaryFunctionProps
   readonly ignoreTlsErrors?: boolean;
 
   /**
-     * Specify the timeout for each http request, the default is
-     * 2 seconds
+     * Specify the timeout for each http request
+     *
+     * @default - 2 seconds
      */
   readonly httpTimeout?: Duration;
 }

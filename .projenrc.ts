@@ -38,14 +38,10 @@ const project = new awscdk.AwsCdkConstructLibrary({
     '**/.DS_Store',
     'src/canaries/src/package',
     'src/canaries/src/canary.zip',
-    'src/chi-squared/src/package',
-    'src/chi-squared/src/scipy',
-    'src/chi-squared/src/chi-squared.zip',
-    'src/chi-squared/src/scipy-layer.zip',
-    'src/z-score/src/package',
-    'src/z-score/src/numpy',
-    'src/z-score/src/z-score.zip',
-    'src/z-score/src/numpy-layer.zip',
+    'src/outlier-detection/src/scipy',
+    'src/outlier-detection/src/outlier-detection.zip',
+    'src/outlier-detection/src/scipy-layer.zip',
+    'src/monitoring',
   ],
   packageName: 'multi-az-observability',
   publishToNuget: {
@@ -84,6 +80,32 @@ project.addTask('awslint', {
   exec: 'awslint',
 });
 
+project.tasks.addTask('build-monitoring-layer', {
+  steps: [
+    {
+      exec: 'rm -rf src/monitoring/src/monitoring',
+    },
+    {
+      exec: 'rm -f src/monitoring/src/monitoring-layer.zip',
+    },
+    {
+      exec: 'mkdir -p src/monitoring/src/monitoring',
+    },
+    {
+      exec: 'mkdir -p lib/monitoring/src',
+    },
+    {
+      exec: 'pip3 install aws-embedded-metrics aws-xray-sdk --only-binary=:all: --target src/monitoring/src/monitoring/python/lib/python3.12/site-packages --platform manylinux2014_aarch64',
+    },
+    {
+      exec: 'cd src/monitoring/src/monitoring && zip -r ../monitoring-layer.zip .',
+    },
+    {
+      exec: 'cp src/monitoring/src/monitoring-layer.zip lib/monitoring/src/monitoring-layer.zip',
+    },
+  ],
+});
+
 project.tasks.addTask('build-canary-function', {
   steps: [
     {
@@ -96,7 +118,7 @@ project.tasks.addTask('build-canary-function', {
       exec: 'rm -f src/canaries/src/canaries.zip',
     },
     {
-      exec: 'mkdir src/canaries/src/package',
+      exec: 'mkdir -p src/canaries/src/package',
     },
     {
       exec: 'mkdir -p lib/canaries/src',
@@ -116,106 +138,46 @@ project.tasks.addTask('build-canary-function', {
 project.tasks.addTask('build-scipy-layer', {
   steps: [
     {
-      exec: 'rm -rf src/chi-squared/src/scipy',
+      exec: 'rm -rf src/outlier-detection/src/scipy',
     },
     {
-      exec: 'rm -f src/chi-squared/src/scipy-layer.zip',
+      exec: 'rm -f src/outlier-detection/src/scipy-layer.zip',
     },
     {
-      exec: 'mkdir src/chi-squared/src/scipy',
+      exec: 'mkdir src/outlier-detection/src/scipy',
     },
     {
-      exec: 'mkdir -p lib/chi-squared/src',
+      exec: 'mkdir -p lib/outlier-detection/src',
     },
     {
-      exec: 'pip3 install scipy --only-binary=:all: --target src/chi-squared/src/scipy/python/lib/python3.12/site-packages --platform manylinux2014_aarch64',
+      exec: 'pip3 install scipy --only-binary=:all: --target src/outlier-detection/src/scipy/python/lib/python3.12/site-packages --platform manylinux2014_aarch64',
     },
     {
-      exec: 'cd src/chi-squared/src/scipy && zip -r ../scipy-layer.zip .',
+      exec: 'cd src/outlier-detection/src/scipy && zip -r ../scipy-layer.zip .',
     },
     {
-      exec: 'cp src/chi-squared/src/scipy-layer.zip lib/chi-squared/src/scipy-layer.zip',
+      exec: 'cp src/outlier-detection/src/scipy-layer.zip lib/outlier-detection/src/scipy-layer.zip',
     },
   ],
 });
 
-project.tasks.addTask('build-numpy-layer', {
+project.tasks.addTask('build-outlier-detection-function', {
   steps: [
     {
-      exec: 'rm -rf src/z-score/src/numpy',
+      exec: 'mkdir -p lib/outlier-detection/src',
     },
     {
-      exec: 'rm -f src/z-score/src/numpy-layer.zip',
+      exec: 'rm -f src/outlier-detection/src/outlier-detection.zip',
     },
     {
-      exec: 'mkdir src/z-score/src/numpy',
+      exec: 'zip src/outlier-detection/src/outlier-detection.zip src/outlier-detection/src/index.py',
     },
     {
-      exec: 'mkdir -p lib/z-score/src',
-    },
-    {
-      exec: 'pip3 install numpy --only-binary=:all: --target src/z-score/src/numpy/python/lib/python3.12/site-packages --platform manylinux2014_aarch64',
-    },
-    {
-      exec: 'cd src/z-score/src/numpy && zip -r ../numpy-layer.zip .',
-    },
-    {
-      exec: 'cp src/z-score/src/numpy-layer.zip lib/z-score/src/numpy-layer.zip',
+      exec: 'cp src/outlier-detection/src/outlier-detection.zip lib/outlier-detection/src/outlier-detection.zip',
     },
   ],
 });
 
-project.tasks.addTask('build-chi-squared-function', {
-  steps: [
-    {
-      exec: 'rm -rf src/chi-squared/src/package',
-    },
-    {
-      exec: 'rm -f src/chi-squared/src/chi-squared.zip',
-    },
-    {
-      exec: 'mkdir src/chi-squared/src/package',
-    },
-    {
-      exec: 'mkdir -p lib/chi-squared/src',
-    },
-    {
-      exec: 'docker run --rm --platform "linux/arm64" --user "0:0" --volume "$PWD/src/chi-squared/src:/asset-input:delegated" --volume "$PWD/src/chi-squared/src/package:/asset-output:delegated" --workdir "/asset-input" "public.ecr.aws/sam/build-python3.12" bash -c "pip install --no-cache --requirement requirements.txt --target /asset-output && cp --archive --update index.py /asset-output"',
-    },
-    {
-      exec: 'cd src/chi-squared/src/package && zip -r ../chi-squared.zip .',
-    },
-    {
-      exec: 'cp src/chi-squared/src/chi-squared.zip lib/chi-squared/src/chi-squared.zip',
-    },
-  ],
-});
-
-project.tasks.addTask('build-z-score-function', {
-  steps: [
-    {
-      exec: 'rm -rf src/z-score/src/package',
-    },
-    {
-      exec: 'rm -f src/z-score/src/z-score.zip',
-    },
-    {
-      exec: 'mkdir src/z-score/src/package',
-    },
-    {
-      exec: 'mkdir -p lib/z-score/src',
-    },
-    {
-      exec: 'docker run --rm --platform "linux/arm64" --user "0:0" --volume "$PWD/src/z-score/src:/asset-input:delegated" --volume "$PWD/src/z-score/src/package:/asset-output:delegated" --workdir "/asset-input" "public.ecr.aws/sam/build-python3.12" bash -c "pip install --no-cache --requirement requirements.txt --target /asset-output && cp --archive --update index.py /asset-output"',
-    },
-    {
-      exec: 'cd src/z-score/src/package && zip -r ../z-score.zip .',
-    },
-    {
-      exec: 'cp src/z-score/src/z-score.zip lib/z-score/src/z-score.zip',
-    },
-  ],
-});
 
 project.tasks.addTask('build-assets', {
   steps: [
@@ -226,16 +188,13 @@ project.tasks.addTask('build-assets', {
       spawn: 'build-canary-function',
     },
     {
-      spawn: 'build-chi-squared-function',
-    },
-    {
-      spawn: 'build-z-score-function',
+      spawn: 'build-outlier-detection-function',
     },
     {
       spawn: 'build-scipy-layer',
     },
     {
-      spawn: 'build-numpy-layer',
+      spawn: 'build-monitoring-layer',
     },
     {
       exec: 'rm -rf lib/azmapper/src',

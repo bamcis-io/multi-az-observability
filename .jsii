@@ -3770,7 +3770,7 @@
       "kind": "interface",
       "locationInModule": {
         "filename": "src/canaries/props/AddCanaryTestProps.ts",
-        "line": 7
+        "line": 8
       },
       "name": "AddCanaryTestProps",
       "properties": [
@@ -3783,7 +3783,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/canaries/props/AddCanaryTestProps.ts",
-            "line": 43
+            "line": 44
           },
           "name": "loadBalancer",
           "type": {
@@ -3799,7 +3799,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/canaries/props/AddCanaryTestProps.ts",
-            "line": 12
+            "line": 13
           },
           "name": "requestCount",
           "type": {
@@ -3815,7 +3815,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/canaries/props/AddCanaryTestProps.ts",
-            "line": 24
+            "line": 25
           },
           "name": "schedule",
           "type": {
@@ -3832,7 +3832,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/canaries/props/AddCanaryTestProps.ts",
-            "line": 38
+            "line": 39
           },
           "name": "headers",
           "optional": true,
@@ -3855,7 +3855,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/canaries/props/AddCanaryTestProps.ts",
-            "line": 52
+            "line": 53
           },
           "name": "httpMethods",
           "optional": true,
@@ -3871,6 +3871,24 @@
         {
           "abstract": true,
           "docs": {
+            "default": "- false",
+            "stability": "stable",
+            "summary": "Whether to ignore TLS validation errors."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/canaries/props/AddCanaryTestProps.ts",
+            "line": 74
+          },
+          "name": "ignoreTlsErrors",
+          "optional": true,
+          "type": {
+            "primitive": "boolean"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
             "default": "- The Lambda function is not run in a VPC",
             "stability": "stable",
             "summary": "The VPC network configuration."
@@ -3878,7 +3896,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/canaries/props/AddCanaryTestProps.ts",
-            "line": 59
+            "line": 60
           },
           "name": "networkConfiguration",
           "optional": true,
@@ -3896,7 +3914,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/canaries/props/AddCanaryTestProps.ts",
-            "line": 31
+            "line": 32
           },
           "name": "postData",
           "optional": true,
@@ -3914,12 +3932,30 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/canaries/props/AddCanaryTestProps.ts",
-            "line": 19
+            "line": 20
           },
           "name": "regionalRequestCount",
           "optional": true,
           "type": {
             "primitive": "number"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "default": "- Defaults to 2 seconds",
+            "stability": "stable",
+            "summary": "The timeout for each individual HTTP request."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/canaries/props/AddCanaryTestProps.ts",
+            "line": 67
+          },
+          "name": "timeout",
+          "optional": true,
+          "type": {
+            "fqn": "aws-cdk-lib.Duration"
           }
         }
       ],
@@ -4298,7 +4334,7 @@
         },
         "locationInModule": {
           "filename": "src/services/BasicServiceMultiAZObservability.ts",
-          "line": 79
+          "line": 80
         },
         "parameters": [
           {
@@ -4327,7 +4363,7 @@
       "kind": "class",
       "locationInModule": {
         "filename": "src/services/BasicServiceMultiAZObservability.ts",
-        "line": 22
+        "line": 23
       },
       "name": "BasicServiceMultiAZObservability",
       "properties": [
@@ -4338,7 +4374,7 @@
           },
           "locationInModule": {
             "filename": "src/services/BasicServiceMultiAZObservability.ts",
-            "line": 57
+            "line": 58
           },
           "name": "aggregateZonalIsolatedImpactAlarms",
           "overrides": "multi-az-observability.IBasicServiceMultiAZObservability",
@@ -4358,7 +4394,7 @@
           },
           "locationInModule": {
             "filename": "src/services/BasicServiceMultiAZObservability.ts",
-            "line": 39
+            "line": 40
           },
           "name": "serviceName",
           "overrides": "multi-az-observability.IBasicServiceMultiAZObservability",
@@ -4373,7 +4409,7 @@
           },
           "locationInModule": {
             "filename": "src/services/BasicServiceMultiAZObservability.ts",
-            "line": 51
+            "line": 52
           },
           "name": "albZonalIsolatedImpactAlarms",
           "optional": true,
@@ -4394,7 +4430,7 @@
           },
           "locationInModule": {
             "filename": "src/services/BasicServiceMultiAZObservability.ts",
-            "line": 34
+            "line": 35
           },
           "name": "applicationLoadBalancers",
           "optional": true,
@@ -4415,7 +4451,7 @@
           },
           "locationInModule": {
             "filename": "src/services/BasicServiceMultiAZObservability.ts",
-            "line": 62
+            "line": 63
           },
           "name": "dashboard",
           "optional": true,
@@ -4430,7 +4466,7 @@
           },
           "locationInModule": {
             "filename": "src/services/BasicServiceMultiAZObservability.ts",
-            "line": 29
+            "line": 30
           },
           "name": "natGateways",
           "optional": true,
@@ -4456,7 +4492,7 @@
           },
           "locationInModule": {
             "filename": "src/services/BasicServiceMultiAZObservability.ts",
-            "line": 45
+            "line": 46
           },
           "name": "natGWZonalIsolatedImpactAlarms",
           "optional": true,
@@ -4497,7 +4533,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/BasicServiceMultiAZObservabilityProps.ts",
-            "line": 76
+            "line": 85
           },
           "name": "createDashboard",
           "type": {
@@ -4513,28 +4549,11 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/BasicServiceMultiAZObservabilityProps.ts",
-            "line": 66
+            "line": 75
           },
           "name": "outlierDetectionAlgorithm",
           "type": {
             "fqn": "multi-az-observability.OutlierDetectionAlgorithm"
-          }
-        },
-        {
-          "abstract": true,
-          "docs": {
-            "remarks": "This number is interpreted\ndifferently for different outlier algorithms. When used with\nSTATIC, the number should be between 0 and 1 to represent the\npercentage of errors (like .7) that an AZ must be responsible\nfor to be considered an outlier. When used with CHI_SQUARED, it\nrepresents the p value that indicates statistical significance, like\n0.05 which means the skew has less than or equal to a 5% chance of\noccuring. When used with Z_SCORE it indicates how many standard\ndeviations to evaluate for an AZ being an outlier, typically 3 is\nstandard for Z_SCORE.",
-            "stability": "stable",
-            "summary": "The outlier threshold for determining if an AZ is an outlier for latency or faults."
-          },
-          "immutable": true,
-          "locationInModule": {
-            "filename": "src/services/props/BasicServiceMultiAZObservabilityProps.ts",
-            "line": 44
-          },
-          "name": "outlierThreshold",
-          "type": {
-            "primitive": "number"
           }
         },
         {
@@ -4546,7 +4565,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/BasicServiceMultiAZObservabilityProps.ts",
-            "line": 71
+            "line": 80
           },
           "name": "period",
           "type": {
@@ -4603,7 +4622,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/BasicServiceMultiAZObservabilityProps.ts",
-            "line": 99
+            "line": 108
           },
           "name": "assetsBucketParameterName",
           "optional": true,
@@ -4622,7 +4641,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/BasicServiceMultiAZObservabilityProps.ts",
-            "line": 119
+            "line": 128
           },
           "name": "assetsBucketPrefixParameterName",
           "optional": true,
@@ -4641,7 +4660,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/BasicServiceMultiAZObservabilityProps.ts",
-            "line": 61
+            "line": 70
           },
           "name": "faultCountPercentageThreshold",
           "optional": true,
@@ -4659,7 +4678,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/BasicServiceMultiAZObservabilityProps.ts",
-            "line": 83
+            "line": 92
           },
           "name": "interval",
           "optional": true,
@@ -4698,6 +4717,25 @@
         {
           "abstract": true,
           "docs": {
+            "default": "- Depends on the outlier detection algorithm selected",
+            "remarks": "This number is interpreted\ndifferently for different outlier algorithms. When used with\nSTATIC, the number should be between 0 and 1 to represent the\npercentage of errors (like .7) that an AZ must be responsible\nfor to be considered an outlier. When used with CHI_SQUARED, it\nrepresents the p value that indicates statistical significance, like\n0.05 which means the skew has less than or equal to a 5% chance of\noccuring. When used with Z_SCORE it indicates how many standard\ndeviations to evaluate for an AZ being an outlier, typically 3 is\nstandard for Z_SCORE.\n\nStandard defaults based on the outlier detection algorithm:\nSTATIC: 0.7\nCHI_SQUARED: 0.05\nZ_SCORE: 2\nIQR: 1.5\nMAD: 3",
+            "stability": "stable",
+            "summary": "The outlier threshold for determining if an AZ is an outlier for latency or faults."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/BasicServiceMultiAZObservabilityProps.ts",
+            "line": 53
+          },
+          "name": "outlierThreshold",
+          "optional": true,
+          "type": {
+            "primitive": "number"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
             "default": "- 0.01 (as in 0.01%)",
             "stability": "stable",
             "summary": "The amount of packet loss in a NAT GW to determine if an AZ is actually impacted, recommendation is 0.01%."
@@ -4705,7 +4743,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/BasicServiceMultiAZObservabilityProps.ts",
-            "line": 52
+            "line": 61
           },
           "name": "packetLossImpactPercentageThreshold",
           "optional": true,
@@ -7285,7 +7323,7 @@
         },
         "locationInModule": {
           "filename": "src/services/InstrumentedServiceMultiAZObservability.ts",
-          "line": 80
+          "line": 79
         },
         "parameters": [
           {
@@ -7314,7 +7352,7 @@
       "kind": "class",
       "locationInModule": {
         "filename": "src/services/InstrumentedServiceMultiAZObservability.ts",
-        "line": 34
+        "line": 33
       },
       "name": "InstrumentedServiceMultiAZObservability",
       "properties": [
@@ -7327,7 +7365,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/InstrumentedServiceMultiAZObservability.ts",
-            "line": 48
+            "line": 47
           },
           "name": "perOperationZonalImpactAlarms",
           "overrides": "multi-az-observability.IInstrumentedServiceMultiAZObservability",
@@ -7353,7 +7391,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/InstrumentedServiceMultiAZObservability.ts",
-            "line": 53
+            "line": 52
           },
           "name": "serviceAlarms",
           "overrides": "multi-az-observability.IInstrumentedServiceMultiAZObservability",
@@ -7370,7 +7408,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/InstrumentedServiceMultiAZObservability.ts",
-            "line": 76
+            "line": 75
           },
           "name": "canaryLogGroup",
           "optional": true,
@@ -7387,7 +7425,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/InstrumentedServiceMultiAZObservability.ts",
-            "line": 58
+            "line": 57
           },
           "name": "operationDashboards",
           "optional": true,
@@ -7409,7 +7447,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/InstrumentedServiceMultiAZObservability.ts",
-            "line": 63
+            "line": 62
           },
           "name": "serviceDashboard",
           "optional": true,
@@ -7445,28 +7483,11 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/InstrumentedServiceMultiAZObservabilityProps.ts",
-            "line": 42
+            "line": 51
           },
           "name": "outlierDetectionAlgorithm",
           "type": {
             "fqn": "multi-az-observability.OutlierDetectionAlgorithm"
-          }
-        },
-        {
-          "abstract": true,
-          "docs": {
-            "remarks": "This number is interpreted\ndifferently for different outlier algorithms. When used with\nSTATIC, the number should be between 0 and 1 to represent the\npercentage of errors (like .7) that an AZ must be responsible\nfor to be considered an outlier. When used with CHI_SQUARED, it\nrepresents the p value that indicates statistical significance, like\n0.05 which means the skew has less than or equal to a 5% chance of\noccuring. When used with Z_SCORE it indicates how many standard\ndeviations to evaluate for an AZ being an outlier, typically 3 is\nstandard for Z_SCORE.",
-            "stability": "stable",
-            "summary": "The outlier threshold for determining if an AZ is an outlier for latency or faults."
-          },
-          "immutable": true,
-          "locationInModule": {
-            "filename": "src/services/props/InstrumentedServiceMultiAZObservabilityProps.ts",
-            "line": 37
-          },
-          "name": "outlierThreshold",
-          "type": {
-            "primitive": "number"
           }
         },
         {
@@ -7496,7 +7517,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/InstrumentedServiceMultiAZObservabilityProps.ts",
-            "line": 66
+            "line": 75
           },
           "name": "assetsBucketParameterName",
           "optional": true,
@@ -7515,7 +7536,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/InstrumentedServiceMultiAZObservabilityProps.ts",
-            "line": 86
+            "line": 95
           },
           "name": "assetsBucketPrefixParameterName",
           "optional": true,
@@ -7551,12 +7572,31 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/services/props/InstrumentedServiceMultiAZObservabilityProps.ts",
-            "line": 50
+            "line": 59
           },
           "name": "interval",
           "optional": true,
           "type": {
             "fqn": "aws-cdk-lib.Duration"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "default": "- Depends on the outlier detection algorithm selected",
+            "remarks": "This number is interpreted\ndifferently for different outlier algorithms. When used with\nSTATIC, the number should be between 0 and 1 to represent the\npercentage of errors (like .7) that an AZ must be responsible\nfor to be considered an outlier. When used with CHI_SQUARED, it\nrepresents the p value that indicates statistical significance, like\n0.05 which means the skew has less than or equal to a 5% chance of\noccuring. When used with Z_SCORE it indicates how many standard\ndeviations to evaluate for an AZ being an outlier, typically 3 is\nstandard for Z_SCORE.\n\nStandard defaults based on the outlier detection algorithm:\nSTATIC: 0.7\nCHI_SQUARED: 0.05\nZ_SCORE: 2\nIQR: 1.5\nMAD: 3",
+            "stability": "stable",
+            "summary": "The outlier threshold for determining if an AZ is an outlier for latency or faults."
+          },
+          "immutable": true,
+          "locationInModule": {
+            "filename": "src/services/props/InstrumentedServiceMultiAZObservabilityProps.ts",
+            "line": 46
+          },
+          "name": "outlierThreshold",
+          "optional": true,
+          "type": {
+            "primitive": "number"
           }
         }
       ],
@@ -8876,6 +8916,7 @@
       "members": [
         {
           "docs": {
+            "remarks": "A good default threshold for this is .7 meaning one AZ\nis responsible for 70% of the total errors or high latency responses",
             "stability": "stable",
             "summary": "Defines using a static value to compare skew in faults or high latency responses."
           },
@@ -8883,6 +8924,7 @@
         },
         {
           "docs": {
+            "remarks": "A normal default threshold for this is 0.05, which means there is a 5% or \nless chance of the skew in errors or high latency responses occuring",
             "stability": "stable",
             "summary": "Uses the chi squared statistic to determine if there is a statistically significant skew in fault rate or high latency distribution."
           },
@@ -8890,10 +8932,27 @@
         },
         {
           "docs": {
+            "remarks": "Using 3 means the outlier is outside 99.7% of\nthe normal distribution.",
             "stability": "stable",
-            "summary": "Uses z-score to determine if the skew in faults or high latency respones exceeds a defined number of standard devations (typically 3)."
+            "summary": "Uses z-score to determine if the skew in faults or high latency respones exceeds a defined number of standard devations   A good default threshold value for this is 2, meaning the outlier value is outside 95% of the normal distribution."
           },
           "name": "Z_SCORE"
+        },
+        {
+          "docs": {
+            "remarks": "No threshold is required for this method and will be ignored",
+            "stability": "stable",
+            "summary": "Uses Interquartile Range Method to determine an outlier for faults or latency."
+          },
+          "name": "IQR"
+        },
+        {
+          "docs": {
+            "remarks": "A common default value threshold 3",
+            "stability": "stable",
+            "summary": "Median Absolute Deviation (MAD) to determine an outlier for faults or latency."
+          },
+          "name": "MAD"
         }
       ],
       "name": "OutlierDetectionAlgorithm",
@@ -9836,5 +9895,5 @@
     }
   },
   "version": "0.0.1-alpha.1",
-  "fingerprint": "0oO9YctzbkZ0wPj/28DsnwbsfOMVhwqgWSLEstG3vbo="
+  "fingerprint": "DZDZIuE0Ke/63dIbY9pkijCJQ3LbMQn87hFH++w+gBs="
 }

@@ -9,11 +9,12 @@ import { BasicServiceMultiAZObservabilityProps } from './props/BasicServiceMulti
 import { AvailabilityAndLatencyAlarmsAndRules } from '../alarmsandrules/AvailabilityAndLatencyAlarmsAndRules';
 import { AvailabilityZoneMapper } from '../azmapper/AvailabilityZoneMapper';
 import { IAvailabilityZoneMapper } from '../azmapper/IAvailabilityZoneMapper';
-import { ChiSquaredFunction } from '../chi-squared/ChiSquaredFunction';
 import { BasicServiceDashboard } from '../dashboards/BasicServiceDashboard';
 import { AvailabilityAndLatencyMetrics } from '../metrics/AvailabilityAndLatencyMetrics';
+import { OutlierDetectionFunction } from '../outlier-detection/OutlierDetectionFunction';
 import { OutlierDetectionAlgorithm } from '../utilities/OutlierDetectionAlgorithm';
-import { ZScoreFunction } from '../z-score/ZScoreFunction';
+import { StackWithDynamicSource } from '../utilities/StackWithDynamicSource';
+
 
 /**
  * Basic observability for a service using metrics from
@@ -89,23 +90,51 @@ export class BasicServiceMultiAZObservability extends Construct
     this._packetDropsPerZone = {};
     this._faultsPerZone = {};
 
+    let outlierThreshold: number;
+
+    if (!props.outlierThreshold) {
+      switch (props.outlierDetectionAlgorithm) {
+        case OutlierDetectionAlgorithm.CHI_SQUARED:
+          outlierThreshold= 0.05;
+          break;
+        case OutlierDetectionAlgorithm.IQR:
+          outlierThreshold = 1.5;
+          break;
+        case OutlierDetectionAlgorithm.MAD:
+          outlierThreshold = 3;
+          break;
+        case OutlierDetectionAlgorithm.STATIC:
+          outlierThreshold = 0.70;
+          break;
+        case OutlierDetectionAlgorithm.Z_SCORE:
+          outlierThreshold = 2;
+          break;
+      }
+    } else {
+      outlierThreshold = props.outlierThreshold;
+    }
+
     // Create the AZ mapper resource to translate AZ names to ids
     this.azMapper = new AvailabilityZoneMapper(this, 'AvailabilityZoneMapper');
 
-    if (props.outlierDetectionAlgorithm == OutlierDetectionAlgorithm.CHI_SQUARED) {
-      this.outlierDetectionFunction = new ChiSquaredFunction(this, 'ChiSquaredFunction', {}).function;
-    } else if (props.outlierDetectionAlgorithm == OutlierDetectionAlgorithm.Z_SCORE) {
-      this.outlierDetectionFunction = new ZScoreFunction(this, 'ZScoreFunction', {}).function;
+    if (props.outlierDetectionAlgorithm != OutlierDetectionAlgorithm.STATIC) {
+      let outlierDetectionStack: StackWithDynamicSource = new StackWithDynamicSource(this, 'OutlierDetectionStack', {
+        assetsBucketsParameterName: props.assetsBucketParameterName,
+        assetsBucketPrefixParameterName: props.assetsBucketPrefixParameterName,
+      });
+
+      this.outlierDetectionFunction = new OutlierDetectionFunction(outlierDetectionStack, 'OutlierDetectionFunction', {
+      }).function;
     }
 
     // Create metrics and alarms for just load balancers if they were provided
     if (this.applicationLoadBalancers !== undefined && this.applicationLoadBalancers != null) {
-      this.doAlbMetrics(props);
+      this.doAlbMetrics(props, outlierThreshold);
     }
 
     // Create NAT Gateway metrics and alarms
     if (this.natGateways !== undefined && this.natGateways != null) {
-      this.doNatGatewayMetrics(props);
+      this.doNatGatewayMetrics(props, outlierThreshold);
     }
 
     let counter: number = 1;
@@ -168,7 +197,7 @@ export class BasicServiceMultiAZObservability extends Construct
     }
   }
 
-  private doAlbMetrics(props: BasicServiceMultiAZObservabilityProps) {
+  private doAlbMetrics(props: BasicServiceMultiAZObservabilityProps, outlierThreshold: number) {
     // Collect total fault count metrics per AZ
     let albZoneFaultCountMetrics: { [key: string]: IMetric[] } = {};
 
@@ -337,102 +366,95 @@ export class BasicServiceMultiAZObservability extends Construct
       period: props.period,
     });
 
-    switch (props.outlierDetectionAlgorithm) {
-      default:
-      case OutlierDetectionAlgorithm.STATIC:
+    if (props.outlierDetectionAlgorithm == OutlierDetectionAlgorithm.STATIC) {
+      // Finally, iterate back through each AZ
+      Object.keys(this._faultsPerZone).forEach((azLetter, index) => {
+        keyPrefix = AvailabilityAndLatencyMetrics.nextChar(keyPrefix);
+        let availabilityZoneId: string = this.azMapper
+          .availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
 
-        // Finally, iterate back through each AZ
-        Object.keys(this._faultsPerZone).forEach((azLetter, index) => {
-          keyPrefix = AvailabilityAndLatencyMetrics.nextChar(keyPrefix);
-          let availabilityZoneId: string = this.azMapper
-            .availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
+        // Determine if AZ is an outlier for faults by exceeding
+        // a static threshold
+        let outlierMetrics: IMetric;
 
-          // Determine if AZ is an outlier for faults by exceeding
-          // a static threshold
-          let outlierMetrics: IMetric;
-
-          // These metrics will give the percent of faults for the AZ
-          let usingMetrics: { [key: string]: IMetric } = {};
-          usingMetrics[`${keyPrefix}1`] = this._faultsPerZone[azLetter];
-          usingMetrics[`${keyPrefix}2`] = totalFaults;
-          outlierMetrics = new MathExpression({
-            expression: `${keyPrefix}1 / ${keyPrefix}2`,
-            usingMetrics: usingMetrics,
-          });
-
-          let azIsOutlierForFaults: IAlarm = new Alarm(this, 'AZ' + index + 'FaultCountOutlierAlarm', {
-            alarmName: availabilityZoneId + '-fault-count-outlier',
-            metric: outlierMetrics,
-            threshold: props.outlierThreshold,
-            evaluationPeriods: 5,
-            datapointsToAlarm: 3,
-            actionsEnabled: false,
-            treatMissingData: TreatMissingData.IGNORE,
-            comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
-          });
-
-          // Create isolated AZ impact alarms by determining
-          // if the AZ is an outlier for fault count and at least
-          // one ALB exceeds the fault rate threshold provided
-          this._albZonalIsolatedImpactAlarms[azLetter] = new CompositeAlarm(this, 'AZ' + index + 'IsolatedFaultCountImpact', {
-            compositeAlarmName: availabilityZoneId + '-isolated-fault-count-impact',
-            alarmRule: AlarmRule.allOf(
-              azIsOutlierForFaults,
-              AlarmRule.anyOf(
-                ...faultRatePercentageAlarms[azLetter],
-              ),
-            ),
-          });
+        // These metrics will give the percent of faults for the AZ
+        let usingMetrics: { [key: string]: IMetric } = {};
+        usingMetrics[`${keyPrefix}1`] = this._faultsPerZone[azLetter];
+        usingMetrics[`${keyPrefix}2`] = totalFaults;
+        outlierMetrics = new MathExpression({
+          expression: `${keyPrefix}1 / ${keyPrefix}2`,
+          usingMetrics: usingMetrics,
         });
 
-        break;
-      case OutlierDetectionAlgorithm.CHI_SQUARED:
-      case OutlierDetectionAlgorithm.Z_SCORE:
-
-        let allAZs: string[] = Array.from(new Set(this.applicationLoadBalancers!.flatMap(x => {
-          return x.vpc!.availabilityZones;
-        })));
-
-        allAZs.forEach((az: string, index: number) => {
-          let azLetter: string = az.substring(az.length - 1);
-          let availabilityZoneId: string = this.azMapper
-            .availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
-
-          let azIsOutlierForFaults: IAlarm = AvailabilityAndLatencyAlarmsAndRules
-            .createZonalFaultRateOutlierAlarmForAlb(
-              this,
-              props.applicationLoadBalancers!,
-              availabilityZoneId,
-              props.outlierThreshold,
-              this.outlierDetectionFunction!,
-              this.azMapper,
-              index,
-              5,
-              3,
-              '',
-            );
-
-          // In addition to being an outlier for fault count, make sure
-          // the fault count is substantial enough to trigger the alarm
-          // by making sure at least 1 ALB sees packet loss that exceeds the threshold
-          let azIsOutlierAndSeesImpact: IAlarm = new CompositeAlarm(this, 'AZ' + index + 'ALBIsolatedImpact', {
-            compositeAlarmName: availabilityZoneId + '-isolated-fault-count-impact',
-            alarmRule: AlarmRule.allOf(
-              azIsOutlierForFaults,
-              AlarmRule.anyOf(...faultRatePercentageAlarms[azLetter]),
-            ),
-          });
-
-          // Record these so they can be used in dashboard or for combination
-          // with AZ
-          this._albZonalIsolatedImpactAlarms[azLetter] = azIsOutlierAndSeesImpact;
+        let azIsOutlierForFaults: IAlarm = new Alarm(this, 'AZ' + index + 'FaultCountOutlierAlarm', {
+          alarmName: availabilityZoneId + '-fault-count-outlier',
+          metric: outlierMetrics,
+          threshold: outlierThreshold,
+          evaluationPeriods: 5,
+          datapointsToAlarm: 3,
+          actionsEnabled: false,
+          treatMissingData: TreatMissingData.IGNORE,
+          comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
         });
 
-        break;
+        // Create isolated AZ impact alarms by determining
+        // if the AZ is an outlier for fault count and at least
+        // one ALB exceeds the fault rate threshold provided
+        this._albZonalIsolatedImpactAlarms[azLetter] = new CompositeAlarm(this, 'AZ' + index + 'IsolatedFaultCountImpact', {
+          compositeAlarmName: availabilityZoneId + '-isolated-fault-count-impact',
+          alarmRule: AlarmRule.allOf(
+            azIsOutlierForFaults,
+            AlarmRule.anyOf(
+              ...faultRatePercentageAlarms[azLetter],
+            ),
+          ),
+        });
+      });
+
+    } else {
+      let allAZs: string[] = Array.from(new Set(this.applicationLoadBalancers!.flatMap(x => {
+        return x.vpc!.availabilityZones;
+      })));
+
+      allAZs.forEach((az: string, index: number) => {
+        let azLetter: string = az.substring(az.length - 1);
+        let availabilityZoneId: string = this.azMapper
+          .availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
+
+        let azIsOutlierForFaults: IAlarm = AvailabilityAndLatencyAlarmsAndRules
+          .createZonalFaultRateOutlierAlarmForAlb(
+            this,
+            props.applicationLoadBalancers!,
+            availabilityZoneId,
+            outlierThreshold,
+            this.outlierDetectionFunction!,
+            props.outlierDetectionAlgorithm,
+            this.azMapper,
+            index,
+            5,
+            3,
+            '',
+          );
+
+        // In addition to being an outlier for fault count, make sure
+        // the fault count is substantial enough to trigger the alarm
+        // by making sure at least 1 ALB sees packet loss that exceeds the threshold
+        let azIsOutlierAndSeesImpact: IAlarm = new CompositeAlarm(this, 'AZ' + index + 'ALBIsolatedImpact', {
+          compositeAlarmName: availabilityZoneId + '-isolated-fault-count-impact',
+          alarmRule: AlarmRule.allOf(
+            azIsOutlierForFaults,
+            AlarmRule.anyOf(...faultRatePercentageAlarms[azLetter]),
+          ),
+        });
+
+        // Record these so they can be used in dashboard or for combination
+        // with AZ
+        this._albZonalIsolatedImpactAlarms[azLetter] = azIsOutlierAndSeesImpact;
+      });
     }
   }
 
-  private doNatGatewayMetrics(props: BasicServiceMultiAZObservabilityProps) {
+  private doNatGatewayMetrics(props: BasicServiceMultiAZObservabilityProps, outlierThreshold: number) {
     let keyPrefix: string = AvailabilityAndLatencyMetrics.nextChar('');
 
     // Collect alarms for packet drops exceeding a threshold per NAT GW
@@ -558,102 +580,95 @@ export class BasicServiceMultiAZObservability extends Construct
       period: props.period,
     });
 
-    switch (props.outlierDetectionAlgorithm) {
-      default:
-      case OutlierDetectionAlgorithm.STATIC:
+    if (props.outlierDetectionAlgorithm == OutlierDetectionAlgorithm.STATIC) {
+      // Create outlier detection alarms by comparing packet
+      // drops in one AZ versus total packet drops in the region
+      Object.keys(this._packetDropsPerZone).forEach((azLetter, index) => {
+        let azIsOutlierForPacketDrops: IAlarm;
+        keyPrefix = AvailabilityAndLatencyMetrics.nextChar(keyPrefix);
+        let availabilityZoneId: string = this.azMapper
+          .availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
 
-        // Create outlier detection alarms by comparing packet
-        // drops in one AZ versus total packet drops in the region
-        Object.keys(this._packetDropsPerZone).forEach((azLetter, index) => {
-          let azIsOutlierForPacketDrops: IAlarm;
-          keyPrefix = AvailabilityAndLatencyMetrics.nextChar(keyPrefix);
-          let availabilityZoneId: string = this.azMapper
-            .availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
+        // Determine if AZ is an outlier for faults by exceeding
+        // a static threshold
+        let outlierMetrics: IMetric;
 
-          // Determine if AZ is an outlier for faults by exceeding
-          // a static threshold
-          let outlierMetrics: IMetric;
+        // These metrics will give the percent of faults for the AZ
+        let usingMetrics: { [key: string]: IMetric } = {};
+        usingMetrics[`${keyPrefix}1`] = this._packetDropsPerZone[azLetter];
+        usingMetrics[`${keyPrefix}2`] = totalPacketDrops;
 
-          // These metrics will give the percent of faults for the AZ
-          let usingMetrics: { [key: string]: IMetric } = {};
-          usingMetrics[`${keyPrefix}1`] = this._packetDropsPerZone[azLetter];
-          usingMetrics[`${keyPrefix}2`] = totalPacketDrops;
-
-          outlierMetrics = new MathExpression({
-            expression: `(${keyPrefix}1 / ${keyPrefix}2) * 100`,
-            usingMetrics: usingMetrics,
-            label: availabilityZoneId + ' percentage of dropped packets',
-          });
-
-          azIsOutlierForPacketDrops = new Alarm(this, 'AZ' + (index + 1) + 'NATGWDroppedPacketsOutlierAlarm', {
-            metric: outlierMetrics,
-            alarmName: availabilityZoneId + '-dropped-packets-outlier',
-            evaluationPeriods: 5,
-            datapointsToAlarm: 3,
-            threshold: props.outlierThreshold,
-            actionsEnabled: false,
-            treatMissingData: TreatMissingData.IGNORE,
-            comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
-          });
-
-          // In addition to being an outlier for packet drops, make sure
-          // the packet loss is substantial enough to trigger the alarm
-          // by making sure at least 1 NAT GW sees packet loss more than 0.01%
-          let azIsOutlierAndSeesImpact: IAlarm = new CompositeAlarm(this, 'AZ' + index + 'NATGWIsolatedImpact', {
-            compositeAlarmName: availabilityZoneId + '-isolated-natgw-impact',
-            alarmRule: AlarmRule.allOf(
-              azIsOutlierForPacketDrops,
-              AlarmRule.anyOf(...packetDropPercentageAlarms[azLetter]),
-            ),
-          });
-
-          // Record these so they can be used in dashboard or for combination
-          // with AZ
-          this._natGWZonalIsolatedImpactAlarms[azLetter] = azIsOutlierAndSeesImpact;
+        outlierMetrics = new MathExpression({
+          expression: `(${keyPrefix}1 / ${keyPrefix}2) * 100`,
+          usingMetrics: usingMetrics,
+          label: availabilityZoneId + ' percentage of dropped packets',
         });
 
-        break;
-      case OutlierDetectionAlgorithm.CHI_SQUARED:
-      case OutlierDetectionAlgorithm.Z_SCORE:
-
-        Object.keys(props.natGateways!).forEach((az: string, index: number) => {
-          let azLetter: string = az.substring(az.length - 1);
-          let availabilityZoneId: string = this.azMapper.
-            availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
-
-          // Iterate all NAT GWs in this AZ
-
-          let azIsOutlierForPacketDrops: IAlarm = AvailabilityAndLatencyAlarmsAndRules
-            .createZonalFaultRateOutlierAlarmForNatGW(
-              this,
-              this.natGateways!,
-              availabilityZoneId,
-              props.outlierThreshold,
-              this.outlierDetectionFunction!,
-              this.azMapper,
-              index,
-              5,
-              3,
-              '',
-            );
-
-          // In addition to being an outlier for packet drops, make sure
-          // the packet loss is substantial enough to trigger the alarm
-          // by making sure at least 1 NAT GW sees packet loss more than 0.01%
-          let azIsOutlierAndSeesImpact: IAlarm = new CompositeAlarm(this, 'AZ' + index + 'NATGWIsolatedImpact', {
-            compositeAlarmName: availabilityZoneId + '-isolated-natgw-impact',
-            alarmRule: AlarmRule.allOf(
-              azIsOutlierForPacketDrops,
-              AlarmRule.anyOf(...packetDropPercentageAlarms[azLetter]),
-            ),
-          });
-
-          // Record these so they can be used in dashboard or for combination
-          // with AZ
-          this._natGWZonalIsolatedImpactAlarms[azLetter] = azIsOutlierAndSeesImpact;
+        azIsOutlierForPacketDrops = new Alarm(this, 'AZ' + (index + 1) + 'NATGWDroppedPacketsOutlierAlarm', {
+          metric: outlierMetrics,
+          alarmName: availabilityZoneId + '-dropped-packets-outlier',
+          evaluationPeriods: 5,
+          datapointsToAlarm: 3,
+          threshold: outlierThreshold,
+          actionsEnabled: false,
+          treatMissingData: TreatMissingData.IGNORE,
+          comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
         });
 
-        break;
+        // In addition to being an outlier for packet drops, make sure
+        // the packet loss is substantial enough to trigger the alarm
+        // by making sure at least 1 NAT GW sees packet loss more than 0.01%
+        let azIsOutlierAndSeesImpact: IAlarm = new CompositeAlarm(this, 'AZ' + index + 'NATGWIsolatedImpact', {
+          compositeAlarmName: availabilityZoneId + '-isolated-natgw-impact',
+          alarmRule: AlarmRule.allOf(
+            azIsOutlierForPacketDrops,
+            AlarmRule.anyOf(...packetDropPercentageAlarms[azLetter]),
+          ),
+        });
+
+        // Record these so they can be used in dashboard or for combination
+        // with AZ
+        this._natGWZonalIsolatedImpactAlarms[azLetter] = azIsOutlierAndSeesImpact;
+      });
+
+    } else {
+      Object.keys(props.natGateways!).forEach((az: string, index: number) => {
+        let azLetter: string = az.substring(az.length - 1);
+        let availabilityZoneId: string = this.azMapper.
+          availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
+
+        // Iterate all NAT GWs in this AZ
+
+        let azIsOutlierForPacketDrops: IAlarm = AvailabilityAndLatencyAlarmsAndRules
+          .createZonalFaultRateOutlierAlarmForNatGW(
+            this,
+            this.natGateways!,
+            availabilityZoneId,
+            outlierThreshold,
+            this.outlierDetectionFunction!,
+            props.outlierDetectionAlgorithm,
+            this.azMapper,
+            index,
+            5,
+            3,
+            '',
+          );
+
+        // In addition to being an outlier for packet drops, make sure
+        // the packet loss is substantial enough to trigger the alarm
+        // by making sure at least 1 NAT GW sees packet loss more than 0.01%
+        let azIsOutlierAndSeesImpact: IAlarm = new CompositeAlarm(this, 'AZ' + index + 'NATGWIsolatedImpact', {
+          compositeAlarmName: availabilityZoneId + '-isolated-natgw-impact',
+          alarmRule: AlarmRule.allOf(
+            azIsOutlierForPacketDrops,
+            AlarmRule.anyOf(...packetDropPercentageAlarms[azLetter]),
+          ),
+        });
+
+        // Record these so they can be used in dashboard or for combination
+        // with AZ
+        this._natGWZonalIsolatedImpactAlarms[azLetter] = azIsOutlierAndSeesImpact;
+      });
     }
   }
 }

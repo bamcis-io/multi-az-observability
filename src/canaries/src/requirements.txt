@@ -1,3 +1,1 @@
-aws-embedded-metrics
-aws-xray-sdk
 requests

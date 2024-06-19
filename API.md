@@ -653,9 +653,11 @@ const addCanaryTestProps: AddCanaryTestProps = { ... }
 | <code><a href="#multi-az-observability.AddCanaryTestProps.property.schedule">schedule</a></code> | <code>string</code> | A schedule expression. |
 | <code><a href="#multi-az-observability.AddCanaryTestProps.property.headers">headers</a></code> | <code>{[ key: string ]: string}</code> | Any headers to include. |
 | <code><a href="#multi-az-observability.AddCanaryTestProps.property.httpMethods">httpMethods</a></code> | <code>string[]</code> | Defining this will override the methods defined in the operation and will use these instead. |
+| <code><a href="#multi-az-observability.AddCanaryTestProps.property.ignoreTlsErrors">ignoreTlsErrors</a></code> | <code>boolean</code> | Whether to ignore TLS validation errors. |
 | <code><a href="#multi-az-observability.AddCanaryTestProps.property.networkConfiguration">networkConfiguration</a></code> | <code><a href="#multi-az-observability.NetworkConfigurationProps">NetworkConfigurationProps</a></code> | The VPC network configuration. |
 | <code><a href="#multi-az-observability.AddCanaryTestProps.property.postData">postData</a></code> | <code>string</code> | Data to supply in a POST, PUT, or PATCH operation. |
 | <code><a href="#multi-az-observability.AddCanaryTestProps.property.regionalRequestCount">regionalRequestCount</a></code> | <code>number</code> | Specifies a separate number of request to send to the regional endpoint. |
+| <code><a href="#multi-az-observability.AddCanaryTestProps.property.timeout">timeout</a></code> | <code>aws-cdk-lib.Duration</code> | The timeout for each individual HTTP request. |
 
 ---
 
@@ -721,6 +723,19 @@ Defining this will override the methods defined in the operation and will use th
 
 ---
 
+##### `ignoreTlsErrors`<sup>Optional</sup> <a name="ignoreTlsErrors" id="multi-az-observability.AddCanaryTestProps.property.ignoreTlsErrors"></a>
+
+```typescript
+public readonly ignoreTlsErrors: boolean;
+```
+
+- *Type:* boolean
+- *Default:* false
+
+Whether to ignore TLS validation errors.
+
+---
+
 ##### `networkConfiguration`<sup>Optional</sup> <a name="networkConfiguration" id="multi-az-observability.AddCanaryTestProps.property.networkConfiguration"></a>
 
 ```typescript
@@ -757,6 +772,19 @@ public readonly regionalRequestCount: number;
 - *Default:* The same number of requests specified by the requestCount property is used.
 
 Specifies a separate number of request to send to the regional endpoint.
+
+---
+
+##### `timeout`<sup>Optional</sup> <a name="timeout" id="multi-az-observability.AddCanaryTestProps.property.timeout"></a>
+
+```typescript
+public readonly timeout: Duration;
+```
+
+- *Type:* aws-cdk-lib.Duration
+- *Default:* Defaults to 2 seconds
+
+The timeout for each individual HTTP request.
 
 ---
 
@@ -811,7 +839,6 @@ const basicServiceMultiAZObservabilityProps: BasicServiceMultiAZObservabilityPro
 | --- | --- | --- |
 | <code><a href="#multi-az-observability.BasicServiceMultiAZObservabilityProps.property.createDashboard">createDashboard</a></code> | <code>boolean</code> | Whether to create a dashboard displaying the metrics and alarms. |
 | <code><a href="#multi-az-observability.BasicServiceMultiAZObservabilityProps.property.outlierDetectionAlgorithm">outlierDetectionAlgorithm</a></code> | <code><a href="#multi-az-observability.OutlierDetectionAlgorithm">OutlierDetectionAlgorithm</a></code> | The algorithm to use for performing outlier detection. |
-| <code><a href="#multi-az-observability.BasicServiceMultiAZObservabilityProps.property.outlierThreshold">outlierThreshold</a></code> | <code>number</code> | The outlier threshold for determining if an AZ is an outlier for latency or faults. |
 | <code><a href="#multi-az-observability.BasicServiceMultiAZObservabilityProps.property.period">period</a></code> | <code>aws-cdk-lib.Duration</code> | The period to evaluate metrics. |
 | <code><a href="#multi-az-observability.BasicServiceMultiAZObservabilityProps.property.serviceName">serviceName</a></code> | <code>string</code> | The service's name. |
 | <code><a href="#multi-az-observability.BasicServiceMultiAZObservabilityProps.property.applicationLoadBalancers">applicationLoadBalancers</a></code> | <code>aws-cdk-lib.aws_elasticloadbalancingv2.IApplicationLoadBalancer[]</code> | The application load balancers being used by the service. |
@@ -820,6 +847,7 @@ const basicServiceMultiAZObservabilityProps: BasicServiceMultiAZObservabilityPro
 | <code><a href="#multi-az-observability.BasicServiceMultiAZObservabilityProps.property.faultCountPercentageThreshold">faultCountPercentageThreshold</a></code> | <code>number</code> | The percentage of faults for a single ALB to consider an AZ to be unhealthy, this should align with your availability goal. |
 | <code><a href="#multi-az-observability.BasicServiceMultiAZObservabilityProps.property.interval">interval</a></code> | <code>aws-cdk-lib.Duration</code> | Dashboard interval. |
 | <code><a href="#multi-az-observability.BasicServiceMultiAZObservabilityProps.property.natGateways">natGateways</a></code> | <code>{[ key: string ]: aws-cdk-lib.aws_ec2.CfnNatGateway[]}</code> | (Optional) A map of Availability Zone name to the NAT Gateways in that AZ. |
+| <code><a href="#multi-az-observability.BasicServiceMultiAZObservabilityProps.property.outlierThreshold">outlierThreshold</a></code> | <code>number</code> | The outlier threshold for determining if an AZ is an outlier for latency or faults. |
 | <code><a href="#multi-az-observability.BasicServiceMultiAZObservabilityProps.property.packetLossImpactPercentageThreshold">packetLossImpactPercentageThreshold</a></code> | <code>number</code> | The amount of packet loss in a NAT GW to determine if an AZ is actually impacted, recommendation is 0.01%. |
 
 ---
@@ -845,29 +873,6 @@ public readonly outlierDetectionAlgorithm: OutlierDetectionAlgorithm;
 - *Type:* <a href="#multi-az-observability.OutlierDetectionAlgorithm">OutlierDetectionAlgorithm</a>
 
 The algorithm to use for performing outlier detection.
-
----
-
-##### `outlierThreshold`<sup>Required</sup> <a name="outlierThreshold" id="multi-az-observability.BasicServiceMultiAZObservabilityProps.property.outlierThreshold"></a>
-
-```typescript
-public readonly outlierThreshold: number;
-```
-
-- *Type:* number
-
-The outlier threshold for determining if an AZ is an outlier for latency or faults.
-
-This number is interpreted
-differently for different outlier algorithms. When used with
-STATIC, the number should be between 0 and 1 to represent the
-percentage of errors (like .7) that an AZ must be responsible
-for to be considered an outlier. When used with CHI_SQUARED, it
-represents the p value that indicates statistical significance, like
-0.05 which means the skew has less than or equal to a 5% chance of
-occuring. When used with Z_SCORE it indicates how many standard
-deviations to evaluate for an AZ being an outlier, typically 3 is
-standard for Z_SCORE.
 
 ---
 
@@ -986,6 +991,37 @@ public readonly natGateways: {[ key: string ]: CfnNatGateway[]};
 - *Default:* No alarms for NAT Gateways will be created
 
 (Optional) A map of Availability Zone name to the NAT Gateways in that AZ.
+
+---
+
+##### `outlierThreshold`<sup>Optional</sup> <a name="outlierThreshold" id="multi-az-observability.BasicServiceMultiAZObservabilityProps.property.outlierThreshold"></a>
+
+```typescript
+public readonly outlierThreshold: number;
+```
+
+- *Type:* number
+- *Default:* Depends on the outlier detection algorithm selected
+
+The outlier threshold for determining if an AZ is an outlier for latency or faults.
+
+This number is interpreted
+differently for different outlier algorithms. When used with
+STATIC, the number should be between 0 and 1 to represent the
+percentage of errors (like .7) that an AZ must be responsible
+for to be considered an outlier. When used with CHI_SQUARED, it
+represents the p value that indicates statistical significance, like
+0.05 which means the skew has less than or equal to a 5% chance of
+occuring. When used with Z_SCORE it indicates how many standard
+deviations to evaluate for an AZ being an outlier, typically 3 is
+standard for Z_SCORE.
+
+Standard defaults based on the outlier detection algorithm:
+STATIC: 0.7
+CHI_SQUARED: 0.05
+Z_SCORE: 2
+IQR: 1.5
+MAD: 3
 
 ---
 
@@ -1270,12 +1306,12 @@ const instrumentedServiceMultiAZObservabilityProps: InstrumentedServiceMultiAZOb
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#multi-az-observability.InstrumentedServiceMultiAZObservabilityProps.property.outlierDetectionAlgorithm">outlierDetectionAlgorithm</a></code> | <code><a href="#multi-az-observability.OutlierDetectionAlgorithm">OutlierDetectionAlgorithm</a></code> | The algorithm to use for performing outlier detection. |
-| <code><a href="#multi-az-observability.InstrumentedServiceMultiAZObservabilityProps.property.outlierThreshold">outlierThreshold</a></code> | <code>number</code> | The outlier threshold for determining if an AZ is an outlier for latency or faults. |
 | <code><a href="#multi-az-observability.InstrumentedServiceMultiAZObservabilityProps.property.service">service</a></code> | <code><a href="#multi-az-observability.IService">IService</a></code> | The service that the alarms and dashboards are being crated for. |
 | <code><a href="#multi-az-observability.InstrumentedServiceMultiAZObservabilityProps.property.assetsBucketParameterName">assetsBucketParameterName</a></code> | <code>string</code> | If you are not using a static bucket to deploy assets, for example you are synthing this and it gets uploaded to a bucket whose name is unknown to you (maybe used as part of a central CI/CD system) and is provided as a parameter to your stack, specify that parameter name here. |
 | <code><a href="#multi-az-observability.InstrumentedServiceMultiAZObservabilityProps.property.assetsBucketPrefixParameterName">assetsBucketPrefixParameterName</a></code> | <code>string</code> | If you are not using a static bucket to deploy assets, for example you are synthing this and it gets uploaded to a bucket that uses a prefix that is unknown to you (maybe used as part of a central CI/CD system) and is provided as a parameter to your stack, specify that parameter name here. |
 | <code><a href="#multi-az-observability.InstrumentedServiceMultiAZObservabilityProps.property.createDashboards">createDashboards</a></code> | <code>boolean</code> | Indicates whether to create per operation and overall service dashboards. |
 | <code><a href="#multi-az-observability.InstrumentedServiceMultiAZObservabilityProps.property.interval">interval</a></code> | <code>aws-cdk-lib.Duration</code> | The interval used in the dashboard, defaults to 60 minutes. |
+| <code><a href="#multi-az-observability.InstrumentedServiceMultiAZObservabilityProps.property.outlierThreshold">outlierThreshold</a></code> | <code>number</code> | The outlier threshold for determining if an AZ is an outlier for latency or faults. |
 
 ---
 
@@ -1288,29 +1324,6 @@ public readonly outlierDetectionAlgorithm: OutlierDetectionAlgorithm;
 - *Type:* <a href="#multi-az-observability.OutlierDetectionAlgorithm">OutlierDetectionAlgorithm</a>
 
 The algorithm to use for performing outlier detection.
-
----
-
-##### `outlierThreshold`<sup>Required</sup> <a name="outlierThreshold" id="multi-az-observability.InstrumentedServiceMultiAZObservabilityProps.property.outlierThreshold"></a>
-
-```typescript
-public readonly outlierThreshold: number;
-```
-
-- *Type:* number
-
-The outlier threshold for determining if an AZ is an outlier for latency or faults.
-
-This number is interpreted
-differently for different outlier algorithms. When used with
-STATIC, the number should be between 0 and 1 to represent the
-percentage of errors (like .7) that an AZ must be responsible
-for to be considered an outlier. When used with CHI_SQUARED, it
-represents the p value that indicates statistical significance, like
-0.05 which means the skew has less than or equal to a 5% chance of
-occuring. When used with Z_SCORE it indicates how many standard
-deviations to evaluate for an AZ being an outlier, typically 3 is
-standard for Z_SCORE.
 
 ---
 
@@ -1388,6 +1401,37 @@ public readonly interval: Duration;
 - *Default:* 60 minutes
 
 The interval used in the dashboard, defaults to 60 minutes.
+
+---
+
+##### `outlierThreshold`<sup>Optional</sup> <a name="outlierThreshold" id="multi-az-observability.InstrumentedServiceMultiAZObservabilityProps.property.outlierThreshold"></a>
+
+```typescript
+public readonly outlierThreshold: number;
+```
+
+- *Type:* number
+- *Default:* Depends on the outlier detection algorithm selected
+
+The outlier threshold for determining if an AZ is an outlier for latency or faults.
+
+This number is interpreted
+differently for different outlier algorithms. When used with
+STATIC, the number should be between 0 and 1 to represent the
+percentage of errors (like .7) that an AZ must be responsible
+for to be considered an outlier. When used with CHI_SQUARED, it
+represents the p value that indicates statistical significance, like
+0.05 which means the skew has less than or equal to a 5% chance of
+occuring. When used with Z_SCORE it indicates how many standard
+deviations to evaluate for an AZ being an outlier, typically 3 is
+standard for Z_SCORE.
+
+Standard defaults based on the outlier detection algorithm:
+STATIC: 0.7
+CHI_SQUARED: 0.05
+Z_SCORE: 2
+IQR: 1.5
+MAD: 3
 
 ---
 
@@ -4949,13 +4993,18 @@ Available algorithms for performing outlier detection, currently only STATIC is 
 | --- | --- |
 | <code><a href="#multi-az-observability.OutlierDetectionAlgorithm.STATIC">STATIC</a></code> | Defines using a static value to compare skew in faults or high latency responses. |
 | <code><a href="#multi-az-observability.OutlierDetectionAlgorithm.CHI_SQUARED">CHI_SQUARED</a></code> | Uses the chi squared statistic to determine if there is a statistically significant skew in fault rate or high latency distribution. |
-| <code><a href="#multi-az-observability.OutlierDetectionAlgorithm.Z_SCORE">Z_SCORE</a></code> | Uses z-score to determine if the skew in faults or high latency respones exceeds a defined number of standard devations (typically 3). |
+| <code><a href="#multi-az-observability.OutlierDetectionAlgorithm.Z_SCORE">Z_SCORE</a></code> | Uses z-score to determine if the skew in faults or high latency respones exceeds a defined number of standard devations   A good default threshold value for this is 2, meaning the outlier value is outside 95% of the normal distribution. |
+| <code><a href="#multi-az-observability.OutlierDetectionAlgorithm.IQR">IQR</a></code> | Uses Interquartile Range Method to determine an outlier for faults or latency. |
+| <code><a href="#multi-az-observability.OutlierDetectionAlgorithm.MAD">MAD</a></code> | Median Absolute Deviation (MAD) to determine an outlier for faults or latency. |
 
 ---
 
 ##### `STATIC` <a name="STATIC" id="multi-az-observability.OutlierDetectionAlgorithm.STATIC"></a>
 
 Defines using a static value to compare skew in faults or high latency responses.
+
+A good default threshold for this is .7 meaning one AZ
+is responsible for 70% of the total errors or high latency responses
 
 ---
 
@@ -4964,12 +5013,36 @@ Defines using a static value to compare skew in faults or high latency responses
 
 Uses the chi squared statistic to determine if there is a statistically significant skew in fault rate or high latency distribution.
 
+A normal default threshold for this is 0.05, which means there is a 5% or 
+less chance of the skew in errors or high latency responses occuring
+
 ---
 
 
 ##### `Z_SCORE` <a name="Z_SCORE" id="multi-az-observability.OutlierDetectionAlgorithm.Z_SCORE"></a>
 
-Uses z-score to determine if the skew in faults or high latency respones exceeds a defined number of standard devations (typically 3).
+Uses z-score to determine if the skew in faults or high latency respones exceeds a defined number of standard devations   A good default threshold value for this is 2, meaning the outlier value is outside 95% of the normal distribution.
+
+Using 3 means the outlier is outside 99.7% of
+the normal distribution.
+
+---
+
+
+##### `IQR` <a name="IQR" id="multi-az-observability.OutlierDetectionAlgorithm.IQR"></a>
+
+Uses Interquartile Range Method to determine an outlier for faults or latency.
+
+No threshold is required for this method and will be ignored
+
+---
+
+
+##### `MAD` <a name="MAD" id="multi-az-observability.OutlierDetectionAlgorithm.MAD"></a>
+
+Median Absolute Deviation (MAD) to determine an outlier for faults or latency.
+
+A common default value threshold 3
 
 ---
 

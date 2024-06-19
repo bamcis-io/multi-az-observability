@@ -5,12 +5,12 @@ import { Effect, IManagedPolicy, IRole, ManagedPolicy, PolicyStatement, Role, Se
 import { Architecture, Code, Function, IFunction, ILayerVersion, LayerVersion, Runtime, Tracing } from 'aws-cdk-lib/aws-lambda';
 import { ILogGroup, LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { Construct } from 'constructs';
-import { IChiSquaredFunction } from './IChiSquaredFunction';
-import { ChiSquaredFunctionProps } from './props/ChiSquaredFunctionProps';
+import { IOutlierDetectionFunction } from './IOutlierDetectionFunction';
+import { OutlierDetectionFunctionProps } from './props/OutlierDetectionFunctionProps';
 
-export class ChiSquaredFunction extends Construct implements IChiSquaredFunction {
+export class OutlierDetectionFunction extends Construct implements IOutlierDetectionFunction {
   /**
-     * The chi-squared function
+     * The z-score function
      */
   function: IFunction;
 
@@ -19,11 +19,11 @@ export class ChiSquaredFunction extends Construct implements IChiSquaredFunction
      */
   logGroup: ILogGroup;
 
-  constructor(scope: Construct, id: string, props: ChiSquaredFunctionProps) {
+  constructor(scope: Construct, id: string, props: OutlierDetectionFunctionProps) {
     super(scope, id);
 
     let xrayManagedPolicy: IManagedPolicy = new ManagedPolicy(this, 'xrayManagedPolicy', {
-      path: '/chi-squared/',
+      path: '/outlier-detection/',
       statements: [
         new PolicyStatement({
           actions: [
@@ -39,7 +39,7 @@ export class ChiSquaredFunction extends Construct implements IChiSquaredFunction
       ],
     });
     let cwManagedPolicy = new ManagedPolicy(this, 'CWManagedPolicy', {
-      path: '/chi-squared/',
+      path: '/outlier-detection/',
       statements: [
         new PolicyStatement({
           actions: [
@@ -54,14 +54,14 @@ export class ChiSquaredFunction extends Construct implements IChiSquaredFunction
 
     let executionRole: IRole = new Role(this, 'executionRole', {
       assumedBy: new ServicePrincipal('lambda.amazonaws.com'),
-      path: '/chi-squared/',
+      path: '/outlier-detection/',
       managedPolicies: [
         xrayManagedPolicy,
         cwManagedPolicy,
       ],
     });
 
-    let layer: ILayerVersion = new LayerVersion(this, 'SciPyLayer', {
+    let sciPyLayer: ILayerVersion = new LayerVersion(this, 'SciPyLayer', {
       code: Code.fromAsset(path.join(__dirname, 'src/scipy-layer.zip')),
       compatibleArchitectures: [
         Architecture.ARM_64,
@@ -71,16 +71,26 @@ export class ChiSquaredFunction extends Construct implements IChiSquaredFunction
       ],
     });
 
+    let monitoringLayer: ILayerVersion = new LayerVersion(this, 'MonitoringLayer', {
+      code: Code.fromAsset(path.join(__dirname, '../monitoring/src/monitoring-layer.zip')),
+      compatibleArchitectures: [
+        Architecture.ARM_64,
+      ],
+      compatibleRuntimes: [
+        Runtime.PYTHON_3_12,
+      ],
+    });
+
     if (props.vpc !== undefined && props.vpc != null) {
-      let sg: ISecurityGroup = new SecurityGroup(this, 'ChiSquaredSecurityGroup', {
-        description: 'Allow chi-squared function to communicate with CW',
+      let sg: ISecurityGroup = new SecurityGroup(this, 'OutlierDetectionSecurityGroup', {
+        description: 'Allow outlier detection function to communicate with CW',
         vpc: props.vpc,
         allowAllOutbound: true,
       });
 
-      this.function = new Function(this, 'ChiSquared', {
+      this.function = new Function(this, 'OutlierDetection', {
         runtime: Runtime.PYTHON_3_12,
-        code: Code.fromAsset(path.join(__dirname, 'src/chi-squared.zip')),
+        code: Code.fromAsset(path.join(__dirname, 'src/outlier-detection.zip')),
         handler: 'index.handler',
         role: executionRole,
         architecture: Architecture.ARM_64,
@@ -88,7 +98,8 @@ export class ChiSquaredFunction extends Construct implements IChiSquaredFunction
         timeout: Duration.seconds(5),
         memorySize: 512,
         layers: [
-          layer,
+          sciPyLayer,
+          monitoringLayer,
         ],
         environment: {
           REGION: Fn.ref('AWS::Region'),
@@ -99,9 +110,9 @@ export class ChiSquaredFunction extends Construct implements IChiSquaredFunction
         vpcSubnets: props.subnetSelection,
       });
     } else {
-      this.function = new Function(this, 'ChiSquared', {
+      this.function = new Function(this, 'OutlierDetection', {
         runtime: Runtime.PYTHON_3_12,
-        code: Code.fromAsset(path.join(__dirname, 'src/chi-squared.zip')),
+        code: Code.fromAsset(path.join(__dirname, 'src/outlier-detection.zip')),
         handler: 'index.handler',
         role: executionRole,
         architecture: Architecture.ARM_64,
@@ -109,7 +120,8 @@ export class ChiSquaredFunction extends Construct implements IChiSquaredFunction
         timeout: Duration.seconds(5),
         memorySize: 512,
         layers: [
-          layer,
+          sciPyLayer,
+          monitoringLayer,
         ],
         environment: {
           REGION: Fn.ref('AWS::Region'),
@@ -135,7 +147,7 @@ export class ChiSquaredFunction extends Construct implements IChiSquaredFunction
     });
 
     new ManagedPolicy(this, 'cwLogsManagedPolicy', {
-      path: '/chi-squared/',
+      path: '/outlier-detection/',
       statements: [
         new PolicyStatement({
           actions: [

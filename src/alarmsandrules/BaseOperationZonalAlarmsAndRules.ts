@@ -10,33 +10,33 @@ import { OutlierDetectionAlgorithm } from '../utilities/OutlierDetectionAlgorith
  */
 export abstract class BaseOperationZonalAlarmsAndRules extends Construct implements IBaseOperationZonalAlarmsAndRules {
   /**
-      * Composite alarm for either availabiltiy or latency impact to this operation
-      */
+        * Composite alarm for either availabiltiy or latency impact to this operation
+        */
   availabilityOrLatencyAlarm: IAlarm;
 
   /**
-      * Availability alarm for this operation
-      */
+        * Availability alarm for this operation
+        */
   availabilityAlarm: IAlarm;
 
   /**
-      * Latency alarm for this operation
-      */
+        * Latency alarm for this operation
+        */
   latencyAlarm: IAlarm;
 
   /**
-      * Alarm that indicates that this AZ is an outlier for fault rate
-      */
+        * Alarm that indicates that this AZ is an outlier for fault rate
+        */
   availabilityZoneIsOutlierForFaults: IAlarm;
 
   /**
-      * Alarm that indicates this AZ is an outlier for high latency
-      */
+        * Alarm that indicates this AZ is an outlier for high latency
+        */
   availabilityZoneIsOutlierForLatency: IAlarm;
 
   /**
-      * The Availability Zone Id for the alarms and rules
-      */
+        * The Availability Zone Id for the alarms and rules
+        */
   availabilityZoneId: string;
 
   constructor(scope: Construct, id: string, props: BaseOperationZonalAlarmsAndRulesProps) {
@@ -58,55 +58,52 @@ export abstract class BaseOperationZonalAlarmsAndRules extends Construct impleme
         props.nameSuffix,
       );
 
-    switch (props.outlierDetectionAlgorithm) {
-      default:
-      case OutlierDetectionAlgorithm.STATIC:
-        this.availabilityZoneIsOutlierForFaults = AvailabilityAndLatencyAlarmsAndRules
-          .createZonalFaultRateStaticOutlierAlarm(
-            this,
-            props.availabilityMetricDetails,
-            props.availabilityZoneId,
-            props.counter,
-            props.outlierThreshold,
-            props.nameSuffix,
-          );
-        this.availabilityZoneIsOutlierForLatency = AvailabilityAndLatencyAlarmsAndRules
-          .createZonalHighLatencyStaticOutlierAlarm(
-            this,
-            props.latencyMetricDetails,
-            props.availabilityZoneId,
-            props.counter,
-            props.outlierThreshold,
-            props.nameSuffix,
-          );
-        break;
-      case OutlierDetectionAlgorithm.CHI_SQUARED:
-
-        this.availabilityZoneIsOutlierForFaults = AvailabilityAndLatencyAlarmsAndRules
-          .createZonalFaultRateOutlierAlarm(
-            this,
-            props.availabilityMetricDetails,
-            props.availabilityZoneId,
-            props.operation.service.availabilityZoneNames
-              .map(az => { return props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(az.substring(az.length - 1)); }),
-            props.outlierThreshold,
-            props.outlierDetectionFunction!,
-            props.counter,
-            props.nameSuffix,
-          );
-        this.availabilityZoneIsOutlierForLatency = AvailabilityAndLatencyAlarmsAndRules
-          .createZonalHighLatencyOutlierAlarm(
-            this,
-            props.latencyMetricDetails,
-            props.availabilityZoneId,
-            props.operation.service.availabilityZoneNames
-              .map(az => { return props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(az.substring(az.length - 1)); }),
-            props.outlierThreshold,
-            props.outlierDetectionFunction!,
-            props.counter,
-            props.nameSuffix,
-          );
-        break;
+    if (props.outlierDetectionAlgorithm == OutlierDetectionAlgorithm.STATIC) {
+      this.availabilityZoneIsOutlierForFaults = AvailabilityAndLatencyAlarmsAndRules
+        .createZonalFaultRateStaticOutlierAlarm(
+          this,
+          props.availabilityMetricDetails,
+          props.availabilityZoneId,
+          props.counter,
+          props.outlierThreshold,
+          props.nameSuffix,
+        );
+      this.availabilityZoneIsOutlierForLatency = AvailabilityAndLatencyAlarmsAndRules
+        .createZonalHighLatencyStaticOutlierAlarm(
+          this,
+          props.latencyMetricDetails,
+          props.availabilityZoneId,
+          props.counter,
+          props.outlierThreshold,
+          props.nameSuffix,
+        );
+    } else {
+      this.availabilityZoneIsOutlierForFaults = AvailabilityAndLatencyAlarmsAndRules
+        .createZonalFaultRateOutlierAlarm(
+          this,
+          props.availabilityMetricDetails,
+          props.availabilityZoneId,
+          props.operation.service.availabilityZoneNames
+            .map(az => { return props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(az.substring(az.length - 1)); }),
+          props.outlierThreshold,
+          props.outlierDetectionFunction!,
+          props.outlierDetectionAlgorithm,
+          props.counter,
+          props.nameSuffix,
+        );
+      this.availabilityZoneIsOutlierForLatency = AvailabilityAndLatencyAlarmsAndRules
+        .createZonalHighLatencyOutlierAlarm(
+          this,
+          props.latencyMetricDetails,
+          props.availabilityZoneId,
+          props.operation.service.availabilityZoneNames
+            .map(az => { return props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(az.substring(az.length - 1)); }),
+          props.outlierThreshold,
+          props.outlierDetectionFunction!,
+          props.outlierDetectionAlgorithm,
+          props.counter,
+          props.nameSuffix,
+        );
     }
   }
 }

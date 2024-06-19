@@ -19,12 +19,11 @@ import { AvailabilityZoneMapper } from '../azmapper/AvailabilityZoneMapper';
 import { CanaryFunction } from '../canaries/CanaryFunction';
 import { CanaryTest } from '../canaries/CanaryTest';
 import { AddCanaryTestProps } from '../canaries/props/AddCanaryTestProps';
-import { ChiSquaredFunction } from '../chi-squared/ChiSquaredFunction';
 import { OperationAvailabilityAndLatencyDashboard } from '../dashboards/OperationAvailabilityAndLatencyDashboard';
 import { ServiceAvailabilityAndLatencyDashboard } from '../dashboards/ServiceAvailabilityAndLatencyDashboard';
+import { OutlierDetectionFunction } from '../outlier-detection/OutlierDetectionFunction';
 import { OutlierDetectionAlgorithm } from '../utilities/OutlierDetectionAlgorithm';
 import { StackWithDynamicSource } from '../utilities/StackWithDynamicSource';
-import { ZScoreFunction } from '../z-score/ZScoreFunction';
 
 /**
  * An service that implements its own instrumentation to record
@@ -80,6 +79,30 @@ export class InstrumentedServiceMultiAZObservability extends Construct implement
   constructor(scope: Construct, id: string, props: InstrumentedServiceMultiAZObservabilityProps) {
     super(scope, id);
 
+    let outlierThreshold: number;
+
+    if (!props.outlierThreshold) {
+      switch (props.outlierDetectionAlgorithm) {
+        case OutlierDetectionAlgorithm.CHI_SQUARED:
+          outlierThreshold= 0.05;
+          break;
+        case OutlierDetectionAlgorithm.IQR:
+          outlierThreshold = 1.5;
+          break;
+        case OutlierDetectionAlgorithm.MAD:
+          outlierThreshold = 3;
+          break;
+        case OutlierDetectionAlgorithm.STATIC:
+          outlierThreshold = 0.70;
+          break;
+        case OutlierDetectionAlgorithm.Z_SCORE:
+          outlierThreshold = 2;
+          break;
+      }
+    } else {
+      outlierThreshold = props.outlierThreshold;
+    }
+
     this.azMapper = new AvailabilityZoneMapper(this, 'AZMapper', {
       availabilityZoneNames: props.service.availabilityZoneNames,
     });
@@ -93,6 +116,8 @@ export class InstrumentedServiceMultiAZObservability extends Construct implement
       let canary = new CanaryFunction(canaryStack, 'CanaryFunction', {
         vpc: props.service.canaryTestProps.networkConfiguration?.vpc,
         subnetSelection: props.service.canaryTestProps.networkConfiguration?.subnetSelection,
+        httpTimeout: props.service.canaryTestProps.timeout ? props.service.canaryTestProps.timeout : Duration.seconds(2),
+        ignoreTlsErrors: props.service.canaryTestProps.ignoreTlsErrors ? props.service.canaryTestProps.ignoreTlsErrors : false,
       });
 
       this.canaryLogGroup = canary.logGroup;
@@ -230,21 +255,13 @@ export class InstrumentedServiceMultiAZObservability extends Construct implement
       }
     }
 
-    if (props.outlierDetectionAlgorithm == OutlierDetectionAlgorithm.CHI_SQUARED) {
-      let chiSquaredStack: StackWithDynamicSource = new StackWithDynamicSource(this, 'ChiSquaredStack', {
+    if (props.outlierDetectionAlgorithm != OutlierDetectionAlgorithm.STATIC) {
+      let outlierDetectionStack: StackWithDynamicSource = new StackWithDynamicSource(this, 'OutlierDetectionStack', {
         assetsBucketsParameterName: props.assetsBucketParameterName,
         assetsBucketPrefixParameterName: props.assetsBucketPrefixParameterName,
       });
 
-      this.outlierDetectionFunction = new ChiSquaredFunction(chiSquaredStack, 'Function', {
-      }).function;
-    } else if (props.outlierDetectionAlgorithm == OutlierDetectionAlgorithm.Z_SCORE) {
-      let zscoreStack: StackWithDynamicSource = new StackWithDynamicSource(this, 'ZScoreStack', {
-        assetsBucketsParameterName: props.assetsBucketParameterName,
-        assetsBucketPrefixParameterName: props.assetsBucketPrefixParameterName,
-      });
-
-      this.outlierDetectionFunction = new ZScoreFunction(zscoreStack, 'Function', {
+      this.outlierDetectionFunction = new OutlierDetectionFunction(outlierDetectionStack, 'OutlierDetectionFunction', {
       }).function;
     }
 
@@ -256,7 +273,7 @@ export class InstrumentedServiceMultiAZObservability extends Construct implement
         new OperationAlarmsAndRules(nestedStack, operation.operationName, {
           operation: operation,
           outlierDetectionAlgorithm: props.outlierDetectionAlgorithm,
-          outlierThreshold: props.outlierThreshold,
+          outlierThreshold: outlierThreshold,
           loadBalancer: props.service.loadBalancer,
           azMapper: this.azMapper,
           outlierDetectionFunction: this.outlierDetectionFunction,

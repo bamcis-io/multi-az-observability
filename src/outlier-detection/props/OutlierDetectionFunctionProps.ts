@@ -1,6 +1,6 @@
 import { IVpc, SubnetSelection } from 'aws-cdk-lib/aws-ec2';
 
-export interface ChiSquaredFunctionProps
+export interface OutlierDetectionFunctionProps
 {
   /**
      * If you want the function to run in your VPC, provide

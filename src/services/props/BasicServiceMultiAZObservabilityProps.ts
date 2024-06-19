@@ -40,8 +40,17 @@ export interface BasicServiceMultiAZObservabilityProps
      * occuring. When used with Z_SCORE it indicates how many standard
      * deviations to evaluate for an AZ being an outlier, typically 3 is
      * standard for Z_SCORE.
+     *
+     * Standard defaults based on the outlier detection algorithm:
+     * STATIC: 0.7
+     * CHI_SQUARED: 0.05
+     * Z_SCORE: 2
+     * IQR: 1.5
+     * MAD: 3
+     *
+     * @default - Depends on the outlier detection algorithm selected
      */
-  readonly outlierThreshold: number;
+  readonly outlierThreshold?: number;
 
   /**
      * The amount of packet loss in a NAT GW to determine if an AZ

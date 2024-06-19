@@ -1,10 +1,10 @@
 import { IFunction } from 'aws-cdk-lib/aws-lambda';
 import { ILogGroup } from 'aws-cdk-lib/aws-logs';
 
-export interface IChiSquaredFunction
+export interface IOutlierDetectionFunction
 {
   /**
-     * The chi-squared function
+     * The outlier detection function
      */
   function: IFunction;
 

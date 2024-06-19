@@ -2,7 +2,7 @@ import * as path from 'path';
 import { Duration, Fn, RemovalPolicy } from 'aws-cdk-lib';
 import { ISecurityGroup, SecurityGroup } from 'aws-cdk-lib/aws-ec2';
 import { Effect, IManagedPolicy, IRole, ManagedPolicy, PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
-import { Architecture, Code, Function, IFunction, Runtime, Tracing } from 'aws-cdk-lib/aws-lambda';
+import { Architecture, Code, Function, IFunction, ILayerVersion, LayerVersion, Runtime, Tracing } from 'aws-cdk-lib/aws-lambda';
 import { ILogGroup, LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { Construct } from 'constructs';
 import { ICanaryFunction } from './ICanaryFunction';
@@ -75,6 +75,15 @@ export class CanaryFunction extends Construct implements ICanaryFunction {
       },
     });
     */
+    let monitoringLayer: ILayerVersion = new LayerVersion(this, 'MonitoringLayer', {
+      code: Code.fromAsset(path.join(__dirname, '../monitoring/src/monitoring-layer.zip')),
+      compatibleArchitectures: [
+        Architecture.ARM_64,
+      ],
+      compatibleRuntimes: [
+        Runtime.PYTHON_3_12,
+      ],
+    });
 
     if (props.vpc !== undefined && props.vpc != null) {
       let sg: ISecurityGroup = new SecurityGroup(this, 'canarySecurityGroup', {
@@ -92,6 +101,9 @@ export class CanaryFunction extends Construct implements ICanaryFunction {
         tracing: Tracing.ACTIVE,
         timeout: Duration.seconds(240),
         memorySize: 512,
+        layers: [
+          monitoringLayer,
+        ],
         environment: {
           REGION: Fn.ref('AWS::Region'),
           PARTITION: Fn.ref('AWS::Partition'),
@@ -112,6 +124,9 @@ export class CanaryFunction extends Construct implements ICanaryFunction {
         tracing: Tracing.ACTIVE,
         timeout: Duration.seconds(240),
         memorySize: 512,
+        layers: [
+          monitoringLayer,
+        ],
         environment: {
           REGION: Fn.ref('AWS::Region'),
           PARTITION: Fn.ref('AWS::Partition'),

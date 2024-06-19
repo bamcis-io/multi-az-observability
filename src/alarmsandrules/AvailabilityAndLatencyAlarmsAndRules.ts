@@ -15,6 +15,7 @@ import { IOperation } from '../services/IOperation';
 import { IOperationMetricDetails } from '../services/IOperationMetricDetails';
 import { AvailabilityMetricType } from '../utilities/AvailabilityMetricType';
 import { LatencyMetricType } from '../utilities/LatencyMetricType';
+import { OutlierDetectionAlgorithm } from '../utilities/OutlierDetectionAlgorithm';
 
 /**
  * Class used to create availability and latency alarms and Contributor Insight rules
@@ -173,6 +174,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
     allAvailabilityZoneIds: string[],
     outlierThreshold: number,
     outlierDetectionFunction: IFunction,
+    outlierDetectionAlgorithm: OutlierDetectionAlgorithm,
     counter: number,
     nameSuffix?: string,
   ): IAlarm {
@@ -197,6 +199,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
     let outlierMetrics: IMetric = new MathExpression({
       expression:
                 `MAX(LAMBDA("${outlierDetectionFunction.functionName}",` +
+                `"${outlierDetectionAlgorithm.toString()}",` +
                 `"${outlierThreshold}",` +
                 `"${availabilityZoneId}",` +
                 `"${str}",` +
@@ -225,6 +228,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
     availabilityZoneId: string,
     outlierThreshold: number,
     outlierDetectionFunction: IFunction,
+    outlierDetectionAlgorithm: OutlierDetectionAlgorithm,
     azMapper: IAvailabilityZoneMapper,
     counter: number,
     evaluationPeriods: number,
@@ -260,6 +264,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
     let outlierMetrics: IMetric = new MathExpression({
       expression:
                 `MAX(LAMBDA("${outlierDetectionFunction.functionName}",` +
+                `"${outlierDetectionAlgorithm.toString()}",` +
                 `"${outlierThreshold}",` +
                 `"${availabilityZoneId}",` +
                 `"${str}",` +
@@ -288,6 +293,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
     availabilityZoneId: string,
     outlierThreshold: number,
     outlierDetectionFunction: IFunction,
+    outlierDetectionAlgorithm: OutlierDetectionAlgorithm,
     azMapper: IAvailabilityZoneMapper,
     counter: number,
     evaluationPeriods: number,
@@ -323,6 +329,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
     let outlierMetrics: IMetric = new MathExpression({
       expression:
                 `MAX(LAMBDA("${outlierDetectionFunction.functionName}",` +
+                `"${outlierDetectionAlgorithm.toString()}",` +
                 `"${outlierThreshold}",` +
                 `"${availabilityZoneId}",` +
                 `"${str}",` +
@@ -352,6 +359,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
     allAvailabilityZoneIds: string[],
     outlierThreshold: number,
     outlierDetectionFunction: IFunction,
+    outlierDetectionAlgorithm: OutlierDetectionAlgorithm,
     counter: number,
     nameSuffix ?: string,
   ): IAlarm {
@@ -376,6 +384,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
     let outlierMetrics: IMetric = new MathExpression({
       expression:
             `MAX(LAMBDA("${outlierDetectionFunction.functionName}",` +
+            `"${outlierDetectionAlgorithm.toString()}",` +
             `"${outlierThreshold}",` +
             `"${availabilityZoneId}",` +
             `"${str}",` +

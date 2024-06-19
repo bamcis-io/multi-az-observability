@@ -1,3 +1,4 @@
+import { Duration } from 'aws-cdk-lib';
 import { ILoadBalancerV2 } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import { NetworkConfigurationProps } from './NetworkConfigurationProps';
 
@@ -57,4 +58,18 @@ export interface AddCanaryTestProps
    * @default - The Lambda function is not run in a VPC
    */
   readonly networkConfiguration?: NetworkConfigurationProps;
+
+  /**
+   * The timeout for each individual HTTP request
+   *
+   * @default - Defaults to 2 seconds
+   */
+  readonly timeout?: Duration;
+
+  /**
+   * Whether to ignore TLS validation errors
+   *
+   * @default - false
+   */
+  readonly ignoreTlsErrors?: boolean;
 }
