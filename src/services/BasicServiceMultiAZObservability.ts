@@ -307,8 +307,8 @@ export class BasicServiceMultiAZObservability extends Construct
           alarmName: availabilityZoneId + '-' + alb.loadBalancerArn + '-fault-rate',
           actionsEnabled: false,
           metric: faultRate,
-          evaluationPeriods: 5,
-          datapointsToAlarm: 3,
+          evaluationPeriods: props.evaluationPeriods,
+          datapointsToAlarm: props.datapointsToAlarm,
           threshold: threshold,
           comparisonOperator: ComparisonOperator.GREATER_THAN_THRESHOLD,
         });
@@ -390,8 +390,8 @@ export class BasicServiceMultiAZObservability extends Construct
           alarmName: availabilityZoneId + '-fault-count-outlier',
           metric: outlierMetrics,
           threshold: outlierThreshold,
-          evaluationPeriods: 5,
-          datapointsToAlarm: 3,
+          evaluationPeriods: props.evaluationPeriods,
+          datapointsToAlarm: props.datapointsToAlarm,
           actionsEnabled: false,
           treatMissingData: TreatMissingData.IGNORE,
           comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
@@ -431,8 +431,8 @@ export class BasicServiceMultiAZObservability extends Construct
             props.outlierDetectionAlgorithm,
             this.azMapper,
             index,
-            5,
-            3,
+            props.evaluationPeriods,
+            props.datapointsToAlarm,
             '',
           );
 
@@ -535,8 +535,8 @@ export class BasicServiceMultiAZObservability extends Construct
           metric: packetDropPercentage,
           threshold: threshold,
           comparisonOperator: ComparisonOperator.GREATER_THAN_THRESHOLD,
-          evaluationPeriods: 5,
-          datapointsToAlarm: 3,
+          evaluationPeriods: props.evaluationPeriods,
+          datapointsToAlarm: props.datapointsToAlarm,
         });
 
         // Collect all of the packet drop impact alarms for each
@@ -607,8 +607,8 @@ export class BasicServiceMultiAZObservability extends Construct
         azIsOutlierForPacketDrops = new Alarm(this, 'AZ' + (index + 1) + 'NATGWDroppedPacketsOutlierAlarm', {
           metric: outlierMetrics,
           alarmName: availabilityZoneId + '-dropped-packets-outlier',
-          evaluationPeriods: 5,
-          datapointsToAlarm: 3,
+          evaluationPeriods: props.evaluationPeriods,
+          datapointsToAlarm: props.datapointsToAlarm,
           threshold: outlierThreshold,
           actionsEnabled: false,
           treatMissingData: TreatMissingData.IGNORE,
@@ -649,8 +649,8 @@ export class BasicServiceMultiAZObservability extends Construct
             props.outlierDetectionAlgorithm,
             this.azMapper,
             index,
-            5,
-            3,
+            props.evaluationPeriods,
+            props.datapointsToAlarm,
             '',
           );
 

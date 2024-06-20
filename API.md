@@ -838,6 +838,8 @@ const basicServiceMultiAZObservabilityProps: BasicServiceMultiAZObservabilityPro
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#multi-az-observability.BasicServiceMultiAZObservabilityProps.property.createDashboard">createDashboard</a></code> | <code>boolean</code> | Whether to create a dashboard displaying the metrics and alarms. |
+| <code><a href="#multi-az-observability.BasicServiceMultiAZObservabilityProps.property.datapointsToAlarm">datapointsToAlarm</a></code> | <code>number</code> | The number of datapoints to alarm on for latency and availability alarms. |
+| <code><a href="#multi-az-observability.BasicServiceMultiAZObservabilityProps.property.evaluationPeriods">evaluationPeriods</a></code> | <code>number</code> | The number of evaluation periods for latency and availabiltiy alarms. |
 | <code><a href="#multi-az-observability.BasicServiceMultiAZObservabilityProps.property.outlierDetectionAlgorithm">outlierDetectionAlgorithm</a></code> | <code><a href="#multi-az-observability.OutlierDetectionAlgorithm">OutlierDetectionAlgorithm</a></code> | The algorithm to use for performing outlier detection. |
 | <code><a href="#multi-az-observability.BasicServiceMultiAZObservabilityProps.property.period">period</a></code> | <code>aws-cdk-lib.Duration</code> | The period to evaluate metrics. |
 | <code><a href="#multi-az-observability.BasicServiceMultiAZObservabilityProps.property.serviceName">serviceName</a></code> | <code>string</code> | The service's name. |
@@ -861,6 +863,30 @@ public readonly createDashboard: boolean;
 - *Type:* boolean
 
 Whether to create a dashboard displaying the metrics and alarms.
+
+---
+
+##### `datapointsToAlarm`<sup>Required</sup> <a name="datapointsToAlarm" id="multi-az-observability.BasicServiceMultiAZObservabilityProps.property.datapointsToAlarm"></a>
+
+```typescript
+public readonly datapointsToAlarm: number;
+```
+
+- *Type:* number
+
+The number of datapoints to alarm on for latency and availability alarms.
+
+---
+
+##### `evaluationPeriods`<sup>Required</sup> <a name="evaluationPeriods" id="multi-az-observability.BasicServiceMultiAZObservabilityProps.property.evaluationPeriods"></a>
+
+```typescript
+public readonly evaluationPeriods: number;
+```
+
+- *Type:* number
+
+The number of evaluation periods for latency and availabiltiy alarms.
 
 ---
 
@@ -4735,6 +4761,7 @@ Service level alarms and rules using critical operations.
 | <code><a href="#multi-az-observability.IServiceAlarmsAndRules.property.regionalFaultCountServerSideAlarm">regionalFaultCountServerSideAlarm</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm</code> | An alarm for fault count exceeding a regional threshold for all critical operations. |
 | <code><a href="#multi-az-observability.IServiceAlarmsAndRules.property.service">service</a></code> | <code><a href="#multi-az-observability.IService">IService</a></code> | The service these alarms and rules are for. |
 | <code><a href="#multi-az-observability.IServiceAlarmsAndRules.property.zonalAggregateIsolatedImpactAlarms">zonalAggregateIsolatedImpactAlarms</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm[]</code> | The zonal aggregate isolated impact alarms. |
+| <code><a href="#multi-az-observability.IServiceAlarmsAndRules.property.zonalServerSideIsolatedImpactAlarms">zonalServerSideIsolatedImpactAlarms</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm[]</code> | The zonal server-side isolated impact alarms. |
 | <code><a href="#multi-az-observability.IServiceAlarmsAndRules.property.regionalAvailabilityCanaryAlarm">regionalAvailabilityCanaryAlarm</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm</code> | An alarm for regional impact of any critical operation as measured by the canary. |
 
 ---
@@ -4788,6 +4815,23 @@ The zonal aggregate isolated impact alarms.
 There is 1 alarm per AZ that
 triggers for availability or latency impact to any critical operation in that AZ
 that indicates it has isolated impact as measured by canaries or server-side.
+
+---
+
+##### `zonalServerSideIsolatedImpactAlarms`<sup>Required</sup> <a name="zonalServerSideIsolatedImpactAlarms" id="multi-az-observability.IServiceAlarmsAndRules.property.zonalServerSideIsolatedImpactAlarms"></a>
+
+```typescript
+public readonly zonalServerSideIsolatedImpactAlarms: IAlarm[];
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.IAlarm[]
+
+The zonal server-side isolated impact alarms.
+
+There is 1 alarm per AZ that triggers
+on availability or atency impact to any critical operation in that AZ. These are useful
+for deployment monitoring to not inadvertently fail when a canary can't contact an AZ
+during a deployment.
 
 ---
 
@@ -4993,7 +5037,7 @@ Available algorithms for performing outlier detection, currently only STATIC is 
 | --- | --- |
 | <code><a href="#multi-az-observability.OutlierDetectionAlgorithm.STATIC">STATIC</a></code> | Defines using a static value to compare skew in faults or high latency responses. |
 | <code><a href="#multi-az-observability.OutlierDetectionAlgorithm.CHI_SQUARED">CHI_SQUARED</a></code> | Uses the chi squared statistic to determine if there is a statistically significant skew in fault rate or high latency distribution. |
-| <code><a href="#multi-az-observability.OutlierDetectionAlgorithm.Z_SCORE">Z_SCORE</a></code> | Uses z-score to determine if the skew in faults or high latency respones exceeds a defined number of standard devations   A good default threshold value for this is 2, meaning the outlier value is outside 95% of the normal distribution. |
+| <code><a href="#multi-az-observability.OutlierDetectionAlgorithm.Z_SCORE">Z_SCORE</a></code> | Uses z-score to determine if the skew in faults or high latency respones exceeds a defined number of standard devations. |
 | <code><a href="#multi-az-observability.OutlierDetectionAlgorithm.IQR">IQR</a></code> | Uses Interquartile Range Method to determine an outlier for faults or latency. |
 | <code><a href="#multi-az-observability.OutlierDetectionAlgorithm.MAD">MAD</a></code> | Median Absolute Deviation (MAD) to determine an outlier for faults or latency. |
 
@@ -5013,7 +5057,7 @@ is responsible for 70% of the total errors or high latency responses
 
 Uses the chi squared statistic to determine if there is a statistically significant skew in fault rate or high latency distribution.
 
-A normal default threshold for this is 0.05, which means there is a 5% or 
+A normal default threshold for this is 0.05, which means there is a 5% or
 less chance of the skew in errors or high latency responses occuring
 
 ---
@@ -5021,9 +5065,10 @@ less chance of the skew in errors or high latency responses occuring
 
 ##### `Z_SCORE` <a name="Z_SCORE" id="multi-az-observability.OutlierDetectionAlgorithm.Z_SCORE"></a>
 
-Uses z-score to determine if the skew in faults or high latency respones exceeds a defined number of standard devations   A good default threshold value for this is 2, meaning the outlier value is outside 95% of the normal distribution.
+Uses z-score to determine if the skew in faults or high latency respones exceeds a defined number of standard devations.
 
-Using 3 means the outlier is outside 99.7% of
+A good default threshold value for this is 2, meaning the outlier value is outside
+95% of the normal distribution. Using 3 means the outlier is outside 99.7% of
 the normal distribution.
 
 ---

@@ -61,6 +61,8 @@ test('Basic service observability', () => {
     serviceName: 'test',
     period: cdk.Duration.seconds(60),
     createDashboard: true,
+    evaluationPeriods: 5,
+    datapointsToAlarm: 3,
   });
 
   Template.fromStack(stack);
@@ -121,6 +123,8 @@ test('Basic service observability with chi-squared', () => {
     serviceName: 'test',
     period: cdk.Duration.seconds(60),
     createDashboard: true,
+    evaluationPeriods: 5,
+    datapointsToAlarm: 3,
   });
 
   Template.fromStack(stack);

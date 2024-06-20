@@ -53,4 +53,9 @@ export interface IOperationAlarmsAndRules
    * The aggregate zonal alarm indexed by Availability Zone Id.
    */
   aggregateZonalAlarmsMap: {[key: string]: IAlarm};
+
+  /**
+   * Just the server side zonal alarms
+   */
+  serverSideZonalAlarmsMap: {[key: string]: IAlarm};
 }

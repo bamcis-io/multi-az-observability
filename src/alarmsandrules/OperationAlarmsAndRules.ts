@@ -62,6 +62,11 @@ export class OperationAlarmsAndRules extends Construct implements IOperationAlar
      */
   readonly aggregateZonalAlarmsMap: { [key: string]: IAlarm };
 
+  /**
+   * Just the server side zonal alarms
+   */
+  readonly serverSideZonalAlarmsMap: {[key: string]: IAlarm};
+
   constructor(scope: Construct, id: string, props: OperationAlarmsAndRulesProps) {
     super(scope, id);
     this.serverSideZonalAlarmsAndRules = [];
@@ -69,6 +74,7 @@ export class OperationAlarmsAndRules extends Construct implements IOperationAlar
     this.aggregateZonalAlarms = [];
     this.operation = props.operation;
     this.aggregateZonalAlarmsMap = {};
+    this.serverSideZonalAlarmsMap = {};
 
     let availabilityZoneIds: string[] = props.operation.service.availabilityZoneNames.map(x => {
       return props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(x.substring(x.length - 1));
@@ -138,6 +144,8 @@ export class OperationAlarmsAndRules extends Construct implements IOperationAlar
           outlierDetectionFunction: props.outlierDetectionFunction,
         },
       ));
+
+      this.serverSideZonalAlarmsMap[availabilityZoneId] = this.serverSideZonalAlarmsAndRules[i].isolatedImpactAlarm;
 
       if (props.operation.canaryMetricDetails !== undefined && props.operation.canaryMetricDetails != null) {
         this.canaryZonalAlarmsAndRules.push(new CanaryOperationZonalAlarmsAndRules(

@@ -61,4 +61,6 @@ new BasicServiceMultiAZObservability(stack, 'MAZObservability', {
   serviceName: 'test',
   period: cdk.Duration.seconds(60),
   createDashboard: true,
+  datapointsToAlarm: 3,
+  evaluationPeriods: 5,
 });

@@ -126,4 +126,14 @@ export interface BasicServiceMultiAZObservabilityProps
      * even if the prefix value is blank.
      */
   readonly assetsBucketPrefixParameterName?: string;
+
+  /**
+     * The number of evaluation periods for latency and availabiltiy alarms
+     */
+  readonly evaluationPeriods: number;
+
+  /**
+     * The number of datapoints to alarm on for latency and availability alarms
+     */
+  readonly datapointsToAlarm: number;
 }

@@ -19,6 +19,14 @@ export interface IServiceAlarmsAndRules
   zonalAggregateIsolatedImpactAlarms: IAlarm[];
 
   /**
+   * The zonal server-side isolated impact alarms. There is 1 alarm per AZ that triggers
+   * on availability or atency impact to any critical operation in that AZ. These are useful
+   * for deployment monitoring to not inadvertently fail when a canary can't contact an AZ
+   * during a deployment.
+   */
+  zonalServerSideIsolatedImpactAlarms: IAlarm[];
+
+  /**
      * An alarm for regional impact of any critical operation as measured by the canary.
      */
   regionalAvailabilityCanaryAlarm?: IAlarm;

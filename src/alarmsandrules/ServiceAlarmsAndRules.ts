@@ -27,6 +27,14 @@ export class ServiceAlarmsAndRules extends Construct implements IServiceAlarmsAn
   zonalAggregateIsolatedImpactAlarms: IAlarm[];
 
   /**
+   * The zonal server-side isolated impact alarms. There is 1 alarm per AZ that triggers
+   * on availability or atency impact to any critical operation in that AZ. These are useful
+   * for deployment monitoring to not inadvertently fail when a canary can't contact an AZ
+   * during a deployment.
+   */
+  zonalServerSideIsolatedImpactAlarms: IAlarm[];
+
+  /**
      * An alarm for regional impact of any critical operation as measured by the canary.
      */
   regionalAvailabilityCanaryAlarm?: IAlarm;
@@ -48,6 +56,7 @@ export class ServiceAlarmsAndRules extends Construct implements IServiceAlarmsAn
     let criticalOperations: string[] = props.service.operations.filter(x => x.critical == true).map(x => x.operationName);
     let counter: number = 1;
     this.zonalAggregateIsolatedImpactAlarms = [];
+    this.zonalServerSideIsolatedImpactAlarms = [];
 
     let availabilityZoneIds: string[] = props.service.availabilityZoneNames.map(x => {
       return props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(x.substring(x.length - 1));
@@ -68,6 +77,20 @@ export class ServiceAlarmsAndRules extends Construct implements IServiceAlarmsAn
           }, {} as {[key: string]: IOperationAlarmsAndRules}),
         )
           .map(x => x.aggregateZonalAlarms[i])),
+      }));
+
+      this.zonalServerSideIsolatedImpactAlarms.push(new CompositeAlarm(this, 'AZ' + counter + 'ServiceServerSideIsolatedImpactAlarm', {
+        compositeAlarmName: availabilityZonedId + '-' + props.service.serviceName.toLowerCase() + '-isolated-impact-server-side-alarm',
+        alarmRule: AlarmRule.anyOf(...Object.values(Object.entries(props.perOperationAlarmsAndRules)
+          .reduce((filtered, [key, value]) => {
+            if (criticalOperations.indexOf(key) > -1) {
+              filtered[key] = value;
+            }
+
+            return filtered;
+          }, {} as {[key: string]: IOperationAlarmsAndRules}),
+        )
+          .map(x => x.serverSideZonalAlarmsMap[availabilityZonedId])),
       }));
 
       counter++;

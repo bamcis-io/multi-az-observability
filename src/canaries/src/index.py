@@ -19,8 +19,8 @@ from requests.adapters import HTTPAdapter
 
 ignore_ssl_errors = os.environ.get("IGNORE_SSL_ERRORS")
 region = os.environ.get("REGION")
-session = requests.Session()
-session.mount("http://", HTTPAdapter(max_retries = 0))
+#session = requests.Session()
+#session.mount("http://", HTTPAdapter(max_retries = 0))
 
 try:
   timeout = float(os.environ.get("TIMEOUT"))
@@ -123,9 +123,12 @@ def verify_request(context, item, method, metrics = None):
       start = (time.time() * 1000)
       metrics.set_property("RequestStartTime", round(start))
       
-      response = session.request(method = method, headers = h, url = url, data = str(post_data), verify = verify, timeout = timeout)
+      response = requests.request(method = method, headers = h, url = url, data = str(post_data), verify = verify, timeout = timeout, stream = True)
       data = response.text
       response_end = time.time() * 1000
+      if response.raw._connection and response.raw._connection.sock:
+        sock = response.raw._connection.sock.getsockname()
+        metrics.set_property("RemoteIpAddress", str(sock[0]) + ":" + str(sock[1]))
       metrics.set_property("ResponseReceivedTime", round(response_end))
       metrics.put_metric("TimeToResponseReceived", response_end - start, "Milliseconds")
     except http.client.RemoteDisconnected as e:
