@@ -129,6 +129,8 @@ def verify_request(context, item, method, metrics = None):
       if response.raw._connection and response.raw._connection.sock:
         sock = response.raw._connection.sock.getsockname()
         metrics.set_property("RemoteIpAddress", str(sock[0]) + ":" + str(sock[1]))
+      else:
+        metrics.set_property("RemoteIpAddress", "Unknown")
       metrics.set_property("ResponseReceivedTime", round(response_end))
       metrics.put_metric("TimeToResponseReceived", response_end - start, "Milliseconds")
     except http.client.RemoteDisconnected as e:
