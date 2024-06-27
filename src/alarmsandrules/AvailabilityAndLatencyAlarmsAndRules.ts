@@ -151,7 +151,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
     return new Alarm(scope, 'AZ' + counter + 'IsolatedImpactAlarmStatic', {
       alarmName: availabilityZoneId + `-${metricDetails.operationName.toLowerCase()}-static-majority-errors-impact` + nameSuffix,
       metric: new MathExpression({
-        expression: '(m1 / m2)',
+        expression: 'IF(m2 > 0, (m1 / m2), 0)',
         usingMetrics: {
           m1: zonalFaults,
           m2: regionalFaults,
@@ -161,7 +161,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
       }),
       threshold: outlierThreshold,
       comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
-      treatMissingData: TreatMissingData.IGNORE,
+      treatMissingData: TreatMissingData.NOT_BREACHING,
       evaluationPeriods: metricDetails.evaluationPeriods,
       datapointsToAlarm: metricDetails.datapointsToAlarm,
     });
@@ -216,7 +216,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
       metric: outlierMetrics,
       threshold: 1,
       comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
-      treatMissingData: TreatMissingData.IGNORE,
+      treatMissingData: TreatMissingData.NOT_BREACHING,
       evaluationPeriods: metricDetails.evaluationPeriods,
       datapointsToAlarm: metricDetails.datapointsToAlarm,
     });
@@ -281,7 +281,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
       metric: outlierMetrics,
       threshold: 1,
       comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
-      treatMissingData: TreatMissingData.IGNORE,
+      treatMissingData: TreatMissingData.NOT_BREACHING,
       evaluationPeriods: evaluationPeriods,
       datapointsToAlarm: datapointsToAlarm,
     });
@@ -346,7 +346,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
       metric: outlierMetrics,
       threshold: 1,
       comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
-      treatMissingData: TreatMissingData.IGNORE,
+      treatMissingData: TreatMissingData.NOT_BREACHING,
       evaluationPeriods: evaluationPeriods,
       datapointsToAlarm: datapointsToAlarm,
     });
@@ -401,7 +401,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
       metric: outlierMetrics,
       threshold: 1,
       comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
-      treatMissingData: TreatMissingData.IGNORE,
+      treatMissingData: TreatMissingData.NOT_BREACHING,
       evaluationPeriods: metricDetails.evaluationPeriods,
       datapointsToAlarm: metricDetails.datapointsToAlarm,
     });
@@ -435,7 +435,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
     return new Alarm(scope, metricDetails.operationName + 'AZ' + counter + 'IsolatedImpactAlarmStatic', {
       alarmName: availabilityZoneId + `-${metricDetails.operationName.toLowerCase()}-static-majority-high-latency-impact` + nameSuffix,
       metric: new MathExpression({
-        expression: '(m1 / m2)',
+        expression: 'IF(m2 > 0, (m1 / m2), 0)',
         usingMetrics: {
           m1: zonalLatency,
           m2: regionalLatency,
@@ -445,7 +445,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
       }),
       threshold: outlierThreshold,
       comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
-      treatMissingData: TreatMissingData.IGNORE,
+      treatMissingData: TreatMissingData.NOT_BREACHING,
       evaluationPeriods: metricDetails.evaluationPeriods,
       datapointsToAlarm: metricDetails.datapointsToAlarm,
     });
