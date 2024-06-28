@@ -1,6 +1,6 @@
 import { Fn } from 'aws-cdk-lib';
 import { Dashboard, IMetric, PeriodOverride, IWidget, TextWidget, AlarmStatusWidget, GraphWidget, Color, AlarmWidget, LegendPosition } from 'aws-cdk-lib/aws-cloudwatch';
-import { BaseLoadBalancer } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
+import { BaseLoadBalancer, CfnLoadBalancer } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import { Construct } from 'constructs';
 import { ContributorInsightsWidget } from './ContributorInsightsWidget';
 import { IOperationAvailabilityAndLatencyDashboard } from './IOperationAvailabilityAndLatencyDashboard';
@@ -10,6 +10,7 @@ import { OperationLatencyWidgetProps } from './props/OperationLatencyWidgetProps
 import { IAvailabilityZoneMapper } from '../azmapper/IAvailabilityZoneMapper';
 import { ApplicationLoadBalancerMetrics } from '../metrics/ApplicationLoadBalancerMetrics';
 import { AvailabilityAndLatencyMetrics } from '../metrics/AvailabilityAndLatencyMetrics';
+import { NetworkLoadBalancerMetrics } from '../metrics/NetworkLoadBalancerMetrics';
 import { RegionalAvailabilityMetrics } from '../metrics/RegionalAvailabilityMetrics';
 import { RegionalLatencyMetrics } from '../metrics/RegionalLatencyMetrics';
 import { ZonalAvailabilityMetrics } from '../metrics/ZonalAvailabilityMetrics';
@@ -498,6 +499,114 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
     return latencyWidgets;
   }
 
+  private static createApplicationLoadBalancerWidgets(
+    props: OperationAvailabilityAndLatencyDashboardProps,
+    title: string,
+    availabilityZoneNames: string[],
+  ) : IWidget[] {
+    let albWidgets: IWidget[] = [];
+    let loadBalancerFullName: string = (props.loadBalancer as BaseLoadBalancer).loadBalancerFullName;
+
+    albWidgets.push(new TextWidget({ height: 2, width: 24, markdown: title }));
+
+    albWidgets.push(new GraphWidget({
+      height: 8,
+      width: 24,
+      title: Fn.sub('${AWS::Region} Processed Bytes'),
+      region: Fn.sub('${AWS::Region}'),
+      left: [
+        ApplicationLoadBalancerMetrics.createRegionalApplicationLoadBalancerProcessedBytesMetric(
+          loadBalancerFullName,
+          props.operation.serverSideAvailabilityMetricDetails.period,
+        ),
+      ],
+      leftYAxis: {
+        label: 'Processed Bytes',
+        showUnits: true,
+      },
+    }));
+
+    availabilityZoneNames.forEach(availabilityZoneName => {
+      let availabilityZoneId: string = props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(
+        availabilityZoneName.substring(availabilityZoneName.length - 1),
+      );
+
+      albWidgets.push(new GraphWidget({
+        height: 6,
+        width: 8,
+        title: availabilityZoneId + ' Processed Bytes',
+        region: Fn.sub('${AWS::Region}'),
+        left: [
+          ApplicationLoadBalancerMetrics.createZonalApplicationLoadBalancerProcessedBytesMetric(
+            loadBalancerFullName,
+            availabilityZoneName,
+            props.operation.serverSideAvailabilityMetricDetails.period,
+          ),
+        ],
+        leftYAxis: {
+          label: 'Processed Bytes',
+          showUnits: true,
+        },
+      }));
+    });
+
+    return albWidgets;
+  }
+
+  private static createNetworkLoadBalancerWidgets(
+    props: OperationAvailabilityAndLatencyDashboardProps,
+    title: string,
+    availabilityZoneNames: string[],
+  ) : IWidget[] {
+    let nlbWidgets: IWidget[] = [];
+    let loadBalancerFullName: string = (props.loadBalancer as BaseLoadBalancer).loadBalancerFullName;
+
+    nlbWidgets.push(new TextWidget({ height: 2, width: 24, markdown: title }));
+
+    nlbWidgets.push(new GraphWidget({
+      height: 8,
+      width: 24,
+      title: Fn.sub('${AWS::Region} Processed Bytes'),
+      region: Fn.sub('${AWS::Region}'),
+      left: [
+        NetworkLoadBalancerMetrics.createRegionalNetworkLoadBalancerProcessedBytesMetric(
+          loadBalancerFullName,
+          props.operation.serverSideAvailabilityMetricDetails.period,
+        ),
+      ],
+      leftYAxis: {
+        label: 'Processed Bytes',
+        showUnits: true,
+      },
+    }));
+
+    availabilityZoneNames.forEach(availabilityZoneName => {
+      let availabilityZoneId: string = props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(
+        availabilityZoneName.substring(availabilityZoneName.length - 1),
+      );
+
+      nlbWidgets.push(new GraphWidget({
+        height: 6,
+        width: 8,
+        title: availabilityZoneId + ' Processed Bytes',
+        region: Fn.sub('${AWS::Region}'),
+        left: [
+          NetworkLoadBalancerMetrics.createZonalNetworkLoadBalancerProcessedBytesMetric(
+            loadBalancerFullName,
+            availabilityZoneName,
+            props.operation.serverSideAvailabilityMetricDetails.period,
+          ),
+        ],
+        leftYAxis: {
+          label: 'Processed Bytes',
+          showUnits: true,
+        },
+      }));
+    });
+
+    return nlbWidgets;
+  }
+
   /**
      * The operation level dashboard
      */
@@ -548,14 +657,26 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
       }, '**Server-side Latency**'),
     );
 
-    if (props.loadBalancer !== undefined && props.loadBalancer != null) {
-      widgets.push(
-        this.createApplicationLoadBalancerWidgets(
-          props,
-          '**Application Load Balancer Metrics**',
-          props.operation.service.availabilityZoneNames,
-        ),
-      );
+    let lb: CfnLoadBalancer = props.loadBalancer?.node.defaultChild as CfnLoadBalancer;
+
+    if (lb !== undefined && lb != null) {
+      if (lb.type == 'application') {
+        widgets.push(
+          OperationAvailabilityAndLatencyDashboard.createApplicationLoadBalancerWidgets(
+            props,
+            '**Application Load Balancer Metrics**',
+            props.operation.service.availabilityZoneNames,
+          ),
+        );
+      } else if (lb.type == 'network') {
+        widgets.push(
+          OperationAvailabilityAndLatencyDashboard.createNetworkLoadBalancerWidgets(
+            props,
+            '**Network Load Balancer Metrics**',
+            props.operation.service.availabilityZoneNames,
+          ),
+        );
+      }
     }
 
     if (props.operation.canaryMetricDetails !== undefined && props.operation.canaryMetricDetails != null) {
@@ -589,119 +710,4 @@ export class OperationAvailabilityAndLatencyDashboard extends Construct implemen
       widgets: widgets,
     });
   }
-
-  private createApplicationLoadBalancerWidgets(
-    props: OperationAvailabilityAndLatencyDashboardProps,
-    title: string, availabilityZoneNames: string[],
-  ) : IWidget[] {
-    let albWidgets: IWidget[] = [];
-    let loadBalancerFullName: string = (props.loadBalancer as BaseLoadBalancer).loadBalancerFullName;
-
-    albWidgets.push(new TextWidget({ height: 2, width: 24, markdown: title }));
-
-    albWidgets.push(new GraphWidget({
-      height: 8,
-      width: 24,
-      title: Fn.sub('${AWS::Region} Fault Rate'),
-      region: Fn.sub('${AWS::Region}'),
-      left: [
-        ApplicationLoadBalancerMetrics.createRegionalApplicationLoadBalancerFaultRateMetric(
-          loadBalancerFullName,
-          props.operation.serverSideAvailabilityMetricDetails.period,
-        ),
-      ],
-      leftYAxis: {
-        max: 20,
-        min: 0,
-        label: 'Fault Rate',
-        showUnits: false,
-      },
-      leftAnnotations: [
-        {
-          value: 1,
-          visible: true,
-          color: Color.RED,
-          label: 'High severity',
-        },
-      ],
-    }));
-
-    availabilityZoneNames.forEach((availabilityZoneName) => {
-      let availabilityZoneId: string = this.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(
-        availabilityZoneName.substring(availabilityZoneName.length - 1),
-      );
-
-      albWidgets.push(new GraphWidget({
-        height: 6,
-        width: 8,
-        title: availabilityZoneId + ' Fault Rate',
-        region: Fn.sub('${AWS::Region}'),
-        left: [
-          ApplicationLoadBalancerMetrics.createZonalApplicationLoadBalancerFaultRateMetric(
-            loadBalancerFullName,
-            availabilityZoneName,
-            props.operation.serverSideAvailabilityMetricDetails.period,
-          ),
-        ],
-        leftYAxis: {
-          max: 20,
-          min: 0,
-          label: 'Fault Rate',
-          showUnits: false,
-        },
-        leftAnnotations: [
-          {
-            value: 1,
-            visible: true,
-            color: Color.RED,
-            label: 'High severity',
-          },
-        ],
-      }));
-    });
-
-    albWidgets.push(new GraphWidget({
-      height: 8,
-      width: 24,
-      title: Fn.sub('${AWS::Region} Processed Bytes'),
-      region: Fn.sub('${AWS::Region}'),
-      left: [
-        ApplicationLoadBalancerMetrics.createRegionalApplicationLoadBalancerProcessedBytesMetric(
-          loadBalancerFullName,
-          props.operation.serverSideAvailabilityMetricDetails.period,
-        ),
-      ],
-      leftYAxis: {
-        label: 'Processed Bytes',
-        showUnits: true,
-      },
-    }));
-
-    availabilityZoneNames.forEach(availabilityZoneName => {
-      let availabilityZoneId: string = this.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(
-        availabilityZoneName.substring(availabilityZoneName.length - 1),
-      );
-
-      albWidgets.push(new GraphWidget({
-        height: 6,
-        width: 8,
-        title: availabilityZoneId + ' Processed Bytes',
-        region: Fn.sub('${AWS::Region}'),
-        left: [
-          ApplicationLoadBalancerMetrics.createZonalApplicationLoadBalancerProcessedBytesMetric(
-            loadBalancerFullName,
-            availabilityZoneName,
-            props.operation.serverSideAvailabilityMetricDetails.period,
-          ),
-        ],
-        leftYAxis: {
-          label: 'Processed Bytes',
-          showUnits: true,
-        },
-      }));
-    });
-
-    return albWidgets;
-  }
-
 }

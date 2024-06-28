@@ -2,7 +2,7 @@ import * as cdk from 'aws-cdk-lib';
 import { Duration } from 'aws-cdk-lib';
 import { Unit } from 'aws-cdk-lib/aws-cloudwatch';
 import { SelectedSubnets, SubnetType, Vpc } from 'aws-cdk-lib/aws-ec2';
-import { ApplicationLoadBalancer, ILoadBalancerV2 } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
+import { ILoadBalancerV2, NetworkLoadBalancer } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import { ILogGroup, LogGroup } from 'aws-cdk-lib/aws-logs';
 import { InstrumentedServiceMultiAZObservability } from '../src/services/InstrumentedServiceMultiAZObservability';
 import { IService } from '../src/services/IService';
@@ -54,7 +54,7 @@ let subnets: SelectedSubnets = vpc.selectSubnets({
   subnetType: SubnetType.PRIVATE_ISOLATED,
 });
 
-let loadBalancer: ILoadBalancerV2 = new ApplicationLoadBalancer(stack, 'alb', {
+let loadBalancer: ILoadBalancerV2 = new NetworkLoadBalancer(stack, 'alb', {
   vpc: vpc,
   crossZoneEnabled: false,
   vpcSubnets: subnets,
@@ -168,7 +168,6 @@ service.addOperation(payOperation);
 new InstrumentedServiceMultiAZObservability(stack, 'MAZObservability', {
   createDashboards: true,
   service: service,
-  outlierThreshold: 0.7,
   interval: Duration.minutes(30),
   assetsBucketParameterName: 'AssetsBucket',
   assetsBucketPrefixParameterName: 'AssetsBucketPrefix',

@@ -1,8 +1,10 @@
 import { Fn } from 'aws-cdk-lib';
 import { AlarmStatusWidget, Color, Dashboard, GraphWidget, IMetric, IWidget, MathExpression, PeriodOverride, TextWidget } from 'aws-cdk-lib/aws-cloudwatch';
+import { BaseLoadBalancer, CfnLoadBalancer } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import { Construct } from 'constructs';
 import { IServiceAvailabilityAndLatencyDashboard } from './IServiceAvailabilityAndLatencyDashboard';
 import { ServiceAvailabilityAndLatencyDashboardProps } from './props/ServiceAvailabilityAndLatencyDashboardProps';
+import { ApplicationLoadBalancerMetrics } from '../metrics/ApplicationLoadBalancerMetrics';
 import { AvailabilityAndLatencyMetrics } from '../metrics/AvailabilityAndLatencyMetrics';
 import { AvailabilityMetricProps } from '../metrics/props/AvailabilityMetricProps';
 import { LatencyMetricProps } from '../metrics/props/LatencyMetricProps';
@@ -401,6 +403,80 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
         };
       });
   }
+
+  private static generateLoadBalancerWidgets(
+    props: ServiceAvailabilityAndLatencyDashboardProps,
+    title: string,
+    availabilityZoneNames: string[],
+  ) : IWidget[] {
+
+    let albWidgets: IWidget[] = [];
+    let loadBalancerFullName: string = (props.service.loadBalancer as BaseLoadBalancer).loadBalancerFullName;
+
+    albWidgets.push(new TextWidget({ height: 2, width: 24, markdown: title }));
+    albWidgets.push(new GraphWidget({
+      height: 8,
+      width: 24,
+      title: Fn.sub('${AWS::Region} Fault Rate'),
+      region: Fn.sub('${AWS::Region}'),
+      left: [
+        ApplicationLoadBalancerMetrics.createRegionalApplicationLoadBalancerFaultRateMetric(
+          loadBalancerFullName,
+          props.service.period,
+        ),
+      ],
+      leftYAxis: {
+        max: 35,
+        min: 0,
+        label: 'Fault Rate',
+        showUnits: false,
+      },
+      leftAnnotations: [
+        {
+          value: 1,
+          visible: true,
+          color: Color.RED,
+          label: 'High severity',
+        },
+      ],
+    }));
+
+    availabilityZoneNames.forEach((availabilityZoneName) => {
+      let availabilityZoneId: string = props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(
+        availabilityZoneName.substring(availabilityZoneName.length - 1),
+      );
+
+      albWidgets.push(new GraphWidget({
+        height: 6,
+        width: 8,
+        title: availabilityZoneId + ' Fault Rate',
+        region: Fn.sub('${AWS::Region}'),
+        left: [
+          ApplicationLoadBalancerMetrics.createZonalApplicationLoadBalancerFaultRateMetric(
+            loadBalancerFullName,
+            availabilityZoneName,
+            props.service.period,
+          ),
+        ],
+        leftYAxis: {
+          max: 35,
+          min: 0,
+          label: 'Fault Rate',
+          showUnits: false,
+        },
+        leftAnnotations: [
+          {
+            value: 1,
+            visible: true,
+            color: Color.RED,
+            label: 'High severity',
+          },
+        ],
+      }));
+    });
+
+    return albWidgets;
+  }
   /**
      * The service level dashboard
      */
@@ -493,5 +569,11 @@ export class ServiceAvailabilityAndLatencyDashboard extends Construct implements
         ServiceAvailabilityAndLatencyDashboard.generateServerSideAndCanaryLatencyWidgets(props, availabilityZoneIds),
       ],
     });
+
+    let lb: CfnLoadBalancer = props.service.loadBalancer?.node.defaultChild as CfnLoadBalancer;
+
+    if (lb !== undefined && lb != null && lb.type == 'application') {
+      this.dashboard.addWidgets(...ServiceAvailabilityAndLatencyDashboard.generateLoadBalancerWidgets(props, 'Application Load Balancer Metrics', props.service.availabilityZoneNames));
+    }
   }
 }
