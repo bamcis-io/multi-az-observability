@@ -7025,11 +7025,26 @@
           "abstract": true,
           "docs": {
             "stability": "stable",
-            "summary": "An alarm for regional impact of any critical operation as measured by the server-side."
+            "summary": "An alarm for regional availability or latency impact of any critical operation as measured by the server-side."
           },
           "locationInModule": {
             "filename": "src/alarmsandrules/IServiceAlarmsAndRules.ts",
-            "line": 37
+            "line": 42
+          },
+          "name": "regionalAvailabilityOrLatencyServerSideAlarm",
+          "type": {
+            "fqn": "aws-cdk-lib.aws_cloudwatch.IAlarm"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "An alarm for regional availability impact of any critical operation as measured by the server-side."
+          },
+          "locationInModule": {
+            "filename": "src/alarmsandrules/IServiceAlarmsAndRules.ts",
+            "line": 47
           },
           "name": "regionalAvailabilityServerSideAlarm",
           "type": {
@@ -7044,7 +7059,7 @@
           },
           "locationInModule": {
             "filename": "src/alarmsandrules/IServiceAlarmsAndRules.ts",
-            "line": 42
+            "line": 52
           },
           "name": "regionalFaultCountServerSideAlarm",
           "type": {
@@ -7112,13 +7127,29 @@
           "abstract": true,
           "docs": {
             "stability": "stable",
-            "summary": "An alarm for regional impact of any critical operation as measured by the canary."
+            "summary": "An alarm for regional availability impact of any critical operation as measured by the canary."
+          },
+          "locationInModule": {
+            "filename": "src/alarmsandrules/IServiceAlarmsAndRules.ts",
+            "line": 37
+          },
+          "name": "regionalAvailabilityCanaryAlarm",
+          "optional": true,
+          "type": {
+            "fqn": "aws-cdk-lib.aws_cloudwatch.IAlarm"
+          }
+        },
+        {
+          "abstract": true,
+          "docs": {
+            "stability": "stable",
+            "summary": "An alarm for regional availability or latency impact of any critical operation as measured by the canary."
           },
           "locationInModule": {
             "filename": "src/alarmsandrules/IServiceAlarmsAndRules.ts",
             "line": 32
           },
-          "name": "regionalAvailabilityCanaryAlarm",
+          "name": "regionalAvailabilityOrLatencyCanaryAlarm",
           "optional": true,
           "type": {
             "fqn": "aws-cdk-lib.aws_cloudwatch.IAlarm"
@@ -9948,5 +9979,5 @@
     }
   },
   "version": "0.0.1-alpha.1",
-  "fingerprint": "MidETEaKx6u5kdF2NQfh8/zUGTV+gJl1YKeFZ+kFxk8="
+  "fingerprint": "rpk48Sr/dpYVd0oNLmNHn48TjOSucgpPc9dj/7rCqY4="
 }
