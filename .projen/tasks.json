@@ -4,6 +4,9 @@
       "name": "awslint",
       "steps": [
         {
+          "exec": "npm install awslint"
+        },
+        {
           "exec": "awslint"
         }
       ]
