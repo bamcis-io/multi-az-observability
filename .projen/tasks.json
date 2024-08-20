@@ -4,7 +4,10 @@
       "name": "awslint",
       "steps": [
         {
-          "exec": "npx run awslint"
+          "exec": "npm install awslint"
+        },
+        {
+          "exec": "npm run awslint"
         }
       ]
     },

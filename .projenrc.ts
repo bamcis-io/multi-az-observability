@@ -21,7 +21,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
       schedule: UpgradeDependenciesSchedule.WEEKLY
     }
   },
-  workflowRunsOn: [ "codebuild-Arm64GithubRunner-${{ github.run_id }}-${{ github.run_attempt }}" ],
+  workflowRunsOn: [ 'codebuild-Arm64GithubRunner-${{ github.run_id }}-${{ github.run_attempt }}' ],
   //workflowRunsOn: [ "macos-14" ],
   //workflowBootstrapSteps: [
   //  {
@@ -100,7 +100,10 @@ const project = new awscdk.AwsCdkConstructLibrary({
 const awsLint = project.tasks.addTask('awslint', {
   steps: [
     {
-      exec: "npx run awslint"
+      exec: 'npm install awslint'
+    },
+    {
+      exec: 'npm run awslint'
     }
   ]
 });
@@ -229,11 +232,11 @@ const buildAssets = project.tasks.addTask('build-assets', {
   ],
 });
 
-project.tasks.tryFind("compile")?.spawn(buildAssets);
-project.tasks.tryFind("post-compile")?.spawn(awsLint);
+project.tasks.tryFind('compile')?.spawn(buildAssets);
+project.tasks.tryFind('post-compile')?.spawn(awsLint);
 
-project.addFields({
-  version: '0.0.1-alpha.1',
-});
+//project.addFields({
+//  version: '0.0.1-alpha.1',
+//});
 
 project.synth();
