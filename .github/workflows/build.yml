@@ -6,7 +6,7 @@ on:
   workflow_dispatch: {}
 jobs:
   build:
-    runs-on: macos-14
+    runs-on: codebuild-Arm64GithubRunner-${{ github.run_id }}-${{ github.run_attempt }}
     permissions:
       contents: write
     outputs:
@@ -19,12 +19,6 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.ref }}
           repository: ${{ github.event.pull_request.head.repo.full_name }}
-      - name: Install Docker
-        run: brew install docker
-      - name: Install Colima
-        run: brew install colima
-      - name: Start Colima
-        run: colima start
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -63,7 +57,7 @@ jobs:
           overwrite: true
   self-mutation:
     needs: build
-    runs-on: macos-14
+    runs-on: codebuild-Arm64GithubRunner-${{ github.run_id }}-${{ github.run_attempt }}
     permissions:
       contents: write
     if: always() && needs.build.outputs.self_mutation_happened && !(github.event.pull_request.head.repo.full_name != github.repository)
@@ -94,7 +88,7 @@ jobs:
           git push origin HEAD:$PULL_REQUEST_REF
   package-js:
     needs: build
-    runs-on: macos-14
+    runs-on: codebuild-Arm64GithubRunner-${{ github.run_id }}-${{ github.run_attempt }}
     permissions: {}
     if: "! needs.build.outputs.self_mutation_happened"
     steps:
@@ -109,12 +103,6 @@ jobs:
       - name: Restore build artifact permissions
         run: cd dist && setfacl --restore=permissions-backup.acl
         continue-on-error: true
-      - name: Install Docker
-        run: brew install docker
-      - name: Install Colima
-        run: brew install colima
-      - name: Start Colima
-        run: colima start
       - name: Prepare Repository
         run: mv dist .repo
       - name: Install Dependencies
@@ -125,7 +113,7 @@ jobs:
         run: mv .repo/dist dist
   package-java:
     needs: build
-    runs-on: macos-14
+    runs-on: codebuild-Arm64GithubRunner-${{ github.run_id }}-${{ github.run_attempt }}
     permissions: {}
     if: "! needs.build.outputs.self_mutation_happened"
     steps:
@@ -144,12 +132,6 @@ jobs:
       - name: Restore build artifact permissions
         run: cd dist && setfacl --restore=permissions-backup.acl
         continue-on-error: true
-      - name: Install Docker
-        run: brew install docker
-      - name: Install Colima
-        run: brew install colima
-      - name: Start Colima
-        run: colima start
       - name: Prepare Repository
         run: mv dist .repo
       - name: Install Dependencies
@@ -160,7 +142,7 @@ jobs:
         run: mv .repo/dist dist
   package-python:
     needs: build
-    runs-on: macos-14
+    runs-on: codebuild-Arm64GithubRunner-${{ github.run_id }}-${{ github.run_attempt }}
     permissions: {}
     if: "! needs.build.outputs.self_mutation_happened"
     steps:
@@ -178,12 +160,6 @@ jobs:
       - name: Restore build artifact permissions
         run: cd dist && setfacl --restore=permissions-backup.acl
         continue-on-error: true
-      - name: Install Docker
-        run: brew install docker
-      - name: Install Colima
-        run: brew install colima
-      - name: Start Colima
-        run: colima start
       - name: Prepare Repository
         run: mv dist .repo
       - name: Install Dependencies
@@ -194,7 +170,7 @@ jobs:
         run: mv .repo/dist dist
   package-dotnet:
     needs: build
-    runs-on: macos-14
+    runs-on: codebuild-Arm64GithubRunner-${{ github.run_id }}-${{ github.run_attempt }}
     permissions: {}
     if: "! needs.build.outputs.self_mutation_happened"
     steps:
@@ -212,12 +188,6 @@ jobs:
       - name: Restore build artifact permissions
         run: cd dist && setfacl --restore=permissions-backup.acl
         continue-on-error: true
-      - name: Install Docker
-        run: brew install docker
-      - name: Install Colima
-        run: brew install colima
-      - name: Start Colima
-        run: colima start
       - name: Prepare Repository
         run: mv dist .repo
       - name: Install Dependencies
@@ -228,7 +198,7 @@ jobs:
         run: mv .repo/dist dist
   package-go:
     needs: build
-    runs-on: macos-14
+    runs-on: codebuild-Arm64GithubRunner-${{ github.run_id }}-${{ github.run_attempt }}
     permissions: {}
     if: "! needs.build.outputs.self_mutation_happened"
     steps:
@@ -246,12 +216,6 @@ jobs:
       - name: Restore build artifact permissions
         run: cd dist && setfacl --restore=permissions-backup.acl
         continue-on-error: true
-      - name: Install Docker
-        run: brew install docker
-      - name: Install Colima
-        run: brew install colima
-      - name: Start Colima
-        run: colima start
       - name: Prepare Repository
         run: mv dist .repo
       - name: Install Dependencies

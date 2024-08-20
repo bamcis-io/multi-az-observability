@@ -8,7 +8,7 @@ on:
   workflow_dispatch: {}
 jobs:
   release:
-    runs-on: macos-14
+    runs-on: codebuild-Arm64GithubRunner-${{ github.run_id }}-${{ github.run_attempt }}
     permissions:
       contents: write
     outputs:
@@ -25,12 +25,6 @@ jobs:
         run: |-
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
-      - name: Install Docker
-        run: brew install docker
-      - name: Install Colima
-        run: brew install colima
-      - name: Start Colima
-        run: colima start
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -70,7 +64,7 @@ jobs:
       - release_pypi
       - release_nuget
       - release_golang
-    runs-on: macos-14
+    runs-on: codebuild-Arm64GithubRunner-${{ github.run_id }}-${{ github.run_attempt }}
     permissions:
       contents: write
     if: needs.release.outputs.tag_exists != 'true' && needs.release.outputs.latest_commit == github.sha
@@ -99,7 +93,7 @@ jobs:
   release_npm:
     name: Publish to npm
     needs: release
-    runs-on: macos-14
+    runs-on: codebuild-Arm64GithubRunner-${{ github.run_id }}-${{ github.run_attempt }}
     permissions:
       id-token: write
       contents: read
@@ -116,12 +110,6 @@ jobs:
       - name: Restore build artifact permissions
         run: cd dist && setfacl --restore=permissions-backup.acl
         continue-on-error: true
-      - name: Install Docker
-        run: brew install docker
-      - name: Install Colima
-        run: brew install colima
-      - name: Start Colima
-        run: colima start
       - name: Prepare Repository
         run: mv dist .repo
       - name: Install Dependencies
@@ -140,7 +128,7 @@ jobs:
   release_maven:
     name: Publish to Maven Central
     needs: release
-    runs-on: macos-14
+    runs-on: codebuild-Arm64GithubRunner-${{ github.run_id }}-${{ github.run_attempt }}
     permissions:
       contents: read
     if: needs.release.outputs.tag_exists != 'true' && needs.release.outputs.latest_commit == github.sha
@@ -160,12 +148,6 @@ jobs:
       - name: Restore build artifact permissions
         run: cd dist && setfacl --restore=permissions-backup.acl
         continue-on-error: true
-      - name: Install Docker
-        run: brew install docker
-      - name: Install Colima
-        run: brew install colima
-      - name: Start Colima
-        run: colima start
       - name: Prepare Repository
         run: mv dist .repo
       - name: Install Dependencies
@@ -185,7 +167,7 @@ jobs:
   release_pypi:
     name: Publish to PyPI
     needs: release
-    runs-on: macos-14
+    runs-on: codebuild-Arm64GithubRunner-${{ github.run_id }}-${{ github.run_attempt }}
     permissions:
       contents: read
     if: needs.release.outputs.tag_exists != 'true' && needs.release.outputs.latest_commit == github.sha
@@ -204,12 +186,6 @@ jobs:
       - name: Restore build artifact permissions
         run: cd dist && setfacl --restore=permissions-backup.acl
         continue-on-error: true
-      - name: Install Docker
-        run: brew install docker
-      - name: Install Colima
-        run: brew install colima
-      - name: Start Colima
-        run: colima start
       - name: Prepare Repository
         run: mv dist .repo
       - name: Install Dependencies
@@ -226,7 +202,7 @@ jobs:
   release_nuget:
     name: Publish to NuGet Gallery
     needs: release
-    runs-on: macos-14
+    runs-on: codebuild-Arm64GithubRunner-${{ github.run_id }}-${{ github.run_attempt }}
     permissions:
       contents: read
     if: needs.release.outputs.tag_exists != 'true' && needs.release.outputs.latest_commit == github.sha
@@ -245,12 +221,6 @@ jobs:
       - name: Restore build artifact permissions
         run: cd dist && setfacl --restore=permissions-backup.acl
         continue-on-error: true
-      - name: Install Docker
-        run: brew install docker
-      - name: Install Colima
-        run: brew install colima
-      - name: Start Colima
-        run: colima start
       - name: Prepare Repository
         run: mv dist .repo
       - name: Install Dependencies
@@ -266,7 +236,7 @@ jobs:
   release_golang:
     name: Publish to GitHub Go Module Repository
     needs: release
-    runs-on: macos-14
+    runs-on: codebuild-Arm64GithubRunner-${{ github.run_id }}-${{ github.run_attempt }}
     permissions:
       contents: read
     if: needs.release.outputs.tag_exists != 'true' && needs.release.outputs.latest_commit == github.sha
@@ -285,12 +255,6 @@ jobs:
       - name: Restore build artifact permissions
         run: cd dist && setfacl --restore=permissions-backup.acl
         continue-on-error: true
-      - name: Install Docker
-        run: brew install docker
-      - name: Install Colima
-        run: brew install colima
-      - name: Start Colima
-        run: colima start
       - name: Prepare Repository
         run: mv dist .repo
       - name: Install Dependencies

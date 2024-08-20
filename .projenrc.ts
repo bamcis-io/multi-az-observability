@@ -21,21 +21,22 @@ const project = new awscdk.AwsCdkConstructLibrary({
       schedule: UpgradeDependenciesSchedule.WEEKLY
     }
   },
-  workflowRunsOn: [ "macos-14" ],
-  workflowBootstrapSteps: [
-    {
-      name: "Install Docker",
-      run: "brew install docker"
-    },
-    {
-      name: "Install Colima",
-      run: "brew install colima"
-    },
-    {
-      name: "Start Colima",
-      run: "colima start"
-    }
-  ],
+  workflowRunsOn: [ "codebuild-Arm64GithubRunner-${{ github.run_id }}-${{ github.run_attempt }}" ],
+  //workflowRunsOn: [ "macos-14" ],
+  //workflowBootstrapSteps: [
+  //  {
+  //    name: "Install Docker",
+  //    run: "brew install docker"
+  //  },
+  //  {
+  //    name: "Install Colima",
+  //    run: "brew install colima"
+  //  },
+  // {
+  //    name: "Start Colima",
+  //    run: "colima start"
+  //  }
+  //],
   keywords: [
     'cdk',
     'cloudwatch',
