@@ -17,11 +17,11 @@ const project = new awscdk.AwsCdkConstructLibrary({
   release: true,
   depsUpgradeOptions: {
     workflowOptions: {
-      labels: [ 'auto-approve', 'auto-merge'],
-      schedule: UpgradeDependenciesSchedule.WEEKLY
-    }
+      labels: ['auto-approve', 'auto-merge'],
+      schedule: UpgradeDependenciesSchedule.WEEKLY,
+    },
   },
-  workflowRunsOn: [ 'codebuild-Arm64GithubRunner-${{ github.run_id }}-${{ github.run_attempt }}' ],
+  workflowRunsOn: ['codebuild-Arm64GithubRunner-${{ github.run_id }}-${{ github.run_attempt }}'],
   //workflowRunsOn: [ "macos-14" ],
   //workflowBootstrapSteps: [
   //  {
@@ -232,7 +232,10 @@ const buildAssets = project.tasks.addTask('build-assets', {
 
 project.tasks.tryFind('compile')?.spawn(buildAssets);
 //project.tasks.tryFind('post-compile')?.spawn(awsLint);
-project.tasks.tryFind('post-compile')?.exec('npx run awslint');
+project.tasks.tryFind('post-compile')?.exec('yarn awslint');
+
+// tsconfig.json gets the exclude list updated and isn't tracked
+project.tasks .tryFind('release')?.updateStep(4, { exec: 'git diff --ignore-space-at-eol --exit-code \':!tsconfig.json\'' })
 
 /*project.addFields({
   version: '0.0.1-alpha.1',

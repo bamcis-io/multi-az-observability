@@ -359,7 +359,7 @@
           "spawn": "docgen"
         },
         {
-          "exec": "npx run awslint"
+          "exec": "yarn awslint"
         }
       ]
     },
@@ -391,7 +391,7 @@
           "spawn": "unbump"
         },
         {
-          "exec": "git diff --ignore-space-at-eol --exit-code"
+          "exec": "git diff --ignore-space-at-eol --exit-code ':!tsconfig.json'"
         }
       ]
     },
