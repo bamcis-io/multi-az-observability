@@ -235,7 +235,7 @@ project.tasks.tryFind('compile')?.spawn(buildAssets);
 project.tasks.tryFind('post-compile')?.exec('npx awslint');
 
 // tsconfig.json gets the exclude list updated and isn't tracked
-project.tasks .tryFind('release')?.updateStep(4, { exec: 'git diff --ignore-space-at-eol --exit-code \':!tsconfig.json\'' })
+project.tasks .tryFind('release')?.updateStep(4, { exec: 'git diff --ignore-space-at-eol --exit-code \':!tsconfig.json\'' });
 
 /*project.addFields({
   version: '0.0.1-alpha.1',

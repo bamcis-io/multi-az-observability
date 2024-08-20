@@ -3716,10 +3716,11 @@
   "homepage": "https://github.com/bamcis-io/multi-az-observability",
   "jsiiVersion": "5.4.12 (build bc82b08)",
   "keywords": [
+    "aws-cdk",
     "cdk",
     "cloudwatch",
     "monitoring",
-    "multi-AZ",
+    "multi-az",
     "observability",
     "resilience"
   ],
@@ -9985,6 +9986,6 @@
       "symbolId": "src/services/props/ServiceProps:ServiceProps"
     }
   },
-  "version": "0.0.1-alpha.1",
-  "fingerprint": "0WPY01TsJZYaNJ7cpyu40uCcYr2EtgVaGsVReB2dGjo="
+  "version": "0.0.0",
+  "fingerprint": "BOTTH0/uk8V5jZWoM/VoAyoSX6TqLz6qhdzRISNCT9s="
 }
