@@ -4,10 +4,7 @@
       "name": "awslint",
       "steps": [
         {
-          "exec": "npm install awslint"
-        },
-        {
-          "exec": "npm run awslint"
+          "exec": "yarn awslint"
         }
       ]
     },

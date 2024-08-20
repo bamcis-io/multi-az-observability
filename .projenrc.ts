@@ -39,11 +39,12 @@ const project = new awscdk.AwsCdkConstructLibrary({
   //],
   keywords: [
     'cdk',
+    'aws-cdk',
     'cloudwatch',
     'observability',
     'monitoring',
     'resilience',
-    'multi-AZ',
+    'multi-az',
   ],
   gitignore: [
     '*.d.ts',
@@ -100,10 +101,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
 const awsLint = project.tasks.addTask('awslint', {
   steps: [
     {
-      exec: 'npm install awslint'
-    },
-    {
-      exec: 'npm run awslint'
+      exec: 'yarn awslint'
     }
   ]
 });

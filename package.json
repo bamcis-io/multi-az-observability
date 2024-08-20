@@ -72,10 +72,11 @@
     "constructs": "^10.0.5"
   },
   "keywords": [
+    "aws-cdk",
     "cdk",
     "cloudwatch",
     "monitoring",
-    "multi-AZ",
+    "multi-az",
     "observability",
     "resilience"
   ],
