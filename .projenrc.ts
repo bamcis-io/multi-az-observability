@@ -81,7 +81,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
   },
 });
 
-project.tasks.addTask('awslint', {
+const awsLint = project.tasks.addTask('awslint', {
   exec: 'awslint',
 });
 
@@ -183,7 +183,7 @@ project.tasks.addTask('build-outlier-detection-function', {
   ],
 });
 
-project.tasks.addTask('build-assets', {
+const buildAssets = project.tasks.addTask('build-assets', {
   steps: [
     {
       exec: 'export DOCKER_DEFAULT_PLATFORM="linux/arm64"',
@@ -209,34 +209,8 @@ project.tasks.addTask('build-assets', {
   ],
 });
 
-project.tasks.addTask('build2', {
-  steps: [
-    {
-      spawn: 'default',
-    },
-    {
-      spawn: 'pre-compile',
-    },
-    {
-      spawn: 'compile',
-    },
-    {
-      spawn: 'build-assets',
-    },
-    {
-      spawn: 'post-compile',
-    },
-    {
-      spawn: 'awslint',
-    },
-    {
-      spawn: 'test',
-    },
-    {
-      spawn: 'package',
-    },
-  ],
-});
+project.tasks.tryFind("compile")?.spawn(buildAssets);
+project.tasks.tryFind("post-compile")?.spawn(awsLint);
 
 project.addFields({
   version: '0.0.1-alpha.1',

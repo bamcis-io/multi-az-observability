@@ -156,35 +156,6 @@
         }
       ]
     },
-    "build2": {
-      "name": "build2",
-      "steps": [
-        {
-          "spawn": "default"
-        },
-        {
-          "spawn": "pre-compile"
-        },
-        {
-          "spawn": "compile"
-        },
-        {
-          "spawn": "build-assets"
-        },
-        {
-          "spawn": "post-compile"
-        },
-        {
-          "spawn": "awslint"
-        },
-        {
-          "spawn": "test"
-        },
-        {
-          "spawn": "package"
-        }
-      ]
-    },
     "bump": {
       "name": "bump",
       "description": "Bumps version based on latest git tag and generates a changelog entry",
@@ -249,6 +220,9 @@
       "steps": [
         {
           "exec": "jsii --silence-warnings=reserved-word"
+        },
+        {
+          "spawn": "build-assets"
         }
       ]
     },
@@ -391,6 +365,9 @@
       "steps": [
         {
           "spawn": "docgen"
+        },
+        {
+          "spawn": "awslint"
         }
       ]
     },

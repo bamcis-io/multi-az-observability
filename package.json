@@ -13,7 +13,6 @@
     "build-monitoring-layer": "npx projen build-monitoring-layer",
     "build-outlier-detection-function": "npx projen build-outlier-detection-function",
     "build-scipy-layer": "npx projen build-scipy-layer",
-    "build2": "npx projen build2",
     "bump": "npx projen bump",
     "clobber": "npx projen clobber",
     "compat": "npx projen compat",
