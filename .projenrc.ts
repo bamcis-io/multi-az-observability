@@ -1,4 +1,5 @@
 import { awscdk } from 'projen';
+import { UpgradeDependenciesSchedule } from 'projen/lib/javascript';
 const project = new awscdk.AwsCdkConstructLibrary({
   author: 'Michael Haken',
   authorAddress: 'michael.haken@outlook.com',
@@ -11,9 +12,15 @@ const project = new awscdk.AwsCdkConstructLibrary({
   repositoryUrl: 'https://github.com/bamcis-io/multi-az-observability',
   description: 'A construct for implementing multi-AZ observability to detect single AZ impairments',
   dependabot: false,
-  buildWorkflow: false,
-  depsUpgrade: false,
-  release: false,
+  buildWorkflow: true,
+  depsUpgrade: true,
+  release: true,
+  depsUpgradeOptions: {
+    workflowOptions: {
+      labels: [ 'auto-approve', 'auto-merge'],
+      schedule: UpgradeDependenciesSchedule.WEEKLY
+    }
+  },
   keywords: [
     'cdk',
     'cloudwatch',
@@ -56,13 +63,11 @@ const project = new awscdk.AwsCdkConstructLibrary({
     distName: 'bamcis.io.constructs.multi_az_observability',
     module: 'bamcis.io.constructs.multi_az_observability',
   },
-  /*
   publishToMaven: {
     javaPackage: 'io.bamcis.constructs.multiazobservability',
     mavenGroupId: 'io.bamcis.constructs.multiazobservability',
     mavenArtifactId: 'multiazobservability',
   },
-  */
   jest: true,
   jestOptions: {
     jestConfig: {
@@ -76,7 +81,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
   },
 });
 
-project.addTask('awslint', {
+project.tasks.addTask('awslint', {
   exec: 'awslint',
 });
 
@@ -177,7 +182,6 @@ project.tasks.addTask('build-outlier-detection-function', {
     },
   ],
 });
-
 
 project.tasks.addTask('build-assets', {
   steps: [
