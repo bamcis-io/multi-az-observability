@@ -22,6 +22,12 @@ const project = new awscdk.AwsCdkConstructLibrary({
     }
   },
   workflowRunsOn: [ "macos-14" ],
+  workflowBootstrapSteps: [
+    {
+      name: "Install Docker",
+      run: "brew install docker"
+    }
+  ],
   keywords: [
     'cdk',
     'cloudwatch',
