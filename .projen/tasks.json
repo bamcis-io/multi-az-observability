@@ -359,6 +359,9 @@
           "spawn": "docgen"
         },
         {
+          "exec": "npm install awslint"
+        },
+        {
           "exec": "yarn awslint"
         }
       ]

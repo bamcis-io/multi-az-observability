@@ -232,6 +232,7 @@ const buildAssets = project.tasks.addTask('build-assets', {
 
 project.tasks.tryFind('compile')?.spawn(buildAssets);
 //project.tasks.tryFind('post-compile')?.spawn(awsLint);
+project.tasks.tryFind('post-compile')?.exec('npm install awslint');
 project.tasks.tryFind('post-compile')?.exec('yarn awslint');
 
 // tsconfig.json gets the exclude list updated and isn't tracked
