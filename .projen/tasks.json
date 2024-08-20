@@ -362,7 +362,7 @@
           "exec": "npm install awslint"
         },
         {
-          "exec": "yarn awslint"
+          "exec": "npm run awslint"
         }
       ]
     },
