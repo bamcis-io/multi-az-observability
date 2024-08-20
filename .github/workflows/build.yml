@@ -20,7 +20,9 @@ jobs:
           ref: ${{ github.event.pull_request.head.ref }}
           repository: ${{ github.event.pull_request.head.repo.full_name }}
       - name: Install Docker
-        run: brew install docker
+        run: brew install colima
+      - name: Start Docker
+        run: colima start
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -106,7 +108,9 @@ jobs:
         run: cd dist && setfacl --restore=permissions-backup.acl
         continue-on-error: true
       - name: Install Docker
-        run: brew install docker
+        run: brew install colima
+      - name: Start Docker
+        run: colima start
       - name: Prepare Repository
         run: mv dist .repo
       - name: Install Dependencies
@@ -137,7 +141,9 @@ jobs:
         run: cd dist && setfacl --restore=permissions-backup.acl
         continue-on-error: true
       - name: Install Docker
-        run: brew install docker
+        run: brew install colima
+      - name: Start Docker
+        run: colima start
       - name: Prepare Repository
         run: mv dist .repo
       - name: Install Dependencies
@@ -167,7 +173,9 @@ jobs:
         run: cd dist && setfacl --restore=permissions-backup.acl
         continue-on-error: true
       - name: Install Docker
-        run: brew install docker
+        run: brew install colima
+      - name: Start Docker
+        run: colima start
       - name: Prepare Repository
         run: mv dist .repo
       - name: Install Dependencies
@@ -197,7 +205,9 @@ jobs:
         run: cd dist && setfacl --restore=permissions-backup.acl
         continue-on-error: true
       - name: Install Docker
-        run: brew install docker
+        run: brew install colima
+      - name: Start Docker
+        run: colima start
       - name: Prepare Repository
         run: mv dist .repo
       - name: Install Dependencies
@@ -227,7 +237,9 @@ jobs:
         run: cd dist && setfacl --restore=permissions-backup.acl
         continue-on-error: true
       - name: Install Docker
-        run: brew install docker
+        run: brew install colima
+      - name: Start Docker
+        run: colima start
       - name: Prepare Repository
         run: mv dist .repo
       - name: Install Dependencies
