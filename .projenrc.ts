@@ -232,8 +232,7 @@ const buildAssets = project.tasks.addTask('build-assets', {
 
 project.tasks.tryFind('compile')?.spawn(buildAssets);
 //project.tasks.tryFind('post-compile')?.spawn(awsLint);
-project.tasks.tryFind('post-compile')?.exec('npm install awslint');
-project.tasks.tryFind('post-compile')?.exec('npm run awslint');
+project.tasks.tryFind('post-compile')?.exec('npx awslint');
 
 // tsconfig.json gets the exclude list updated and isn't tracked
 project.tasks .tryFind('release')?.updateStep(4, { exec: 'git diff --ignore-space-at-eol --exit-code \':!tsconfig.json\'' })
