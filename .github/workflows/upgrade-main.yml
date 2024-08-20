@@ -19,8 +19,10 @@ jobs:
         with:
           ref: main
       - name: Install Docker
+        run: brew install docker
+      - name: Install Colima
         run: brew install colima
-      - name: Start Docker
+      - name: Start Colima
         run: colima start
       - name: Setup Node.js
         uses: actions/setup-node@v4

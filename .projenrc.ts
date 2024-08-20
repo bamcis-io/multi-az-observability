@@ -25,10 +25,14 @@ const project = new awscdk.AwsCdkConstructLibrary({
   workflowBootstrapSteps: [
     {
       name: "Install Docker",
+      run: "brew install docker"
+    },
+    {
+      name: "Install Colima",
       run: "brew install colima"
     },
     {
-      name: "Start Docker",
+      name: "Start Colima",
       run: "colima start"
     }
   ],
