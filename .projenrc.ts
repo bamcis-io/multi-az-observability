@@ -100,13 +100,9 @@ const project = new awscdk.AwsCdkConstructLibrary({
 const awsLint = project.tasks.addTask('awslint', {
   steps: [
     {
-      exec: "npm install awslint"
-    },
-    {
-      exec: 'awslint'
+      exec: "npx run awslint"
     }
   ]
-  
 });
 
 project.tasks.addTask('build-monitoring-layer', {
