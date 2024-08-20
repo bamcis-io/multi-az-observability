@@ -6,7 +6,7 @@ on:
   workflow_dispatch: {}
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: macos-14
     permissions:
       contents: write
     outputs:
@@ -57,7 +57,7 @@ jobs:
           overwrite: true
   self-mutation:
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: macos-14
     permissions:
       contents: write
     if: always() && needs.build.outputs.self_mutation_happened && !(github.event.pull_request.head.repo.full_name != github.repository)
@@ -88,7 +88,7 @@ jobs:
           git push origin HEAD:$PULL_REQUEST_REF
   package-js:
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: macos-14
     permissions: {}
     if: "! needs.build.outputs.self_mutation_happened"
     steps:
@@ -113,7 +113,7 @@ jobs:
         run: mv .repo/dist dist
   package-java:
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: macos-14
     permissions: {}
     if: "! needs.build.outputs.self_mutation_happened"
     steps:
@@ -142,7 +142,7 @@ jobs:
         run: mv .repo/dist dist
   package-python:
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: macos-14
     permissions: {}
     if: "! needs.build.outputs.self_mutation_happened"
     steps:
@@ -170,7 +170,7 @@ jobs:
         run: mv .repo/dist dist
   package-dotnet:
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: macos-14
     permissions: {}
     if: "! needs.build.outputs.self_mutation_happened"
     steps:
@@ -198,7 +198,7 @@ jobs:
         run: mv .repo/dist dist
   package-go:
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: macos-14
     permissions: {}
     if: "! needs.build.outputs.self_mutation_happened"
     steps:

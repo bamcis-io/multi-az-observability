@@ -21,6 +21,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
       schedule: UpgradeDependenciesSchedule.WEEKLY
     }
   },
+  workflowRunsOn: [ "macos-14" ],
   keywords: [
     'cdk',
     'cloudwatch',
