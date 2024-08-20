@@ -359,10 +359,7 @@
           "spawn": "docgen"
         },
         {
-          "exec": "npm install awslint"
-        },
-        {
-          "exec": "npm run awslint"
+          "exec": "npx awslint"
         }
       ]
     },
