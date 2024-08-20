@@ -6,7 +6,6 @@
     "url": "https://github.com/bamcis-io/multi-az-observability"
   },
   "scripts": {
-    "awslint": "npx projen awslint",
     "build": "npx projen build",
     "build-assets": "npx projen build-assets",
     "build-canary-function": "npx projen build-canary-function",

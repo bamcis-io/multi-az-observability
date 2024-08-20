@@ -98,16 +98,13 @@ const project = new awscdk.AwsCdkConstructLibrary({
   },
 });
 
-const awsLint = project.tasks.addTask('awslint', {
+/*const awsLint = project.tasks.addTask('awslint', {
   steps: [
     {
-      exec: 'npm install -g awslint'
-    },
-    {
-      exec: 'npm run awslint'
+      exec: 'npx run awslint'
     }
   ]
-});
+});*/
 
 project.tasks.addTask('build-monitoring-layer', {
   steps: [
@@ -234,10 +231,11 @@ const buildAssets = project.tasks.addTask('build-assets', {
 });
 
 project.tasks.tryFind('compile')?.spawn(buildAssets);
-project.tasks.tryFind('post-compile')?.spawn(awsLint);
+//project.tasks.tryFind('post-compile')?.spawn(awsLint);
+project.tasks.tryFind('post-compile')?.exec('npx run awslint');
 
-//project.addFields({
-//  version: '0.0.1-alpha.1',
-//});
+/*project.addFields({
+  version: '0.0.1-alpha.1',
+});*/
 
 project.synth();

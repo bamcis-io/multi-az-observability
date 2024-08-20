@@ -1,13 +1,5 @@
 {
   "tasks": {
-    "awslint": {
-      "name": "awslint",
-      "steps": [
-        {
-          "exec": "yarn awslint"
-        }
-      ]
-    },
     "build": {
       "name": "build",
       "description": "Full release build",
@@ -367,7 +359,7 @@
           "spawn": "docgen"
         },
         {
-          "spawn": "awslint"
+          "exec": "npx run awslint"
         }
       ]
     },
