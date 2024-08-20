@@ -129,7 +129,7 @@ project.tasks.addTask('build-canary-function', {
       exec: 'mkdir -p lib/canaries/src',
     },
     {
-      exec: 'docker run --rm --platform "linux/arm64" --user "0:0" --volume "$PWD/src/canaries/src:/asset-input:delegated" --volume "$PWD/src/canaries/src/package:/asset-output:delegated" --workdir "/asset-input" "public.ecr.aws/sam/build-python3.12" bash -c "pip install --no-cache --requirement requirements.txt --target /asset-output && cp --archive --update index.py /asset-output"',
+      exec: 'docker run --rm --platform "linux/arm64" --user "0:0" --volume "$PWD/src/canaries/src:/asset-input:delegated" --volume "$PWD/src/canaries/src/package:/asset-output:delegated" --workdir "$PWD/asset-input" "public.ecr.aws/sam/build-python3.12" bash -c "pip install --no-cache --requirement requirements.txt --target $PWD/asset-output && cp --archive --update index.py $PWD/asset-output"',
     },
     {
       exec: 'cd src/canaries/src/package && zip -r ../canary.zip .',
