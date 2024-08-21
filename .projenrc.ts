@@ -15,6 +15,8 @@ const project = new awscdk.AwsCdkConstructLibrary({
   buildWorkflow: true,
   depsUpgrade: true,
   release: true,
+  npmProvenance: false,
+  releaseToNpm: true,
   depsUpgradeOptions: {
     workflowOptions: {
       labels: ['auto-approve', 'auto-merge'],
@@ -68,7 +70,6 @@ const project = new awscdk.AwsCdkConstructLibrary({
   publishToPypi: {
     distName: 'bamcis.io.constructs.multi_az_observability',
     module: 'bamcis.io.constructs.multi_az_observability',
-    
   },
   /*publishToMaven: {
     javaPackage: 'io.bamcis.constructs.multiazobservability',

@@ -94,7 +94,6 @@ jobs:
     needs: release
     runs-on: codebuild-Arm64GithubRunner-${{ github.run_id }}-${{ github.run_attempt }}
     permissions:
-      id-token: write
       contents: read
     if: needs.release.outputs.tag_exists != 'true' && needs.release.outputs.latest_commit == github.sha
     steps:
@@ -121,7 +120,6 @@ jobs:
         env:
           NPM_DIST_TAG: latest
           NPM_REGISTRY: registry.npmjs.org
-          NPM_CONFIG_PROVENANCE: "true"
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npx -p publib@latest publib-npm
   release_pypi:
