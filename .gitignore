@@ -48,12 +48,8 @@ src/outlier-detection/src/scipy
 src/outlier-detection/src/outlier-detection.zip
 src/outlier-detection/src/scipy-layer.zip
 src/monitoring
-.mergify.yml
 tsconfig.tsbuildinfo
-package.json
 package-lock.json
-.eslintrc.json
-cdk.json
 /test-reports/
 junit.xml
 /coverage/
