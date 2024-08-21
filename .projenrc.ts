@@ -235,7 +235,7 @@ project.synth();
 
 const contents = fs.readFileSync('.github/workflows/release.yml');
 const data = yaml.parse(contents.toString());
-data.jobs.release_pypi.steps.splice(1, 1)
+data.jobs.release_pypi.steps.splice(1, 1);
 const newData = yaml.stringify(data);
 fs.unlinkSync('.github/workflows/release.yml');
 fs.writeFileSync('.github/workflows/release.yml', newData);
