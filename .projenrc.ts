@@ -23,6 +23,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
       schedule: UpgradeDependenciesSchedule.WEEKLY,
     },
   },
+  workflowNodeVersion: '20',
   workflowRunsOn: ['codebuild-Arm64GithubRunner-${{ github.run_id }}-${{ github.run_attempt }}'],
   keywords: [
     'cdk',
@@ -60,20 +61,20 @@ const project = new awscdk.AwsCdkConstructLibrary({
   ],
   packageName: 'multi-az-observability',
   publishToNuget: {
-    dotNetNamespace: 'BAMCISIO.Constructs.MultiAZObservability',
-    packageId: 'BAMCISIO.Constructs.MultiAZObservability',
+    dotNetNamespace: 'io.bamcis.cdk.MultiAZObservability',
+    packageId: 'io.bamcis.cdk.MultiAZObservability',
   },
   publishToGo: {
-    moduleName: 'bamcis.io/constructs/multi-az-observability',
+    moduleName: 'bamcis.io/multi-az-observability',
     packageName: 'multi-az-observability',
   },
   publishToPypi: {
-    distName: 'bamcis.io.constructs.multi_az_observability',
-    module: 'bamcis.io.constructs.multi_az_observability',
+    distName: 'multi_az_observability',
+    module: 'multi_az_observability',
   },
   /*publishToMaven: {
-    javaPackage: 'io.bamcis.constructs.multiazobservability',
-    mavenGroupId: 'io.bamcis.constructs.multiazobservability',
+    javaPackage: 'io.bamcis.cdk.multiazobservability',
+    mavenGroupId: 'io.bamcis.cdk.multiazobservability',
     mavenArtifactId: 'multiazobservability',
   },*/
   jest: true,

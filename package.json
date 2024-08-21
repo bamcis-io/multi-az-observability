@@ -136,15 +136,15 @@
     "outdir": "dist",
     "targets": {
       "python": {
-        "distName": "bamcis.io.constructs.multi_az_observability",
-        "module": "bamcis.io.constructs.multi_az_observability"
+        "distName": "multi_az_observability",
+        "module": "multi_az_observability"
       },
       "dotnet": {
-        "namespace": "BAMCISIO.Constructs.MultiAZObservability",
-        "packageId": "BAMCISIO.Constructs.MultiAZObservability"
+        "namespace": "io.bamcis.cdk.MultiAZObservability",
+        "packageId": "io.bamcis.cdk.MultiAZObservability"
       },
       "go": {
-        "moduleName": "bamcis.io/constructs/multi-az-observability",
+        "moduleName": "bamcis.io/multi-az-observability",
         "packageName": "multi-az-observability"
       }
     },
