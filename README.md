@@ -1,28 +1,177 @@
 # multi-az-observability
+This is a CDK construct for multi-AZ observability to help detect single-AZ impairments. This is currently an `alpha` version, but is being used in the AWS Advanced Multi-AZ Resilience Patterns workshop.
+
+There is a lot of available information to think through and combine to provide signals about single-AZ impact. To simplify the setup and use reasonable defaults, this construct (available in TypeScript, Go, Python, and .NET [Java coming soon]) sets up the necessary observability. To use the CDK construct, you first define your service like this:
+
+```csharp
+var wildRydesService = new Service(new ServiceProps(){
+    ServiceName = "WildRydes",
+    BaseUrl = "http://www.example.com",
+    FaultCountThreshold = 25,
+    AvailabilityZoneNames = vpc.AvailabilityZones,
+    Period = Duration.Seconds(60),
+    LoadBalancer = loadBalancer,
+    DefaultAvailabilityMetricDetails = new ServiceMetricDetails(new ServiceMetricDetailsProps() {
+        AlarmStatistic = "Sum",
+        DatapointsToAlarm = 3,
+        EvaluationPeriods = 5,
+        FaultAlarmThreshold = 1,
+        FaultMetricNames = new string[] { "Fault", "Error" },
+        GraphedFaultStatistics = new string[] { "Sum" },
+        GraphedSuccessStatistics = new string[] { "Sum" },
+        MetricNamespace = metricsNamespace,
+        Period = Duration.Seconds(60),
+        SuccessAlarmThreshold = 99,
+        SuccessMetricNames = new string[] {"Success"},
+        Unit = Unit.COUNT,
+    }),
+    DefaultLatencyMetricDetails = new ServiceMetricDetails(new ServiceMetricDetailsProps(){
+        AlarmStatistic = "p99",
+        DatapointsToAlarm = 3,
+        EvaluationPeriods = 5,
+        FaultAlarmThreshold = 1,
+        FaultMetricNames = new string[] { "FaultLatency" },
+        GraphedFaultStatistics = new string[] { "p50" },
+        GraphedSuccessStatistics = new string[] { "p50", "p99", "tm50", "tm99" },
+        MetricNamespace = metricsNamespace,
+        Period = Duration.Seconds(60),
+        SuccessAlarmThreshold = 100,
+        SuccessMetricNames = new string[] {"SuccessLatency"},
+        Unit = Unit.MILLISECONDS,
+    }),
+    DefaultContributorInsightRuleDetails =  new ContributorInsightRuleDetails(new ContributorInsightRuleDetailsProps() {
+        AvailabilityZoneIdJsonPath = azIdJsonPath,
+        FaultMetricJsonPath = faultMetricJsonPath,
+        InstanceIdJsonPath = instanceIdJsonPath,
+        LogGroups = serverLogGroups,
+        OperationNameJsonPath = operationNameJsonPath,
+        SuccessLatencyMetricJsonPath = successLatencyMetricJsonPath
+    }),
+    CanaryTestProps = new AddCanaryTestProps() {
+        RequestCount = 10,
+        LoadBalancer = loadBalancer,
+        Schedule = "rate(1 minute)",
+        NetworkConfiguration = new NetworkConfigurationProps() {
+            Vpc = vpc,
+            SubnetSelection = new SubnetSelection() { SubnetType = SubnetType.PRIVATE_ISOLATED }
+        }
+    }
+});
+wildRydesService.AddOperation(new Operation(new OperationProps() {
+    OperationName = "Signin",
+    Path = "/signin",
+    Service = wildRydesService,
+    Critical = true,
+    HttpMethods = new string[] { "GET" },
+    ServerSideAvailabilityMetricDetails = new OperationMetricDetails(new OperationMetricDetailsProps() {
+        OperationName = "Signin",
+        MetricDimensions = new MetricDimensions(new Dictionary<string, string> {{ "Operation", "Signin"}}, "AZ-ID", "Region")
+    }, wildRydesService.DefaultAvailabilityMetricDetails),
+    ServerSideLatencyMetricDetails = new OperationMetricDetails(new OperationMetricDetailsProps() {
+        OperationName = "Signin",
+        SuccessAlarmThreshold = 150,
+        MetricDimensions = new MetricDimensions(new Dictionary<string, string> {{ "Operation", "Signin"}}, "AZ-ID", "Region")
+    }, wildRydesService.DefaultLatencyMetricDetails),
+    CanaryTestLatencyMetricsOverride = new CanaryTestMetricsOverride(new CanaryTestMetricsOverrideProps() {
+        SuccessAlarmThreshold = 250
+    })
+}));
+wildRydesService.AddOperation(new Operation(new OperationProps() {
+    OperationName = "Pay",
+    Path = "/pay",
+    Service = wildRydesService,
+    HttpMethods = new string[] { "GET" },
+    Critical = true,
+    ServerSideAvailabilityMetricDetails = new OperationMetricDetails(new OperationMetricDetailsProps() {
+        OperationName = "Pay",
+        MetricDimensions = new MetricDimensions(new Dictionary<string, string> {{ "Operation", "Pay"}}, "AZ-ID", "Region")
+    }, wildRydesService.DefaultAvailabilityMetricDetails),
+    ServerSideLatencyMetricDetails = new OperationMetricDetails(new OperationMetricDetailsProps() {
+        OperationName = "Pay",
+        SuccessAlarmThreshold = 200,
+        MetricDimensions = new MetricDimensions(new Dictionary<string, string> {{ "Operation", "Pay"}}, "AZ-ID", "Region")
+    }, wildRydesService.DefaultLatencyMetricDetails),
+    CanaryTestLatencyMetricsOverride = new CanaryTestMetricsOverride(new CanaryTestMetricsOverrideProps() {
+        SuccessAlarmThreshold = 300
+    })
+}));
+wildRydesService.AddOperation(new Operation(new OperationProps() {
+    OperationName = "Ride",
+    Path = "/ride",
+    Service = wildRydesService,
+    HttpMethods = new string[] { "GET" },
+    Critical = true,
+    ServerSideAvailabilityMetricDetails = new OperationMetricDetails(new OperationMetricDetailsProps() {
+        OperationName = "Ride",
+        MetricDimensions = new MetricDimensions(new Dictionary<string, string> {{ "Operation", "Ride"}}, "AZ-ID", "Region")
+    }, wildRydesService.DefaultAvailabilityMetricDetails),
+    ServerSideLatencyMetricDetails = new OperationMetricDetails(new OperationMetricDetailsProps() {
+        OperationName = "Ride",
+        SuccessAlarmThreshold = 350,
+        MetricDimensions = new MetricDimensions(new Dictionary<string, string> {{ "Operation", "Ride"}}, "AZ-ID", "Region")
+    }, wildRydesService.DefaultLatencyMetricDetails),
+    CanaryTestLatencyMetricsOverride = new CanaryTestMetricsOverride(new CanaryTestMetricsOverrideProps() {
+        SuccessAlarmThreshold = 550
+    })
+}));
+wildRydesService.AddOperation(new Operation(new OperationProps() {
+    OperationName = "Home",
+    Path = "/home",
+    Service = wildRydesService,
+    HttpMethods = new string[] { "GET" },
+    Critical = true,
+    ServerSideAvailabilityMetricDetails = new OperationMetricDetails(new OperationMetricDetailsProps() {
+        OperationName = "Home",
+        MetricDimensions = new MetricDimensions(new Dictionary<string, string> {{ "Operation", "Ride"}}, "AZ-ID", "Region")
+    }, wildRydesService.DefaultAvailabilityMetricDetails),
+    ServerSideLatencyMetricDetails = new OperationMetricDetails(new OperationMetricDetailsProps() {
+        OperationName = "Home",
+        SuccessAlarmThreshold = 100,
+        MetricDimensions = new MetricDimensions(new Dictionary<string, string> {{ "Operation", "Ride"}}, "AZ-ID", "Region")
+    }, wildRydesService.DefaultLatencyMetricDetails),
+    CanaryTestLatencyMetricsOverride = new CanaryTestMetricsOverride(new CanaryTestMetricsOverrideProps() {
+        SuccessAlarmThreshold = 200
+    })
+}));
+```
+
+Then you provide that service definition to the CDK construct.
+
+```csharp
+InstrumentedServiceMultiAZObservability multiAvailabilityZoneObservability = new InstrumentedServiceMultiAZObservability(this, "MultiAZObservability", new InstrumentedServiceMultiAZObservabilityProps() {
+    Service = wildRydesService,
+    CreateDashboards = true,
+    Interval = Duration.Minutes(60), // The interval for the dashboard
+    OutlierDetectionAlgorithm = OutlierDetectionAlgorithm.STATIC
+});
+```
+
+You define some characteristics of service, default values for metrics and alarms, and then add operations as well as any overrides for default values that you need. The construct can also automatically create synthetic canaries that test each operation with a very simple HTTP check, or you can configure your own synthetics and just tell the construct about the metric details and optionally log files. This creates metrics, alarms, and dashboards that can be used to detect single-AZ impact.
+
+If you don't have service specific logs and custom metrics with per-AZ dimensions, you can still use the construct to evaluate ALB and NAT Gateway metrics to find single AZ faults.
+
+```csharp
+BasicServiceMultiAZObservability multiAvailabilityZoneObservability = new BasicServiceMultiAZObservability(this, "MultiAZObservability", new BasicServiceMultiAZObservabilityProps() {
+    ApplicationLoadBalancers = new IApplicationLoadBalancer[] { loadBalancer },
+    NatGateways = new Dictionary<string, CfnNatGateway>() {
+        { "us-east-1a", natGateway1},
+        { "us-east-1b", natGateway2},
+        { "us-east-1c", natGateway3},
+    },
+    CreateDashboard = true,
+    OutlierDetectionAlgorithm = OutlierDetectionAlgorithm.STATIC,
+    FaultCountPercentageThreshold = 1.0, // The fault rate to alarm on for errors seen from the ALBs in the same AZ
+    PacketLossImpactPercentageThreshold = 0.01, // The percentage of packet loss to alarm on for the NAT Gateways in the same AZ
+    ServiceName = "WildRydes",
+    Period = Duration.Seconds(60), // The period for metric evaluation
+    Interval = Duration.Minutes(60) // The interval for the dashboards
+    EvaluationPeriods = 5,
+    DatapointsToAlarm = 3
+});
+```
+
+Both options support running workloads on EC2, ECS, Lambda, and EKS.
 
 ## TODO
 
-- Add testing
-
-## problems worth noting
-
-- Named Java package with hyphens, which broke java file syntax and spewed tons of errors
-- Typescript class and interfaces that were being exported were importing other classes/interfaces
-from the main file, which caused an error that something couldn't be imported from outside a module
-when trying to use the construct from .NET
-- Building CDK constructs that produce reusable CFN templates, for example, for use in workshop studio,
-need to specific assets bucket and prefix in the default sythensizer as a variable and then pass parameters from parent to nested stack with the variable name
-- Packaging content synth'd by CDK for use in a CI/CD pipeline
-- Using typescript property naming for interfaces/classes that need to be converted to a json string (like an insight rule body)
-- Testing new local builds of nuget packages for .net without having to increment the version each test by deleting 
-existing content from the nuget package cache
-- Trouble using AWS::LanguageExtensions to use intrinsic functions with Fn::GetAtt, instead used the last letter of the az 
-name as the attribute to reference which worked
-- Starting with projen and understanding how it manages a project and how to build your own test
-- Copying files over for bundled lambda functions in the projen definition
-- Building arm64 Lambda functions locally for packaging and setting default platform via environment variable
-- Finding first parent stack of a construct to be able to add CfnParameters to it or tranforms
-- Understanding how props and constructs are intended to be built and reconciling required other non-construct classes that other languages would need to use to define things like a Service and Operation.
-- Focusing too much on how logic would be translated into other languages, not realizing the typescript implementation still
-runs in the background and the language specific results are just shims to calling the original code
-- Packaging Lambda functions with external dependencies, build the function/zip as part of the build and package the zip with the construct instead of defining bundling options
+- Add additional unit tests

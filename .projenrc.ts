@@ -51,6 +51,10 @@ const project = new awscdk.AwsCdkConstructLibrary({
     'src/outlier-detection/src/outlier-detection.zip',
     'src/outlier-detection/src/scipy-layer.zip',
     'src/monitoring',
+    'tsconfig.tsbuildinfo',
+    'package-lock.json',
+    '.jsii',
+    'tsconfig.json'
   ],
   packageName: 'multi-az-observability',
   publishToNuget: {
@@ -64,6 +68,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
   publishToPypi: {
     distName: 'bamcis.io.constructs.multi_az_observability',
     module: 'bamcis.io.constructs.multi_az_observability',
+    
   },
   /*publishToMaven: {
     javaPackage: 'io.bamcis.constructs.multiazobservability',
