@@ -1,5 +1,8 @@
 import { awscdk } from 'projen';
 import { UpgradeDependenciesSchedule } from 'projen/lib/javascript';
+import * as fs from 'fs';
+import * as yaml from 'yaml';
+
 const project = new awscdk.AwsCdkConstructLibrary({
   author: 'Michael Haken',
   authorAddress: 'michael.haken@outlook.com',
@@ -216,14 +219,23 @@ const buildAssets = project.tasks.addTask('build-assets', {
   ],
 });
 
+
+
 project.tasks.tryFind('compile')?.spawn(buildAssets);
 project.tasks.tryFind('post-compile')?.exec('npx awslint');
 
 // tsconfig.json gets the exclude list updated and isn't tracked
-project.tasks .tryFind('release')?.updateStep(4, { exec: 'git diff --ignore-space-at-eol --exit-code \':!tsconfig.json\'' });
+project.tasks.tryFind('release')?.updateStep(4, { exec: 'git diff --ignore-space-at-eol --exit-code \':!tsconfig.json\'' });
 
 /*project.addFields({
   version: '0.0.1-alpha.1',
 });*/
 
 project.synth();
+
+const contents = fs.readFileSync('.github/workflows/release.yml');
+const data = yaml.parse(contents.toString());
+data.jobs.release_pypi.steps.splice(1, 1)
+const newData = yaml.stringify(data);
+fs.unlinkSync('.github/workflows/release.yml');
+fs.writeFileSync('.github/workflows/release.yml', newData);
