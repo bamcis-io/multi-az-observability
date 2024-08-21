@@ -22,21 +22,6 @@ const project = new awscdk.AwsCdkConstructLibrary({
     },
   },
   workflowRunsOn: ['codebuild-Arm64GithubRunner-${{ github.run_id }}-${{ github.run_attempt }}'],
-  //workflowRunsOn: [ "macos-14" ],
-  //workflowBootstrapSteps: [
-  //  {
-  //    name: "Install Docker",
-  //    run: "brew install docker"
-  //  },
-  //  {
-  //    name: "Install Colima",
-  //    run: "brew install colima"
-  //  },
-  // {
-  //    name: "Start Colima",
-  //    run: "colima start"
-  //  }
-  //],
   keywords: [
     'cdk',
     'aws-cdk',
@@ -69,22 +54,22 @@ const project = new awscdk.AwsCdkConstructLibrary({
   ],
   packageName: 'multi-az-observability',
   publishToNuget: {
-    dotNetNamespace: 'BAMCISIO.MultiAZObservability',
-    packageId: 'BAMCISIO.MultiAZObservability',
+    dotNetNamespace: 'BAMCISIO.Constructs.MultiAZObservability',
+    packageId: 'BAMCISIO.Constructs.MultiAZObservability',
   },
   publishToGo: {
-    moduleName: 'bamcis.io/constructs',
-    packageName: 'multiazobservability',
+    moduleName: 'bamcis.io/constructs/multi-az-observability',
+    packageName: 'multi-az-observability',
   },
   publishToPypi: {
     distName: 'bamcis.io.constructs.multi_az_observability',
     module: 'bamcis.io.constructs.multi_az_observability',
   },
-  publishToMaven: {
+  /*publishToMaven: {
     javaPackage: 'io.bamcis.constructs.multiazobservability',
     mavenGroupId: 'io.bamcis.constructs.multiazobservability',
     mavenArtifactId: 'multiazobservability',
-  },
+  },*/
   jest: true,
   jestOptions: {
     jestConfig: {
@@ -97,14 +82,6 @@ const project = new awscdk.AwsCdkConstructLibrary({
     },
   },
 });
-
-/*const awsLint = project.tasks.addTask('awslint', {
-  steps: [
-    {
-      exec: 'npx run awslint'
-    }
-  ]
-});*/
 
 project.tasks.addTask('build-monitoring-layer', {
   steps: [
@@ -231,7 +208,6 @@ const buildAssets = project.tasks.addTask('build-assets', {
 });
 
 project.tasks.tryFind('compile')?.spawn(buildAssets);
-//project.tasks.tryFind('post-compile')?.spawn(awsLint);
 project.tasks.tryFind('post-compile')?.exec('npx awslint');
 
 // tsconfig.json gets the exclude list updated and isn't tracked
