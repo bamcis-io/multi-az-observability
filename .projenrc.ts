@@ -54,7 +54,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
     'tsconfig.tsbuildinfo',
     'package-lock.json',
     '.jsii',
-    'tsconfig.json'
+    'tsconfig.json',
   ],
   packageName: 'multi-az-observability',
   publishToNuget: {
