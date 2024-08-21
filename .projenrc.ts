@@ -1,6 +1,6 @@
+import * as fs from 'fs';
 import { awscdk } from 'projen';
 import { UpgradeDependenciesSchedule } from 'projen/lib/javascript';
-import * as fs from 'fs';
 import * as yaml from 'yaml';
 
 const project = new awscdk.AwsCdkConstructLibrary({
@@ -219,13 +219,11 @@ const buildAssets = project.tasks.addTask('build-assets', {
   ],
 });
 
-
-
 project.tasks.tryFind('compile')?.spawn(buildAssets);
 project.tasks.tryFind('post-compile')?.exec('npx awslint');
 
 // tsconfig.json gets the exclude list updated and isn't tracked
-project.tasks.tryFind('release')?.updateStep(4, { exec: 'git diff --ignore-space-at-eol --exit-code \':!tsconfig.json\'' });
+project.tasks.tryFind('release')?.updateStep(4, { exec: 'git diff --ignore-space-at-eol --exit-code \':!tsconfig.json\' \':!.projenrc.ts\'' });
 
 /*project.addFields({
   version: '0.0.1-alpha.1',
