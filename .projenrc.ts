@@ -8,6 +8,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
   jsiiVersion: '~5.4.0',
   name: 'multi-az-observability',
   license: 'MIT',
+  prerelease: 'alpha',
   projenrcTs: true,
   repositoryUrl: 'https://github.com/bamcis-io/multi-az-observability',
   description: 'A construct for implementing multi-AZ observability to detect single AZ impairments',
