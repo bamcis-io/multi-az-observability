@@ -3744,19 +3744,12 @@
   "schema": "jsii/0.10.0",
   "targets": {
     "dotnet": {
-      "namespace": "BAMCISIO.MultiAZObservability",
-      "packageId": "BAMCISIO.MultiAZObservability"
+      "namespace": "BAMCISIO.Constructs.MultiAZObservability",
+      "packageId": "BAMCISIO.Constructs.MultiAZObservability"
     },
     "go": {
-      "moduleName": "bamcis.io/constructs",
-      "packageName": "multiazobservability"
-    },
-    "java": {
-      "maven": {
-        "artifactId": "multiazobservability",
-        "groupId": "io.bamcis.constructs.multiazobservability"
-      },
-      "package": "io.bamcis.constructs.multiazobservability"
+      "moduleName": "bamcis.io/constructs/multi-az-observability",
+      "packageName": "multi-az-observability"
     },
     "js": {
       "npm": "multi-az-observability"
@@ -9987,5 +9980,5 @@
     }
   },
   "version": "0.0.0",
-  "fingerprint": "BOTTH0/uk8V5jZWoM/VoAyoSX6TqLz6qhdzRISNCT9s="
+  "fingerprint": "EoOiy0ZHFMxMPLx8P/apiZawH+S5r5GlWAwC89Ce6UE="
 }
