@@ -1,6 +1,5 @@
 /**
- * Available algorithms for performing outlier detection, currently
- * only STATIC is supported
+ * Available algorithms for performing outlier detection
  */
 export enum OutlierDetectionAlgorithm
 {
