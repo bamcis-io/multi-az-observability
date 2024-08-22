@@ -48,7 +48,6 @@ src/outlier-detection/src/scipy
 src/outlier-detection/src/outlier-detection.zip
 src/outlier-detection/src/scipy-layer.zip
 src/monitoring
-tsconfig.tsbuildinfo
 package-lock.json
 /test-reports/
 junit.xml
