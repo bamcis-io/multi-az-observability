@@ -21,6 +21,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
   release: true,
   npmProvenance: false,
   releaseToNpm: true,
+  majorVersion: 0,
   depsUpgradeOptions: {
     workflowOptions: {
       labels: ['auto-approve', 'auto-merge'],
