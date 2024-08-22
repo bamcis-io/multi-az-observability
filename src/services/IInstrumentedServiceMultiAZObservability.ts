@@ -1,13 +1,12 @@
-import { Dashboard, IAlarm } from 'aws-cdk-lib/aws-cloudwatch';
-import { ILogGroup } from 'aws-cdk-lib/aws-logs';
-import { IConstruct } from 'constructs';
-import { IServiceAlarmsAndRules } from '../alarmsandrules/IServiceAlarmsAndRules';
+import { Dashboard, IAlarm } from "aws-cdk-lib/aws-cloudwatch";
+import { ILogGroup } from "aws-cdk-lib/aws-logs";
+import { IConstruct } from "constructs";
+import { IServiceAlarmsAndRules } from "../alarmsandrules/IServiceAlarmsAndRules";
 
 /**
  * Observability for an instrumented service
  */
-export interface IInstrumentedServiceMultiAZObservability extends IConstruct
-{
+export interface IInstrumentedServiceMultiAZObservability extends IConstruct {
   /**
    * The alarms and rules for the overall service
    */
@@ -19,16 +18,18 @@ export interface IInstrumentedServiceMultiAZObservability extends IConstruct
    * or latency as seen by either the server-side or canary. These are the alarms
    * you would want to use to trigger automation to evacuate an AZ.
    */
-  readonly perOperationZonalImpactAlarms: {[key: string]: {[key: string]: IAlarm}};
+  readonly perOperationZonalImpactAlarms: {
+    [key: string]: { [key: string]: IAlarm };
+  };
 
   /**
-       * The dashboards for each operation
-       */
+   * The dashboards for each operation
+   */
   readonly operationDashboards?: Dashboard[];
 
   /**
-       * The service level dashboard
-       */
+   * The service level dashboard
+   */
   readonly serviceDashboard?: Dashboard;
 
   /**

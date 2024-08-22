@@ -1,12 +1,11 @@
-import { Dashboard } from 'aws-cdk-lib/aws-cloudwatch';
+import { Dashboard } from "aws-cdk-lib/aws-cloudwatch";
 
 /**
  * A service-level availability and latency dashboard
  */
-export interface IServiceAvailabilityAndLatencyDashboard
-{
+export interface IServiceAvailabilityAndLatencyDashboard {
   /**
-     * The service availability and latency dashboard
-     */
+   * The service availability and latency dashboard
+   */
   dashboard: Dashboard;
 }

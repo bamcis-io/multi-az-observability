@@ -1,18 +1,17 @@
 //import { IContributorInsightRuleDetails } from './IContributorInsightRuleDetails';
-import { IOperationMetricDetails } from './IOperationMetricDetails';
+import { IOperationMetricDetails } from "./IOperationMetricDetails";
 
 /**
  * The metric definitions for metric produced by the canary
  */
-export interface ICanaryMetrics
-{
+export interface ICanaryMetrics {
   /**
-     * The canary availability metric details
-     */
+   * The canary availability metric details
+   */
   readonly canaryAvailabilityMetricDetails: IOperationMetricDetails;
 
   /**
-     * The canary latency metric details
-     */
+   * The canary latency metric details
+   */
   readonly canaryLatencyMetricDetails: IOperationMetricDetails;
 }

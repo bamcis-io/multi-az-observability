@@ -1,17 +1,16 @@
-import { IOperationMetricDetails } from '../IOperationMetricDetails';
+import { IOperationMetricDetails } from "../IOperationMetricDetails";
 
 /**
  * Properties for canary metrics in an operation
  */
-export interface CanaryMetricProps
-{
+export interface CanaryMetricProps {
   /**
-     * The canary availability metric details
-     */
+   * The canary availability metric details
+   */
   readonly canaryAvailabilityMetricDetails: IOperationMetricDetails;
 
   /**
-     * The canary latency metric details
-     */
+   * The canary latency metric details
+   */
   readonly canaryLatencyMetricDetails: IOperationMetricDetails;
 }

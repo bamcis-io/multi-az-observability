@@ -1,19 +1,30 @@
-import { Fn } from 'aws-cdk-lib';
-import { Alarm, AlarmRule, ComparisonOperator, CompositeAlarm, IAlarm, IMetric, MathExpression } from 'aws-cdk-lib/aws-cloudwatch';
-import { Construct } from 'constructs';
-import { ICanaryOperationRegionalAlarmsAndRules } from './ICanaryOperationRegionalAlarmsAndRules';
-import { IOperationAlarmsAndRules } from './IOperationAlarmsAndRules';
-import { IServiceAlarmsAndRules } from './IServiceAlarmsAndRules';
-import { ServiceAlarmsAndRulesProps } from './props/ServiceAlarmsAndRulesProps';
-import { AvailabilityAndLatencyMetrics } from '../metrics/AvailabilityAndLatencyMetrics';
-import { RegionalAvailabilityMetrics } from '../metrics/RegionalAvailabilityMetrics';
-import { IService } from '../services/IService';
-import { AvailabilityMetricType } from '../utilities/AvailabilityMetricType';
+import { Fn } from "aws-cdk-lib";
+import {
+  Alarm,
+  AlarmRule,
+  ComparisonOperator,
+  CompositeAlarm,
+  IAlarm,
+  IMetric,
+  MathExpression,
+} from "aws-cdk-lib/aws-cloudwatch";
+import { Construct } from "constructs";
+import { ICanaryOperationRegionalAlarmsAndRules } from "./ICanaryOperationRegionalAlarmsAndRules";
+import { IOperationAlarmsAndRules } from "./IOperationAlarmsAndRules";
+import { IServiceAlarmsAndRules } from "./IServiceAlarmsAndRules";
+import { ServiceAlarmsAndRulesProps } from "./props/ServiceAlarmsAndRulesProps";
+import { AvailabilityAndLatencyMetrics } from "../metrics/AvailabilityAndLatencyMetrics";
+import { RegionalAvailabilityMetrics } from "../metrics/RegionalAvailabilityMetrics";
+import { IService } from "../services/IService";
+import { AvailabilityMetricType } from "../utilities/AvailabilityMetricType";
 
 /**
  * Service level alarms and rules using critical operations
  */
-export class ServiceAlarmsAndRules extends Construct implements IServiceAlarmsAndRules {
+export class ServiceAlarmsAndRules
+  extends Construct
+  implements IServiceAlarmsAndRules
+{
   /**
    * The service these alarms and rules are for
    */
@@ -63,156 +74,258 @@ export class ServiceAlarmsAndRules extends Construct implements IServiceAlarmsAn
     super(scope, id);
     this.service = props.service;
 
-    let criticalOperations: string[] = props.service.operations.filter(x => x.critical == true).map(x => x.operationName);
+    let criticalOperations: string[] = props.service.operations
+      .filter((x) => x.critical == true)
+      .map((x) => x.operationName);
     let counter: number = 1;
     this.zonalAggregateIsolatedImpactAlarms = [];
     this.zonalServerSideIsolatedImpactAlarms = [];
 
-    let availabilityZoneIds: string[] = props.service.availabilityZoneNames.map(x => {
-      return props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(x.substring(x.length - 1));
-    });
+    let availabilityZoneIds: string[] = props.service.availabilityZoneNames.map(
+      (x) => {
+        return props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(
+          x.substring(x.length - 1),
+        );
+      },
+    );
 
     for (let i = 0; i < availabilityZoneIds.length; i++) {
       let availabilityZonedId: string = availabilityZoneIds[i];
 
-      this.zonalAggregateIsolatedImpactAlarms.push(new CompositeAlarm(this, 'AZ' + counter + 'ServiceAggregateIsolatedImpactAlarm', {
-        compositeAlarmName: availabilityZonedId + '-' + props.service.serviceName.toLowerCase() + '-isolated-impact-aggregate-alarm',
-        alarmRule: AlarmRule.anyOf(...Object.values(Object.entries(props.perOperationAlarmsAndRules)
-          .reduce((filtered, [key, value]) => {
-            if (criticalOperations.indexOf(key) > -1) {
-              filtered[key] = value;
-            }
+      this.zonalAggregateIsolatedImpactAlarms.push(
+        new CompositeAlarm(
+          this,
+          "AZ" + counter + "ServiceAggregateIsolatedImpactAlarm",
+          {
+            compositeAlarmName:
+              availabilityZonedId +
+              "-" +
+              props.service.serviceName.toLowerCase() +
+              "-isolated-impact-aggregate-alarm",
+            alarmRule: AlarmRule.anyOf(
+              ...Object.values(
+                Object.entries(props.perOperationAlarmsAndRules).reduce(
+                  (filtered, [key, value]) => {
+                    if (criticalOperations.indexOf(key) > -1) {
+                      filtered[key] = value;
+                    }
 
-            return filtered;
-          }, {} as {[key: string]: IOperationAlarmsAndRules}),
-        )
-          .map(x => x.aggregateZonalAlarms[i])),
-      }));
+                    return filtered;
+                  },
+                  {} as { [key: string]: IOperationAlarmsAndRules },
+                ),
+              ).map((x) => x.aggregateZonalAlarms[i]),
+            ),
+          },
+        ),
+      );
 
-      this.zonalServerSideIsolatedImpactAlarms.push(new CompositeAlarm(this, 'AZ' + counter + 'ServiceServerSideIsolatedImpactAlarm', {
-        compositeAlarmName: availabilityZonedId + '-' + props.service.serviceName.toLowerCase() + '-isolated-impact-server-side-alarm',
-        alarmRule: AlarmRule.anyOf(...Object.values(Object.entries(props.perOperationAlarmsAndRules)
-          .reduce((filtered, [key, value]) => {
-            if (criticalOperations.indexOf(key) > -1) {
-              filtered[key] = value;
-            }
+      this.zonalServerSideIsolatedImpactAlarms.push(
+        new CompositeAlarm(
+          this,
+          "AZ" + counter + "ServiceServerSideIsolatedImpactAlarm",
+          {
+            compositeAlarmName:
+              availabilityZonedId +
+              "-" +
+              props.service.serviceName.toLowerCase() +
+              "-isolated-impact-server-side-alarm",
+            alarmRule: AlarmRule.anyOf(
+              ...Object.values(
+                Object.entries(props.perOperationAlarmsAndRules).reduce(
+                  (filtered, [key, value]) => {
+                    if (criticalOperations.indexOf(key) > -1) {
+                      filtered[key] = value;
+                    }
 
-            return filtered;
-          }, {} as {[key: string]: IOperationAlarmsAndRules}),
-        )
-          .map(x => x.serverSideZonalAlarmsMap[availabilityZonedId])),
-      }));
+                    return filtered;
+                  },
+                  {} as { [key: string]: IOperationAlarmsAndRules },
+                ),
+              ).map((x) => x.serverSideZonalAlarmsMap[availabilityZonedId]),
+            ),
+          },
+        ),
+      );
 
       counter++;
     }
 
-    let keyPrefix: string = '';
+    let keyPrefix: string = "";
 
-    let regionalOperationFaultCountMetrics: {[key: string]: IMetric} = {};
+    let regionalOperationFaultCountMetrics: { [key: string]: IMetric } = {};
 
-    props.service.operations.filter(x => x.critical == true).forEach(x => {
-      keyPrefix = AvailabilityAndLatencyMetrics.nextChar(keyPrefix);
+    props.service.operations
+      .filter((x) => x.critical == true)
+      .forEach((x) => {
+        keyPrefix = AvailabilityAndLatencyMetrics.nextChar(keyPrefix);
 
-      regionalOperationFaultCountMetrics[keyPrefix] = RegionalAvailabilityMetrics.createRegionalAvailabilityMetric({
-        label: x.operationName + ' fault count',
-        metricDetails: x.serverSideAvailabilityMetricDetails,
-        metricType: AvailabilityMetricType.FAULT_COUNT,
+        regionalOperationFaultCountMetrics[keyPrefix] =
+          RegionalAvailabilityMetrics.createRegionalAvailabilityMetric({
+            label: x.operationName + " fault count",
+            metricDetails: x.serverSideAvailabilityMetricDetails,
+            metricType: AvailabilityMetricType.FAULT_COUNT,
+          });
       });
-    });
 
     let regionalFaultCount: IMetric = new MathExpression({
       usingMetrics: regionalOperationFaultCountMetrics,
-      expression: Object.keys(regionalOperationFaultCountMetrics).join('+'),
-      label: props.service.serviceName + ' fault count',
+      expression: Object.keys(regionalOperationFaultCountMetrics).join("+"),
+      label: props.service.serviceName + " fault count",
       period: props.service.period,
     });
 
-    this.regionalFaultCountServerSideAlarm = new Alarm(this, 'RegionalFaultCount', {
-      alarmName: Fn.ref('AWS::Region') + '-' + props.service.serviceName.toLowerCase() + '-fault-count',
-      datapointsToAlarm: 3,
-      evaluationPeriods: 5,
-      comparisonOperator: ComparisonOperator.GREATER_THAN_THRESHOLD,
-      threshold: props.service.faultCountThreshold,
-      alarmDescription: 'Counts faults from all critical operation in the service',
-      metric: regionalFaultCount,
-    });
+    this.regionalFaultCountServerSideAlarm = new Alarm(
+      this,
+      "RegionalFaultCount",
+      {
+        alarmName:
+          Fn.ref("AWS::Region") +
+          "-" +
+          props.service.serviceName.toLowerCase() +
+          "-fault-count",
+        datapointsToAlarm: 3,
+        evaluationPeriods: 5,
+        comparisonOperator: ComparisonOperator.GREATER_THAN_THRESHOLD,
+        threshold: props.service.faultCountThreshold,
+        alarmDescription:
+          "Counts faults from all critical operation in the service",
+        metric: regionalFaultCount,
+      },
+    );
 
-    let canaryAlarms: IAlarm[] = Object.values(Object.entries(props.perOperationAlarmsAndRules)
-      .reduce((filtered, [key, value]) => {
-        if (criticalOperations.indexOf(key) > -1) {
-          filtered[key] = value;
+    let canaryAlarms: IAlarm[] = Object.values(
+      Object.entries(props.perOperationAlarmsAndRules).reduce(
+        (filtered, [key, value]) => {
+          if (criticalOperations.indexOf(key) > -1) {
+            filtered[key] = value;
+          }
+
+          return filtered;
+        },
+        {} as { [key: string]: IOperationAlarmsAndRules },
+      ),
+    )
+      .reduce((filtered, value) => {
+        if (value.canaryRegionalAlarmsAndRules !== undefined) {
+          filtered.push(value.canaryRegionalAlarmsAndRules);
         }
-
         return filtered;
-      }, {} as {[key: string]: IOperationAlarmsAndRules})).reduce((filtered, value) => {
-      if (value.canaryRegionalAlarmsAndRules !== undefined) {
-        filtered.push(value.canaryRegionalAlarmsAndRules);
-      }
-      return filtered;
-    }, [] as ICanaryOperationRegionalAlarmsAndRules[])
-      .map(x => x.availabilityOrLatencyAlarm);
+      }, [] as ICanaryOperationRegionalAlarmsAndRules[])
+      .map((x) => x.availabilityOrLatencyAlarm);
 
-
-    if (canaryAlarms !== undefined && canaryAlarms !== null && canaryAlarms.length > 0) {
-      this.regionalAvailabilityOrLatencyCanaryAlarm = new CompositeAlarm(this,
-        'ServiceCanaryAvailabilityOrLatencyAggregateAlarm', {
-          compositeAlarmName: Fn.ref('AWS::Region') + '-' + props.service.serviceName.toLowerCase() + '-canary-availability-or-latency-aggregate-alarm',
+    if (
+      canaryAlarms !== undefined &&
+      canaryAlarms !== null &&
+      canaryAlarms.length > 0
+    ) {
+      this.regionalAvailabilityOrLatencyCanaryAlarm = new CompositeAlarm(
+        this,
+        "ServiceCanaryAvailabilityOrLatencyAggregateAlarm",
+        {
+          compositeAlarmName:
+            Fn.ref("AWS::Region") +
+            "-" +
+            props.service.serviceName.toLowerCase() +
+            "-canary-availability-or-latency-aggregate-alarm",
           alarmRule: AlarmRule.anyOf(...canaryAlarms),
-        });
+        },
+      );
     }
 
-    let canaryAvailabilityAlarms: IAlarm[] = Object.values(Object.entries(props.perOperationAlarmsAndRules)
-      .reduce((filtered, [key, value]) => {
-        if (criticalOperations.indexOf(key) > -1) {
-          filtered[key] = value;
+    let canaryAvailabilityAlarms: IAlarm[] = Object.values(
+      Object.entries(props.perOperationAlarmsAndRules).reduce(
+        (filtered, [key, value]) => {
+          if (criticalOperations.indexOf(key) > -1) {
+            filtered[key] = value;
+          }
+
+          return filtered;
+        },
+        {} as { [key: string]: IOperationAlarmsAndRules },
+      ),
+    )
+      .reduce((filtered, value) => {
+        if (value.canaryRegionalAlarmsAndRules !== undefined) {
+          filtered.push(value.canaryRegionalAlarmsAndRules);
         }
-
         return filtered;
-      }, {} as {[key: string]: IOperationAlarmsAndRules})).reduce((filtered, value) => {
-      if (value.canaryRegionalAlarmsAndRules !== undefined) {
-        filtered.push(value.canaryRegionalAlarmsAndRules);
-      }
-      return filtered;
-    }, [] as ICanaryOperationRegionalAlarmsAndRules[])
-      .map(x => x.availabilityAlarm);
+      }, [] as ICanaryOperationRegionalAlarmsAndRules[])
+      .map((x) => x.availabilityAlarm);
 
-    if (canaryAvailabilityAlarms !== undefined && canaryAvailabilityAlarms !== null && canaryAvailabilityAlarms.length > 0) {
-      this.regionalAvailabilityCanaryAlarm = new CompositeAlarm(this, 'ServiceCanaryAvailabilityAggregateAlarm', {
-        compositeAlarmName: Fn.ref('AWS::Region') + '-' + props.service.serviceName.toLowerCase() + '-canary-availability-aggregate-alarm',
-        alarmRule: AlarmRule.anyOf(...canaryAvailabilityAlarms),
-      });
+    if (
+      canaryAvailabilityAlarms !== undefined &&
+      canaryAvailabilityAlarms !== null &&
+      canaryAvailabilityAlarms.length > 0
+    ) {
+      this.regionalAvailabilityCanaryAlarm = new CompositeAlarm(
+        this,
+        "ServiceCanaryAvailabilityAggregateAlarm",
+        {
+          compositeAlarmName:
+            Fn.ref("AWS::Region") +
+            "-" +
+            props.service.serviceName.toLowerCase() +
+            "-canary-availability-aggregate-alarm",
+          alarmRule: AlarmRule.anyOf(...canaryAvailabilityAlarms),
+        },
+      );
     }
 
-    this.regionalAvailabilityOrLatencyServerSideAlarm = new CompositeAlarm(this, 'ServiceServerSideAggregateIsolatedImpactAlarm', {
-      compositeAlarmName: Fn.ref('AWS::Region') + '-' + props.service.serviceName.toLowerCase() + '-server-side-aggregate-alarm',
-      alarmRule: AlarmRule.anyOf(...Object.values(Object.entries(props.perOperationAlarmsAndRules)
-        .reduce((filtered, [key, value]) => {
-          if (criticalOperations.indexOf(key) > -1) {
-            filtered[key] = value;
-          }
+    this.regionalAvailabilityOrLatencyServerSideAlarm = new CompositeAlarm(
+      this,
+      "ServiceServerSideAggregateIsolatedImpactAlarm",
+      {
+        compositeAlarmName:
+          Fn.ref("AWS::Region") +
+          "-" +
+          props.service.serviceName.toLowerCase() +
+          "-server-side-aggregate-alarm",
+        alarmRule: AlarmRule.anyOf(
+          ...Object.values(
+            Object.entries(props.perOperationAlarmsAndRules).reduce(
+              (filtered, [key, value]) => {
+                if (criticalOperations.indexOf(key) > -1) {
+                  filtered[key] = value;
+                }
 
-          return filtered;
-        }, {} as {[key: string]: IOperationAlarmsAndRules}),
-      )
-        .map(x => x.serverSideRegionalAlarmsAndRules)
-        .map(x => x.availabilityOrLatencyAlarm),
-      ),
-    });
+                return filtered;
+              },
+              {} as { [key: string]: IOperationAlarmsAndRules },
+            ),
+          )
+            .map((x) => x.serverSideRegionalAlarmsAndRules)
+            .map((x) => x.availabilityOrLatencyAlarm),
+        ),
+      },
+    );
 
-    this.regionalAvailabilityServerSideAlarm = new CompositeAlarm(this, 'ServiceServerSideAvailabilityAlarm', {
-      compositeAlarmName: Fn.ref('AWS::Region') + '-' + props.service.serviceName.toLowerCase() + '-server-side-availability-alarm',
-      alarmRule: AlarmRule.anyOf(...Object.values(Object.entries(props.perOperationAlarmsAndRules)
-        .reduce((filtered, [key, value]) => {
-          if (criticalOperations.indexOf(key) > -1) {
-            filtered[key] = value;
-          }
+    this.regionalAvailabilityServerSideAlarm = new CompositeAlarm(
+      this,
+      "ServiceServerSideAvailabilityAlarm",
+      {
+        compositeAlarmName:
+          Fn.ref("AWS::Region") +
+          "-" +
+          props.service.serviceName.toLowerCase() +
+          "-server-side-availability-alarm",
+        alarmRule: AlarmRule.anyOf(
+          ...Object.values(
+            Object.entries(props.perOperationAlarmsAndRules).reduce(
+              (filtered, [key, value]) => {
+                if (criticalOperations.indexOf(key) > -1) {
+                  filtered[key] = value;
+                }
 
-          return filtered;
-        }, {} as {[key: string]: IOperationAlarmsAndRules}),
-      )
-        .map(x => x.serverSideRegionalAlarmsAndRules)
-        .map(x => x.availabilityAlarm),
-      ),
-    });
+                return filtered;
+              },
+              {} as { [key: string]: IOperationAlarmsAndRules },
+            ),
+          )
+            .map((x) => x.serverSideRegionalAlarmsAndRules)
+            .map((x) => x.availabilityAlarm),
+        ),
+      },
+    );
   }
 }

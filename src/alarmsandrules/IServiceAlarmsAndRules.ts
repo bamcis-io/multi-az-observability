@@ -1,11 +1,10 @@
-import { IAlarm } from 'aws-cdk-lib/aws-cloudwatch';
-import { IService } from '../services/IService';
+import { IAlarm } from "aws-cdk-lib/aws-cloudwatch";
+import { IService } from "../services/IService";
 
 /**
  * Service level alarms and rules using critical operations
  */
-export interface IServiceAlarmsAndRules
-{
+export interface IServiceAlarmsAndRules {
   /**
    * The service these alarms and rules are for
    */

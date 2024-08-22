@@ -1,45 +1,44 @@
-import { IAlarm, CfnInsightRule } from 'aws-cdk-lib/aws-cloudwatch';
-import { IOperation } from '../../services/IOperation';
-import { IOperationMetricDetails } from '../../services/IOperationMetricDetails';
+import { IAlarm, CfnInsightRule } from "aws-cdk-lib/aws-cloudwatch";
+import { IOperation } from "../../services/IOperation";
+import { IOperationMetricDetails } from "../../services/IOperationMetricDetails";
 
 /**
  * Props for creating operation dashboard availability and latency widgets
  */
-export interface OperationLatencyWidgetProps
-{
+export interface OperationLatencyWidgetProps {
   /**
-     * The operation for this widget
-     */
+   * The operation for this widget
+   */
   readonly operation: IOperation;
 
   /**
-     * The latency metric details
-     */
+   * The latency metric details
+   */
   readonly latencyMetricDetails: IOperationMetricDetails;
 
   /**
-     * The number of AZs being used
-     */
+   * The number of AZs being used
+   */
   readonly availabilityZoneIds: string[];
 
   /**
-     * An alarm per AZ for latency
-     */
+   * An alarm per AZ for latency
+   */
   readonly zonalEndpointLatencyAlarms: IAlarm[];
 
   /**
-     * The regional endpoint latency alarm
-     */
+   * The regional endpoint latency alarm
+   */
   readonly regionalEndpointLatencyAlarm: IAlarm;
 
   /**
-     * Instance contributors to high latency, only set for
-     * server-side widgets
-     */
+   * Instance contributors to high latency, only set for
+   * server-side widgets
+   */
   readonly instanceContributorsToHighLatency?: CfnInsightRule;
 
   /**
-     * Is this widget for the canary metrics
-     */
+   * Is this widget for the canary metrics
+   */
   readonly isCanary: boolean;
 }

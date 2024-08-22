@@ -1,61 +1,60 @@
-import { Duration } from 'aws-cdk-lib';
-import { OutlierDetectionAlgorithm } from '../../utilities/OutlierDetectionAlgorithm';
-import { IService } from '../IService';
+import { Duration } from "aws-cdk-lib";
+import { OutlierDetectionAlgorithm } from "../../utilities/OutlierDetectionAlgorithm";
+import { IService } from "../IService";
 
 /**
  * The properties for adding alarms and dashboards
  * for an instrumented service.
  */
-export interface InstrumentedServiceMultiAZObservabilityProps
-{
+export interface InstrumentedServiceMultiAZObservabilityProps {
   /**
-     * The service that the alarms and dashboards are being crated for.
-     */
+   * The service that the alarms and dashboards are being crated for.
+   */
   readonly service: IService;
 
   /**
-     * Indicates whether to create per operation and overall service
-     * dashboards.
-     *
-     * @default - No dashboards are created
-     */
+   * Indicates whether to create per operation and overall service
+   * dashboards.
+   *
+   * @default - No dashboards are created
+   */
   readonly createDashboards?: boolean;
 
   /**
-     * The outlier threshold for determining if an AZ is an
-     * outlier for latency or faults. This number is interpreted
-     * differently for different outlier algorithms. When used with
-     * STATIC, the number should be between 0 and 1 to represent the
-     * percentage of errors (like .7) that an AZ must be responsible
-     * for to be considered an outlier. When used with CHI_SQUARED, it
-     * represents the p value that indicates statistical significance, like
-     * 0.05 which means the skew has less than or equal to a 5% chance of
-     * occuring. When used with Z_SCORE it indicates how many standard
-     * deviations to evaluate for an AZ being an outlier, typically 3 is
-     * standard for Z_SCORE.
-     *
-     * Standard defaults based on the outlier detection algorithm:
-     * STATIC: 0.7
-     * CHI_SQUARED: 0.05
-     * Z_SCORE: 2
-     * IQR: 1.5
-     * MAD: 3
-     *
-     * @default - Depends on the outlier detection algorithm selected
-     */
+   * The outlier threshold for determining if an AZ is an
+   * outlier for latency or faults. This number is interpreted
+   * differently for different outlier algorithms. When used with
+   * STATIC, the number should be between 0 and 1 to represent the
+   * percentage of errors (like .7) that an AZ must be responsible
+   * for to be considered an outlier. When used with CHI_SQUARED, it
+   * represents the p value that indicates statistical significance, like
+   * 0.05 which means the skew has less than or equal to a 5% chance of
+   * occuring. When used with Z_SCORE it indicates how many standard
+   * deviations to evaluate for an AZ being an outlier, typically 3 is
+   * standard for Z_SCORE.
+   *
+   * Standard defaults based on the outlier detection algorithm:
+   * STATIC: 0.7
+   * CHI_SQUARED: 0.05
+   * Z_SCORE: 2
+   * IQR: 1.5
+   * MAD: 3
+   *
+   * @default - Depends on the outlier detection algorithm selected
+   */
   readonly outlierThreshold?: number;
 
   /**
-     * The algorithm to use for performing outlier detection
-     */
+   * The algorithm to use for performing outlier detection
+   */
   readonly outlierDetectionAlgorithm: OutlierDetectionAlgorithm;
 
   /**
-     * The interval used in the dashboard, defaults to
-     * 60 minutes.
-     *
-     * @default - 60 minutes
-     */
+   * The interval used in the dashboard, defaults to
+   * 60 minutes.
+   *
+   * @default - 60 minutes
+   */
   readonly interval?: Duration;
 
   /**

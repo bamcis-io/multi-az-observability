@@ -1,45 +1,45 @@
-import { Duration } from 'aws-cdk-lib';
-import { ILoadBalancerV2 } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
-import { IContributorInsightRuleDetails } from './IContributorInsightRuleDetails';
-import { IOperation } from './IOperation';
-import { IService } from './IService';
-import { IServiceMetricDetails } from './IServiceMetricDetails';
-import { ServiceProps } from './props/ServiceProps';
-import { AddCanaryTestProps } from '../canaries/props/AddCanaryTestProps';
+import { Duration } from "aws-cdk-lib";
+import { ILoadBalancerV2 } from "aws-cdk-lib/aws-elasticloadbalancingv2";
+import { IContributorInsightRuleDetails } from "./IContributorInsightRuleDetails";
+import { IOperation } from "./IOperation";
+import { IService } from "./IService";
+import { IServiceMetricDetails } from "./IServiceMetricDetails";
+import { ServiceProps } from "./props/ServiceProps";
+import { AddCanaryTestProps } from "../canaries/props/AddCanaryTestProps";
 
 /**
  * The representation of a service composed of multiple operations
  */
 export class Service implements IService {
   /**
-      * The name of your service
-      */
+   * The name of your service
+   */
   readonly serviceName: string;
 
   /**
-      * The base endpoint for this service, like "https://www.example.com". Operation paths will be appended to this endpoint for canary testing the service.
-      */
+   * The base endpoint for this service, like "https://www.example.com". Operation paths will be appended to this endpoint for canary testing the service.
+   */
   readonly baseUrl: string;
 
   /**
-      * The fault count threshold that indicates the service is unhealthy. This is an absolute value of faults
-      * being produced by all critical operations in aggregate.
-      */
+   * The fault count threshold that indicates the service is unhealthy. This is an absolute value of faults
+   * being produced by all critical operations in aggregate.
+   */
   readonly faultCountThreshold: number;
 
   /**
-      * A list of the Availability Zone names used by this application
-      */
+   * A list of the Availability Zone names used by this application
+   */
   readonly availabilityZoneNames: string[];
 
   /**
-      * The period for which metrics for the service should be aggregated
-      */
+   * The period for which metrics for the service should be aggregated
+   */
   readonly period: Duration;
 
   /**
-      * The operations that are part of this service
-      */
+   * The operations that are part of this service
+   */
   readonly operations: IOperation[];
 
   /**
@@ -92,15 +92,17 @@ export class Service implements IService {
     this.period = props.period;
     this.loadBalancer = props.loadBalancer;
     this.canaryTestProps = props.canaryTestProps;
-    this.defaultAvailabilityMetricDetails = props.defaultAvailabilityMetricDetails;
+    this.defaultAvailabilityMetricDetails =
+      props.defaultAvailabilityMetricDetails;
     this.defaultLatencyMetricDetails = props.defaultLatencyMetricDetails;
-    this.defaultContributorInsightRuleDetails = props.defaultContributorInsightRuleDetails;
+    this.defaultContributorInsightRuleDetails =
+      props.defaultContributorInsightRuleDetails;
   }
 
   /**
-      * Adds an operation to this service and sets the operation's
-      * service property
-      */
+   * Adds an operation to this service and sets the operation's
+   * service property
+   */
   addOperation(operation: IOperation): void {
     this.operations.push(operation);
   }
