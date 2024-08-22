@@ -147,7 +147,7 @@
         "packageId": "io.bamcis.cdk.MultiAZObservability"
       },
       "go": {
-        "moduleName": "github.com/bamcis-io/multi-az-observability-go",
+        "moduleName": "github.com/bamcis-io/multi-az-observability",
         "packageName": "multi-az-observability"
       }
     },
