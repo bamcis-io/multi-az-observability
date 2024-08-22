@@ -1,7 +1,5 @@
-import * as fs from 'fs';
-import { awscdk } from 'projen';
+import { awscdk, JsonPatch } from 'projen';
 import { UpgradeDependenciesSchedule } from 'projen/lib/javascript';
-import * as yaml from 'yaml';
 
 const project = new awscdk.AwsCdkConstructLibrary({
   author: 'Michael Haken',
@@ -12,7 +10,6 @@ const project = new awscdk.AwsCdkConstructLibrary({
   name: 'multi-az-observability',
   license: 'MIT',
   prerelease: 'alpha',
-  publishDryRun: true,
   projenrcTs: true,
   repositoryUrl: 'https://github.com/bamcis-io/multi-az-observability',
   description: 'A construct for implementing multi-AZ observability to detect single AZ impairments',
@@ -225,17 +222,11 @@ project.tasks.tryFind('compile')?.spawn(buildAssets);
 project.tasks.tryFind('post-compile')?.exec('npx awslint');
 
 // tsconfig.json gets the exclude list updated and isn't tracked
-project.tasks.tryFind('release')?.updateStep(4, { exec: 'git diff --ignore-space-at-eol --exit-code \':!tsconfig.json\' \':!.projenrc.ts\' | tee' });
+//project.tasks.tryFind('release')?.updateStep(4, { exec: 'git diff --ignore-space-at-eol --exit-code \':!tsconfig.json\' \':!.projenrc.ts\'' });
 
 /*project.addFields({
   version: '0.0.1-alpha.1',
 });*/
 
+project.github?.tryFindWorkflow('release')?.file?.patch(JsonPatch.remove('/jobs/release_pypi/steps/1'));
 project.synth();
-
-const contents = fs.readFileSync('.github/workflows/release.yml');
-const data = yaml.parse(contents.toString());
-data.jobs.release_pypi.steps.splice(1, 1);
-const newData = yaml.stringify(data);
-fs.unlinkSync('.github/workflows/release.yml');
-fs.writeFileSync('.github/workflows/release.yml', newData);
