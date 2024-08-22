@@ -5,7 +5,7 @@ import { ApplicationLoadBalancer } from 'aws-cdk-lib/aws-elasticloadbalancingv2'
 import { BasicServiceMultiAZObservability } from '../src/services/BasicServiceMultiAZObservability';
 import { OutlierDetectionAlgorithm } from '../src/utilities/OutlierDetectionAlgorithm';
 
-test('Basic service observability', () => {
+test('Basic service observability test', () => {
   const app = new cdk.App();
   const stack = new cdk.Stack(app, 'TestStack');
 
