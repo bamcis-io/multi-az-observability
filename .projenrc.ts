@@ -71,12 +71,11 @@ const project = new awscdk.AwsCdkConstructLibrary({
     dotNetNamespace: "io.bamcis.cdk.MultiAZObservability",
     packageId: "io.bamcis.cdk.MultiAZObservability",
   },
-  /*
   publishToGo: {
-    moduleName: "github.com/bamcis-io/multi-az-observability",
-    githubRepo: "github.com/bamcis-io/multi-az-observability-go",
+    moduleName: "github.com/bamcis-io/multi-az-observability-go",
+    //packageName: "",
+    //githubRepo: "github.com/bamcis-io/multi-az-observability-go",
   },
-  */
   publishToPypi: {
     distName: "multi_az_observability",
     module: "multi_az_observability",

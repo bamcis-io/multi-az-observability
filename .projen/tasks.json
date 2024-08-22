@@ -302,6 +302,9 @@
         },
         {
           "spawn": "package:dotnet"
+        },
+        {
+          "spawn": "package:go"
         }
       ]
     },
@@ -311,6 +314,15 @@
       "steps": [
         {
           "exec": "jsii-pacmak -v --target dotnet"
+        }
+      ]
+    },
+    "package:go": {
+      "name": "package:go",
+      "description": "Create go language bindings",
+      "steps": [
+        {
+          "exec": "jsii-pacmak -v --target go"
         }
       ]
     },
