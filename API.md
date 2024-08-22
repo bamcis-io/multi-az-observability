@@ -5055,7 +5055,7 @@ metrics this will typically just be "Sum".
 
 ### OutlierDetectionAlgorithm <a name="OutlierDetectionAlgorithm" id="multi-az-observability.OutlierDetectionAlgorithm"></a>
 
-Available algorithms for performing outlier detection, currently only STATIC is supported.
+Available algorithms for performing outlier detection.
 
 #### Members <a name="Members" id="Members"></a>
 

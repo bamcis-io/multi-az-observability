@@ -146,7 +146,7 @@ export class ApplicationLoadBalancerMetrics {
    * @param loadBalancerFullName
    * @param availabilityZoneName
    * @param period
-   * @returns
+   * @returns IMetric
    */
   static createZonalApplicationLoadBalancerProcessedBytesMetric(
     loadBalancerFullName: string,

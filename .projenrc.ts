@@ -71,11 +71,12 @@ const project = new awscdk.AwsCdkConstructLibrary({
     dotNetNamespace: "io.bamcis.cdk.MultiAZObservability",
     packageId: "io.bamcis.cdk.MultiAZObservability",
   },
+  /*
   publishToGo: {
     moduleName: "github.com/bamcis-io/multi-az-observability",
-    packageName: "multi-az-observability",
     githubRepo: "github.com/bamcis-io/multi-az-observability-go",
   },
+  */
   publishToPypi: {
     distName: "multi_az_observability",
     module: "multi_az_observability",
@@ -223,7 +224,7 @@ project.tasks.tryFind("post-compile")?.exec("npx awslint");
 
 // tsconfig.json gets the exclude list updated and isn't tracked
 project.tasks.tryFind("release")?.updateStep(4, {
-  exec: "git diff --ignore-space-at-eol --exit-code ':!tsconfig.json' ':!.projenrc.ts' | tee",
+  exec: "git diff --ignore-space-at-eol --exit-code ':!tsconfig.json' ':!.projenrc.ts' ':!API.md'",
 });
 
 /*project.addFields({

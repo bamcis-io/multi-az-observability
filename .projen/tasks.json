@@ -302,9 +302,6 @@
         },
         {
           "spawn": "package:dotnet"
-        },
-        {
-          "spawn": "package:go"
         }
       ]
     },
@@ -314,15 +311,6 @@
       "steps": [
         {
           "exec": "jsii-pacmak -v --target dotnet"
-        }
-      ]
-    },
-    "package:go": {
-      "name": "package:go",
-      "description": "Create go language bindings",
-      "steps": [
-        {
-          "exec": "jsii-pacmak -v --target go"
         }
       ]
     },
@@ -386,7 +374,7 @@
           "spawn": "unbump"
         },
         {
-          "exec": "git diff --ignore-space-at-eol --exit-code ':!tsconfig.json' ':!.projenrc.ts' | tee"
+          "exec": "git diff --ignore-space-at-eol --exit-code ':!tsconfig.json' ':!.projenrc.ts' ':!API.md'"
         }
       ]
     },
