@@ -2,7 +2,7 @@
  * Different availability metric types
  */
 export enum AvailabilityMetricType
-{
+  {
   /**
    * The success rate, i.e. (successful responses) / (successful + fault responses) * 100
    */

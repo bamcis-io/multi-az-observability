@@ -2,7 +2,7 @@
  * Available algorithms for performing outlier detection
  */
 export enum OutlierDetectionAlgorithm
-{
+  {
   /**
    * Defines using a static value to compare skew in faults or
    * high latency responses.
