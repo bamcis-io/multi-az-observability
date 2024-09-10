@@ -232,7 +232,6 @@ project.tasks.tryFind("release")?.updateStep(4, {
   version: '0.0.1-alpha.1',
 });*/
 
-
 project.github
   ?.tryFindWorkflow("release")
   ?.file?.patch(JsonPatch.remove("/jobs/release_pypi/steps/1"));
