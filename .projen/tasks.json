@@ -387,7 +387,7 @@
           "spawn": "unbump"
         },
         {
-          "exec": "git diff --ignore-space-at-eol --exit-code ':!tsconfig.json' ':!.projenrc.ts' ':!API.md'"
+          "exec": "git diff --ignore-space-at-eol --exit-code ':!tsconfig.json'"
         }
       ]
     },
