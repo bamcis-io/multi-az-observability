@@ -6,6 +6,9 @@ on:
     branches:
       - main
   workflow_dispatch: {}
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
 jobs:
   release:
     runs-on: codebuild-Arm64GithubRunner-${{ github.run_id }}-${{ github.run_attempt }}
