@@ -235,6 +235,7 @@ export class BasicServiceMultiAZObservability
     this.albZonalIsolatedImpactAlarms = this._albZonalIsolatedImpactAlarms;
     this.natGWZonalIsolatedImpactAlarms = this._natGWZonalIsolatedImpactAlarms;
 
+    // Should we create the dashboard
     if (props.createDashboard == true) {
       this.dashboard = new BasicServiceDashboard(
         this,
@@ -454,7 +455,7 @@ export class BasicServiceMultiAZObservability
     let totalFaults: IMetric = new MathExpression({
       expression: Object.keys(tmp).join("+"),
       usingMetrics: tmp,
-      label: Fn.ref("AWS::Region") + " fault count",
+      label: Fn.sub("${AWS::Region} fault count"),
       period: props.period,
     });
 
