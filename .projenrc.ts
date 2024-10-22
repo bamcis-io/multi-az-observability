@@ -6,7 +6,10 @@ const project = new awscdk.AwsCdkConstructLibrary({
   authorAddress: "michael.haken@outlook.com",
   cdkVersion: "2.138.0",
   defaultReleaseBranch: "main",
-  jsiiVersion: "~5.4.0",
+  jsiiVersion: "~5.5.0",
+  devDeps: [
+    "eslint@^9"
+  ],
   name: "multi-az-observability",
   license: "MIT",
   githubOptions: {
@@ -20,6 +23,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
   autoApproveOptions: {
     allowedUsernames: ["hakenmt", "github-bot"],
   },
+  eslint: true,
   prettier: true,
   prerelease: "alpha",
   projenrcTs: true,
@@ -251,4 +255,7 @@ project.synth();
 project.github
   ?.tryFindWorkflow("build")
   ?.file?.patch(JsonPatch.remove("/jobs/package-python/steps/1"));
+project.synth();
+
+project.addDevDeps("eslint@^9", "@typescript-eslint/eslint-plugin@^8", "@typescript-eslint/parser@^8");
 project.synth();
