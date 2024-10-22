@@ -190,7 +190,8 @@ export class BasicServiceDashboard extends Construct {
 
     this.dashboard = new Dashboard(this, "BasicServiceDashboard", {
       dashboardName:
-        props.serviceName.toLowerCase() + Fn.sub("-service-${AWS::Region}"),
+        props.serviceName.toLowerCase() +
+        Fn.sub("-service-availability-${AWS::Region}"),
       defaultInterval: props.interval,
       periodOverride: PeriodOverride.INHERIT,
       widgets: widgets,

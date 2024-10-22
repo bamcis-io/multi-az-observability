@@ -535,7 +535,7 @@ export class InstrumentedServiceMultiAZObservability
 
       this.serviceDashboard = new ServiceAvailabilityAndLatencyDashboard(
         dashboardStack,
-        props.service.serviceName,
+        props.service.serviceName.toLowerCase(),
         {
           interval: props.interval ? props.interval : Duration.minutes(60),
           service: props.service,

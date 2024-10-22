@@ -9,6 +9,17 @@ const project = new awscdk.AwsCdkConstructLibrary({
   jsiiVersion: "~5.4.0",
   name: "multi-az-observability",
   license: "MIT",
+  githubOptions: {
+    mergify: true,
+  },
+  autoMerge: true,
+  autoMergeOptions: {
+    approvedReviews: 0,
+  },
+  autoApproveUpgrades: true,
+  autoApproveOptions: {
+    allowedUsernames: ["hakenmt", "github-bot"],
+  },
   prettier: true,
   prerelease: "alpha",
   projenrcTs: true,
