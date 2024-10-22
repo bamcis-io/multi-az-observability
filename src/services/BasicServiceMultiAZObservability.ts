@@ -241,8 +241,7 @@ export class BasicServiceMultiAZObservability
         this,
         "BasicServiceDashboard",
         {
-          serviceName:
-            props.serviceName + Fn.sub("-availability-${AWS::Region}"),
+          serviceName: props.serviceName.toLowerCase(),
           zonalAggregateIsolatedImpactAlarms:
             this.aggregateZonalIsolatedImpactAlarms,
           zonalLoadBalancerIsolatedImpactAlarms:
