@@ -13,9 +13,6 @@ const project = new awscdk.AwsCdkConstructLibrary({
     mergify: true,
   },
   autoMerge: true,
-  autoMergeOptions: {
-    approvedReviews: 0,
-  },
   autoApproveUpgrades: true,
   autoApproveOptions: {
     allowedUsernames: ["hakenmt", "github-bot"],
