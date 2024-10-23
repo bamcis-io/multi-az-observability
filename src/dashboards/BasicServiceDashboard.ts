@@ -1,7 +1,6 @@
 import { Fn } from "aws-cdk-lib";
 import {
   AlarmStatusWidget,
-  AlarmWidget,
   Dashboard,
   GraphWidget,
   IAlarm,
@@ -52,12 +51,12 @@ export class BasicServiceDashboard extends Construct {
       //of alarms, 1, 2, or 3
       if (index % 3 == 2 || index - 1 == Object.keys(alarms).length) {
         for (let k = rowTracker; k <= index; k++) {
+          let azId: string = Object.keys(alarms).at(k)!;
           widgets.push(
-            new AlarmWidget({
+            new AlarmStatusWidget({
               height: 2,
               width: 8,
-              region: Fn.sub("${AWS::Region}"),
-              alarm: alarms[availabilityZoneId],
+              alarms: [ alarms[azId] ]
             }),
           );
         }
@@ -107,12 +106,12 @@ export class BasicServiceDashboard extends Construct {
       //of alarms, 1, 2, or 3
       if (index % 3 == 2 || index - 1 == Object.keys(alarms).length) {
         for (let k = rowTracker; k <= index; k++) {
+          let azId: string = Object.keys(alarms).at(k)!;
           widgets.push(
-            new AlarmWidget({
+            new AlarmStatusWidget({
               height: 2,
               width: 8,
-              region: Fn.sub("${AWS::Region}"),
-              alarm: alarms[availabilityZoneId],
+              alarms: [ alarms[azId] ]
             }),
           );
         }
