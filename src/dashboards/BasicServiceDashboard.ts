@@ -11,11 +11,14 @@ import {
 } from "aws-cdk-lib/aws-cloudwatch";
 import { Construct } from "constructs";
 import { BasicServiceDashboardProps } from "./props/BasicServiceDashboardProps";
+import { AvailabilityZoneMapper } from "../azmapper/AvailabilityZoneMapper";
 
 export class BasicServiceDashboard extends Construct {
+
   private static createLoadBalancerWidgets(
     alarms: { [key: string]: IAlarm },
     metrics: { [key: string]: IMetric },
+    azMapper: AvailabilityZoneMapper
   ): IWidget[] {
     let widgets: IWidget[] = [];
 
@@ -29,14 +32,16 @@ export class BasicServiceDashboard extends Construct {
 
     let rowTracker: number = 0;
 
-    Object.keys(alarms).forEach((availabilityZoneId, index) => {
+    Object.keys(alarms).forEach((azLetter, index) => {
+      let availabilityZoneId: string = azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
+
       widgets.push(
         new GraphWidget({
           height: 6,
           width: 8,
           title: availabilityZoneId + " Load Balancer Faults",
           region: Fn.sub("${AWS::Region}"),
-          left: [metrics[availabilityZoneId]],
+          left: [metrics[azLetter]],
           statistic: "Sum",
           leftYAxis: {
             min: 0,
@@ -71,6 +76,7 @@ export class BasicServiceDashboard extends Construct {
   private static createNatGatewayWidgets(
     alarms: { [key: string]: IAlarm },
     metrics: { [key: string]: IMetric },
+    azMapper: AvailabilityZoneMapper
   ): IWidget[] {
     let widgets: IWidget[] = [];
 
@@ -84,14 +90,17 @@ export class BasicServiceDashboard extends Construct {
 
     let rowTracker: number = 0;
 
-    Object.keys(alarms).forEach((availabilityZoneId, index) => {
+    Object.keys(alarms).forEach((azLetter, index) => {
+
+      let availabilityZoneId: string = azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
+
       widgets.push(
         new GraphWidget({
           height: 6,
           width: 8,
           title: availabilityZoneId + " NAT Gateway Dropped Packets",
           region: Fn.sub("${AWS::Region}"),
-          left: [metrics[availabilityZoneId]],
+          left: [metrics[azLetter]],
           statistic: "Sum",
           leftYAxis: {
             min: 0,
@@ -124,8 +133,10 @@ export class BasicServiceDashboard extends Construct {
   }
 
   private static createTopLevelAlarmWidgets(alarms: {
-    [key: string]: IAlarm;
-  }): IWidget[] {
+      [key: string]: IAlarm;
+    },
+    azMapper: AvailabilityZoneMapper
+  ): IWidget[] {
     let widgets: IWidget[] = [];
 
     widgets.push(
@@ -136,10 +147,12 @@ export class BasicServiceDashboard extends Construct {
       }),
     );
 
-    Object.keys(alarms).forEach((availabilityZoneId) => {
+    Object.keys(alarms).forEach((azLetter) => {
+      let availabilityZoneId: string = azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
+
       widgets.push(
         new AlarmStatusWidget({
-          alarms: [alarms[availabilityZoneId]],
+          alarms: [alarms[azLetter]],
           height: 2,
           width: 8,
           title: availabilityZoneId + " Aggregate Isolated Impact",
@@ -160,6 +173,7 @@ export class BasicServiceDashboard extends Construct {
     widgets.push(
       BasicServiceDashboard.createTopLevelAlarmWidgets(
         props.zonalAggregateIsolatedImpactAlarms,
+        props.azMapper
       ),
     );
 
@@ -171,6 +185,7 @@ export class BasicServiceDashboard extends Construct {
         BasicServiceDashboard.createLoadBalancerWidgets(
           props.zonalLoadBalancerIsolatedImpactAlarms,
           props.zonalLoadBalancerFaultRateMetrics,
+          props.azMapper
         ),
       );
     }
@@ -183,6 +198,7 @@ export class BasicServiceDashboard extends Construct {
         BasicServiceDashboard.createNatGatewayWidgets(
           props.zonalNatGatewayIsolatedImpactAlarms,
           props.zonalNatGatewayPacketDropMetrics,
+          props.azMapper
         ),
       );
     }

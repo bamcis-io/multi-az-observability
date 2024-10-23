@@ -251,6 +251,7 @@ export class BasicServiceMultiAZObservability
           interval: props.interval,
           zonalLoadBalancerFaultRateMetrics: this._faultsPerZone,
           zonalNatGatewayPacketDropMetrics: this._packetDropsPerZone,
+          azMapper: this.azMapper
         },
       ).dashboard;
     }

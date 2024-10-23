@@ -1,5 +1,6 @@
 import { Duration } from "aws-cdk-lib";
 import { IAlarm, IMetric } from "aws-cdk-lib/aws-cloudwatch";
+import { AvailabilityZoneMapper } from "../../azmapper/AvailabilityZoneMapper";
 
 export interface BasicServiceDashboardProps {
   readonly serviceName: string;
@@ -15,4 +16,6 @@ export interface BasicServiceDashboardProps {
   readonly zonalNatGatewayPacketDropMetrics?: { [key: string]: IMetric };
 
   readonly interval?: Duration;
+
+  readonly azMapper: AvailabilityZoneMapper;
 }
