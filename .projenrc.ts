@@ -7,9 +7,6 @@ const project = new awscdk.AwsCdkConstructLibrary({
   cdkVersion: "2.138.0",
   defaultReleaseBranch: "main",
   jsiiVersion: "~5.5.0",
-  devDeps: [
-    "eslint@^9"
-  ],
   name: "multi-az-observability",
   license: "MIT",
   githubOptions: {
@@ -24,6 +21,13 @@ const project = new awscdk.AwsCdkConstructLibrary({
     allowedUsernames: ["hakenmt", "github-bot"],
   },
   eslint: true,
+  eslintOptions: {
+    dirs: [
+      "**/*.ts",
+      "**/*.tsx"
+    ],
+    fileExtensions: []
+  },
   prettier: true,
   prerelease: "alpha",
   projenrcTs: true,
@@ -110,6 +114,8 @@ const project = new awscdk.AwsCdkConstructLibrary({
     },
   },
 });
+
+project.addDevDeps("eslint@^9", "@typescript-eslint/eslint-plugin@^8", "@typescript-eslint/parser@^8");
 
 project.tasks.addTask("build-monitoring-layer", {
   steps: [
@@ -242,6 +248,10 @@ project.tasks.tryFind("post-compile")?.exec("npx awslint");
 project.tasks.tryFind("release")?.updateStep(4, {
   exec: "git diff --ignore-space-at-eol --exit-code ':!tsconfig.json'",
 });
+//project.tasks.tryFind("eslint")?.updateStep(0, {
+//  exec: "eslint **/*.ts --fix --no-error-on-unmatched-pattern $@ src test build-tools projenrc .projenrc.ts",
+//  receiveArgs: true,
+//});
 
 /*project.addFields({
   version: '0.0.1-alpha.1',
@@ -255,7 +265,4 @@ project.synth();
 project.github
   ?.tryFindWorkflow("build")
   ?.file?.patch(JsonPatch.remove("/jobs/package-python/steps/1"));
-project.synth();
-
-project.addDevDeps("eslint@^9", "@typescript-eslint/eslint-plugin@^8", "@typescript-eslint/parser@^8");
 project.synth();
