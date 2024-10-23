@@ -20,7 +20,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
   autoApproveOptions: {
     allowedUsernames: ["hakenmt", "github-bot"],
   },
-  eslint: true,
+  eslint: false,
   eslintOptions: {
     dirs: [
       "**/*.ts",
@@ -114,8 +114,6 @@ const project = new awscdk.AwsCdkConstructLibrary({
     },
   },
 });
-
-project.addDevDeps("eslint@^9", "@typescript-eslint/eslint-plugin@^8", "@typescript-eslint/parser@^8");
 
 project.tasks.addTask("build-monitoring-layer", {
   steps: [
@@ -248,10 +246,6 @@ project.tasks.tryFind("post-compile")?.exec("npx awslint");
 project.tasks.tryFind("release")?.updateStep(4, {
   exec: "git diff --ignore-space-at-eol --exit-code ':!tsconfig.json'",
 });
-//project.tasks.tryFind("eslint")?.updateStep(0, {
-//  exec: "eslint **/*.ts --fix --no-error-on-unmatched-pattern $@ src test build-tools projenrc .projenrc.ts",
-//  receiveArgs: true,
-//});
 
 /*project.addFields({
   version: '0.0.1-alpha.1',

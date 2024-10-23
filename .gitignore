@@ -68,7 +68,6 @@ junit.xml
 !/src/
 /lib
 /dist/
-!/.eslintrc.json
 .jsii
 tsconfig.json
 !/API.md
