@@ -146,7 +146,7 @@ InstrumentedServiceMultiAZObservability multiAvailabilityZoneObservability = new
 });
 ```
 
-You define some characteristics of service, default values for metrics and alarms, and then add operations as well as any overrides for default values that you need. The construct can also automatically create synthetic canaries that test each operation with a very simple HTTP check, or you can configure your own synthetics and just tell the construct about the metric details and optionally log files. This creates metrics, alarms, and dashboards that can be used to detect single-AZ impact.
+You define some characteristics of the service, default values for metrics and alarms, and then add operations as well as any overrides for default values that you need. The construct can also automatically create synthetic canaries that test each operation with a very simple HTTP check, or you can configure your own synthetics and just tell the construct about the metric details and optionally log files. This creates metrics, alarms, and dashboards that can be used to detect single-AZ impact.
 
 If you don't have service specific logs and custom metrics with per-AZ dimensions, you can still use the construct to evaluate ALB and NAT Gateway metrics to find single AZ faults.
 
@@ -169,6 +169,8 @@ BasicServiceMultiAZObservability multiAvailabilityZoneObservability = new BasicS
     DatapointsToAlarm = 3
 });
 ```
+
+If you provide a load balancer, the construct assumes it is deployed in each AZ of the VPC the load balancer is associated with and will look for HTTP metrics using those AZs as dimensions.
 
 Both options support running workloads on EC2, ECS, Lambda, and EKS.
 
