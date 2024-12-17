@@ -1,4 +1,4 @@
-# multi-az-observability
+# multi-az-observability test
 This is a CDK construct for multi-AZ observability to help detect single-AZ impairments. This is currently an `alpha` version, but is being used in the AWS [Advanced Multi-AZ Resilience Patterns](https://catalog.workshops.aws/multi-az-gray-failures/en-US) workshop.
 
 There is a lot of available information to think through and combine to provide signals about single-AZ impact. To simplify the setup and use reasonable defaults, this construct (available in TypeScript, Go, Python, and .NET [Java coming soon]) sets up the necessary observability. To use the CDK construct, you first define your service like this:
