@@ -248,6 +248,38 @@ project.tasks.tryFind("release")?.updateStep(4, {
   version: '0.0.1-alpha.1',
 });*/
 
+let wf: GithubWorkflow = new GithubWorkflow(project.github!, "auto-pr-review");
+wf.on({pullRequest: { types: [ "ready_for_review"] }});
+wf.addJob(
+  "ReviewPR",
+  {
+    runsOn: ["ubuntu-latest"],
+    permissions: {
+      contents: JobPermission.WRITE
+    },
+    env: {
+      GITHUB_TOKEN: "${{ github.token }}"
+    },
+    if: "contains(github.event.pull_request.labels.*.name, 'auto-approve') && github.event.pull_request.user.login == 'hakenmt'",
+    name: "Automatic PR Review",
+    steps: [
+      {
+        name: "Checkout",
+        uses: "actions/checkout@v4"
+      },
+      {
+        name: "Review PR",
+        run: "PR_NUMBER=$(jq --raw-output .pull_request.number $GITHUB_EVENT_PATH)\n" +
+          "REVIEWER='auto-reviewer'\n" +
+          "COMMENT='Looks good.'\n" +
+          "gh pr review $PR_NUMBER --approve --body \"$COMMENT\" --repo ${{ github.repository }}"
+      }
+    ]
+  }
+);
+
+project.github?.workflows.push(wf);
+
 project.github
   ?.tryFindWorkflow("release")
   ?.file?.patch(JsonPatch.remove("/jobs/release_pypi/steps/1"));
